@@ -84,8 +84,8 @@ LoadFile: ;(ds:di = FILE NAME, es:si = Dist)
     add eax, DATA_SECTION_START
     call ReadSector
     pop eax
-    add si, 512
     call GetFatEntry
+    add si, 512
     cmp ax, 0xFFFF
     je .ed
     jmp .READ
@@ -94,6 +94,7 @@ LoadFile: ;(ds:di = FILE NAME, es:si = Dist)
     ret
 
 GetFatEntry: ;(ax = entry_no/result)
+    push si
     push di
     push es
     push ax
@@ -115,6 +116,7 @@ GetFatEntry: ;(ax = entry_no/result)
 
     pop es
     pop di
+    pop si
     ret
 
 FindRootEntry: ;(ds:di = FILE NAME, ax = first clus of loader, if ax equals to 0xffff, that not found)
@@ -151,7 +153,6 @@ FindRootEntry: ;(ds:di = FILE NAME, ax = first clus of loader, if ax equals to 0
     mov ax, word [es:(si + 0x1A)]
     pop es
     ret
-
 
 CMP_FILE_NAME: ;(ds:di = FILE NAME 1, es:si = FILE NAME 2, ax = result)
     push cx

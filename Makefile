@@ -9,3 +9,4 @@ clean:
 .PHONY: image
 image:
 	cd kernel ; make image
+	sudo umount /mnt/flyOS

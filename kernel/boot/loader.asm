@@ -1,5 +1,9 @@
     org 0x0100
-
+    mov ax, cs
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov sp, 0x0100
 ; %define ENABLE_GRAPH
 ; %define ENABLE_256C_GRAPH_MODE
 
@@ -15,12 +19,6 @@
     %endif
     int 0x10
 %endif
-
-    mov ax, cs
-    mov ds, ax
-    mov es, ax
-    mov ss, ax
-    mov sp, 0x0100
 
 ;     mov cx, 10
 ;     mov ah, 0x0C
@@ -48,189 +46,168 @@
     mov bl, 0xC
     call DispStr
 
-    jmp $
-
-MSG_LOADING: db `Loading...\00`
-
-ClrScreen:
-    push ax
-    push bx
-    push cx
-    push dx
-
-    mov ax, 0x0600
-    mov bx, 0x0700
-    mov cx, 0x0000
-    mov dx, 0x184f
-    int 0x10
-
-    pop dx
-    pop cx
-    pop bx
-    pop ax
-    ret
-
-DispStr: ;(ds:di=str, dl = x, dh = y, bl = color)
-    push es
-    push bp
-    push cx
-    push ax
-
-    call StrLen
-    mov cx, ax
-
-    mov ax, ds
-    mov es, ax
-    mov bp, di
-
-    mov bh, 0
-
-    mov ax, 0x1301
-
-    int 10h
-
-    pop ax
-    pop cx
-    pop bp
-    pop es
-    ret
-
-StrLen: ;(ds:di=str, ax=out)
-    push di
-    push cx
-
-    mov cx, 0
-.goon:
-    mov al, byte [ds:di]
-    cmp al, 0
-    je .tail
-    inc cx
-    inc di
-    jmp .goon
-.tail:
-    mov ax, cx
-
-    pop cx
-    pop di
-    ret
-
-DispHex2B: ;(ax = data, bh = color, bl = disp_0x, dl = x, dh = y)
-    push dx
-    push ax
-    mov al, ah
-    mov ah, bh
-    call DispHex1B
-    add dl, 2
-    cmp bl, 0
-    je .e
-    add dl, 2
-.e:
-    pop ax
-    push ax
-    mov ah, bh
-    mov bl, 0
-    call DispHex1B
-    pop ax
-    pop dx
-    ret
-
-DispHexSeq: ;(ds:di: seq, bx = number, ah = color, dh = y)
-    push cx
-    push dx
-
-    xor cx, cx
-    xor dl, dl
-
-.s:
-    cmp cx, bx
-    je .e
-
-    mov al, byte [di]
-    push bx
-    mov bl, 0
-    call DispHex1B
-    pop bx
-
-    add dl, 2
-    mov al, ' '
-    call DispChar
-    inc dl
-    cmp dl, 0x30
-    jne .e2
+    mov di, STAGE2_NAME
+    call FindRootEntry
+    cmp ax, 0xffff
+    jne .goon
+    mov di, MSG_NOT_FOUND
     mov dl, 0
-    inc dh
-.e2:
-    inc di
-    inc cx
-    jmp .s
-.e:
-    pop dx
-    pop cx
-    ret
+    mov dh, 1
+    mov bl, 0x0C
+    call DispStr
+    jmp $
+.goon:
+    mov di, MSG_FOUND
+    mov dl, 0
+    mov dh, 1
+    mov bl, 0xC
+    call DispStr
 
-DispHex1B: ;(ah = color, al = data, dl = x, dh = y, bl = disp_0x)
-    push dx
-    cmp bl, 0
-    je .disp_hex
-    push ax
-    mov al, '0'
-    call DispChar
-    inc dl
-    mov al, 'x'
-    call DispChar
-    inc dl
-    pop ax
-.disp_hex:
-    push ax
-    shr al, 4
-    cmp al, 9
-    jg .disp_alpha1
-    add al, '0'
-    call DispChar
-    jmp .disp_hex2
-.disp_alpha1:
-    add al, ('A'-10)
-    call DispChar
-.disp_hex2:
-    inc dl
-    pop ax
-    and al, 0x0F
-    cmp al, 9
-    jg .disp_alpha2
-    add al, '0'
-    call DispChar
-    pop dx
-    ret
-.disp_alpha2:
-    add al, ('A'-10)
-    call DispChar
-    pop dx
-    ret
+    mov di, STAGE2_NAME
+    mov ax, BASE_OF_STAGE2_DATA
+    mov es, ax
+    mov si, 0
+    call LoadFile
 
-DispChar: ;(ah = color, al = data, dl = x, dh = y)
+    mov ax, cs
+    mov ds, ax
+    mov di, ELF_MAGIC
+    mov ax, BASE_OF_STAGE2_DATA
+    mov es, ax
+    mov si, 0
+    mov cx, 4
+    call CMP_STR
+
+    cmp ax, 0
+    jne .valid
+    mov di, MSG_ELF_NOT_MATCH
+    mov dl, 0
+    mov dh, 2
+    mov bl, 0xC
+    call DispStr
+    jmp $
+.valid:
+    call InitStage2
+    jmp far [STAGE2_ADDR]
+
+InitStage2:
+    mov ax, BASE_OF_STAGE2_DATA
+    mov es, ax
+    call GetELFHeaderInfo
+
+    xor edi, edi
+    mov edi, dword [ELFHeaderInfo + 4]
+
+    mov cx, word [ELFHeaderInfo + 16]
+.lp:
+    cmp cx, 0
+    jle .ed
+    call GetProgramHeaderInfo
+
+    mov eax, dword [ProgramHeaderInfo + 12]
+    cmp eax, 1
+    jne .tail
+
     push edi
-    push eax
-    push ebx
+    push esi
+    push ecx
+    push ds
+    push es
 
-    mov ax, 0xb800
-    mov gs, ax
+    mov esi, dword[ProgramHeaderInfo + 4]
+    mov edi, dword[ProgramHeaderInfo + 0]
+    mov ecx, dword[ProgramHeaderInfo + 8]
+    mov ax, BASE_OF_STAGE2
+    mov es, ax
+    mov ax, BASE_OF_STAGE2_DATA
+    mov ds, ax
 
-    xor eax, eax
-    xor ebx, ebx
-    mov al, dh
-    mov bl, dh
-    shl eax, 4
-    shl ebx, 6
-    add eax, ebx
-    xor ebx, ebx
-    mov bl, dl
-    add eax, ebx
-    shl eax, 1
-    mov edi, eax
+    call MemCpy
 
-    pop ebx
-    pop eax
-
-    mov word [gs:edi], ax
+    pop es
+    pop ds
+    pop ecx
+    pop esi
     pop edi
+
+.tail:
+
+    add di, word [ELFHeaderInfo + 14]
+    dec cx
+    jmp .lp
+.ed:
+    mov eax, dword [ELFHeaderInfo + 0]
+    mov word [STAGE2_ADDR + 0], ax
     ret
+
+STAGE2_ADDR:
+    dw 0
+    dw BASE_OF_STAGE2
+
+GetELFHeaderInfo:
+    mov eax, dword [es:0x18]
+    mov dword [ELFHeaderInfo + 0], eax
+
+    mov eax, dword [es:0x1c]
+    mov dword [ELFHeaderInfo + 4], eax
+
+    mov eax, dword [es:0x20]
+    mov dword [ELFHeaderInfo + 8], eax
+
+    mov ax, word [es:0x28]
+    mov word [ELFHeaderInfo + 12], ax
+
+    mov ax, word [es:0x2a]
+    mov word [ELFHeaderInfo + 14], ax
+
+    mov ax, word [es:0x2c]
+    mov word [ELFHeaderInfo + 16], ax
+
+    mov ax, word [es:0x2e]
+    mov word [ELFHeaderInfo + 18], ax
+
+    mov ax, word [es:0x30]
+    mov word [ELFHeaderInfo + 20], ax
+    ret
+
+GetProgramHeaderInfo: ;edi = offset
+    mov eax, dword [es:(edi + 4)]
+    mov dword [ProgramHeaderInfo + 0], eax
+
+    mov eax, dword [es:(edi + 12)]
+    mov dword [ProgramHeaderInfo + 4], eax
+
+    mov eax, dword [es:(edi + 16)]
+    mov dword [ProgramHeaderInfo + 8], eax
+
+    mov eax, dword [es:(edi + 0)]
+    mov dword [ProgramHeaderInfo + 12], eax
+    ret
+
+ELFHeaderInfo:
+    dd 0 ;e_entry(0)
+    dd 0 ;e_phoff(4)
+    dd 0 ;e_shoff(8)
+    dw 0 ;e_ehsize(12)
+    dw 0 ;e_phentsize(14)
+    dw 0 ;e_phnum(16)
+    dw 0 ;e_shentsize(18)
+    dw 0 ;e_shnum(20)
+
+ProgramHeaderInfo:
+    dd 0 ;p_offset(0)
+    dd 0 ;p_paddr(4)
+    dd 0 ;p_filesz(8)
+    dd 0 ;p_type(12)
+
+BASE_OF_STAGE2_DATA equ 0x7000
+BASE_OF_STAGE2 equ 0x6000
+OFFSET_OF_STAGE2 equ 0x0220
+MSG_LOADING: db `Loading...\00`
+MSG_NOT_FOUND: db `NotFound!\00`
+MSG_FOUND: db `Found!\00`
+MSG_ELF_NOT_MATCH: db `Invalid Stage2: ELF Magic Number not match!\00`
+STAGE2_NAME: db "STAGE2  BIN"
+
+ELF_MAGIC: db `\x7fELF`
+%include "functions.inc"
