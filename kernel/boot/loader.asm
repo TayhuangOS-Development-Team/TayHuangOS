@@ -88,6 +88,9 @@
     jmp $
 .valid:
     call InitStage2
+    mov ax, 0x0000
+    mov ss, ax
+    mov sp, 0x0600
     jmp far [STAGE2_ADDR]
 
 InitStage2:
