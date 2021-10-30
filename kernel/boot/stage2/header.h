@@ -8,5 +8,9 @@
 
 #define bool unsigned char
 #define byte unsigned char
+#define word unsigned short
+#define dword unsigned int
 #define true 1
 #define false 0
+
+#define BASE_OF_DATA 0x1000

@@ -2,12 +2,12 @@ STAGE2_OUPUT := stage2.bin
 ASM := nasm
 RM := rm
 GCC := gcc
-REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wstrict-prototypes -march=i386 \
+REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder
-C_SRC := stage2 print
-ASM_SRC := disp stage2_entry
+C_SRC := stage2 print memory
+ASM_SRC := disp stage2_entry read_sector
 
 .PHONY: build
 build:
