@@ -19,4 +19,4 @@ clean:
 .PHONY: image
 image:
 	cd boot ; make image
-	sudo cp $(KERNEL_OUTPUT) /mnt/flyOS
+	sudo cp $(KERNEL_OUTPUT) /mnt/tayhuangOS

@@ -1,3 +1,19 @@
+; SPDX-License-Identifier: GPL-2.0-only
+; -------------------------------*-TayhuangOS-*-----------------------------------
+;
+;   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+;
+; --------------------------------------------------------------------------------
+;
+; Author: Flysong
+;
+; kernel/boot/boot.asm
+;
+; MBR here
+;
+
+
+
     org 0x7c00
     jmp short START
     nop
@@ -110,7 +126,7 @@ GetFatEntry: ;(ax = entry_no/result)
     pop ax
 
     mov di, ax
-    and di, 0x007F
+    and di, 0x00FF
     shl di, 1
     mov ax, word[es:di]
 

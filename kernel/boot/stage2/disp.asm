@@ -1,17 +1,20 @@
+; SPDX-License-Identifier: GPL-2.0-only
+; -------------------------------*-TayhuangOS-*-----------------------------------
+;
+;   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+;
+; --------------------------------------------------------------------------------
+;
+; Author: Flysong
+;
+; kernel/boot/stage2/disp.asm
+;
+; Base disp functions are implemented here
+;
+
 [SECTION .text]
 [BITS 16]
 
-global _dispchar
-_dispchar: ;void _dispchar(char ch, byte color, short pos)
-    push eax
-    mov eax, 0xB800
-    mov gs, ax
-    pop eax
-    mov ah, byte [ss:(esp + 4)]
-    mov di, word [ss:(esp + 8)]
-    shl di, 1
-    mov word [gs:di], ax
-    ret
 
 global _clrscr
 _clrscr: ; void _clrscr(void)

@@ -1,4 +1,6 @@
-# FlyOS
+# Tayhuang OS
+
+> There is a person, called Pangu. Born in Tayhuang
 
 It's a personal ONLY-FOR-LEARN System.
 

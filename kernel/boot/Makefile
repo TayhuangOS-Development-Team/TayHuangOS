@@ -1,4 +1,4 @@
-IMG := ../../flyOS.img
+IMG := ../../tayhuangOS.img
 BOOT_OUTPUT := boot.bin
 LOADER_OUTPUT := loader.bin
 DD := dd
@@ -20,6 +20,6 @@ clean:
 .PHONY: image
 image:
 	sudo ${DD} if=$(BOOT_OUTPUT) of=$(IMG) bs=512 conv=notrunc
-	sudo mount -o loop $(IMG) /mnt/flyOS
-	sudo cp $(LOADER_OUTPUT) /mnt/flyOS
+	sudo mount -o loop $(IMG) /mnt/tayhuangOS
+	sudo cp $(LOADER_OUTPUT) /mnt/tayhuangOS
 	cd stage2 ; make image

@@ -1,3 +1,19 @@
+; SPDX-License-Identifier: GPL-2.0-only
+; -------------------------------*-TayhuangOS-*-----------------------------------
+;
+;   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+;
+; --------------------------------------------------------------------------------
+;
+; Author: Flysong
+;
+; kernel/boot/functions.inc
+;
+; Base functions are implemented here
+;
+
+
+
 BASE_OF_DATA equ 0x0800
 
 disk_address_packet: db 0x10 ; Size of Packet (+0, byte)
@@ -54,7 +70,7 @@ GetFatEntry: ;(ax = entry_no/result)
     pop ax
 
     mov di, ax
-    and di, 0x007F
+    and di, 0x00FF
     shl di, 1
     mov ax, word[es:di]
 

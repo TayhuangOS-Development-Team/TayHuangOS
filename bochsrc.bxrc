@@ -3,7 +3,7 @@ megs: 32
 romimage: file=./bios/bochs/BIOS-bochs-legacy
 vgaromimage: file=./bios/vgabios/vgabios.bin
 
-ata0-master: type=disk, path="flyOS.img", mode=flat
+ata0-master: type=disk, path="tayhuangOS.img", mode=flat
 
 boot: c
 

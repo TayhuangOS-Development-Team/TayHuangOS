@@ -4,9 +4,9 @@ RM := rm
 GCC := gcc
 REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector \
-		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder
-C_SRC := stage2 print memory
+ 		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
+		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
+C_SRC := stage2 print string disk
 ASM_SRC := disp stage2_entry read_sector
 
 .PHONY: build
@@ -27,4 +27,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(STAGE2_OUPUT) /mnt/flyOS
+	sudo cp $(STAGE2_OUPUT) /mnt/tayhuangOS

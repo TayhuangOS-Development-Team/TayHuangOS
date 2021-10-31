@@ -1,3 +1,19 @@
+; SPDX-License-Identifier: GPL-2.0-only
+; -------------------------------*-TayhuangOS-*-----------------------------------
+;
+;   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+;
+; --------------------------------------------------------------------------------
+;
+; Author: Flysong
+;
+; kernel/boot/stage2/read_sector.asm
+;
+; Base memory and disk functions are implemented here
+;
+
+
+
 [SECTION .text]
 [BITS 16]
 
@@ -24,17 +40,6 @@ _readsector: ;void _readsector(dword LDA_LOW, dword LDA_HIGH, word segment, word
     mov dl, 0x80
     mov si, disk_address_packet
     int 0x13
-    ret
-
-global _changeds
-_changeds: ;void _changeds(word segment)
-    mov ds, ax
-    ret
-
-global _restoreds
-_restoreds: ;void _restoreds(void)
-    mov ax, cs
-    mov ds, ax
     ret
 
 global _getbyte
