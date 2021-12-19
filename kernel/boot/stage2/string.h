@@ -17,5 +17,5 @@
 #pragma once
 #include "header.h"
 
-int strcmp(const char *str1, const char *str2);
-int strlen(const char *str);
+PUBLIC int strcmp(const char *str1, const char *str2);
+PUBLIC int strlen(const char *str);

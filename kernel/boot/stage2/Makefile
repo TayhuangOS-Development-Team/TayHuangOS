@@ -6,8 +6,8 @@ REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototype
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
-C_SRC := stage2 print string disk
-ASM_SRC := disp stage2_entry read_sector
+C_SRC := stage2_main string print ./drivers/vedio/vedio_driver ./drivers/driver ./drivers/drivers ./drivers/devices
+ASM_SRC := stage2_entry io
 
 .PHONY: build
 build:
@@ -17,13 +17,16 @@ build:
 	for c_file in $(C_SRC); do \
 	    $(GCC) $(REALMODE_CFLAGS) $$c_file.c -c -o $$c_file.o; \
 	done
-#	$(GCC) $(REALMODE_CFLAGS) stage2.c -c -o stage2.o
-#	$(GCC) $(REALMODE_CFLAGS) print.c -c -o stage2.o
 	$(LD) -m elf_i386 -s -Ttext 0x0200 $(foreach asm_obj, $(ASM_SRC), $(asm_obj).o) $(foreach c_obj, $(C_SRC), $(c_obj).o) -o $(STAGE2_OUPUT)
 
 .PHONY: clean
 clean:
-	${RM} stage2.o stage2_entry.o $(STAGE2_OUPUT)
+	for asm_file in $(ASM_SRC); do \
+		$(RM) $$asm_file.o; \
+	done
+	for c_file in $(C_SRC); do \
+	    $(RM) $$c_file.o; \
+	done
 
 .PHONY: image
 image:

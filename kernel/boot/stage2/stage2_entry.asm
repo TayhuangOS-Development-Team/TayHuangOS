@@ -23,6 +23,9 @@ extern entry
 _start:
     mov ax, cs
     mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
     push word 0
     call entry
     jmp $

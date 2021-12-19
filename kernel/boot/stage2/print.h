@@ -17,26 +17,26 @@
 #pragma once
 #include "header.h"
 
-void printchar(char ch);
-void printstr(const char *str);
-void printreturn(void);
-void printbyte(byte num, bool is_signed);
-void printbytehex(byte num, bool disp_0x);
-void printshort(word num, bool is_signed);
-void printshorthex(word num, bool disp_0x);
-void printint(dword num, bool is_signed);
-void printinthex(dword num, bool disp_0x);
-void changepos(word x, word y);
-word getposx(void);
-word getposy(void);
+PUBLIC void printChar(char ch);
+PUBLIC void printStr(const char *str);
+PUBLIC void printReturn(void);
+PUBLIC void printByte(byte num, bool is_signed);
+PUBLIC void printByteHex(byte num, bool disp_0x);
+PUBLIC void printShort(word num, bool is_signed);
+PUBLIC void printShortHex(word num, bool disp_0x);
+PUBLIC void printInt(dword num, bool is_signed);
+PUBLIC void printIntHex(dword num, bool disp_0x);
+PUBLIC void changePos(word x, word y);
+PUBLIC word getPosX(void);
+PUBLIC word getPosY(void);
 
-void dispchar(char ch, byte color, byte x, byte y);
-void dispstr(const char *str, byte color, byte x, byte y);
-void dispbyte(byte num, byte color, byte x, byte y, bool is_signed);
-void dispbytehex(byte num, byte color, byte x, byte y, bool disp_0x);
-void dispshort(word num, byte color, byte x, byte y, bool is_signed);
-void dispshorthex(word num, byte color, byte x, byte y, bool disp_0x);
-void dispint(dword num, byte color, byte x, byte y, bool is_signed);
-void dispinthex(dword num, byte color, byte x, byte y, bool disp_0x);
+PUBLIC void dispChar(char ch, byte color, byte x, byte y);
+PUBLIC void dispStr(const char *str, byte color, byte x, byte y);
+PUBLIC void dispByte(byte num, byte color, byte x, byte y, bool is_signed);
+PUBLIC void dispByteHex(byte num, byte color, byte x, byte y, bool disp_0x);
+PUBLIC void dispShort(word num, byte color, byte x, byte y, bool is_signed);
+PUBLIC void dispShortHex(word num, byte color, byte x, byte y, bool disp_0x);
+PUBLIC void dispInt(dword num, byte color, byte x, byte y, bool is_signed);
+PUBLIC void dispIntHex(dword num, byte color, byte x, byte y, bool disp_0x);
 
-void clrscr(void);
+PUBLIC void clrscr(void);

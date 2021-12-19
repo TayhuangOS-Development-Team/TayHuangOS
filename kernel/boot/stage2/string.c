@@ -16,7 +16,7 @@
 
 #include "string.h"
 
-int strcmp(const char *str1, const char *str2) {
+PUBLIC int strcmp(const char *str1, const char *str2) {
     int res = 0;
     while (!(res = (unsigned char) *(str1++) - (unsigned char) *(str2++)) && *str1);
 
@@ -27,7 +27,7 @@ int strcmp(const char *str1, const char *str2) {
     return 0;
 }
 
-int strlen(const char *str) {
+PUBLIC int strlen(const char *str) {
     int res = 0;
     while (*(str ++)) res ++;
     return res;

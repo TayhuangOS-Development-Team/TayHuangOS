@@ -1,6 +1,6 @@
 # Tayhuang OS
 
-> There is a person, called Pangu. Born in Tayhuang
+> There is a person called Pangu. He borned in Tayhuang.
 
 It's a personal ONLY-FOR-LEARN System.
 
