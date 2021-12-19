@@ -1,3 +1,19 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* -------------------------------*-TayhuangOS-*-----------------------------------
+ *
+ *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+ *
+ * --------------------------------------------------------------------------------
+ *
+ * Author: Flysong
+ *
+ * kernel/boot/stage2/drivers/vedio/vedio_driver.c
+ *
+ * Vedio driver is implemented here
+ */
+
+
+
 #include "vedio_driver.h"
 
 PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
