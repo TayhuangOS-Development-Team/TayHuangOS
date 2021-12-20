@@ -19,6 +19,15 @@
 #define BASE_OF_DATA 0x1000
 #define PUBLIC
 #define PRIVATE static
+#define HIGHTBYTE(x) ((byte)(x >> 8))
+#define LOWBYTE(x) ((byte)x)
+#define HIGHHEX(x) (x >> 4)
+#define LOWHEX(x) (x & 0xF)
+#define HIGHWORD(x) ((word)(x >> 16))
+#define LOWWORD(x) ((word)x)
+#define MKBYTE(h, l) (h << 4 + l)
+#define MKWORD(h, l) (((word)h << 8) + l)
+#define MKDWORD(h, l) (((dword)h << 16) + l)
 
 static inline byte inb(word port) {
     byte data;

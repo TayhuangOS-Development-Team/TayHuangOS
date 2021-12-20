@@ -40,3 +40,6 @@ PUBLIC void dispInt(dword num, byte color, byte x, byte y, bool is_signed);
 PUBLIC void dispIntHex(dword num, byte color, byte x, byte y, bool disp_0x);
 
 PUBLIC void clrscr(void);
+
+PUBLIC void vsprintf(char* buffer, const char* format, ...);
+PUBLIC void printf(const char* format, ...);

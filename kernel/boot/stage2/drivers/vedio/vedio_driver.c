@@ -27,30 +27,36 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
 }
 
 PRIVATE bool process_read_byte_cmd(pdevice device, pdriver driver, argpack_t pack) {
+    driver->state = DS_BUSY;
     pvd_readbyte_ap_t args = (pvd_readbyte_ap_t)pack;
     stgs(0xB800);
     args->out->ch = rdgs8((args->posY * 80 + args->posX) * 2);
     args->out->color = rdgs8((args->posY * 80 + args->posX) * 2 + 1);
+    driver->state = DS_IDLE;
     return true;
 }
 
 void _clrscr(void);
 PRIVATE bool process_clrscr_cmd(pdevice device, pdriver driver, argpack_t pack) {
+    driver->state = DS_BUSY;
     _clrscr();
     ed_callasm();
+    driver->state = DS_IDLE;
     return true;
 }
 
 PRIVATE bool process_write_byte_cmd(pdevice device, pdriver driver, argpack_t pack) {
+    driver->state = DS_BUSY;
     pvd_writebyte_ap_t args = (pvd_writebyte_ap_t)pack;
     stgs(0xB800);
     stgs8((args->posY * 80 + args->posX) * 2, args->ch);
     stgs8((args->posY * 80 + args->posX) * 2 + 1, args->color);
+    driver->state = DS_IDLE;
     return true;
 }
 
 PRIVATE bool process_center(pdevice device, pdriver driver, word cmdty, argpack_t pack) {
-    if (driver->state == DS_TERMAINATED || device->type != DT_VEDIO)
+    if (driver->state != DS_IDLE || device->type != DT_VEDIO)
         return false;
     switch (cmdty) {
     case VD_CMD_READ_BYTE:

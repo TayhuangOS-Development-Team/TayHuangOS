@@ -34,3 +34,56 @@ _clrscr: ; void _clrscr(void)
     pop ebx
     pop eax
     ret
+
+global _intcall
+_intcall: ; void _intcall(pintargs args)
+    pushad
+    mov bl, byte [eax + 8]
+    mov byte [cs:.intn], bl
+    mov dword[.ax_store], eax
+    mov eax, dword [eax + 0] ; eax -> in regs
+
+    mov ebx, dword [eax + 4]
+    mov ecx, dword [eax + 8]
+    mov edx, dword [eax + 12]
+    mov edi, dword [eax + 16]
+    mov esi, dword [eax + 20]
+    push ebx
+    mov bx, word [eax + 24]
+    mov es, bx
+    mov bx, word [eax + 26]
+    mov fs, bx
+    mov bx, word [eax + 28]
+    mov gs, bx
+    pop ebx
+    mov eax, dword [eax + 0]
+
+db 0xcd
+.intn: db 0
+
+    push ebx
+    mov ebx, eax
+    mov eax, dword [.ax_store]
+    mov dword [.ax_store], ebx
+    pop ebx
+
+    mov eax, dword[eax + 4]
+    mov dword [eax + 4], ebx
+    mov dword [eax + 8], ecx
+    mov dword [eax + 12], edx
+    mov dword [eax + 16], edi
+    mov dword [eax + 20], esi
+    push ebx
+    mov bx, es
+    mov word [eax + 24], bx
+    mov bx, fs
+    mov word [eax + 26], bx
+    mov bx, gs
+    mov word [eax + 28], bx
+    mov ebx, dword [.ax_store]
+    mov dword [eax + 0], ebx
+    pop ebx
+
+    popad
+    ret
+.ax_store: dd 0

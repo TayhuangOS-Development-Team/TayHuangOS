@@ -313,3 +313,13 @@ PUBLIC void dispIntHex(dword num, byte color, byte x, byte y, bool disp_0x) {
         dispChar(S[top --], color, x ++, y);
     }
 }
+
+//输出内容到vsprintf中
+PUBLIC void vsprintf(char* buffer, const char* format, ...) {
+
+}
+
+
+PUBLIC void printf(const char* format, ...) {
+
+}

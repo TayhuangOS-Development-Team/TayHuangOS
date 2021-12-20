@@ -21,7 +21,8 @@
 typedef enum {
     DT_VEDIO,
     DT_DISK,
-    DT_KEYBOARD
+    DT_KEYBOARD,
+    DT_MEMORY
 }device_ty;
 
 typedef struct {

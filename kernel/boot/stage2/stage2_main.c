@@ -18,6 +18,8 @@
 #include "drivers/devices.h"
 #include "print.h"
 
+#include "intcall.h"
+
 void entry(void) {
     init_devices();
     init_drivers();

@@ -6,7 +6,8 @@ REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototype
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
-C_SRC := stage2_main string print ./drivers/vedio/vedio_driver ./drivers/driver ./drivers/drivers ./drivers/devices
+C_SRC := stage2_main string print intcall \
+	./drivers/vedio/vedio_driver ./drivers/driver ./drivers/drivers ./drivers/devices
 ASM_SRC := stage2_entry io
 
 .PHONY: build
