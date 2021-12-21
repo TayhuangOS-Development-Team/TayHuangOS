@@ -19,44 +19,46 @@
 #define BASE_OF_DATA 0x1000
 #define PUBLIC
 #define PRIVATE static
-#define HIGHTBYTE(x) ((byte)(x >> 8))
+#define HIGHTBYTE(x) ((byte)((x) >> 8))
 #define LOWBYTE(x) ((byte)x)
-#define HIGHHEX(x) (x >> 4)
-#define LOWHEX(x) (x & 0xF)
-#define HIGHWORD(x) ((word)(x >> 16))
-#define LOWWORD(x) ((word)x)
-#define MKBYTE(h, l) (h << 4 + l)
-#define MKWORD(h, l) (((word)h << 8) + l)
-#define MKDWORD(h, l) (((dword)h << 16) + l)
+#define HIGHHEX(x) ((x) >> 4)
+#define LOWHEX(x) ((x) & 0xF)
+#define HIGHWORD(x) ((word)((x) >> 16))
+#define LOWWORD(x) ((word)(x))
+#define MKBYTE(h, l) ((h) << 4 + (l))
+#define MKWORD(h, l) ((((word)h) << 8) + (l))
+#define MKDWORD(h, l) ((((dword)h) << 16) + (l))
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 
 static inline byte inb(word port) {
     byte data;
-    asm volatile ("inb %1, %0" : "=a"(data) : "dN"(port));
+    asmv ("inb %1, %0" : "=a"(data) : "dN"(port));
     return data;
 }
 
 static inline void outb(word port, byte data) {
-    asm volatile ("outb %0, %1" : : "a"(data), "dN"(port));
+    asmv ("outb %0, %1" : : "a"(data), "dN"(port));
 }
 
 static inline word inw(word port) {
     word data;
-    asm volatile ("inw %1, %0" : "=a"(data) : "dN"(port));
+    asmv ("inw %1, %0" : "=a"(data) : "dN"(port));
     return data;
 }
 
 static inline void outw(word port, word data) {
-    asm volatile ("outw %0, %1" : : "a"(data), "dN"(port));
+    asmv ("outw %0, %1" : : "a"(data), "dN"(port));
 }
 
 static inline dword ind(word port) {
     dword data;
-    asm volatile ("inl %1, %0" : "=a"(data) : "dN"(port));
+    asmv ("inl %1, %0" : "=a"(data) : "dN"(port));
     return data;
 }
 
 static inline void outd(word port, dword data) {
-    asm volatile ("outl %0, %1" : : "a"(data), "dN"(port));
+    asmv ("outl %0, %1" : : "a"(data), "dN"(port));
 }
 
 #include "memory.h"

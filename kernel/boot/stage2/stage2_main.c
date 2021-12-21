@@ -19,10 +19,16 @@
 #include "print.h"
 
 #include "intcall.h"
+#include "heap.h"
 
 void entry(void) {
     init_devices();
     init_drivers();
     clrscr();
-    printStr("Hello, World!");
+
+    ll_init_heap();
+    addr_t num = ll_alloc(sizeof(dword));
+    ll_set_dword(num, 10);
+    print_int(ll_get_dword(num), false);
+    // print_string("Hello, World!");
 }

@@ -24,31 +24,31 @@
 PRIVATE short print_x = 0;
 PRIVATE short print_y = 0;
 
-PUBLIC void printChar(char ch) {
-    dispChar(ch, PRINT_COLOR, print_x ++, print_y);
+PUBLIC void print_char(char ch) {
+    disp_char(ch, PRINT_COLOR, print_x ++, print_y);
 }
 
-PUBLIC void printStr(const char *str) {
+PUBLIC void print_string(const char *str) {
     while (*str != 0) {
         if (*str == '\n') {
-            printReturn();
+            print_return();
             str ++;
         }
         else {
-            printChar(*(str ++));
+            print_char(*(str ++));
         }
     }
 }
 
-PUBLIC void printReturn(void) {
+PUBLIC void print_return(void) {
     print_x = 0;
     print_y ++;
 }
 
-PUBLIC void printByte(byte num, bool is_signed) {
+PUBLIC void print_byte(byte num, bool is_signed) {
     if (is_signed) {
         if (num < 0) {
-            printChar('-');
+            print_char('-');
             num = -num;
         }
     }
@@ -61,14 +61,14 @@ PUBLIC void printByte(byte num, bool is_signed) {
     if (!top)
         str[++ top] = '0';
     while (top) {
-        printChar(str[top --]);
+        print_char(str[top --]);
     }
 }
 
-PUBLIC void printByteHex(byte num, bool disp_0x) {
+PUBLIC void print_byte_hex(byte num, bool disp_0x) {
     if (disp_0x) {
-        printChar('0');
-        printChar('x');
+        print_char('0');
+        print_char('x');
     }
     char str[5];
     short top = 0;
@@ -78,16 +78,16 @@ PUBLIC void printByteHex(byte num, bool disp_0x) {
     }
     char cnt = 2 - top;
     while (cnt --)
-        printChar('0');
+        print_char('0');
     while (top) {
-        printChar(str[top --]);
+        print_char(str[top --]);
     }
 }
 
-PUBLIC void printShort(word num, bool is_signed) {
+PUBLIC void print_short(word num, bool is_signed) {
     if (is_signed) {
         if (num < 0) {
-            printChar('-');
+            print_char('-');
             num = -num;
         }
     }
@@ -100,14 +100,14 @@ PUBLIC void printShort(word num, bool is_signed) {
     if (!top)
         str[++ top] = '0';
     while (top) {
-        printChar(str[top --]);
+        print_char(str[top --]);
     }
 }
 
-PUBLIC void printShortHex(word num, bool disp_0x) {
+PUBLIC void print_short_hex(word num, bool disp_0x) {
     if (disp_0x) {
-        printChar('0');
-        printChar('x');
+        print_char('0');
+        print_char('x');
     }
     char str[7];
     short top = 0;
@@ -117,16 +117,16 @@ PUBLIC void printShortHex(word num, bool disp_0x) {
     }
     char cnt = 4 - top;
     while (cnt --)
-        printChar('0');
+        print_char('0');
     while (top) {
-        printChar(str[top --]);
+        print_char(str[top --]);
     }
 }
 
-PUBLIC void printInt(dword num, bool is_signed) {
+PUBLIC void print_int(dword num, bool is_signed) {
     if (is_signed) {
         if (num < 0) {
-            printChar('-');
+            print_char('-');
             num = -num;
         }
     }
@@ -139,14 +139,14 @@ PUBLIC void printInt(dword num, bool is_signed) {
     if (!top)
         str[++ top] = '0';
     while (top) {
-        printChar(str[top --]);
+        print_char(str[top --]);
     }
 }
 
-PUBLIC void printIntHex(dword num, bool disp_0x) {
+PUBLIC void print_int_hex(dword num, bool disp_0x) {
     if (disp_0x) {
-        printChar('0');
-        printChar('x');
+        print_char('0');
+        print_char('x');
     }
     char str[13];
     short top = 0;
@@ -156,30 +156,30 @@ PUBLIC void printIntHex(dword num, bool disp_0x) {
     }
     char cnt = 8 - top;
     while (cnt --)
-        printChar('0');
+        print_char('0');
     while (top) {
-        printChar(str[top --]);
+        print_char(str[top --]);
     }
 }
 
-PUBLIC void changePos(word x, word y) {
+PUBLIC void change_pos(word x, word y) {
     print_x = x;
     print_y = y;
 }
 
-PUBLIC word getPosX(void) {
+PUBLIC word get_pos_x(void) {
     return print_x;
 }
 
-PUBLIC word getPosY(void) {
+PUBLIC word get_pos_y(void) {
     return print_y;
 }
 
 vd_writebyte_ap_t write_pack;
 
-PUBLIC void dispChar(char ch, byte color, byte x, byte y) {
-    write_pack.posX = x;
-    write_pack.posY = y;
+PUBLIC void disp_char(char ch, byte color, byte x, byte y) {
+    write_pack.pos_x = x;
+    write_pack.pos_y = y;
     write_pack.ch = ch;
     write_pack.color = color;
     vedio_driver.pc_handle(&vedio_device, &vedio_driver, VD_CMD_WRITE_BYTE, &write_pack);
@@ -189,15 +189,15 @@ PUBLIC void clrscr(void) {
     vedio_driver.pc_handle(&vedio_device, &vedio_driver, VD_CMD_CLRSCR, NULL);
 }
 
-PUBLIC void dispStr(const char *str, byte color, byte x, byte y) {
+PUBLIC void disp_string(const char *str, byte color, byte x, byte y) {
     while (*str != 0)
-        dispChar(*(str ++), color, x ++, y);
+        disp_char(*(str ++), color, x ++, y);
 }
 
-PUBLIC void dispByte(byte num, byte color, byte x, byte y, bool is_signed) {
+PUBLIC void disp_byte(byte num, byte color, byte x, byte y, bool is_signed) {
     if (is_signed) {
         if (num < 0) {
-            dispChar('-', color, x ++, y);
+            disp_char('-', color, x ++, y);
             num = -num;
         }
     }
@@ -210,14 +210,14 @@ PUBLIC void dispByte(byte num, byte color, byte x, byte y, bool is_signed) {
     if (!top)
         S[++ top] = 0;
     while (top) {
-        dispChar(S[top --] + '0', color, x ++, y);
+        disp_char(S[top --] + '0', color, x ++, y);
     }
 }
 
-PUBLIC void dispByteHex(byte num, byte color, byte x, byte y, bool disp_0x) {
+PUBLIC void disp_byte_hex(byte num, byte color, byte x, byte y, bool disp_0x) {
     if (disp_0x) {
-        dispChar('0', color, x ++, y);
-        dispChar('x', color, x ++, y);
+        disp_char('0', color, x ++, y);
+        disp_char('x', color, x ++, y);
     }
 
     char S[5];
@@ -228,16 +228,16 @@ PUBLIC void dispByteHex(byte num, byte color, byte x, byte y, bool disp_0x) {
     }
     char cnt = 2 - top;
     while (cnt --)
-        dispChar('0', color, x ++, y);
+        disp_char('0', color, x ++, y);
     while (top) {
-        dispChar(S[top --], color, x ++, y);
+        disp_char(S[top --], color, x ++, y);
     }
 }
 
-PUBLIC void dispShort(word num, byte color, byte x, byte y, bool is_signed) {
+PUBLIC void disp_short(word num, byte color, byte x, byte y, bool is_signed) {
     if (is_signed) {
         if (num < 0) {
-            dispChar('-', color, x ++, y);
+            disp_char('-', color, x ++, y);
             num = -num;
         }
     }
@@ -250,14 +250,14 @@ PUBLIC void dispShort(word num, byte color, byte x, byte y, bool is_signed) {
     if (!top)
         S[++ top] = 0;
     while (top) {
-        dispChar(S[top --] + '0', color, x ++, y);
+        disp_char(S[top --] + '0', color, x ++, y);
     }
 }
 
-PUBLIC void dispShortHex(word num, byte color, byte x, byte y, bool disp_0x) {
+PUBLIC void disp_short_hex(word num, byte color, byte x, byte y, bool disp_0x) {
     if (disp_0x) {
-        dispChar('0', color, x ++, y);
-        dispChar('x', color, x ++, y);
+        disp_char('0', color, x ++, y);
+        disp_char('x', color, x ++, y);
     }
 
     char S[7];
@@ -268,16 +268,16 @@ PUBLIC void dispShortHex(word num, byte color, byte x, byte y, bool disp_0x) {
     }
     char cnt = 4 - top;
     while (cnt --)
-        dispChar('0', color, x ++, y);
+        disp_char('0', color, x ++, y);
     while (top) {
-        dispChar(S[top --], color, x ++, y);
+        disp_char(S[top --], color, x ++, y);
     }
 }
 
-PUBLIC void dispInt(dword num, byte color, byte x, byte y, bool is_signed) {
+PUBLIC void disp_int(dword num, byte color, byte x, byte y, bool is_signed) {
     if (is_signed) {
         if (num < 0) {
-            dispChar('-', color, x ++, y);
+            disp_char('-', color, x ++, y);
             num = -num;
         }
     }
@@ -290,14 +290,14 @@ PUBLIC void dispInt(dword num, byte color, byte x, byte y, bool is_signed) {
     if (!top)
         S[++ top] = 0;
     while (top) {
-        dispChar(S[top --] + '0', color, x ++, y);
+        disp_char(S[top --] + '0', color, x ++, y);
     }
 }
 
-PUBLIC void dispIntHex(dword num, byte color, byte x, byte y, bool disp_0x) {
+PUBLIC void disp_int_hex(dword num, byte color, byte x, byte y, bool disp_0x) {
     if (disp_0x) {
-        dispChar('0', color, x ++, y);
-        dispChar('x', color, x ++, y);
+        disp_char('0', color, x ++, y);
+        disp_char('x', color, x ++, y);
     }
 
     char S[20];
@@ -308,9 +308,9 @@ PUBLIC void dispIntHex(dword num, byte color, byte x, byte y, bool disp_0x) {
     }
     char cnt = 8 - top;
     while (cnt --)
-        dispChar('0', color, x ++, y);
+        disp_char('0', color, x ++, y);
     while (top) {
-        dispChar(S[top --], color, x ++, y);
+        disp_char(S[top --], color, x ++, y);
     }
 }
 

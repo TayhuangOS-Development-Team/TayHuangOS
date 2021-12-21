@@ -32,5 +32,6 @@ typedef void *handle_t;
 #define false (0)
 #define NULL (0)
 
-#define ed_callasm() asm("addw $2, %sp")
-#define cpu_relax() asm("rep; nop")
+#define asmv asm volatile
+#define ed_callasm() asmv("addw $2, %sp")
+#define cpu_relax() asmv("rep; nop")

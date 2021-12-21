@@ -26,6 +26,8 @@ _start:
     mov es, ax
     mov fs, ax
     mov gs, ax
+    mov ss, ax
+    mov sp, 0x0600
     push word 0
     call entry
     jmp $
