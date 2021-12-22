@@ -28,6 +28,7 @@ typedef enum {
 typedef struct {
     device_ty type;
     id_t id;
+    void *driver;
 } device_t, *pdevice;
 
 typedef bool(*initialize_handle_t)(pdevice, void*, id_t);
@@ -36,6 +37,12 @@ typedef bool(*pc_handle_t)(pdevice, void*, word, argpack_t);
 typedef bool(*terminate_handle_t)(pdevice, void*);
 
 #define CMD_TY(x) (x + 0x100)
+#define APACK(suf, name) suf##_##name##_ap_t
+#define OPACK(suf, name) suf##_##name##_out_t
+#define POPACK(suf, name) p##suf##_##name##_out
+#define PAPACK(suf, name) p##suf##_##name##_ap
+#define DAPACK(suf, name) APACK(suf, name), *PAPACK(suf, name)
+#define DOPACK(suf, name) OPACK(suf, name), *POPACK(suf, name)
 
 typedef enum {
     DS_UNINITIALIZE,

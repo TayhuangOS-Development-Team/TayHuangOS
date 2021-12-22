@@ -175,18 +175,18 @@ PUBLIC word get_pos_y(void) {
     return print_y;
 }
 
-vd_writebyte_ap_t write_pack;
+PRIVATE APACK(vd, writebyte) write_pack;
 
 PUBLIC void disp_char(char ch, byte color, byte x, byte y) {
     write_pack.pos_x = x;
     write_pack.pos_y = y;
     write_pack.ch = ch;
     write_pack.color = color;
-    vedio_driver.pc_handle(&vedio_device, &vedio_driver, VD_CMD_WRITE_BYTE, &write_pack);
+    ((pdriver)vedio_device.driver)->pc_handle(&vedio_device, vedio_device.driver, VD_CMD_WRITE_BYTE, &write_pack);
 }
 
 PUBLIC void clrscr(void) {
-    vedio_driver.pc_handle(&vedio_device, &vedio_driver, VD_CMD_CLRSCR, NULL);
+    ((pdriver)vedio_device.driver).pc_handle(&vedio_device, vedio_device.driver, VD_CMD_CLRSCR, NULL);
 }
 
 PUBLIC void disp_string(const char *str, byte color, byte x, byte y) {

@@ -23,12 +23,13 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     driver->state = DS_IDLE;
     driver->extension = NULL;
     driver->id = id;
+    device->driver = driver;
     return true;
 }
 
 PRIVATE bool process_read_byte_cmd(pdevice device, pdriver driver, argpack_t pack) {
     driver->state = DS_BUSY;
-    pvd_readbyte_ap_t args = (pvd_readbyte_ap_t)pack;
+    PAPACK(vd, readbyte) args = (PAPACK(vd, readbyte))pack;
     stgs(0xB800);
     args->out->ch = rdgs8((args->pos_y * 80 + args->pos_x) * 2);
     args->out->color = rdgs8((args->pos_y * 80 + args->pos_x) * 2 + 1);
@@ -47,7 +48,7 @@ PRIVATE bool process_clrscr_cmd(pdevice device, pdriver driver, argpack_t pack) 
 
 PRIVATE bool process_write_byte_cmd(pdevice device, pdriver driver, argpack_t pack) {
     driver->state = DS_BUSY;
-    pvd_writebyte_ap_t args = (pvd_writebyte_ap_t)pack;
+    PAPACK(vd, writebyte) args = (PAPACK(vd, writebyte))pack;
     stgs(0xB800);
     stgs8((args->pos_y * 80 + args->pos_x) * 2, args->ch);
     stgs8((args->pos_y * 80 + args->pos_x) * 2 + 1, args->color);

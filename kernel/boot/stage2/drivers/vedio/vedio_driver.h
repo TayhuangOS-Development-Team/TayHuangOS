@@ -25,13 +25,13 @@
 typedef struct{
     b8 ch;
     b8 color;
-}vd_readbyte_out_t, *pvd_readbyte_out;
+}DOPACK(vd, readbyte);
 
 typedef struct{
     b8 pos_x;
     b8 pos_y;
-    pvd_readbyte_out out;
-}vd_readbyte_ap_t, *pvd_readbyte_ap_t;
+    POPACK(vd,readbyte) out;
+}DAPACK(vd, readbyte);
 
 
 typedef struct{
@@ -39,6 +39,6 @@ typedef struct{
     b8 pos_y;
     b8 ch;
     b8 color;
-}vd_writebyte_ap_t, *pvd_writebyte_ap_t;
+}DAPACK(vd, writebyte);
 
 PUBLIC void create_vedio_driver(pdriver driver);

@@ -23,6 +23,7 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     driver->state = DS_IDLE;
     driver->extension = NULL;
     driver->id = id;
+    device->driver = driver;
     return true;
 }
 
