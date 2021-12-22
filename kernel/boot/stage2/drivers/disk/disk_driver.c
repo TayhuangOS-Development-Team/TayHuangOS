@@ -21,7 +21,7 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
         return false;
     driver->dev_ty = DT_DISK;
     driver->state = DS_IDLE;
-    driver->extension = NULL;
+    driver->extensions = NULL;
     driver->id = id;
     device->driver = driver;
     return true;

@@ -186,7 +186,7 @@ PUBLIC void disp_char(char ch, byte color, byte x, byte y) {
 }
 
 PUBLIC void clrscr(void) {
-    ((pdriver)vedio_device.driver).pc_handle(&vedio_device, vedio_device.driver, VD_CMD_CLRSCR, NULL);
+    ((pdriver)vedio_device.driver)->pc_handle(&vedio_device, vedio_device.driver, VD_CMD_CLRSCR, NULL);
 }
 
 PUBLIC void disp_string(const char *str, byte color, byte x, byte y) {
