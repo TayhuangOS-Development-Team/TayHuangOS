@@ -107,14 +107,18 @@ PUBLIC void ll_set_dword(addr_t addr, dword val) {
     stes(essv);
 }
 
-PUBLIC void ll_cp_bytes(addr_t src, addr_t dst, word num) {
+PUBLIC void ll_cp_from(addr_t src, void* dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
         *((byte*)dst + i) = ll_get_byte(src + i);
     }
 }
 
-PUBLIC void ll_cp_from(addr_t src, addr_t dst, word num) {
+PUBLIC void ll_cp_to(void* src, addr_t dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
         ll_set_byte(src + i, *((byte*)dst + i));
     }
+}
+
+PUBLIC sreg_t ll_get_heap_seg(void) {
+    return HEAP.heap_seg;
 }

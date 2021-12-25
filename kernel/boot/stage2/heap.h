@@ -31,5 +31,6 @@ PUBLIC dword ll_get_dword(addr_t addr);
 PUBLIC void ll_set_byte(addr_t addr, byte val);
 PUBLIC void ll_set_word(addr_t addr, word val);
 PUBLIC void ll_set_dword(addr_t addr, dword val);
-PUBLIC void ll_cp_to(addr_t src, addr_t dst, word num);
-PUBLIC void ll_cp_from(addr_t src, addr_t dst, word num);
+PUBLIC void ll_cp_from(addr_t src, void* dst, word num);
+PUBLIC void ll_cp_to(void* src, addr_t dst, word num);
+PUBLIC sreg_t ll_get_heap_seg(void);

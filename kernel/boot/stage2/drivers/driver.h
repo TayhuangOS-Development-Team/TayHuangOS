@@ -43,6 +43,8 @@ typedef bool(*terminate_handle_t)(pdevice, void*);
 #define PAPACK(suf, name) p##suf##_##name##_ap
 #define DAPACK(suf, name) APACK(suf, name), *PAPACK(suf, name)
 #define DOPACK(suf, name) OPACK(suf, name), *POPACK(suf, name)
+#define SUB_CMD(cmdname) process_##cmdname##_cmd
+#define DEF_SUB_CMD(cmdname) PRIVATE bool SUB_CMD(cmdname)(pdevice device, pdriver driver, argpack_t pack)
 
 typedef enum {
     DS_UNINITIALIZE,

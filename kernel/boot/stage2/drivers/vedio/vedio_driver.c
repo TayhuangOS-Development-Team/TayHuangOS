@@ -27,7 +27,7 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     return true;
 }
 
-PRIVATE bool process_read_byte_cmd(pdevice device, pdriver driver, argpack_t pack) {
+DEF_SUB_CMD(readbyte) {
     driver->state = DS_BUSY;
     PAPACK(vd, readbyte) args = (PAPACK(vd, readbyte))pack;
     stgs(0xB800);
@@ -38,7 +38,7 @@ PRIVATE bool process_read_byte_cmd(pdevice device, pdriver driver, argpack_t pac
 }
 
 void _clrscr(void);
-PRIVATE bool process_clrscr_cmd(pdevice device, pdriver driver, argpack_t pack) {
+DEF_SUB_CMD(clrscr) {
     driver->state = DS_BUSY;
     _clrscr();
     ed_callasm();
@@ -46,7 +46,7 @@ PRIVATE bool process_clrscr_cmd(pdevice device, pdriver driver, argpack_t pack) 
     return true;
 }
 
-PRIVATE bool process_write_byte_cmd(pdevice device, pdriver driver, argpack_t pack) {
+DEF_SUB_CMD(writebyte) {
     driver->state = DS_BUSY;
     PAPACK(vd, writebyte) args = (PAPACK(vd, writebyte))pack;
     stgs(0xB800);
@@ -61,11 +61,11 @@ PRIVATE bool process_center(pdevice device, pdriver driver, word cmdty, argpack_
         return false;
     switch (cmdty) {
     case VD_CMD_READ_BYTE:
-        return process_read_byte_cmd(device, driver, pack);
+        return SUB_CMD(readbyte)(device, driver, pack);
     case VD_CMD_WRITE_BYTE:
-        return process_write_byte_cmd(device, driver, pack);
+        return SUB_CMD(writebyte)(device, driver, pack);
     case VD_CMD_CLRSCR:
-        return process_clrscr_cmd(device, driver, pack);
+        return SUB_CMD(clrscr)(device, driver, pack);
     }
     return false;
 }

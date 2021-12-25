@@ -43,19 +43,17 @@ _intcall: ; void _intcall(pintargs args)
     mov dword[.ax_store], eax
     mov eax, dword [eax + 0] ; eax -> in regs
 
-    mov ebx, dword [eax + 4]
     mov ecx, dword [eax + 8]
     mov edx, dword [eax + 12]
     mov edi, dword [eax + 16]
     mov esi, dword [eax + 20]
-    push ebx
     mov bx, word [eax + 24]
     mov es, bx
     mov bx, word [eax + 26]
     mov fs, bx
     mov bx, word [eax + 28]
     mov gs, bx
-    pop ebx
+    mov ebx, dword [eax + 4]
     mov eax, dword [eax + 0]
 
 db 0xcd
@@ -65,9 +63,10 @@ db 0xcd
     mov ebx, eax
     mov eax, dword [.ax_store]
     mov dword [.ax_store], ebx
+
     pop ebx
 
-    mov eax, dword[eax + 4]
+    mov eax, dword[eax + 4] ; eax -> out regs
     mov dword [eax + 4], ebx
     mov dword [eax + 8], ecx
     mov dword [eax + 12], edx
@@ -80,6 +79,9 @@ db 0xcd
     mov word [eax + 26], bx
     mov bx, gs
     mov word [eax + 28], bx
+    pushf
+    pop bx ;bx -> eflags
+    mov word [eax + 30], bx
     mov ebx, dword [.ax_store]
     mov dword [eax + 0], ebx
     pop ebx

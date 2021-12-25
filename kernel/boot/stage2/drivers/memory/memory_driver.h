@@ -35,4 +35,18 @@
 #define MM_CMD_OPEN_A20 CMD_TY(14)
 #define MM_CMD_CLOSE_A20 CMD_TY(15)
 
+typedef struct {
+    dword base_address_low;
+    dword base_address_high;
+    dword length_low;
+    dword length_high;
+    dword type;
+} ards_t, pards;
+
+typedef struct {
+    ards_t ards_list[20];
+    int prode_cnt;
+} mem_prode_t, *pmem_prode;
+
+
 PUBLIC void create_memory_driver(pdriver driver);
