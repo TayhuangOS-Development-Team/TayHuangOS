@@ -19,5 +19,6 @@
 #include "driver.h"
 
 extern device_t vedio_device;
+extern device_t memory_device;
 
 PUBLIC void init_devices(void);

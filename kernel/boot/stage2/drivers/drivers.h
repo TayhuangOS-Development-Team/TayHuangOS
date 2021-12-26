@@ -19,6 +19,7 @@
 #include "driver.h"
 
 extern driver_t vedio_driver;
+extern driver_t memory_driver;
 
 PUBLIC void init_drivers(void);
 PUBLIC void terminate_drivers(void);

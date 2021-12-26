@@ -18,9 +18,9 @@
 
 #include "../driver.h"
 
-#define VD_CMD_READ_BYTE CMD_TY(0)
-#define VD_CMD_WRITE_BYTE CMD_TY(1)
-#define VD_CMD_CLRSCR CMD_TY(2)
+#define VD_CMD_READ_BYTE CMD_TY(0) // PAPACK(vd, readbyte)
+#define VD_CMD_WRITE_BYTE CMD_TY(1) // PAPACK(vd, writebyte)
+#define VD_CMD_CLRSCR CMD_TY(2) // NULL
 
 typedef struct{
     b8 ch;
