@@ -9,7 +9,7 @@
  *
  * kernel/boot/stage2/std/stdarg.h
  *
- * stdarg header here
+ * Standard lib stdarg.h header here
  */
 
 
@@ -19,8 +19,8 @@
 typedef char *va_list;
 typedef va_list *pva_list;
 
-#define __calcsz__(x) ((sizeof(x) + sizeof(int) - 1) & (~(sizeof(int) - 1)))
+#define INTSIZEOF(ty) ((sizeof(ty) + sizeof(int) - 1) & (~(sizeof(int) - 1)))
 
-#define va_start(lst, start)	((lst) = (va_list)&start + __calcsz__(start))
-#define va_arg(lst, ty) (*((type*)((va_list)((lst) = (void*)((va_list)(lst) + __calcsz__(ty))) - __calcsz__(ty))))
-#define va_end(lst)
+#define va_start(lst, start) (lst = (((va_list)&start) + INTSIZEOF(start)))
+#define va_arg(lst, ty) (*(ty*)((lst += INTSIZEOF(ty)) - INTSIZEOF(ty)))
+#define va_end(lst) (lst = ((va_list)0))

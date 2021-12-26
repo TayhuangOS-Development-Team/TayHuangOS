@@ -16,13 +16,15 @@
 
 #include "drivers/drivers.h"
 #include "drivers/devices.h"
-#include "print.h"
+#include "printf.h"
 
 #include "intcall.h"
 #include "heap.h"
 #include "drivers/memory/memory_driver.h"
+#include <string.h>
 
 mem_prode_t prode_mem_result;
+
 
 void entry(void) {
     ll_init_heap();
@@ -33,39 +35,16 @@ void entry(void) {
 
     init_heap();
 
-    addr_t num = alloc(sizeof(dword), false);
-    set_heap_dword(num, 2);
-    print_int_hex(get_heap_dword(num), true);
-    free(num);
-    // addr_t num = ll_alloc(sizeof(dword));
-    // ll_set_dword(num, 10);
-    // print_int(ll_get_dword(num), false);
-    // print_string("Hello, World!");
-    // dword mem_sz;
-    // ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_MEM_SIZE, &mem_sz);
-    // if (((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_PRODE, &prode_mem_result)) {
-    //     print_string("   Base Address         Length          Type   ");
-    //     print_return();
-    //     for (int i = 0 ; i < prode_mem_result.prode_cnt ; i ++) {
-    //         print_int_hex(prode_mem_result.ards_list[i].base_address_high, true);
-    //         print_int_hex(prode_mem_result.ards_list[i].base_address_low, false);
-    //         print_char(' ');
-    //         print_int_hex(prode_mem_result.ards_list[i].length_high, true);
-    //         print_int_hex(prode_mem_result.ards_list[i].length_low, false);
-    //         print_char(' ');
-    //         print_int_hex(prode_mem_result.ards_list[i].type, true);
-    //         print_return();
-    //     }
-    //     print_string("Memory Size: ");
-    //     print_int_hex(mem_sz, true);
-    //     print_string("B, ");
-    //     print_int_hex(mem_sz / 1024, true);
-    //     print_string("KB, ");
-    //     print_int_hex(mem_sz / 1024 / 1024, true);
-    //     print_string("MB");
-    // }
+    // addr_t num = alloc(sizeof(dword), false);
+    // set_heap_dword(num, 2);
+    //char buffer[100];
+    // itoa(buffer, 100, 10);
+    // puts(buffer);
+    //  printf("aa%#4Xbaa", 233);
+    // printf("%d", get_heap_dword(num));
+    // free(num);
 
-
+    printf("Hello, World!");
 
     terminate_drivers();
 }

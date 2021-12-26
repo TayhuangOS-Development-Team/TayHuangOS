@@ -6,9 +6,11 @@ REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototype
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
-C_SRC := stage2_main string print intcall heap \
+C_SRC := stage2_main printf intcall heap \
 	./drivers/vedio/vedio_driver ./drivers/memory/memory_driver \
-	./drivers/driver ./drivers/drivers ./drivers/devices
+	./drivers/driver ./drivers/drivers ./drivers/devices \
+	./std/string
+C_INCLUDE := -I "./std/"
 ASM_SRC := stage2_entry io
 
 .PHONY: build
@@ -17,7 +19,7 @@ build:
 		$(ASM) $$asm_file.asm -f elf -o $$asm_file.o; \
 	done
 	for c_file in $(C_SRC); do \
-	    $(GCC) $(REALMODE_CFLAGS) $$c_file.c -c -o $$c_file.o; \
+	    $(GCC) $(REALMODE_CFLAGS) $(C_INCLUDE) $$c_file.c -c -o $$c_file.o;\
 	done
 	$(LD) -m elf_i386 -s -Ttext 0x0600 $(foreach asm_obj, $(ASM_SRC), $(asm_obj).o) $(foreach c_obj, $(C_SRC), $(c_obj).o) -o $(STAGE2_OUPUT)
 
