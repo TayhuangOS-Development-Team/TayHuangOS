@@ -23,6 +23,7 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     driver->state = DS_IDLE;
     driver->extensions = NULL;
     driver->id = id;
+    driver->device = device;
     device->driver = driver;
     return true;
 }
@@ -56,22 +57,22 @@ DEF_SUB_CMD(writebyte) {
     return true;
 }
 
-PRIVATE bool process_center(pdevice device, pdriver driver, word cmdty, argpack_t pack) {
-    if (driver->state != DS_IDLE || device->type != DT_VEDIO)
+PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
+    if (driver->state != DS_IDLE || driver->device->type != DT_VEDIO)
         return false;
     switch (cmdty) {
     case VD_CMD_READ_BYTE:
-        return SUB_CMD(readbyte)(device, driver, pack);
+        return SUB_CMD(readbyte)(driver, pack);
     case VD_CMD_WRITE_BYTE:
-        return SUB_CMD(writebyte)(device, driver, pack);
+        return SUB_CMD(writebyte)(driver, pack);
     case VD_CMD_CLRSCR:
-        return SUB_CMD(clrscr)(device, driver, pack);
+        return SUB_CMD(clrscr)(driver, pack);
     }
     return false;
 }
 
-PRIVATE bool terminate_driver(pdevice device, pdriver driver) {
-    if (driver->state == DS_TERMAINATED || device->type != DT_VEDIO)
+PRIVATE bool terminate_driver(pdriver driver) {
+    if (driver->state == DS_TERMAINATED || driver->device->type != DT_VEDIO)
         return false;
     driver->state = DS_TERMAINATED;
     return true;

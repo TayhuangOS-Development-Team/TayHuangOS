@@ -17,6 +17,7 @@
 #include "memory_driver.h"
 #include "../../intcall.h"
 #include "../../heap.h"
+#include "../../printf.h"
 
 PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     if (driver->state != DS_UNINITIALIZE || device->type != DT_MEMORY)
@@ -26,6 +27,7 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     driver->extensions = NULL;
     driver->id = id;
     device->driver = driver;
+    driver->device = device;
     return true;
 }
 
@@ -72,8 +74,9 @@ PRIVATE struct {
 } HEAP;
 
 struct __mse_t {
+    byte m_p : 1;
     word m_start : 16;
-    byte m_len : 4;
+    byte m_len : 3;
     byte m_gc : 2;
     byte m_type : 2;
 } __attribute__((packed));
@@ -183,6 +186,8 @@ DEF_SUB_CMD(reset_heap) {
     return true;
 }
 
+#define HEAP_UNIT (1024)
+
 DEF_SUB_CMD(alloc) {
     PAPACK(mm, alloc) args = (PAPACK(mm, alloc))pack;
     if (args->length == 0) {
@@ -199,14 +204,23 @@ DEF_SUB_CMD(alloc) {
     }while (args->length > (1 << mse.m_len));
 
     if (idx == 0xffff) {
+        if (TO2POW(HEAP.heap_top + 1, HEAP_UNIT) - HEAP.heap_top < args->length) {
+            int len = TO2POW(HEAP.heap_top + 1, HEAP_UNIT) - HEAP.heap_top;
+            while (len != 0) {
+                mse.m_start = HEAP.heap_top;
+                mse.m_len = (dword) - leading_zeros(LOWBIT(len) - 1);
+                mse.m_start += LOWBIT(len);
+                insert_new_mse(&mse);
+                len -= LOWBIT(len);
+            }
+            HEAP.heap_top = TO2POW(HEAP.heap_top, 1024);
+        }
         mse.m_start = HEAP.heap_top;
-        mse.m_len = sizeof(dword) - leading_zeros(args->length - 1);
+        mse.m_len = sizeof(dword) * 8 - leading_zeros(args->length - 1);
         HEAP.heap_top += (1 << mse.m_len);
         insert_new_mse(&mse);
     }
-    else {
-        *(args->address) = mse.m_start;
-    }
+
     if (args->weak) {
         mse.m_type = MSE_TY_WEAK;
         mse.m_gc = 3;
@@ -215,6 +229,9 @@ DEF_SUB_CMD(alloc) {
         mse.m_type = MSE_TY_USING;
         mse.m_gc = 0;
     }
+    write_mse(&mse, idx);
+
+    *(args->address) = mse.m_start;
 
     return true;
 }
@@ -325,45 +342,46 @@ DEF_SUB_CMD(get_heap_segment) {
     return true;
 }
 
-PRIVATE bool process_center(pdevice device, pdriver driver, word cmdty, argpack_t pack) {
-    if (driver->state != DS_IDLE || device->type != DT_MEMORY)
+PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
+    if (driver->state != DS_IDLE || driver->device->type != DT_MEMORY)
         return false;
     switch (cmdty) {
         case MM_CMD_INIT_HEAP:
-            return SUB_CMD(init_heap)(device, driver, pack);
+            return SUB_CMD(init_heap)(driver, pack);
         case MM_CMD_PRODE:
-            return SUB_CMD(prode)(device, driver, pack);
+            return SUB_CMD(prode)(driver, pack);
         case MM_CMD_GET_MEM_SIZE:
-            return SUB_CMD(get_mem_size)(device, driver, pack);
+            return SUB_CMD(get_mem_size)(driver, pack);
         case MM_CMD_ALLOC:
-            return SUB_CMD(alloc)(device, driver, pack);
+            return SUB_CMD(alloc)(driver, pack);
         case MM_CMD_FREE:
-            return SUB_CMD(free)(device, driver, pack);
+            return SUB_CMD(free)(driver, pack);
         case MM_CMD_UPDATE:
-            return SUB_CMD(update)(device, driver, pack);
+            return SUB_CMD(update)(driver, pack);
         case MM_CMD_REFRESH_GC:
-            return SUB_CMD(refresh_gc)(device, driver, pack);
+            return SUB_CMD(refresh_gc)(driver, pack);
         case MM_CMD_RESET_HEAP:
-            return SUB_CMD(reset_heap)(device, driver, pack);
+            return SUB_CMD(reset_heap)(driver, pack);
         case MM_CMD_GET_USED:
-            return SUB_CMD(get_used)(device, driver, pack);
+            return SUB_CMD(get_used)(driver, pack);
         case MM_CMD_GET_REMAIN:
-            return SUB_CMD(get_remain)(device, driver, pack);
+            return SUB_CMD(get_remain)(driver, pack);
         case MM_CMD_GET_DATA:
-            return SUB_CMD(get_data)(device, driver, pack);
+            return SUB_CMD(get_data)(driver, pack);
         case MM_CMD_SET_DATA:
-            return SUB_CMD(set_data)(device, driver, pack);
+            return SUB_CMD(set_data)(driver, pack);
         case MM_CMD_CP_DATA:
-            return SUB_CMD(cp_data)(device, driver, pack);
+            return SUB_CMD(cp_data)(driver, pack);
         case MM_CMD_GET_HEAP_SEGMENT:
-            return SUB_CMD(get_heap_segment)(device, driver, pack);
+            return SUB_CMD(get_heap_segment)(driver, pack);
     }
     return false;
 }
 
-PRIVATE bool terminate_driver(pdevice device, pdriver driver) {
-    if (driver->state == DS_TERMAINATED || device->type != DT_MEMORY)
+PRIVATE bool terminate_driver(pdriver driver) {
+    if (driver->state == DS_TERMAINATED || driver->device->type != DT_MEMORY)
         return false;
+    while (true);
     driver->state = DS_TERMAINATED;
     return true;
 }

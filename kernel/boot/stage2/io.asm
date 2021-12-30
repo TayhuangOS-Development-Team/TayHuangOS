@@ -33,6 +33,7 @@ _clrscr: ; void _clrscr(void)
     pop ecx
     pop ebx
     pop eax
+
     ret
 
 global _intcall

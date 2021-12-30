@@ -18,10 +18,16 @@
 
 device_t vedio_device;
 device_t memory_device;
+device_t a_disk_device;
 
 PUBLIC void init_devices(void) {
     vedio_device.id = alloc_id();
     vedio_device.type = DT_VEDIO;
+    vedio_device.drive_no = 0;
     memory_device.id = alloc_id();
     memory_device.type = DT_MEMORY;
+    memory_device.drive_no = 0;
+    a_disk_device.id = alloc_id();
+    a_disk_device.type = DT_DISK;
+    a_disk_device.drive_no = 0;
 }

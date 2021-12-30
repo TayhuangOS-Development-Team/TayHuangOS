@@ -30,6 +30,6 @@ PUBLIC void init_drivers(void) {
 }
 
 PUBLIC void terminate_drivers(void) {
-    vedio_driver.terminate_handle(&vedio_device, &vedio_driver);
-    memory_driver.terminate_handle(&memory_device, &memory_driver);
+    vedio_driver.terminate_handle(&vedio_driver);
+    memory_driver.terminate_handle(&memory_driver);
 }

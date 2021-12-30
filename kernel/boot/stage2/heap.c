@@ -15,8 +15,9 @@
 
 
 #include "heap.h"
-#include "drivers/devices.h"
+#include "drivers/drivers.h"
 #include "drivers/memory/memory_driver.h"
+#include "printf.h"
 
 PRIVATE struct {
     sreg_t heap_seg;
@@ -126,32 +127,34 @@ PUBLIC sreg_t ll_get_heap_seg(void) {
 }
 
 PUBLIC void init_heap(void) {
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_INIT_HEAP, NULL);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_INIT_HEAP, NULL);
 }
 
 PUBLIC dword get_heap_used(void) {
     dword result;
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_USED, &result);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_GET_USED, &result);
     return result;
 }
 
 PUBLIC dword get_heap_remain(void) {
     dword result;
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_REMAIN, &result);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_GET_REMAIN, &result);
     return result;
 }
 
 PRIVATE APACK(mm, alloc) alloc_pack;
 
 PUBLIC addr_t alloc(dword sz, bool weak) {
+    addr_t addr;
     alloc_pack.length = sz;
     alloc_pack.weak = weak;
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_ALLOC, &alloc_pack);
-    return alloc_pack.address;
+    alloc_pack.address = &addr;
+    memory_driver.pc_handle(&memory_driver, MM_CMD_ALLOC, &alloc_pack);
+    return addr;
 }
 
 PUBLIC void free(addr_t addr) {
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_FREE, &addr);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_FREE, &addr);
 }
 
 PRIVATE APACK(mm, get_data) get_data_pack;
@@ -161,7 +164,7 @@ PUBLIC byte get_heap_byte(addr_t addr) {
     get_data_pack.src = addr;
     get_data_pack.dst = &result;
     get_data_pack.len = sizeof(result);
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_DATA, &get_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_GET_DATA, &get_data_pack);
     return result;
 }
 
@@ -170,7 +173,7 @@ PUBLIC word get_heap_word(addr_t addr) {
     get_data_pack.src = addr;
     get_data_pack.dst = &result;
     get_data_pack.len = sizeof(result);
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_DATA, &get_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_GET_DATA, &get_data_pack);
     return result;
 }
 
@@ -179,7 +182,7 @@ PUBLIC dword get_heap_dword(addr_t addr) {
     get_data_pack.src = addr;
     get_data_pack.dst = &result;
     get_data_pack.len = sizeof(result);
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_DATA, &get_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_GET_DATA, &get_data_pack);
     return result;
 }
 
@@ -189,35 +192,35 @@ PUBLIC void set_heap_byte(addr_t addr, byte val) {
     set_data_pack.src = addr;
     set_data_pack.dst = &val;
     set_data_pack.len = sizeof(val);
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_SET_DATA, &set_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }
 
 PUBLIC void set_heap_word(addr_t addr, word val) {
     set_data_pack.src = addr;
     set_data_pack.dst = &val;
     set_data_pack.len = sizeof(val);
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_SET_DATA, &set_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }
 
 PUBLIC void set_heap_dword(addr_t addr, dword val) {
     set_data_pack.src = addr;
     set_data_pack.dst = &val;
     set_data_pack.len = sizeof(val);
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_SET_DATA, &set_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }
 
 PUBLIC void cp_from_heap(addr_t src, void* dst, word num) {
     get_data_pack.src = src;
     get_data_pack.dst = dst;
     get_data_pack.len = num;
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_DATA, &get_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_GET_DATA, &get_data_pack);
 }
 
 PUBLIC void cp_to_heap(void* src, addr_t dst, word num) {
     set_data_pack.src = src;
     set_data_pack.dst = dst;
     set_data_pack.len = num;
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_SET_DATA, &set_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }
 
 PRIVATE APACK(mm, cp_data) cp_data_pack;
@@ -226,15 +229,34 @@ PUBLIC void cp_heap_to_heap(addr_t src, addr_t dst, word num) {
     cp_data_pack.src = src;
     cp_data_pack.dst = dst;
     cp_data_pack.len = num;
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_CP_DATA, &cp_data_pack);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_CP_DATA, &cp_data_pack);
 }
 
 PUBLIC sreg_t get_heap_seg(void) {
     sreg_t segment;
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_GET_HEAP_SEGMENT, &segment);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_GET_HEAP_SEGMENT, &segment);
     return segment;
 }
 
 PUBLIC void update_heap(void) {
-    ((pdriver)memory_device.driver)->pc_handle(&memory_device, memory_device.driver, MM_CMD_UPDATE, NULL);
+    memory_driver.pc_handle(&memory_driver, MM_CMD_UPDATE, NULL);
+}
+
+PRIVATE char INNER_HEAP[1024] = {};
+
+PRIVATE void __load_to_inner(word heap_no) {
+    cp_from_heap(heap_no << 10, INNER_HEAP, 1024);
+}
+
+PRIVATE void __save_from_inner(word heap_no) {
+    cp_to_heap(INNER_HEAP, heap_no << 10, 1024);
+}
+
+PUBLIC void* load_to_inner(addr_t address) {
+    __load_to_inner(address >> 10);
+    return (void*)(INNER_HEAP + (address & 0x3FF));
+}
+
+PUBLIC void save_from_inner(addr_t address) {
+    __save_from_inner(address >> 10);
 }

@@ -24,11 +24,12 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     driver->extensions = NULL;
     driver->id = id;
     device->driver = driver;
+    driver->device = device;
     return true;
 }
 
-PRIVATE bool process_center(pdevice device, pdriver driver, word cmdty, argpack_t pack) {
-    if (driver->state != DS_IDLE || device->type != DT_DISK)
+PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
+    if (driver->state != DS_IDLE || driver->device->type != DT_DISK)
         return false;
     switch (cmdty) {
         default:
@@ -37,8 +38,12 @@ PRIVATE bool process_center(pdevice device, pdriver driver, word cmdty, argpack_
     return false;
 }
 
-PRIVATE bool terminate_driver(pdevice device, pdriver driver) {
-    if (driver->state == DS_TERMAINATED || device->type != DT_DISK)
+PRIVATE void read_sector(pdriver driver) {
+
+}
+
+PRIVATE bool terminate_driver(pdriver driver) {
+    if (driver->state == DS_TERMAINATED || driver->device->type != DT_DISK)
         return false;
     driver->state = DS_TERMAINATED;
     return true;

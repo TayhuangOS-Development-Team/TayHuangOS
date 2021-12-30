@@ -53,3 +53,7 @@ PUBLIC void cp_to_heap(void* src, addr_t dst, word num);
 PUBLIC void cp_heap_to_heap(addr_t src, addr_t dst, word num);
 PUBLIC sreg_t get_heap_seg(void);
 PUBLIC void update_heap(void);
+PUBLIC void* load_to_inner(addr_t address);
+PUBLIC void save_from_inner(addr_t address);
+
+#define LDADDR(addr) (load_to_inner(addr))

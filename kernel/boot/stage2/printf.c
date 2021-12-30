@@ -48,7 +48,7 @@ PUBLIC void disp_char(char ch, byte color, byte x, byte y) {
     write_pack.pos_y = y;
     write_pack.ch = ch;
     write_pack.color = color;
-    ((pdriver)vedio_device.driver)->pc_handle(&vedio_device, vedio_device.driver, VD_CMD_WRITE_BYTE, &write_pack);
+    vedio_driver.pc_handle(&vedio_driver, VD_CMD_WRITE_BYTE, &write_pack);
 }
 
 PUBLIC void putchar(char ch) {
@@ -110,7 +110,7 @@ PUBLIC word get_pos_y(void) {
 }
 
 PUBLIC void clrscr(void) {
-    vedio_driver.pc_handle(&vedio_device, &vedio_driver, VD_CMD_CLRSCR, NULL);
+    vedio_driver.pc_handle(&vedio_driver, VD_CMD_CLRSCR, NULL);
 }
 
 PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {

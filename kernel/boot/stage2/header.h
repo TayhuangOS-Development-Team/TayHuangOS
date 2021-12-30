@@ -30,6 +30,8 @@
 #define MKDWORD(h, l) ((((dword)h) << 16) + (l))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
+#define LOWBIT(x) (x & (-x))
+#define TO2POW(num, x) ((num + x - 1) & (~(x - 1)))
 
 static inline byte inb(word port) {
     byte data;

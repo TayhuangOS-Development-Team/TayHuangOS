@@ -18,4 +18,6 @@
 
 #include "../driver.h"
 
+#define DK_CMD_READ_SECTOR CMD_TY(0)
+
 PUBLIC void create_disk_driver(pdriver driver);

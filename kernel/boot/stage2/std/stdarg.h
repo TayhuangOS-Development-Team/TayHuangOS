@@ -19,7 +19,8 @@
 typedef char *va_list;
 typedef va_list *pva_list;
 
-#define INTSIZEOF(ty) ((sizeof(ty) + sizeof(int) - 1) & (~(sizeof(int) - 1)))
+#define INTSIZE (sizeof(int))
+#define INTSIZEOF(ty) ((sizeof(ty) + INTSIZE - 1) & (~(INTSIZE - 1)))
 
 #define va_start(lst, start) (lst = (((va_list)&start) + INTSIZEOF(start)))
 #define va_arg(lst, ty) (*(ty*)((lst += INTSIZEOF(ty)) - INTSIZEOF(ty)))

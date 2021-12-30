@@ -32,19 +32,26 @@ void entry(void) {
     init_devices();
     init_drivers();
     clrscr();
+    // while (true);
+    // printf("233");
+    // disp_char('a', 0x0C, 0, 0);
+
+    //while (true);
+
 
     init_heap();
 
-    // addr_t num = alloc(sizeof(dword), false);
-    // set_heap_dword(num, 2);
-    //char buffer[100];
-    // itoa(buffer, 100, 10);
-    // puts(buffer);
-    //  printf("aa%#4Xbaa", 233);
-    // printf("%d", get_heap_dword(num));
-    // free(num);
+    addr_t num = alloc(sizeof(dword), false);
+    set_heap_dword(num, 0x114514);
+    printf ("%#8X\n", *(dword*)LDADDR(num));
+    // //char buffer[100];
+    // // itoa(buffer, 100, 10);
+    // // puts(buffer);
+    // //  printf("aa%#4Xbaa", 233);
+    // // printf("%d", get_heap_dword(num));
+    // // free(num);
 
-    printf("Hello, World!");
+    // // printf("Hello, World!");
 
     terminate_drivers();
 }
