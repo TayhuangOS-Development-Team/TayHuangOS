@@ -74,9 +74,8 @@ PRIVATE struct {
 } HEAP;
 
 struct __mse_t {
-    byte m_p : 1;
     word m_start : 16;
-    byte m_len : 3;
+    byte m_len : 4;
     byte m_gc : 2;
     byte m_type : 2;
 } __attribute__((packed));
@@ -217,7 +216,7 @@ DEF_SUB_CMD(alloc) {
         }
         mse.m_start = HEAP.heap_top;
         mse.m_len = sizeof(dword) * 8 - leading_zeros(args->length - 1);
-        HEAP.heap_top += (1 << mse.m_len);
+        HEAP.heap_top += ((word)1 << (word)mse.m_len);
         insert_new_mse(&mse);
     }
 

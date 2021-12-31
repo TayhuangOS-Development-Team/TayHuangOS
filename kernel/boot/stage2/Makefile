@@ -7,7 +7,7 @@ REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototype
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
 C_SRC := stage2_main printf intcall heap \
-	./drivers/vedio/vedio_driver ./drivers/memory/memory_driver \
+	./drivers/vedio/vedio_driver ./drivers/memory/memory_driver ./drivers/disk/disk_driver \
 	./drivers/driver ./drivers/drivers ./drivers/devices \
 	./std/string
 C_INCLUDE := -I "./std/"

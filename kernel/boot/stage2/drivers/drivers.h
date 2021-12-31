@@ -20,6 +20,7 @@
 
 extern driver_t vedio_driver;
 extern driver_t memory_driver;
+extern driver_t a_disk_driver;
 
 PUBLIC void init_drivers(void);
 PUBLIC void terminate_drivers(void);

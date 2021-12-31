@@ -15,6 +15,22 @@
 
 
 #include "disk_driver.h"
+#include "../../heap.h"
+#include "../../intcall.h"
+#include "../../printf.h"
+
+PRIVATE addr_t rd_sector_addr = NULL;
+PRIVATE struct {
+    byte size;
+    byte reversed1;
+    byte transfer_num;
+    byte reversed2;
+    addr_t dst_off;
+    sreg_t dst_seg;
+    dword lba_high;
+    dword lba_low;
+} disk_address_packet;
+
 
 PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     if (driver->state != DS_UNINITIALIZE || device->type != DT_DISK)
@@ -38,8 +54,34 @@ PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
     return false;
 }
 
-PRIVATE void read_sector(pdriver driver) {
-
+/*PRIVATE*/ void read_sector(pdriver driver, dword lba_high, dword lba_low) {
+    if (rd_sector_addr == NULL) {
+        rd_sector_addr = alloc(512, false);
+    }
+    disk_address_packet.size = sizeof(disk_address_packet);
+    disk_address_packet.transfer_num = 1;
+    disk_address_packet.reversed1 = disk_address_packet.reversed2 = 0;
+    disk_address_packet.dst_off = rd_sector_addr;
+    disk_address_packet.dst_seg = get_heap_seg();
+    disk_address_packet.lba_high = lba_high;
+    disk_address_packet.lba_low = lba_low;
+    intargs_t args;
+    reg_collect_t in_regs;
+    reg_collect_t out_regs;
+    in_regs.eax = MKDWORD(0, MKWORD(0x42, 0));
+    in_regs.edx = MKDWORD(0, MKWORD(0, driver->device->drive_no));
+    in_regs.esi = MKDWORD(0, &disk_address_packet);
+    args.in_regs = &in_regs;
+    args.out_regs = &out_regs;
+    args.int_no = 0x13;
+    intcall(&args);
+    for (int i = 0 ; i < 8 ; i ++) {
+        printf ("%d0: ", i);
+        for (int j = 0 ; j < 16 ; j ++) {
+            printf ("%2X ", get_heap_byte(rd_sector_addr + i * 16 + j));
+        }
+        printf ("\n");
+    }
 }
 
 PRIVATE bool terminate_driver(pdriver driver) {
