@@ -20,4 +20,10 @@
 
 #define DK_CMD_READ_SECTOR CMD_TY(0)
 
+typedef struct {
+    addr_t dst;
+    dword src_high;
+    dword src_low;
+} DAPACK(dk, read_sector);
+
 PUBLIC void create_disk_driver(pdriver driver);

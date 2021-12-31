@@ -112,13 +112,13 @@ PUBLIC void ll_cp_from_heap(addr_t src, void* dst, word num) {
 
 PUBLIC void ll_cp_to_heap(void* src, addr_t dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
-        ll_set_byte(src + i, *((byte*)dst + i));
+        ll_set_byte(dst + i, *((byte*)src + i));
     }
 }
 
 PUBLIC void ll_cp_heap_to_heap(addr_t src, addr_t dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
-        ll_set_byte(src + i, ll_get_byte(dst + i));
+        ll_set_byte(dst + i, ll_get_byte(src + i));
     }
 }
 

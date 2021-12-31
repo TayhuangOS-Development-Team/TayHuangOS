@@ -130,13 +130,13 @@ PRIVATE void heap_cp_from(addr_t src, void* dst, word num) {
 
 PRIVATE void heap_cp_to(void* src, addr_t dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
-        heap_set_byte(src + i, *((byte*)dst + i));
+        heap_set_byte(dst + i, *((byte*)src + i));
     }
 }
 
 PRIVATE void heap_cp_to_heap(addr_t src, addr_t dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
-        heap_set_byte(src + i, heap_get_byte(dst + i));
+        heap_set_byte(dst + i, heap_get_byte(src + i));
     }
 }
 

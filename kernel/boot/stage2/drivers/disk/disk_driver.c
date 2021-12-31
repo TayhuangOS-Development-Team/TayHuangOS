@@ -44,17 +44,7 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     return true;
 }
 
-PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
-    if (driver->state != DS_IDLE || driver->device->type != DT_DISK)
-        return false;
-    switch (cmdty) {
-        default:
-            return false;
-    }
-    return false;
-}
-
-/*PRIVATE*/ void read_sector(pdriver driver, dword lba_high, dword lba_low) {
+PRIVATE void read_sector(pdriver driver, dword lba_high, dword lba_low) {
     if (rd_sector_addr == NULL) {
         rd_sector_addr = alloc(512, false);
     }
@@ -75,13 +65,23 @@ PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
     args.out_regs = &out_regs;
     args.int_no = 0x13;
     intcall(&args);
-    for (int i = 0 ; i < 8 ; i ++) {
-        printf ("%d0: ", i);
-        for (int j = 0 ; j < 16 ; j ++) {
-            printf ("%2X ", get_heap_byte(rd_sector_addr + i * 16 + j));
-        }
-        printf ("\n");
+}
+
+DEF_SUB_CMD(read_sector) {
+    PAPACK(dk, read_sector) args = (PAPACK(dk, read_sector))pack;
+    read_sector(driver, args->src_high, args->src_low);
+    cp_heap_to_heap(rd_sector_addr, args->dst, 512);
+    return true;
+}
+
+PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
+    if (driver->state != DS_IDLE || driver->device->type != DT_DISK)
+        return false;
+    switch (cmdty) {
+        case DK_CMD_READ_SECTOR:
+            return SUB_CMD(read_sector)(driver, pack);
     }
+    return false;
 }
 
 PRIVATE bool terminate_driver(pdriver driver) {
