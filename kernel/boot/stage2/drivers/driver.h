@@ -77,7 +77,7 @@ typedef struct {
     device_ty dev_ty;
     id_t id;
     driver_state state;
-    drext_t* extensions;
+    drext_t extensions;
     initialize_handle_t init_handle;
     pc_handle_t pc_handle;
     terminate_handle_t terminate_handle;

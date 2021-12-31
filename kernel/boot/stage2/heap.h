@@ -57,3 +57,4 @@ PUBLIC void* load_to_inner(addr_t address);
 PUBLIC void save_from_inner(addr_t address);
 
 #define LDADDR(addr) (load_to_inner(addr))
+#define STADDR(addr) (save_from_inner(addr))

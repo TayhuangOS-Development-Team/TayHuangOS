@@ -18,6 +18,7 @@
 #include "../../heap.h"
 #include "../../intcall.h"
 #include "../../printf.h"
+#include "./filesystem.h"
 
 PRIVATE addr_t rd_sector_addr = NULL;
 PRIVATE struct {
@@ -31,6 +32,16 @@ PRIVATE struct {
     dword lba_low;
 } disk_address_packet;
 
+PRIVATE struct {
+    addr_t file_system;
+    dword drive_no;
+    enum {
+        DK_TY_FLOOPY,
+        DK_TY_HARD,
+        DK_TY_CD
+    }type;
+} disk_infos[4];
+PRIVATE byte disk_cnt = 0;
 
 PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     if (driver->state != DS_UNINITIALIZE || device->type != DT_DISK)
@@ -74,12 +85,21 @@ DEF_SUB_CMD(read_sector) {
     return true;
 }
 
+DEF_SUB_CMD(init) {
+    disk_infos[disk_cnt].type = DK_TY_HARD;
+    disk_infos[disk_cnt].drive_no = driver->device->drive_no;
+    disk_infos[disk_cnt].file_system = recognize_file_system(driver);
+    return true;
+}
+
 PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
     if (driver->state != DS_IDLE || driver->device->type != DT_DISK)
         return false;
     switch (cmdty) {
         case DK_CMD_READ_SECTOR:
             return SUB_CMD(read_sector)(driver, pack);
+        case DK_CMD_INIT:
+            return SUB_CMD(init)(driver, pack);
     }
     return false;
 }

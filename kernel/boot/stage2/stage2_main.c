@@ -22,6 +22,7 @@
 #include "heap.h"
 #include "drivers/memory/memory_driver.h"
 #include "drivers/disk/disk_driver.h"
+#include "drivers/disk/filesystems/fs_fat16.h"
 #include <string.h>
 
 mem_prode_t prode_mem_result;
@@ -47,13 +48,25 @@ void entry(void) {
     pack.src_low = pack.src_high = 0;
     a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_READ_SECTOR, &pack);
 
-    for (int i = 0 ; i < 16 ; i ++) {
-        printf ("%#X0: ", i);
-        for (int j = 0 ; j < 16 ; j ++) {
-            printf ("%2X ", get_heap_byte(sector_addr + i * 16 + j));
-        }
-        printf ("\n");
+    // for (int i = 0 ; i < 16 ; i ++) {
+    //     printf ("%#X0: ", i);
+    //     for (int j = 0 ; j < 16 ; j ++) {
+    //         printf ("%2X ", get_heap_byte(sector_addr + i * 16 + j));
+    //     }
+    //     printf ("\n");
+    // }
+
+    // printf ("%#X", chk_is_fat16(sector_addr) ? 0x114514 : 0x1919810);
+
+    if (chk_is_fat16(sector_addr)) {
+        addr_t fs_fat16 = create_fat16_file_system(sector_addr);
+
+        print_fat16_file_system(fs_fat16);
+
+        free(fs_fat16);
     }
+
+    free (sector_addr);
 
     terminate_drivers();
 }

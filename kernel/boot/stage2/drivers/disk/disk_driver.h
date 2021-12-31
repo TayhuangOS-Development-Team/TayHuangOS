@@ -19,6 +19,7 @@
 #include "../driver.h"
 
 #define DK_CMD_READ_SECTOR CMD_TY(0)
+#define DK_CMD_INIT CMD_TY(1)
 
 typedef struct {
     addr_t dst;
