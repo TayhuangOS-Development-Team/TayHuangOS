@@ -41,12 +41,6 @@ void entry(void) {
     // printf ("%#8X ", alloc(512, false));
     // printf ("%#8X ", alloc(512, false));
 
-    addr_t sector_addr = alloc(512, false);
-
-    APACK(dk, read_sector) pack;
-    pack.dst = sector_addr;
-    pack.src_low = pack.src_high = 0;
-    a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_READ_SECTOR, &pack);
 
     // for (int i = 0 ; i < 16 ; i ++) {
     //     printf ("%#X0: ", i);
@@ -58,15 +52,13 @@ void entry(void) {
 
     // printf ("%#X", chk_is_fat16(sector_addr) ? 0x114514 : 0x1919810);
 
-    if (chk_is_fat16(sector_addr)) {
-        addr_t fs_fat16 = create_fat16_file_system(sector_addr);
-
-        print_fat16_file_system(fs_fat16);
-
-        free(fs_fat16);
+    addr_t fs = recognize_file_system(&a_disk_driver);
+    if (*((dword*)LDADDR(fs)) == 0xD949FA99) {
+        print_fat16_file_system(fs);
     }
 
-    free (sector_addr);
+    free(fs);
+
 
     terminate_drivers();
 }
