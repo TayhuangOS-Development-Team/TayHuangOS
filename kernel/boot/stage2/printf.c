@@ -52,7 +52,30 @@ PUBLIC void disp_char(char ch, byte color, byte x, byte y) {
 }
 
 PUBLIC void putchar(char ch) {
-    disp_char(ch, PRINT_COLOR, print_x ++, print_y);
+    if (ch== '\n') {
+        print_x = 0;
+        print_y ++;
+    }
+    else if (ch== '\t') {
+        print_x += 4;
+    }
+    else if (ch== '\v') {
+        print_y ++;
+    }
+    else if (ch== '\r') {
+        print_x = 0;
+    }
+    else if (ch== '\b') {
+        print_x --;
+    }
+    else if(ch== '\f') {
+        clrscr();
+        print_x = 0;
+        print_y = 0;
+    }
+    else {
+        disp_char(ch, PRINT_COLOR, print_x ++, print_y);
+    }
     if (print_x == 80) {
         print_x = 0;
         print_y ++;
@@ -62,37 +85,7 @@ PUBLIC void putchar(char ch) {
 
 PUBLIC void puts(const char *str) {
     while (*str != 0) {
-        if (*str == '\n') {
-            print_x = 0;
-            print_y ++;
-            str ++;
-            set_cursor_pos(print_x, print_y);
-        }
-        else if (*str == '\t') {
-            print_x += 4;
-            set_cursor_pos(print_x, print_y);
-        }
-        else if (*str == '\v') {
-            print_y ++;
-            set_cursor_pos(print_x, print_y);
-        }
-        else if (*str == '\r') {
-            print_x = 0;
-            set_cursor_pos(print_x, print_y);
-        }
-        else if (*str == '\b') {
-            print_x --;
-            set_cursor_pos(print_x, print_y);
-        }
-        else if(*str == '\f') {
-            clrscr();
-            print_x = 0;
-            print_y = 0;
-            set_cursor_pos(print_x, print_y);
-        }
-        else {
-            putchar(*(str ++));
-        }
+        putchar(*(str ++));
     }
 }
 

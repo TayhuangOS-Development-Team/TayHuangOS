@@ -37,8 +37,34 @@ typedef struct {
     dword volumn_id;
     char volumn_label[11 + 1];
     char file_system[8 + 1];
+    dword fat1_start;
+    dword root_directory_start;
+    dword root_directory_sectors;
+    dword data_start;
+    word entries_per_sector;
 } fs_fat16_t, *pfs_fat16;
+
+#define FAT16_ROOT_ENTRY_SIZE (0x20)
+
+typedef struct {
+    char name[12];
+    struct {
+        bool read_only : 1;
+        bool hidden : 1;
+        bool system : 1;
+        bool vol : 1;
+        bool directory : 1;
+        bool archive : 1;
+    } attribute;
+    char reversed[10];
+    word latest_modify_time;
+    word latest_modify_date;
+    word first_clus;
+    dword length;
+} fat16_file_t, *pfat16_file;
 
 PUBLIC bool chk_is_fat16(addr_t first_sector);
 PUBLIC addr_t create_fat16_file_system(addr_t first_sector);
 PUBLIC void print_fat16_file_system(addr_t fat16_fs);
+PUBLIC word get_fat16_entry(word no, pdriver disk);
+PUBLIC void get_fat16_file_info(const char *filename, pdriver disk, pfat16_file file);

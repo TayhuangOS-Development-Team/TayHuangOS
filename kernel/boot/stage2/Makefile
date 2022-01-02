@@ -13,6 +13,7 @@ C_SRC := stage2_main printf intcall heap \
 	./std/string
 C_INCLUDE := -I "./std/"
 ASM_SRC := stage2_entry io
+SPLASHES := splashes.txt
 
 .PHONY: build
 build:
@@ -36,3 +37,4 @@ clean:
 .PHONY: image
 image:
 	sudo cp $(STAGE2_OUPUT) /mnt/tayhuangOS
+	sudo cp $(SPLASHES) /mnt/tayhuangOS

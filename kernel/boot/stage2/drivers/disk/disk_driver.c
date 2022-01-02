@@ -19,8 +19,8 @@
 #include "../../intcall.h"
 #include "../../printf.h"
 #include "./filesystem.h"
+#include "./filesystems/fs_fat16.h"
 
-PRIVATE addr_t rd_sector_addr = NULL;
 PRIVATE struct {
     byte size;
     byte reversed1;
@@ -28,8 +28,8 @@ PRIVATE struct {
     byte reversed2;
     addr_t dst_off;
     sreg_t dst_seg;
-    dword lba_high;
     dword lba_low;
+    dword lba_high;
 } disk_address_packet;
 
 PRIVATE struct {
@@ -55,15 +55,12 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     return true;
 }
 
-PRIVATE void read_sector(pdriver driver, dword lba_high, dword lba_low) {
-    if (rd_sector_addr == NULL) {
-        rd_sector_addr = alloc(512, false);
-    }
+PRIVATE void _read_sector(pdriver driver, sreg_t segment, addr_t offset, dword lba_high, dword lba_low) {
     disk_address_packet.size = sizeof(disk_address_packet);
     disk_address_packet.transfer_num = 1;
     disk_address_packet.reversed1 = disk_address_packet.reversed2 = 0;
-    disk_address_packet.dst_off = rd_sector_addr;
-    disk_address_packet.dst_seg = get_heap_seg();
+    disk_address_packet.dst_off = offset;
+    disk_address_packet.dst_seg = segment;
     disk_address_packet.lba_high = lba_high;
     disk_address_packet.lba_low = lba_low;
     intargs_t args;
@@ -78,17 +75,54 @@ PRIVATE void read_sector(pdriver driver, dword lba_high, dword lba_low) {
     intcall(&args);
 }
 
+PUBLIC void read_sector(pdriver driver, addr_t buffer, dword lba_high, dword lba_low) {
+    _read_sector(driver, get_heap_seg(), buffer, lba_high, lba_low);
+}
+
 DEF_SUB_CMD(read_sector) {
     PAPACK(dk, read_sector) args = (PAPACK(dk, read_sector))pack;
-    read_sector(driver, args->src_high, args->src_low);
-    cp_heap_to_heap(rd_sector_addr, args->dst, 512);
+    read_sector(driver, args->dst, args->src_high, args->src_low);
     return true;
+}
+
+PRIVATE addr_t get_file_system(pdriver driver) {
+    for (int i = 0 ; i < disk_cnt ; i ++) {
+        if (disk_infos[i].drive_no == driver->device->drive_no)
+            return disk_infos->file_system;
+    }
+    return NULL;
+}
+
+DEF_SUB_CMD(get_filesystem) {
+    *(addr_t*)pack = get_file_system(driver);
+    return true;
+}
+
+DEF_SUB_CMD(load_file) {
+    PAPACK(dk, load_file) args = (PAPACK(dk, load_file))pack;
+    addr_t fs = get_file_system(driver);
+    if (*(dword*)LDADDR(fs) == 0xD949FA99) {
+        fat16_file_t file;
+        get_fat16_file_info(args->name, driver, &file);
+        if (file.length == -1)
+            return false;
+        word clus = file.first_clus;
+        addr_t offset = args->offset;
+        while (clus != 0xFFFF) {
+            _read_sector(driver, args->segment, offset, 0, clus + ((pfs_fat16)LDADDR(fs))->data_start);
+            offset += 512;
+            clus = get_fat16_entry(clus, driver);
+        }
+        return true;
+    }
+    return false;
 }
 
 DEF_SUB_CMD(init) {
     disk_infos[disk_cnt].type = DK_TY_HARD;
     disk_infos[disk_cnt].drive_no = driver->device->drive_no;
     disk_infos[disk_cnt].file_system = recognize_file_system(driver);
+    disk_cnt ++;
     return true;
 }
 
@@ -98,8 +132,12 @@ PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
     switch (cmdty) {
         case DK_CMD_READ_SECTOR:
             return SUB_CMD(read_sector)(driver, pack);
+        case DK_CMD_GET_FILESYSTEM:
+            return SUB_CMD(get_filesystem)(driver, pack);
         case DK_CMD_INIT:
             return SUB_CMD(init)(driver, pack);
+        case DK_CMD_LOAD_FILE:
+            return SUB_CMD(load_file)(driver, pack);
     }
     return false;
 }
@@ -108,6 +146,12 @@ PRIVATE bool terminate_driver(pdriver driver) {
     if (driver->state == DS_TERMAINATED || driver->device->type != DT_DISK)
         return false;
     driver->state = DS_TERMAINATED;
+    for (int i = 0 ; i < disk_cnt ; i ++) {
+        if (disk_infos[i].drive_no == driver->device->drive_no) {
+            free(disk_infos[i].file_system);
+            break;
+        }
+    }
     return true;
 }
 

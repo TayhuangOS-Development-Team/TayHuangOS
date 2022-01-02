@@ -52,13 +52,32 @@ void entry(void) {
 
     // printf ("%#X", chk_is_fat16(sector_addr) ? 0x114514 : 0x1919810);
 
-    addr_t fs = recognize_file_system(&a_disk_driver);
-    if (*((dword*)LDADDR(fs)) == 0xD949FA99) {
-        print_fat16_file_system(fs);
+    a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_INIT, NULL);
+
+    // addr_t fs;
+    // a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_GET_FILESYSTEM, &fs);
+    // if (*((dword*)LDADDR(fs)) == 0xD949FA99) {
+    //     print_fat16_file_system(fs);
+    // }
+
+    // for (int i = 0 ; i < 40 ; i ++) {
+    //     printf("%#4X: %#4X,     ", i, get_fat16_entry(i, &a_disk_driver));
+    // }
+
+    APACK(dk, load_file) args;
+    args.name = "SPLASHESTXT";
+    args.segment = 0x8000;
+    args.offset = 0x0000;
+
+    if (! a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_LOAD_FILE, &args)) {
+        printf ("Error!");
     }
-
-    free(fs);
-
+    else {
+        for (int i  = 0 ; i < 512 ; i ++) {
+            stfs(0x8000);
+            putchar (rdfs8(i));
+        }
+    }
 
     terminate_drivers();
 }

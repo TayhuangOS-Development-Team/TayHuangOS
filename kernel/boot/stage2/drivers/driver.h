@@ -54,22 +54,32 @@ typedef enum {
     DS_TERMAINATED
 }driver_state;
 
-typedef void *drext_t;
+typedef addr_t drext_t;
+typedef bool(*drext_initialize_handle_t)(drext_t, void*, id_t);
+typedef bool(*drext_pc_handle_t)(drext_t, word, argpack_t);
+typedef bool(*drext_terminate_handle_t)(drext_t);
 // drext_t template
 /*
 typedef struct {
     dword magic;
     addr_t nxt;
     pdriver driver;
-    dword version;
-    byte type;
+    id_t id;
+    drext_initialize_handle_t ext_init_handle;
+    drext_pc_handle_t ext_pc_handle;
+    drext_terminate_handle_t ext_terminate_handle;
     ...
-} ...;
-type: 0: Error Type
-      1: Info Extension
-      2: Functions Extension
-      3: Process Modifer
-      4: Device Extension
+} [SUF]_[TYPE]_[NAME];
+suffix: Test           TE
+        Offical        OF
+        Community      CM
+        Manufacturer   MF
+type: Error Type            ER
+      Info Extension        IE
+      Functions Extension   FE
+      Process Modifer       PM
+      Device Extension      DE
+      Adapter               AD
       ...
 */
 

@@ -18,4 +18,6 @@
 
 #include "../driver.h"
 
+#define FILESYSTEM_EXT_MAGIC (0x8C4BAD95)
+
 PUBLIC addr_t recognize_file_system(pdriver disk_driver);
