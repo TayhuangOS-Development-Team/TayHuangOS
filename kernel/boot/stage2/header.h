@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* -------------------------------*-TayhuangOS-*-----------------------------------
  *
- *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+ *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
  * --------------------------------------------------------------------------------
  *
@@ -63,6 +63,10 @@ static inline dword ind(word port) {
 
 static inline void outd(word port, dword data) {
     asmv ("outl %0, %1" : : "a"(data), "dN"(port));
+}
+
+static inline void io_delay(void) {
+    outb(0x80, 0);
 }
 
 #include "memory.h"

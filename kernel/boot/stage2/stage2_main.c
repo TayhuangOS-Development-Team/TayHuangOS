@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* -------------------------------*-TayhuangOS-*-----------------------------------
  *
- *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+ *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
  * --------------------------------------------------------------------------------
  *
@@ -74,7 +74,7 @@ void entry(void) {
     printf ("it's stage2!\n");
     print_splash();
 
-    //go_to_protect_mode();
+    go_to_protect_mode();
 
     terminate_drivers();
 }

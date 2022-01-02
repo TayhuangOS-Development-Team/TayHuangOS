@@ -10,7 +10,8 @@ C_SRC := stage2_main printf intcall heap tools \
 	./drivers/vedio/vedio_driver ./drivers/memory/memory_driver ./drivers/disk/disk_driver ./drivers/disk/filesystem \
 	./drivers/disk/filesystems/fs_fat16 \
 	./drivers/driver ./drivers/drivers ./drivers/devices \
-	./std/string
+	./std/string \
+	./pm/entry ./pm/a20
 C_INCLUDE := -I "./std/"
 ASM_SRC := stage2_entry io
 SPLASHES := splashes.txt
