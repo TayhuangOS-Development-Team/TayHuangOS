@@ -60,12 +60,7 @@ _intcall: ; void _intcall(pintargs args)
 db 0xcd
 .intn: db 0
 
-    push ebx
-    mov ebx, eax
-    mov eax, dword [.ax_store]
-    mov dword [.ax_store], ebx
-
-    pop ebx
+    xchg eax, dword [.ax_store]
 
     mov eax, dword[eax + 4] ; eax -> out regs
     mov dword [eax + 4], ebx

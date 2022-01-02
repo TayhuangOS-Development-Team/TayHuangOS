@@ -24,9 +24,41 @@
 #include "drivers/disk/disk_driver.h"
 #include "drivers/disk/filesystems/fs_fat16.h"
 #include <string.h>
+#include "pm/entry.h"
+#include "tools.h"
 
-mem_prode_t prode_mem_result;
-
+void print_splash(void) {
+    APACK(dk, load_file) pack;
+    pack.name = "SPLASHESTXT";
+    pack.offset = 0;
+    pack.segment = 0x1000;
+    a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_LOAD_FILE, &pack);
+    int cnt = 0;
+    for (int i = 0 ; i < 512 ; i ++) {
+        stfs(0x1000);
+        if (rdfs8(i) == '\n') {
+            cnt ++;
+        }
+    }
+    char splash[33];
+    int choice = random(get_clock_time(), 0, cnt);
+    int t = 0;
+    for (int i = 0 ; i < 512 ; i ++) {
+        stfs(0x1000);
+        if (t == choice) {
+            int j = 0;
+            while (rdfs8(i) != '\n') {
+                splash[j ++] = rdfs8(i ++);
+            }
+            splash[j] = 0;
+            break;
+        }
+        if (rdfs8(i) == '\n') {
+            t ++;
+        }
+    }
+    printf ("%s\n", splash);
+}
 
 void entry(void) {
     ll_init_heap();
@@ -37,47 +69,12 @@ void entry(void) {
 
     init_heap();
 
-    // printf ("%#8X ", rd_sector_addr);
-    // printf ("%#8X ", alloc(512, false));
-    // printf ("%#8X ", alloc(512, false));
-
-
-    // for (int i = 0 ; i < 16 ; i ++) {
-    //     printf ("%#X0: ", i);
-    //     for (int j = 0 ; j < 16 ; j ++) {
-    //         printf ("%2X ", get_heap_byte(sector_addr + i * 16 + j));
-    //     }
-    //     printf ("\n");
-    // }
-
-    // printf ("%#X", chk_is_fat16(sector_addr) ? 0x114514 : 0x1919810);
-
     a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_INIT, NULL);
 
-    // addr_t fs;
-    // a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_GET_FILESYSTEM, &fs);
-    // if (*((dword*)LDADDR(fs)) == 0xD949FA99) {
-    //     print_fat16_file_system(fs);
-    // }
+    printf ("it's stage2!\n");
+    print_splash();
 
-    // for (int i = 0 ; i < 40 ; i ++) {
-    //     printf("%#4X: %#4X,     ", i, get_fat16_entry(i, &a_disk_driver));
-    // }
-
-    APACK(dk, load_file) args;
-    args.name = "SPLASHESTXT";
-    args.segment = 0x8000;
-    args.offset = 0x0000;
-
-    if (! a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_LOAD_FILE, &args)) {
-        printf ("Error!");
-    }
-    else {
-        for (int i  = 0 ; i < 512 ; i ++) {
-            stfs(0x8000);
-            putchar (rdfs8(i));
-        }
-    }
+    //go_to_protect_mode();
 
     terminate_drivers();
 }

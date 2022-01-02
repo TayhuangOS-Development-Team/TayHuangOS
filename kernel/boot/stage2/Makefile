@@ -6,7 +6,7 @@ REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototype
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
-C_SRC := stage2_main printf intcall heap \
+C_SRC := stage2_main printf intcall heap tools \
 	./drivers/vedio/vedio_driver ./drivers/memory/memory_driver ./drivers/disk/disk_driver ./drivers/disk/filesystem \
 	./drivers/disk/filesystems/fs_fat16 \
 	./drivers/driver ./drivers/drivers ./drivers/devices \
