@@ -11,4 +11,4 @@ log: latest.log
 
 mouse: enabled=0
 
-keyboard_mapping: enabled= 1 , map=./bios/bochs/keymaps/x11-pc-us.map
+keyboard_mapping: enabled=1, map=./bios/bochs/keymaps/x11-pc-us.map

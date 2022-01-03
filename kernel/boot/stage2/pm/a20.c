@@ -17,13 +17,13 @@
 #include "a20.h"
 #include "../intcall.h"
 
-#define A20_TEST_ADDRESS (0x80 >> 2)
-#define A20_FAST_TEST_TIME (2 >> 4)
-#define A20_TEST_TIME (2 >> 8)
-#define A20_SLOW_TEST_TIME (2 >> 14)
-#define A20_LONG_TEST_TIME (2 >> 20)
+#define A20_TEST_ADDRESS (0x80 << 2)
+#define A20_FAST_TEST_TIME (2 << 4)
+#define A20_TEST_TIME (2 << 8)
+#define A20_SLOW_TEST_TIME (2 << 14)
+#define A20_LONG_TEST_TIME (2 << 20)
 
-PUBLIC bool test_a20(int loop_time) {
+PUBLIC bool test_a20(int loop_time) {//引用自linux
     stfs(0x0000);
     stgs(0xffff);
 
@@ -66,10 +66,10 @@ PUBLIC bool test_a20_long(void) {
 #undef A20_SLOW_TEST_TIME
 #undef A20_LONG_TEST_TIME
 
-#define MAX_TRY_TIME (2 >> 20)
-#define MAX_FF_TIME (2 >> 8)
+#define MAX_TRY_TIME (2 << 20)
+#define MAX_FF_TIME (2 << 8)
 
-PUBLIC bool empty_8042(void) {
+PUBLIC bool empty_8042(void) {//引用自linux
     int loop_time = MAX_TRY_TIME;
     int ff_time = MAX_FF_TIME;
 
@@ -94,7 +94,7 @@ PUBLIC bool empty_8042(void) {
 #undef MAX_TRY_TIME
 #undef MAX_FF_TIME
 
-PUBLIC void enable_a20_by_bios(void) {
+PUBLIC void enable_a20_by_bios(void) {//参考自linux
     intargs_t args;
     reg_collect_t in_regs;
     reg_collect_t out_regs;
@@ -105,7 +105,7 @@ PUBLIC void enable_a20_by_bios(void) {
     intcall(&args);
 }
 
-PUBLIC void enable_a20_by_8042(void) {
+PUBLIC void enable_a20_by_8042(void) {//引用自linux
     empty_8042();
 
     outb(0x64, 0xD1);
@@ -118,7 +118,7 @@ PUBLIC void enable_a20_by_8042(void) {
     empty_8042();
 }
 
-PUBLIC void enable_a20_by_portA(void) {
+PUBLIC void enable_a20_by_portA(void) {//引用自linux
     b8 port_a;
 
     port_a = inb(0x92);
@@ -129,7 +129,7 @@ PUBLIC void enable_a20_by_portA(void) {
 
 #define MAX_TRY_TIME (0xFF)
 
-PUBLIC bool enable_a20(void) {
+PUBLIC bool enable_a20(void) {//参考自linux
     int loop_time = MAX_TRY_TIME;
 
     while (loop_time --) {

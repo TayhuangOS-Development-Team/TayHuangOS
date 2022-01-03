@@ -12,6 +12,8 @@
 ; Base io functions are implemented here
 ;
 
+
+
 [SECTION .text]
 [BITS 16]
 
@@ -27,7 +29,7 @@ _clrscr: ; void _clrscr(void)
     mov bx, 0x0700
     mov cx, 0x0000
     mov dx, 0x184f
-    int 0x10
+    int 0x10 ;0x10中断
 
     pop edx
     pop ecx
@@ -40,7 +42,7 @@ global _intcall
 _intcall: ; void _intcall(pintargs args)
     pushad
     mov bl, byte [eax + 8]
-    mov byte [cs:.intn], bl
+    mov byte [cs:.intn], bl ;dirty hack
     mov dword[.ax_store], eax
     mov eax, dword [eax + 0] ; eax -> in regs
 

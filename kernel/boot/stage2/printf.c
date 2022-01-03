@@ -106,6 +106,7 @@ PUBLIC void clrscr(void) {
     vedio_driver.pc_handle(&vedio_driver, VD_CMD_CLRSCR, NULL);
 }
 
+//vsprintf
 PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
     bool flag1, flag2;
     int flag3;
@@ -135,7 +136,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                     format ++;
                 }
             }
-            if (*format == 'd') {
+            if (*format == 'd') { //整数
                 int num = va_arg(args, int);
                 if (flag2) {
                     if (num > 0) {
@@ -155,7 +156,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                     *(buffer ++) = *(buff ++);
                 }
             }
-            else if (*format == 'u') {
+            else if (*format == 'u') { //无符号整数
                 unsigned int num = va_arg(args, unsigned int);
                 if (flag2) {
                     if (num > 0) {
@@ -175,18 +176,18 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                     *(buffer ++) = *(buff ++);
                 }
             }
-            else if (*format == 'c') {
+            else if (*format == 'c') { //字符
                 char ch = va_arg(args, char);
                 *(buffer ++) = ch;
             }
-            else if (*format == 's') {
+            else if (*format == 's') { //字符串
                 const char* str;
                 str = va_arg(args, const char*);
                 while (*str != 0) {
                     *(buffer ++) = *(str ++);
                 }
             }
-            else if (*format == 'o') {
+            else if (*format == 'o') { //八进制数
                 if (flag1) {
                     *(buffer ++) = '0';
                 }
@@ -204,7 +205,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                     *(buffer ++) = *(buff ++);
                 }
             }
-            else if (*format == 'x') {
+            else if (*format == 'x') { //16进制数
                 if (flag1) {
                     *(buffer ++) = '0';
                     *(buffer ++) = 'x';
@@ -223,7 +224,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                     *(buffer ++) = *(buff ++);
                 }
             }
-            else if (*format == 'X') {
+            else if (*format == 'X') { //大写的十六进制数
                 if (flag1) {
                     *(buffer ++) = '0';
                     *(buffer ++) = 'X';
@@ -254,7 +255,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
     return buffer - store;
 }
 
-//输出内容到vsprintf中
+//输出内容到buffer中
 PUBLIC int vsprintf(char* buffer, const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -266,7 +267,7 @@ PUBLIC int vsprintf(char* buffer, const char* format, ...) {
     return res;
 }
 
-
+//输出内容到屏幕中
 PUBLIC int printf(const char* format, ...) {
     va_list args;
     va_start(args, format);

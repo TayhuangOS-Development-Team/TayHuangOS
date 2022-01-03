@@ -28,10 +28,6 @@
 #define MM_CMD_SET_DATA CMD_TY(8) // PAPACK(mm, set_data)
 #define MM_CMD_CP_DATA CMD_TY(9) // PAPACK(mm, cp_data)
 #define MM_CMD_PRODE CMD_TY(10) //pmem_prode
-#define MM_CMD_TEST_A20 CMD_TY(11) // bool*
-#define MM_CMD_FAST_TEST_A20 CMD_TY(12) // bool*
-#define MM_CMD_OPEN_A20 CMD_TY(13) // NULL
-#define MM_CMD_CLOSE_A20 CMD_TY(14) // NULL
 #define MM_CMD_GET_MEM_SIZE CMD_TY(15) // dword*
 #define MM_CMD_UPDATE CMD_TY(16)  // NULL
 #define MM_CMD_REFRESH_GC CMD_TY(17) // addr_t*

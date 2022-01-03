@@ -28,6 +28,6 @@ _start:
     mov gs, ax
     mov ss, ax
     mov sp, 0x0600
-    push word 0
+    push word 0 ;补0，因为nasm与c的call, ret指令位长不同
     call entry
     jmp $

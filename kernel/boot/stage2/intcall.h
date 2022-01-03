@@ -18,6 +18,7 @@
 
 #include "header.h"
 
+//对eflags的各种位的操作
 #define EF_SETCF(eflags) (eflags |= (1 << 0))
 #define EF_CLRCF(eflags) (eflags &= (~(1 << 0)))
 #define EF_GETCF(eflags) (eflags & (1 << 0))
@@ -69,6 +70,8 @@
 #define EF_SETTD(eflags) (eflags |= (1 << 21))
 #define EF_CLRTD(eflags) (eflags &= (1 << 21))
 #define EF_GETTD(eflags) (eflags & (1 << 21))
+
+//寄存器集合
 typedef struct {
     reg32_t eax;
     reg32_t ebx;
@@ -82,10 +85,12 @@ typedef struct {
     reg16_t eflags;
 }reg_collect_t, *preg_collect;
 
+//中断参数
 typedef struct {
     preg_collect in_regs;
     preg_collect out_regs;
     int int_no;
 }intargs_t, *pintargs;
 
+//中断函数
 PUBLIC void intcall(pintargs args);

@@ -17,29 +17,38 @@
 #include "entry.h"
 #include "a20.h"
 #include "gdt.h"
+#include "../printf.h"
 
-PRIVATE const qword BOOT_GDT[] = {
-    GDT_ENTRY(0, 0, 0), //EMPTY
-    GDT_ENTRY(0xC09b, 0, 0xFFFFF),
-    GDT_ENTRY(0xC093, 0, 0xFFFFF),
-    GDT_ENTRY(0x0089, 4096, 103),
-};
-
-PRIVATE struct gdt_ptr gdtr;
-PRIVATE struct gdt_ptr null_idtr;
+#define EMPTY_DESC_NO (0)
+#define CS_DESC_NO (1)
+#define DS_DESC_NO (2)
+#define TSS_DESC_NO (3)
 
 PRIVATE void setup_gdt(void) {
+    //一个临时的gdt
+    PRIVATE const struct desc_struct BOOT_GDT[] __attribute__((aligned(16))) = {
+        [EMPTY_DESC_NO] = GDT_ENTRY(0, 0, 0), //EMPTY
+        [CS_DESC_NO] = GDT_ENTRY(0x409A, 0, 0xFFFFF),
+        [DS_DESC_NO] = GDT_ENTRY(0x4093, 0, 0xFFFFF),
+        [TSS_DESC_NO] = GDT_ENTRY(0x0089, 4096, 103) //没用，用于欺骗CPU
+    };
+
+    PRIVATE struct gdt_ptr gdtr;
     gdtr.len = sizeof (BOOT_GDT) - 1;
-    gdtr.ptr = (dword)&BOOT_GDT + ((dword)ds()) << 4;
+    gdtr.ptr = (dword)&BOOT_GDT + (((dword)rdds()) << 4);
 
     asmv ("lgdtl %0" : : "m"(gdtr));
 }
 
 PRIVATE void setup_idt(void) {
-    null_idtr.len = 0;
-    null_idtr.ptr = 0;
-    asmv ("lidtl %0" : : "m"(null_idtr));
+    PRIVATE struct gdt_ptr idtr;
+    idtr.len = 0;
+    idtr.ptr = 0;
+    //欺骗CPU
+    asmv ("lidtl %0" : : "m"(idtr));
 }
+
+void the_finally_jump(dword entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, sreg_t ldt_selector);
 
 PUBLIC void go_to_protect_mode(void) {
     if (! enable_a20()) {
@@ -55,9 +64,10 @@ PUBLIC void go_to_protect_mode(void) {
 	io_delay();
 	outb(0xF1, 0);
 	io_delay();
-    //设置gdt与idt
+    //设置gdt
     setup_gdt();
+    //设置idt
     setup_idt();
     //jump to protect mode
-    while (true); //pause here
+    the_finally_jump(0, CS_DESC_NO << 3, DS_DESC_NO << 3, TSS_DESC_NO << 3);
 }

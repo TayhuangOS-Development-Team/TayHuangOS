@@ -13,7 +13,7 @@ C_SRC := stage2_main printf intcall heap tools \
 	./std/string \
 	./pm/entry ./pm/a20
 C_INCLUDE := -I "./std/"
-ASM_SRC := stage2_entry io
+ASM_SRC := stage2_entry io ./pm/jumping
 SPLASHES := splashes.txt
 
 .PHONY: build

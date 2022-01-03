@@ -28,7 +28,7 @@ PRIVATE struct {
 
 #define LL_HEAP_SEGMENT 0x0700
 #define LL_HEAP_SZ 0x0100
-
+//低级堆
 PUBLIC void ll_init_heap(void) {
     LL_HEAP.heap_seg = LL_HEAP_SEGMENT;
     LL_HEAP.heap_top = LL_HEAP.heap_bottom = 0x0000;
@@ -126,6 +126,7 @@ PUBLIC sreg_t ll_get_heap_seg(void) {
     return LL_HEAP.heap_seg;
 }
 
+//高级的利用驱动完成的堆
 PUBLIC void init_heap(void) {
     memory_driver.pc_handle(&memory_driver, MM_CMD_INIT_HEAP, NULL);
 }

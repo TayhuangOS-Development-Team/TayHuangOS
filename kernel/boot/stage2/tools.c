@@ -25,11 +25,23 @@ PUBLIC dword get_clock_time(void) {
     args.in_regs = &in_regs;
     args.out_regs = &out_regs;
     args.int_no = 0x1A;
-    intcall(&args);
+    intcall(&args); //0x1A ah = 0中断
     return MKDWORD(out_regs.ecx, out_regs.edx);
 }
 
-PRIVATE dword _random(dword seed) {
+PUBLIC byte get_time(void) {
+    intargs_t args;
+    reg_collect_t in_regs;
+    reg_collect_t out_regs;
+    in_regs.eax = MKWORD(2, 0);
+    args.in_regs = &in_regs;
+    args.out_regs = &out_regs;
+    args.int_no = 0x1A;
+    intcall(&args); //0x1A ah = 2中断
+    return out_regs.edx & 0xFF;
+}
+
+PRIVATE dword _random(dword seed) { //恶臭的随机数生成
     if (seed == 0) return 0x11451419;
     dword a = seed * seed % 114;
     dword b = seed * seed * seed % 514;
