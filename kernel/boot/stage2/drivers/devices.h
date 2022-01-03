@@ -21,5 +21,6 @@
 extern device_t vedio_device;
 extern device_t memory_device;
 extern device_t a_disk_device;
+extern device_t keyboard_device;
 
 PUBLIC void init_devices(void);

@@ -62,4 +62,4 @@ after_the_jump:
 
     lldt dx ;欺骗CPU
 
-    jmp $
+    jmp eax

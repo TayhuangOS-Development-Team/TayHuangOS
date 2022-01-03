@@ -26,6 +26,7 @@
 #include <string.h>
 #include "pm/entry.h"
 #include "tools.h"
+#include "scanf.h"
 
 void print_splash(void) {
     APACK(dk, load_file) pack;
@@ -73,8 +74,12 @@ void entry(void) {
 
     printf ("it's stage2!\n");
     print_splash();
+    int num = 0;
+    printf ("Input a number:");
+    scanf("%d", &num);
+    printf ("%d\n", num);
 
-    go_to_protect_mode();
+    //go_to_protect_mode();
 
     terminate_drivers();
 }

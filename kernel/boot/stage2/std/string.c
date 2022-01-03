@@ -36,7 +36,7 @@ int strlen(const char *str) {
 
 int atoi(const char* str) {
     int result = 0;
-    unsigned char sign = 1;
+    char sign = 1;
 
     if (str == 0) {
         return 0;
@@ -48,11 +48,115 @@ int atoi(const char* str) {
     if ((*str) == '-') sign = -1;
     if ((*str) == '-' || (*str) == '+') str ++;
 
-    while (isdigit(*(str ++))) {
+    while (isdigit(*str)) {
         result = result * 10 + (*str) - '0';
+        str ++;
     }
 
     return sign * result;
+}
+
+int atoi_8(const char* str) {
+    int result = 0;
+    char sign = 1;
+
+    if (str == 0) {
+        return 0;
+    }
+
+    while (isspace(*(str ++))) {}
+    str --;
+
+    if ((*str) == '-') sign = -1;
+    if ((*str) == '-' || (*str) == '+') str ++;
+
+    while (isodigit(*str)) {
+        result = result * 8 + (*str) - '0';
+        str ++;
+    }
+
+    return sign * result;
+}
+
+int atoi_16(const char* str) {
+    int result = 0;
+    char sign = 1;
+
+    if (str == 0) {
+        return 0;
+    }
+
+    while (isspace(*(str ++))) {}
+    str --;
+
+    if ((*str) == '-') sign = -1;
+    if ((*str) == '-' || (*str) == '+') str ++;
+
+    while (isxdigit(*str)) {
+        result = result * 16 + tolower(*str) - (isdigit(*str) ? '0' : 'a');
+        str ++;
+    }
+
+    return sign * result;
+}
+
+unsigned int atoui(const char* str) {
+    unsigned int result = 0;
+
+    if (str == 0) {
+        return 0;
+    }
+
+    while (isspace(*(str ++))) {}
+    str --;
+
+    if ((*str) == '+') str ++;
+
+    while (isdigit(*str)) {
+        result = result * 10 + (*str) - '0';
+        str ++;
+    }
+
+    return result;
+}
+
+unsigned int atoui_8(const char* str) {
+    unsigned int result = 0;
+
+    if (str == 0) {
+        return 0;
+    }
+
+    while (isspace(*(str ++))) {}
+    str --;
+
+    if ((*str) == '+') str ++;
+
+    while (isodigit(*str)) {
+        result = result * 8 + (*str) - '0';
+        str ++;
+    }
+
+    return result;
+}
+
+unsigned int atoui_16(const char* str) {
+    unsigned int result = 0;
+
+    if (str == 0) {
+        return 0;
+    }
+
+    while (isspace(*(str ++))) {}
+    str --;
+    if ((*str) == '+') str ++;
+
+    while (isxdigit(*str)) {
+        result = result * 16 + tolower(*str) - (isdigit(*str) ? '0' : 'a');
+        str ++;
+    }
+
+    return result;
 }
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";

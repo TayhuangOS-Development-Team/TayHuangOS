@@ -5,7 +5,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong Beanflame
+ * Author: Flysong
  *
  * kernel/boot/stage2/tools.h
  *

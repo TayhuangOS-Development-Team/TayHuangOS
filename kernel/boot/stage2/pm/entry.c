@@ -48,9 +48,9 @@ PRIVATE void setup_idt(void) {
     asmv ("lidtl %0" : : "m"(idtr));
 }
 
-void the_finally_jump(dword entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, sreg_t ldt_selector);
+void the_finally_jump(dword entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector);
 
-PUBLIC void go_to_protect_mode(void) {
+PUBLIC void go_to_protect_mode(dword entrypoint) {
     if (! enable_a20()) {
         printf ("Error! We can't enable the A20 gate!Or reboot?");
         while (true);
@@ -69,5 +69,5 @@ PUBLIC void go_to_protect_mode(void) {
     //设置idt
     setup_idt();
     //jump to protect mode
-    the_finally_jump(0, CS_DESC_NO << 3, DS_DESC_NO << 3, TSS_DESC_NO << 3);
+    the_finally_jump(entrypoint, CS_DESC_NO << 3, DS_DESC_NO << 3, TSS_DESC_NO << 3);
 }

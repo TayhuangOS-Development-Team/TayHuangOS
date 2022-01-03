@@ -18,4 +18,4 @@
 
 #include "../header.h"
 
-PUBLIC void go_to_protect_mode(void);
+PUBLIC void go_to_protect_mode(dword entrypoint);
