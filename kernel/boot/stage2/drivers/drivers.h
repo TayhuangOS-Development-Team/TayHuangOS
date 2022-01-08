@@ -24,4 +24,4 @@ extern driver_t a_disk_driver;
 extern driver_t keyboard_driver;
 
 PUBLIC void init_drivers(void);
-PUBLIC void terminate_drivers(void);
+PUBLIC bool terminate_drivers(void);

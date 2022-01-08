@@ -190,22 +190,22 @@ PUBLIC dword get_heap_dword(addr_t addr) {
 PRIVATE APACK(mm, set_data) set_data_pack;
 
 PUBLIC void set_heap_byte(addr_t addr, byte val) {
-    set_data_pack.src = addr;
-    set_data_pack.dst = &val;
+    set_data_pack.src = &val;
+    set_data_pack.dst = addr;
     set_data_pack.len = sizeof(val);
     memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }
 
 PUBLIC void set_heap_word(addr_t addr, word val) {
-    set_data_pack.src = addr;
-    set_data_pack.dst = &val;
+    set_data_pack.src = &val;
+    set_data_pack.dst = addr;
     set_data_pack.len = sizeof(val);
     memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }
 
 PUBLIC void set_heap_dword(addr_t addr, dword val) {
-    set_data_pack.src = addr;
-    set_data_pack.dst = &val;
+    set_data_pack.src = &val;
+    set_data_pack.dst = addr;
     set_data_pack.len = sizeof(val);
     memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }

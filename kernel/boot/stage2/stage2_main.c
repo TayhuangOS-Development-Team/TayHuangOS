@@ -24,6 +24,7 @@
 #include "drivers/disk/disk_driver.h"
 #include "drivers/disk/filesystems/fs_fat16.h"
 #include <string.h>
+#include <ctype.h>
 #include "pm/entry.h"
 #include "tools.h"
 #include "scanf.h"
@@ -61,6 +62,24 @@ void print_splash(void) {
     printf ("%s\n", splash);
 }
 
+#define MAX_TERMINATER_NUM (32)
+PRIVATE terminater_t TERMINATE_LIST[MAX_TERMINATER_NUM];
+PRIVATE byte temlst_sz = 0;
+
+PUBLIC bool register_terminater(terminater_t terminater) {
+    if (temlst_sz > MAX_TERMINATER_NUM) return false;
+    TERMINATE_LIST[temlst_sz ++] = terminater;
+    return true;
+}
+
+PRIVATE bool do_terminate(void) {
+    bool flag = true;
+    for(byte i = 0 ; i < temlst_sz ; i ++) {
+        flag &= TERMINATE_LIST[i]();
+    }
+    return flag;
+}
+
 void entry(void) {
     ll_init_heap();
 
@@ -78,8 +97,10 @@ void entry(void) {
     printf ("Input a number:");
     scanf("%d", &num);
     printf ("%d\n", num);
+    scanf("%d", &num);
+    printf ("%d\n", num);
 
     //go_to_protect_mode();
 
-    terminate_drivers();
+    do_terminate();
 }

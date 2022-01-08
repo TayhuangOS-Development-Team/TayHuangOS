@@ -20,13 +20,80 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <string.h>
-#include "./printf.h"
+#include "printf.h"
+#include "heap.h"
+
+#define KBF_SZ (512)
+
+PRIVATE word key_buffer_front = 0;
+PRIVATE word key_buffer_tail = 0;
+PRIVATE addr_t key_buffer = NULL;
+
+PRIVATE bool terminate_keyboard(void) {
+    free(key_buffer);
+    key_buffer_front = key_buffer_tail = 0;
+    return true;
+}
+
+PRIVATE void init_key_buffer(void) {
+    key_buffer = alloc(KBF_SZ, false);
+    key_buffer_front = key_buffer_tail = 0;
+    register_terminater(terminate_keyboard);
+}
+
+PRIVATE bool can_backspace(void) {
+    return key_buffer_tail < key_buffer_front;
+}
+
+PRIVATE void wait_for_enter(void) {
+    char ch = 0;
+    do {
+        ch = getkey();
+        if (ch == '\b') {
+            if (can_backspace()) {
+                key_buffer_front += (KBF_SZ - 1);
+                key_buffer_front %= KBF_SZ;
+            }
+            continue;
+        }
+        set_heap_byte(key_buffer + (key_buffer_front ++), ch);
+        key_buffer_front %= KBF_SZ;
+    } while (ch != '\r' && ch != '\n');
+}
+
+PRIVATE int buffer_next(void) {
+    int res = get_heap_byte(key_buffer + (key_buffer_tail ++));
+    key_buffer_tail %= KBF_SZ;
+    return res;
+}
+
+PRIVATE void wait_for_input(void) {
+    if (key_buffer_tail >= key_buffer_front) {
+        wait_for_enter();
+    }
+}
 
 PUBLIC int getchar(void) {
+    if (key_buffer == NULL) {
+        init_key_buffer();
+    }
+    wait_for_input();
+    return buffer_next();
+}
+
+PUBLIC int getkey(void) {
     word ch;
     keyboard_driver.pc_handle(&keyboard_driver, KB_CMD_READ_KEY, &ch);
-    putchar(ch&0xFF);
-    if ((ch&0xFF) == '\r') putchar('\n');
+    if (isprint(ch&0xFF)) {
+        putchar(ch&0xFF);
+    }
+    else if ((ch&0xFF) == '\r') {
+        putchar('\n');
+        putchar('\r');
+    }
+    else if ((ch&0xFF) == '\b' && can_backspace()) {
+        putchar('\b');
+    }
     return ch & 0xFF;
 }
 

@@ -18,6 +18,7 @@
 
 #include "header.h"
 
+PUBLIC int getkey(void);
 PUBLIC int getchar(void);
 PUBLIC int scanf(const char* format, ...);
 typedef int(*rdkey_t)(void);

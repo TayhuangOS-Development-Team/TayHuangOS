@@ -34,6 +34,8 @@
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define LOWBIT(x) (x & (-x))
 #define TO2POW(num, x) ((num + x - 1) & (~(x - 1)))
+typedef bool(*terminater_t)(void);
+PUBLIC bool register_terminater(terminater_t terminater);
 
 static inline byte inb(word port) {
     byte data;

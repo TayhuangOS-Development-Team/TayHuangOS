@@ -66,7 +66,9 @@ PUBLIC void putchar(char ch) {
         print_x = 0;
     }
     else if (ch== '\b') {
-        print_x --;
+        if (print_x > 0) {
+            disp_char(' ', PRINT_COLOR, -- print_x, print_y);
+        }
     }
     else if(ch== '\f') {
         clrscr();
