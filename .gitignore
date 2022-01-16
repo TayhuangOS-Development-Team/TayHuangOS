@@ -2,3 +2,7 @@
 *.log
 *.o
 .vscode/
+bochsrc.bxrc
+bochsrc
+tayhuangOS.img
+bx_enh_dbg.ini
