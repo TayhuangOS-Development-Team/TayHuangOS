@@ -75,6 +75,7 @@ PRIVATE dword _random(dword seed) { //恶臭的随机数生成
     return a * x * x + b * x + c;
 }
 
+//result 属于 [min, max)
 PUBLIC int random(dword seed, int min, int max) {
     dword step = max - min;
     return _random(seed) % step + min;

@@ -25,3 +25,5 @@ DEF_CONSOLE_CMD(echo);
 DEF_CONSOLE_CMD(echoln);
 DEF_CONSOLE_CMD(shutdown);
 DEF_CONSOLE_CMD(help);
+DEF_CONSOLE_CMD(time);
+DEF_CONSOLE_CMD(random);

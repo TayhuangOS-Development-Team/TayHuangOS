@@ -16,6 +16,7 @@
 
 #include "commands.h"
 #include <string.h>
+#include "../tools.h"
 #include "../printf.h"
 #include "../scanf.h"
 #include "../intcall.h"
@@ -68,10 +69,35 @@ DEF_CONSOLE_CMD(shutdown) {
     return -1;
 }
 
+DEF_CONSOLE_CMD(time) {
+    struct time_t time;
+    struct date_t date;
+    get_time(&time);
+    get_date(&date);
+
+    printf("Current Time: %d/%d/%d %d:%d:%d\n", date.year, date.month, date.day, time.hour, time.minute, time.second);
+    return 0;
+}
+
+DEF_CONSOLE_CMD(random) {
+    int min, max;
+    scanf ("%d%d", &min, &max);
+    struct time_t time;
+    struct date_t date;
+    get_time(&time);
+    get_date(&date);
+    int seed = date.year * 365 + date.month * 30 + date.day + time.second + time.minute * 60 + time.hour * 24 + get_clock_time();
+    int choice = random(seed, min, max + 1);
+    printf ("Random Number: %d\n", choice);
+    return 0;
+}
+
 DEF_CONSOLE_CMD(help) {
     printf ("help: show help\n");
     printf ("echo [sentence]: write sentence into screen\n");
     printf ("echoln [sentence]: write sentence and \\n into screen\n");
     printf ("shutdown: power off\n");
+    printf ("time: print current time\n");
+    printf ("random [min] [max]: print random number\n");
     return 0;
 }

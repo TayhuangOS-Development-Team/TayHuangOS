@@ -158,6 +158,12 @@ PRIVATE void deal_cmd(void) {
     else if (! (strcmp(cmd, "help"))) {
         chkerr(CMD_NAME(help)(cmd));
     }
+    else if (! (strcmp(cmd, "time"))) {
+        chkerr(CMD_NAME(time)(cmd));
+    }
+    else if (! (strcmp(cmd, "random"))) {
+        chkerr(CMD_NAME(random)(cmd));
+    }
     else {
         printf ("unknown command \"%s\"!\n", cmd);
     }
