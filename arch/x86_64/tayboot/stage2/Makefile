@@ -6,17 +6,18 @@ REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototype
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
-DRIVER_C_SRC := ./drivers/vedio/vedio_driver ./drivers/memory/memory_driver ./drivers/disk/disk_driver ./drivers/keyboard/keyboard_driver \
-			  ./drivers/disk/filesystems/fs_fat16 ./drivers/disk/filesystem \
-			  ./drivers/driver ./drivers/drivers ./drivers/devices
+DRIVER_C_SRC := ./drivers/vedio/vedio_driver ./drivers/memory/memory_driver ./drivers/disk/disk_driver \
+				./drivers/keyboard/keyboard_driver \
+			    ./drivers/driver ./drivers/drivers ./drivers/devices \
+				./drivers/disk/filesystems/fs_fat16 ./drivers/disk/filesystem
 STDLIB_C_SRC := ./std/string ./std/ctype printf scanf
 PM_C_SRC := ./pm/entry ./pm/a20
 CONSOLE_C_SRC := ./console/console ./console/commands
-C_SRC := stage2_main intcall heap tools \
+C_SRC := stage2_main intcall buffer heap tools \
 	$(DRIVER_C_SRC) \
 	$(STDLIB_C_SRC) \
 	$(PM_C_SRC) \
-	$(CONSOLE_C_SRC)
+    $(CONSOLE_C_SRC)
 C_INCLUDE := -I "./std/"
 C_DEFS := -DREALMODE_CONSOLE_MAJOR_VERSION=1 -DREALMODE_CONSOLE_MINOR_VERSION=0 -DREALMODE_CONSOLE_REVISION_VERSION=0 -DREALMODE_CONSOLE_BUILD_VERSION=1
 ASM_SRC := stage2_entry io ./pm/jumping

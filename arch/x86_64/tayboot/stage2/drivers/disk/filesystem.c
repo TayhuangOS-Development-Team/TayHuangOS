@@ -15,12 +15,12 @@
 
 
 #include "filesystem.h"
-#include "../heap.h"
+#include "../buffer.h"
 #include "disk_driver.h"
 #include "filesystems/fs_fat16.h"
 
-PUBLIC addr_t recognize_file_system(pdriver disk_driver) {
-    addr_t sector_addr = alloc(512, false);
+PUBLIC void* recognize_file_system(pdriver disk_driver) {
+    addr_t sector_addr = alloc_buffer(512, false);
 
     APACK(dk, read_sector) pack;
     pack.dst = sector_addr;
@@ -28,8 +28,8 @@ PUBLIC addr_t recognize_file_system(pdriver disk_driver) {
     disk_driver->pc_handle(disk_driver, DK_CMD_READ_SECTOR, &pack);
 
     if (chk_is_fat16(sector_addr)) {
-        addr_t fs_fat16 = create_fat16_file_system(sector_addr);
-        free (sector_addr);
+        void* fs_fat16 = create_fat16_file_system(sector_addr);
+        free_buffer (sector_addr);
         return fs_fat16;
     }
     return NULL;

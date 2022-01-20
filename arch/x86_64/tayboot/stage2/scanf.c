@@ -21,7 +21,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "printf.h"
-#include "heap.h"
+#include "buffer.h"
 
 #define KBF_SZ (512)
 
@@ -30,7 +30,7 @@ PRIVATE word key_buffer_tail = 0;
 PRIVATE addr_t key_buffer = NULL;
 
 PRIVATE bool terminate_keyboard(void) {
-    free(key_buffer);
+    free_buffer(key_buffer);
     key_buffer_front = key_buffer_tail = 0;
     return true;
 }
@@ -40,7 +40,7 @@ PUBLIC void clear_buffer(void) {
 }
 
 PUBLIC void init_key_buffer(void) {
-    key_buffer = alloc(KBF_SZ, false);
+    key_buffer = alloc_buffer(KBF_SZ, false);
     key_buffer_front = key_buffer_tail = 0;
     register_terminater(terminate_keyboard);
 }
@@ -60,13 +60,13 @@ PRIVATE void wait_for_enter(void) {
             }
             continue;
         }
-        set_heap_byte(key_buffer + (key_buffer_front ++), ch);
+        set_buffer_byte(key_buffer + (key_buffer_front ++), ch);
         key_buffer_front %= KBF_SZ;
     } while (ch != '\r' && ch != '\n');
 }
 
 PRIVATE int buffer_next(void) {
-    int res = get_heap_byte(key_buffer + (key_buffer_tail ++));
+    int res = get_buffer_byte(key_buffer + (key_buffer_tail ++));
     key_buffer_tail %= KBF_SZ;
     return res;
 }
@@ -85,7 +85,7 @@ PUBLIC int getchar(void) {
 PUBLIC void backchar(int ch) {
     key_buffer_tail += (KBF_SZ - 1);
     key_buffer_tail %= KBF_SZ;
-    set_heap_byte(key_buffer + key_buffer_tail, ch);
+    set_buffer_byte(key_buffer + key_buffer_tail, ch);
 }
 
 PUBLIC int getkey(void) {

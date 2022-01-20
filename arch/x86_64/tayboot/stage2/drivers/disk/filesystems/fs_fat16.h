@@ -64,7 +64,7 @@ typedef struct {
 } fat16_file_t, *pfat16_file;
 
 PUBLIC bool chk_is_fat16(addr_t first_sector);
-PUBLIC addr_t create_fat16_file_system(addr_t first_sector);
-PUBLIC void print_fat16_file_system(addr_t fat16_fs);
+PUBLIC void* create_fat16_file_system(addr_t first_sector);
+PUBLIC void print_fat16_file_system(pfs_fat16 fat16_fs);
 PUBLIC word get_fat16_entry(word no, pdriver disk);
 PUBLIC void get_fat16_file_info(const char *filename, pdriver disk, pfat16_file file);

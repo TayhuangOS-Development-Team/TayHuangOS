@@ -15,6 +15,7 @@
 
 
 #include "disk_driver.h"
+#include "../../buffer.h"
 #include "../../heap.h"
 #include "../../intcall.h"
 #include "../../printf.h"
@@ -33,7 +34,7 @@ PRIVATE struct {
 } disk_address_packet;
 
 PRIVATE struct {
-    addr_t file_system;
+    void* file_system;
     dword drive_no;
     enum {
         DK_TY_FLOOPY,
@@ -76,7 +77,7 @@ PRIVATE void _read_sector(pdriver driver, sreg_t segment, addr_t offset, dword l
 }
 
 PUBLIC void read_sector(pdriver driver, addr_t buffer, dword lba_high, dword lba_low) {
-    _read_sector(driver, get_heap_seg(), buffer, lba_high, lba_low);
+    _read_sector(driver, get_buffer_seg(), buffer, lba_high, lba_low);
 }
 
 DEF_SUB_CMD(read_sector) {
@@ -85,7 +86,7 @@ DEF_SUB_CMD(read_sector) {
     return true;
 }
 
-PRIVATE addr_t get_file_system(pdriver driver) {
+PRIVATE void* get_file_system(pdriver driver) {
     for (int i = 0 ; i < disk_cnt ; i ++) {
         if (disk_infos[i].drive_no == driver->device->drive_no)
             return disk_infos->file_system;
@@ -94,14 +95,14 @@ PRIVATE addr_t get_file_system(pdriver driver) {
 }
 
 DEF_SUB_CMD(get_filesystem) {
-    *(addr_t*)pack = get_file_system(driver);
+    *(void**)pack = get_file_system(driver);
     return true;
 }
 
 DEF_SUB_CMD(load_file) {
     PAPACK(dk, load_file) args = (PAPACK(dk, load_file))pack;
-    addr_t fs = get_file_system(driver);
-    if (*(dword*)LDADDR(fs) == 0xD949FA99) {
+    void* fs = get_file_system(driver);
+    if (*(dword*)fs == 0xD949FA99) {
         fat16_file_t file;
         get_fat16_file_info(args->name, driver, &file);
         if (file.length == -1)
@@ -109,7 +110,7 @@ DEF_SUB_CMD(load_file) {
         word clus = file.first_clus;
         addr_t offset = args->offset;
         while (clus != 0xFFFF) {
-            _read_sector(driver, args->segment, offset, 0, clus + ((pfs_fat16)LDADDR(fs))->data_start);
+            _read_sector(driver, args->segment, offset, 0, clus + ((pfs_fat16)fs)->data_start);
             offset += 512;
             clus = get_fat16_entry(clus, driver);
         }

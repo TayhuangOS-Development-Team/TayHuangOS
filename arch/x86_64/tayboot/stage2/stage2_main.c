@@ -23,6 +23,7 @@
 #include "drivers/disk/disk_driver.h"
 #include "printf.h"
 #include "scanf.h"
+#include "buffer.h"
 
 #define MAX_TERMINATER_NUM (32)
 PRIVATE terminater_t TERMINATE_LIST[MAX_TERMINATER_NUM];
@@ -43,11 +44,13 @@ PUBLIC bool do_terminate(void) {
 }
 
 void entry(void) {
-    ll_init_heap();
+    ll_init_buffer();
 
     init_devices();
     init_drivers();
     clrscr();
+
+    init_buffer();
 
     init_heap();
 
@@ -57,6 +60,15 @@ void entry(void) {
 
     enter_console();
     //go_to_protect_mode();
+
+    // int* ptr = malloc(sizeof(int));
+    // *ptr = 2;
+    // printf ("%d\n", *ptr);
+    // *ptr = 4;
+    // printf ("%d\n", *ptr);
+    // free(ptr);
+
+    while (true);
 
     do_terminate();
 }
