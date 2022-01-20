@@ -83,6 +83,9 @@ PRIVATE void print_splash(void) {
 
 #define INTRO_PRINT_LINE 0
 
+PUBLIC char user_name[32] = "guest";
+PUBLIC bool logined = false;
+
 PRIVATE void print_intro(void) {
     word old_x = get_pos_x();
     word old_y = get_pos_y();
@@ -164,6 +167,9 @@ PRIVATE void deal_cmd(void) {
     else if (! (strcmp(cmd, "random"))) {
         chkerr(CMD_NAME(random)(cmd));
     }
+    else if (! (strcmp(cmd, "change_name"))) {
+        chkerr(CMD_NAME(change_name)(cmd));
+    }
     else {
         printf ("unknown command \"%s\"!\n", cmd);
     }
@@ -179,9 +185,14 @@ PUBLIC void enter_console(void) {
     while (true) {
         byte old_color = get_print_color();
 
-        set_print_color(0x0A);
+        if (! logined) {
+            set_print_color(0x0A);
+        }
+        else {
+            set_print_color(0x0C);
+        }
 
-        printf ("realmode:%s@%s>", "anonymous", "/");
+        printf ("realmode%c%s>", logined ? '@' : ':', user_name);
 
         set_print_color(old_color);
 

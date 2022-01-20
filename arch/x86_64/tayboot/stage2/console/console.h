@@ -19,3 +19,5 @@
 #include "../header.h"
 
 PUBLIC void enter_console(void);
+extern PUBLIC char user_name[32];
+extern PUBLIC bool logined;

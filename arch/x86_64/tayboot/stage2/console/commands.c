@@ -92,6 +92,13 @@ DEF_CONSOLE_CMD(random) {
     return 0;
 }
 
+extern PUBLIC char user_name[32];
+
+DEF_CONSOLE_CMD(change_name) {
+    scanf("%s", user_name);
+    return 0;
+}
+
 DEF_CONSOLE_CMD(help) {
     printf ("help: show help\n");
     printf ("echo [sentence]: write sentence into screen\n");
@@ -99,5 +106,6 @@ DEF_CONSOLE_CMD(help) {
     printf ("shutdown: power off\n");
     printf ("time: print current time\n");
     printf ("random [min] [max]: print random number\n");
+    printf ("change_name [new name]: change current user name\n");
     return 0;
 }
