@@ -16,6 +16,7 @@
 
 #include "keyboard_driver.h"
 #include "../../intcall.h"
+#include "../../printf.h"
 
 PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     if (driver->state != DS_UNINITIALIZE || device->type != DT_KEYBOARD)

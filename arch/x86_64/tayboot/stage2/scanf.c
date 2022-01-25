@@ -53,6 +53,9 @@ PRIVATE void wait_for_enter(void) {
     char ch = 0;
     do {
         ch = getkey();
+        if (ch == '\0') {
+            continue;
+        }
         if (ch == '\b') {
             if (can_backspace()) {
                 key_buffer_front += (KBF_SZ - 1);
@@ -88,18 +91,31 @@ PUBLIC void backchar(int ch) {
     set_buffer_byte(key_buffer + key_buffer_tail, ch);
 }
 
+PUBLIC bool print_key_typed = true;
+
 PUBLIC int getkey(void) {
     word ch;
     keyboard_driver.pc_handle(&keyboard_driver, KB_CMD_READ_KEY, &ch);
-    if (isprint(ch&0xFF)) {
-        putchar(ch&0xFF);
+    if (print_key_typed) {
+        if (isprint(ch&0xFF) || (ch&0xFF) == '\r' || (ch&0xFF) == '\n' ||
+                (ch&0xFF) == '\t' || (ch&0xFF) == '\v') {
+            putchar(ch&0xFF);
+        }
+        else if ((ch&0xFF) == '\b' && can_backspace()) {
+            putchar('\b');
+        }
     }
-    else if ((ch&0xFF) == '\r') {
-        putchar('\n');
-        putchar('\r');
-    }
-    else if ((ch&0xFF) == '\b' && can_backspace()) {
-        putchar('\b');
+    else {
+        if ((ch&0xFF) == '\b') {
+            if (can_backspace())
+                putchar('\b');
+        }
+        else if ((ch&0xFF) == '\n' || (ch&0xFF) == '\r') {
+            putchar('\n');
+        }
+        else {
+            putchar('*');
+        }
     }
     return ch & 0xFF;
 }
@@ -183,7 +199,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                     char ch = 0;
                     if (width > 0) {
                         while (width --) ch = rd_func();
-                        backchar(ch);
+                        bk_func(ch);
                     }
                     continue;
                 }
@@ -191,7 +207,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                 while (width --) {
                     *(ch ++) = rd_func();
                 }
-                backchar(*(ch - 1));
+                bk_func(*(ch - 1));
             }
             else if (*format == 'd') {
                 char buffer[100];
@@ -202,7 +218,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                     buffer[cnt ++] = ch;
                     ch = rd_func();
                 }
-                backchar(ch);
+                bk_func(ch);
                 if (flag1) continue;
                 buffer[cnt] = 0;
                 int value = atoi(buffer);
@@ -217,7 +233,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                     buffer[cnt ++] = ch;
                     ch = rd_func();
                 }
-                backchar(ch);
+                bk_func(ch);
                 if (flag1) continue;
                 buffer[cnt] = 0;
                 unsigned int value = atoui(buffer);
@@ -232,7 +248,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                     buffer[cnt ++] = ch;
                     ch = rd_func();
                 }
-                backchar(ch);
+                bk_func(ch);
                 if (flag1) continue;
                 buffer[cnt] = 0;
                 int value = atoi_8(buffer);
@@ -247,7 +263,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                     buffer[cnt ++] = ch;
                     ch = rd_func();
                 }
-                backchar(ch);
+                bk_func(ch);
                 if (flag1) continue;
                 buffer[cnt] = 0;
                 int value = atoi_16(buffer);
@@ -259,14 +275,14 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                 while (isspace(ch)) ch = rd_func();
                 if (flag1) {
                     while ((width --) && (!isspace(ch))) ch = rd_func();
-                    backchar(ch);
+                    bk_func(ch);
                     continue;
                 }
                 while ((width --) && (!isspace(ch))) {
                     *(str ++) = ch;
                     ch = rd_func();
                 }
-                backchar(ch);
+                bk_func(ch);
                 *str = '\0';
             }
             format ++;
@@ -304,4 +320,57 @@ PUBLIC int vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, ...) {
     va_end(args);
 
     return res;
+}
+
+PRIVATE FILE* current_fp;
+
+PRIVATE int __fgetchar(void) {
+    if (feof(current_fp)) return -1;
+    return get_buffer_byte(current_fp->file_buffer + (current_fp->rdpos ++));
+}
+
+PRIVATE void __fbkchar(int ch) {
+    current_fp->rdpos --;
+}
+
+PUBLIC int fgetc(FILE *file) {
+    current_fp = file;
+    return __fgetchar();
+}
+
+PUBLIC int fscanf(FILE *file, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    current_fp = file;
+
+    int res = _vscanf(__fbkchar, __fgetchar, format, args);
+
+    va_end(args);
+
+    return res;
+}
+
+PUBLIC void getline(char* str) {
+    char ch = getchar();
+    while (ch == '\n' || ch == '\r') {
+        ch = getchar();
+    }
+    while (ch != '\n' && ch != '\r') {
+        *(str ++) = ch;
+        ch = getchar();
+    }
+    *str = '\0';
+}
+
+PUBLIC void fgetline(FILE *file, char *str) {
+    char ch = fgetc(file);
+    while (ch == '\n' || ch == '\r') {
+        ch = fgetc(file);
+    }
+    while (ch != '\n' && ch != '\r' && (feof(file) == 0)) {
+        *(str ++) = ch;
+        ch = fgetc(file);
+    }
+    *str = '\0';
 }

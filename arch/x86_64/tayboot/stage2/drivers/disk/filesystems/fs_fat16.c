@@ -68,7 +68,7 @@ PUBLIC void* create_fat16_file_system(addr_t first_sector) {
     return fat16_fs;
 }
 
-PUBLIC void print_fat16_file_system(pfs_fat16 fat16_fs) {
+PUBLIC void print_fat16_file_system(const pfs_fat16 fat16_fs) {
     printf ("OEM name: %s\n", fat16_fs->oem_name);
     printf ("Bytes per sector: %d\n", fat16_fs->bytes_per_sector);
     printf ("Sectors per clus: %d\n", fat16_fs->sectors_per_clus);
@@ -104,13 +104,13 @@ PUBLIC word get_fat16_entry(word no, pdriver disk) {
     return result;
 }
 
-PUBLIC void get_fat16_file_info(const char *filename, pdriver disk, pfat16_file file) {
+PUBLIC word get_fat16_file_no(const char *filename, pdriver disk) {
     if (strlen(filename) != 11)
-        return;
+        return 0xFFFF;
     char name[12] = "";
     name[11] = 0;
     short entry_no = 0;
-    short sector_entry = -1;
+    short sector_entry = 0xFFFF;
     short offset_of_entry = 0;
     addr_t buffer = alloc_buffer(512, false);
     pfs_fat16 fs;
@@ -123,24 +123,122 @@ PUBLIC void get_fat16_file_info(const char *filename, pdriver disk, pfat16_file 
         offset_of_entry = (entry_no % fs->entries_per_sector) * FAT16_ROOT_ENTRY_SIZE;
         cp_from_buffer(buffer + offset_of_entry, name, 11);
         if (! strcmp(filename, name)) {
-            cp_from_buffer(buffer + offset_of_entry, &file->name, 11);
-            byte attribute = get_buffer_byte(buffer + offset_of_entry + 0xB);
-            file->attribute.read_only = attribute & 1;
-            file->attribute.hidden = (attribute >> 1) & 1;
-            file->attribute.system = (attribute >> 2) & 1;
-            file->attribute.vol = (attribute >> 3) & 1;
-            file->attribute.directory = (attribute >> 4) & 1;
-            file->attribute.archive = (attribute >> 5) & 1;
-            file->latest_modify_time = get_buffer_word(buffer + offset_of_entry + 0x16);
-            file->latest_modify_date = get_buffer_word(buffer + offset_of_entry + 0x18);
-            file->first_clus = get_buffer_word(buffer + offset_of_entry + 0x1A);
-            file->length = get_buffer_dword(buffer + offset_of_entry + 0x1C);
-            free_buffer (buffer);
-            return;
+            return entry_no;
         }
         entry_no ++;
     }
-    file->length = -1;
     free_buffer (buffer);
-    return;
+    return 0xFFFF;
+}
+
+PUBLIC void get_fat16_file_info_by_name(const char *filename, pdriver disk, pfat16_file file) {
+    word entry_no = get_fat16_file_no(filename, disk);
+    if (entry_no == 0xFFFF) {
+        file->length = -1;
+        return;
+    }
+    get_fat16_file_info(entry_no, disk, file);
+}
+
+PUBLIC void get_fat16_file_info(word entry_no, pdriver disk, pfat16_file file) {
+    addr_t buffer = alloc_buffer(512, false);
+    pfs_fat16 fs;
+    disk->pc_handle(disk, DK_CMD_GET_FILESYSTEM, &fs);
+    word sector_entry = entry_no / fs->entries_per_sector;
+    read_sector(disk, buffer, 0, sector_entry + fs->root_directory_start);
+    word offset_of_entry = (entry_no % fs->entries_per_sector) * FAT16_ROOT_ENTRY_SIZE;
+    cp_from_buffer(buffer + offset_of_entry, &file->name, 11);
+    byte attribute = get_buffer_byte(buffer + offset_of_entry + 0xB);
+    file->attribute.read_only = attribute & 1;
+    file->attribute.hidden = (attribute >> 1) & 1;
+    file->attribute.system = (attribute >> 2) & 1;
+    file->attribute.vol = (attribute >> 3) & 1;
+    file->attribute.directory = (attribute >> 4) & 1;
+    file->attribute.archive = (attribute >> 5) & 1;
+    file->latest_modify_time = get_buffer_word(buffer + offset_of_entry + 0x16);
+    file->latest_modify_date = get_buffer_word(buffer + offset_of_entry + 0x18);
+    file->first_clus = get_buffer_word(buffer + offset_of_entry + 0x1A);
+    file->length = get_buffer_dword(buffer + offset_of_entry + 0x1C);
+    free_buffer(buffer);
+}
+
+PUBLIC void set_fat16_entry(word no, word nxt, pdriver disk) {
+    addr_t buffer = alloc_buffer(512, false);
+    pfs_fat16 fs;
+    disk->pc_handle(disk, DK_CMD_GET_FILESYSTEM, &fs);
+    dword sector = (fs->fat1_start) + (no >> 8);
+    read_sector(disk, buffer, 0, sector);
+    set_buffer_word(buffer + (no & 0xFF) * 2, nxt);
+    save_sector(disk, buffer, 0, sector);
+    free_buffer(buffer);
+}
+
+PUBLIC word append_new_sector(word last, pdriver disk) {
+    word free = find_free_entry(disk);
+    set_fat16_entry(last, free, disk);
+    set_fat16_entry(free, 0xFF, disk);
+    return free;
+}
+
+PUBLIC void set_fat16_file_info(word entry_no, pdriver disk, pfat16_file file) {
+    addr_t buffer = alloc_buffer(512, false);
+    pfs_fat16 fs;
+    disk->pc_handle(disk, DK_CMD_GET_FILESYSTEM, &fs);
+    word sector_entry = entry_no / fs->entries_per_sector;
+    word offset_of_entry = (entry_no % fs->entries_per_sector) * FAT16_ROOT_ENTRY_SIZE;
+    read_sector(disk, buffer, 0, fs->root_directory_start + sector_entry);
+    cp_to_buffer(&file->name, buffer + offset_of_entry, 11);
+    set_buffer_byte(buffer + offset_of_entry + 0xB,
+        (file->attribute.read_only) |
+        (file->attribute.hidden << 1) | 
+        (file->attribute.system << 2) | 
+        (file->attribute.vol << 3) | 
+        (file->attribute.directory << 4) | 
+        (file->attribute.archive << 5));
+    set_buffer_word(buffer + offset_of_entry + 0x16, file->latest_modify_time);
+    set_buffer_word(buffer + offset_of_entry + 0x18, file->latest_modify_date);
+    set_buffer_word(buffer + offset_of_entry + 0x1A, file->first_clus);
+    set_buffer_dword(buffer + offset_of_entry + 0x1C, file->length);
+    save_sector(disk, buffer, 0, fs->root_directory_start + sector_entry);
+    free_buffer(buffer);
+}
+
+PUBLIC void set_fat16_file_info_by_name(const char *filename, pdriver disk, const pfat16_file file) {
+    word entry_no = get_fat16_file_no(filename, disk);
+    if (entry_no == 0xFFFF) {
+        file->length = 0xFFFF;
+        return;
+    }
+    set_fat16_file_info(entry_no, disk, file);
+}
+
+PUBLIC word find_free_file_entry(pdriver disk) {
+    fat16_file_t file;
+    pfs_fat16 fs;
+    disk->pc_handle(disk, DK_CMD_GET_FILESYSTEM, &fs);
+    for (int i = 0 ; i < fs->root_entries ; i ++) {
+        get_fat16_file_info(i, disk, &file);
+        if (file.name[0] == '\0') return i;
+    }
+    return 0xFFFF;
+}
+
+PUBLIC bool insert_fat16_file_info(pdriver disk, pfat16_file file) {
+    word entry_no = find_free_file_entry(disk);
+    if (entry_no == 0xFFFF) {
+        return false;
+    }
+    set_fat16_file_info(entry_no, disk, file);
+    return true;
+}
+
+PUBLIC word find_free_entry(pdriver disk) {
+    pfs_fat16 fs;
+    disk->pc_handle(disk, DK_CMD_GET_FILESYSTEM, &fs);
+    for (int i = 3 ; i < fs->fat_sectors * (512 / 2) ; i ++) {
+        if (get_fat16_entry(i, disk) == 0) {
+            return i;
+        }
+    }
+    return 0xFFFF;
 }

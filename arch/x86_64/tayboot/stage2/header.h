@@ -32,8 +32,9 @@
 #define MKDWORD(h, l) ((((dword)h) << 16) + (l))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
-#define LOWBIT(x) (x & (-x))
-#define TO2POW(num, x) ((num + x - 1) & (~(x - 1)))
+#define LOWBIT(x) ((x) & (-(x)))
+#define TO2POW(num, x) (((num) + (x) - 1) & (~((x) - 1)))
+#define abs(x) ((x) < 0 ? (-(x)) : (x))
 typedef bool(*terminater_t)(void);
 PUBLIC bool register_terminater(terminater_t terminater);
 PUBLIC bool do_terminate(void);

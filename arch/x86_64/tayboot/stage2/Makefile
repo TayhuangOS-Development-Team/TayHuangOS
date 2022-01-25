@@ -13,7 +13,7 @@ DRIVER_C_SRC := ./drivers/vedio/vedio_driver ./drivers/memory/memory_driver ./dr
 STDLIB_C_SRC := ./std/string ./std/ctype printf scanf
 PM_C_SRC := ./pm/entry ./pm/a20
 CONSOLE_C_SRC := ./console/console ./console/commands
-C_SRC := stage2_main intcall buffer heap tools \
+C_SRC := stage2_main intcall buffer heap tools file \
 	$(DRIVER_C_SRC) \
 	$(STDLIB_C_SRC) \
 	$(PM_C_SRC) \

@@ -17,7 +17,7 @@
 #include <string.h>
 #include <ctype.h>
 
-int strcmp(const char *str1, const char *str2) {
+int strcmp(const char* str1, const char* str2) {
     int res = 0;
     while (*str1) {
         res = (*str1) - (*str2);
@@ -33,13 +33,13 @@ int strcmp(const char *str1, const char *str2) {
     return 0;
 }
 
-int strlen(const char *str) {
+int strlen(const char* str) {
     int res = 0;
     while (*(str ++)) res ++;
     return res;
 }
 
-char* strcpy(char* dst, const char *src) {
+char* strcpy(char* dst, const char* src) {
     char* r = dst;
     while(*src != '\0') {
         *(r ++) = *(src ++);

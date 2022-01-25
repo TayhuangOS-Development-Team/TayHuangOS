@@ -16,9 +16,9 @@
 
 #pragma once
 
-int strcmp(const char *str1, const char *str2);
-int strlen(const char *str);
-char* strcpy(char* dst, const char *src);
+int strcmp(const char* str1, const char* str2);
+int strlen(const char* str);
+char* strcpy(char* dst, const char* src);
 int atoi(const char* str);
 int atoi_8(const char* str);
 int atoi_16(const char* str);

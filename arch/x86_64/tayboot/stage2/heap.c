@@ -65,6 +65,9 @@ PUBLIC void reset_heap(void) {
 }
 
 PRIVATE inline bool __query_using(void* ptr) {
+    if (ptr < HEAP_INFO.bottom || ptr > HEAP_INFO.top) {
+        return true;
+    }
     int no_of_ptr = HEAP_INFO.top - ptr;
     return (get_buffer_byte(HEAP_INFO.mem_map + (no_of_ptr >> 3)) >> (no_of_ptr & 0x7)) & 0x1;
 }

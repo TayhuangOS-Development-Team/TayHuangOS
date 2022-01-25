@@ -19,7 +19,7 @@
 #include "../header.h"
 
 #define CMD_NAME(x) __console_cmd_##x##__
-#define DEF_CONSOLE_CMD(x) PUBLIC int CMD_NAME(x)(const char* cmdname)
+#define DEF_CONSOLE_CMD(x) PUBLIC int CMD_NAME(x)(int argc, const char** argv)
 
 DEF_CONSOLE_CMD(echo);
 DEF_CONSOLE_CMD(echoln);
@@ -28,4 +28,10 @@ DEF_CONSOLE_CMD(help);
 DEF_CONSOLE_CMD(time);
 DEF_CONSOLE_CMD(random);
 DEF_CONSOLE_CMD(change_name);
+DEF_CONSOLE_CMD(reboot);
+DEF_CONSOLE_CMD(guess_number);
+DEF_CONSOLE_CMD(cls);
+DEF_CONSOLE_CMD(set_pwd);
+DEF_CONSOLE_CMD(login);
+DEF_CONSOLE_CMD(ls);
 extern PUBLIC bool logined;

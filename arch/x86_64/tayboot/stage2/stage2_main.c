@@ -21,9 +21,12 @@
 #include "pm/entry.h"
 #include "console/console.h"
 #include "drivers/disk/disk_driver.h"
+#include "drivers/disk/filesystems/fs_fat16.h"
 #include "printf.h"
 #include "scanf.h"
 #include "buffer.h"
+#include "file.h"
+#include <string.h>
 
 #define MAX_TERMINATER_NUM (32)
 PRIVATE terminater_t TERMINATE_LIST[MAX_TERMINATER_NUM];
@@ -44,6 +47,10 @@ PUBLIC bool do_terminate(void) {
 }
 
 void entry(void) {
+    screen_info.height = 25;
+    screen_info.width = 80;
+    screen_info.current_line = 0;
+    screen_info.scroll_line = 18;
     ll_init_buffer();
 
     init_devices();

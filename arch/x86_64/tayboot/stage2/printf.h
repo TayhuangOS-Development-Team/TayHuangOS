@@ -19,6 +19,13 @@
 #include "header.h"
 #include "file.h"
 
+struct {
+    int width;
+    int height;
+    int current_line;
+    int scroll_line;
+} screen_info;
+
 PUBLIC void disp_char(char ch, byte color, byte x, byte y);
 PUBLIC void change_pos(word x, word y);
 PUBLIC word get_pos_x(void);
@@ -32,4 +39,7 @@ PUBLIC void set_print_color(byte color);
 
 PUBLIC int vsprintf(char* buffer, const char* format, ...);
 PUBLIC int printf(const char* format, ...);
-PUBLIC void fprintf(FILE *file, const char *format, ...);
+PUBLIC int fprintf(FILE *file, const char *format, ...);
+
+PUBLIC void fputc(FILE *file, char ch);
+PUBLIC void scroll_screen(int offset);

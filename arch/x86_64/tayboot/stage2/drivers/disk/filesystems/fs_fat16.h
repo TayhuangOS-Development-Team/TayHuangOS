@@ -48,7 +48,7 @@ typedef struct {
 
 typedef struct {
     char name[12];
-    struct {
+    struct fat16_file_attribute {
         bool read_only : 1;
         bool hidden : 1;
         bool system : 1;
@@ -60,11 +60,20 @@ typedef struct {
     word latest_modify_time;
     word latest_modify_date;
     word first_clus;
-    dword length;
+    int length;
 } fat16_file_t, *pfat16_file;
 
 PUBLIC bool chk_is_fat16(addr_t first_sector);
 PUBLIC void* create_fat16_file_system(addr_t first_sector);
-PUBLIC void print_fat16_file_system(pfs_fat16 fat16_fs);
+PUBLIC void print_fat16_file_system(const pfs_fat16 fat16_fs);
 PUBLIC word get_fat16_entry(word no, pdriver disk);
-PUBLIC void get_fat16_file_info(const char *filename, pdriver disk, pfat16_file file);
+PUBLIC void get_fat16_file_info_by_name(const char *filename, pdriver disk, pfat16_file file);
+PUBLIC void get_fat16_file_info(word entry_no, pdriver disk, pfat16_file file);
+PUBLIC void set_fat16_entry(word no, word nxt, pdriver disk);
+PUBLIC void set_fat16_file_info_by_name(const char *filename, pdriver disk, const pfat16_file file);
+PUBLIC void set_fat16_file_info(word entry_no, pdriver disk, pfat16_file file);
+PUBLIC word find_free_file_entry(pdriver disk);
+PUBLIC bool insert_fat16_file_info(pdriver disk, pfat16_file file);
+PUBLIC word get_fat16_file_no(const char *filename, pdriver disk);
+PUBLIC word append_new_sector(word last, pdriver disk);
+PUBLIC word find_free_entry(pdriver disk);
