@@ -21,6 +21,7 @@
 #define CMD_NAME(x) __console_cmd_##x##__
 #define DEF_CONSOLE_CMD(x) PUBLIC int CMD_NAME(x)(int argc, const char** argv)
 
+PUBLIC void init_variables(void);
 DEF_CONSOLE_CMD(echo);
 DEF_CONSOLE_CMD(echoln);
 DEF_CONSOLE_CMD(shutdown);
@@ -34,4 +35,5 @@ DEF_CONSOLE_CMD(cls);
 DEF_CONSOLE_CMD(set_pwd);
 DEF_CONSOLE_CMD(login);
 DEF_CONSOLE_CMD(ls);
+DEF_CONSOLE_CMD(set);
 extern PUBLIC bool logined;

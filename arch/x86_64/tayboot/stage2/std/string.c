@@ -18,6 +18,14 @@
 #include <ctype.h>
 
 int strcmp(const char* str1, const char* str2) {
+    int len1 = strlen(str1);
+    int len2 = strlen(str2);
+    if (len1 != len2) {
+        if (len1 < len2)
+            return -1;
+        else 
+            return 1;
+    }
     int res = 0;
     while (*str1) {
         res = (*str1) - (*str2);
@@ -44,6 +52,7 @@ char* strcpy(char* dst, const char* src) {
     while(*src != '\0') {
         *(r ++) = *(src ++);
     }
+    *r = '\0';
     return dst;
 }
 

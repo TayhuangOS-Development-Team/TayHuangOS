@@ -37,6 +37,7 @@ int isupper(int ch);
 int islower(int ch);
 int isalpha(int ch);
 int isdigit(int ch);
+int isalnum(int ch);
 int isblank(int ch);
 int iscntrl(int ch);
 int isprint(int ch);

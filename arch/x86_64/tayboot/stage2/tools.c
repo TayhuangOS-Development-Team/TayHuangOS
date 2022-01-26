@@ -80,3 +80,17 @@ PUBLIC int random(dword seed, int min, int max) {
     dword step = max - min;
     return _random(seed) % step + min;
 }
+
+PUBLIC char escape(const char* sentence) {
+    char ch = *sentence;
+    switch (ch) {
+    case 'n': return '\n';
+    case 'r': return '\r';
+    case 'v': return '\v';
+    case 't': return '\t';
+    case '@': return '\"';
+    case '\\': return '\\';
+    case '$': return '$';
+    }
+    return *sentence;
+}

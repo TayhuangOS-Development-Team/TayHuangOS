@@ -121,11 +121,16 @@ PRIVATE void print_time(void) {
 
 PRIVATE void chkerr(int err_code) {
     if (err_code == 0) return;
+    byte old_color = get_print_color();
+    set_print_color(0x0C);
     if (err_code == 1 || err_code == -1) {
         printf ("Abnormal program exit!(Exit code %d)\n", err_code);
     }
     else if (err_code == 2) {
         printf ("Program exit because of wrong action!\n");
+    }
+    else if (err_code == 3) {
+        printf ("Wrong arguments!\n");
     }
     else if (err_code == -2) {
         printf ("Insufficient permissions!\n");
@@ -136,6 +141,7 @@ PRIVATE void chkerr(int err_code) {
     else {
         printf ("Abnormal program exit with custom exit code (%d)\n", err_code);
     }
+    set_print_color(old_color);
 }
 
 PRIVATE void get_argn(char *arg, int size) {
@@ -171,8 +177,8 @@ PRIVATE void get_argn(char *arg, int size) {
 PRIVATE int get_commandsn(char** args, int size) {
     int i = 0;
     while ((size --) > 0) {
-        args[i] = malloc(64);
-        get_argn(args[i ++], 64);
+        args[i] = malloc(96);
+        get_argn(args[i ++], 96);
         char ch = getchar();
         if (ch == '\n' || ch == '\r') {
             break;
@@ -184,6 +190,10 @@ PRIVATE int get_commandsn(char** args, int size) {
 PRIVATE void deal_cmd(void) {
     char** _args = calloc(10, sizeof(char*));
     int num = get_commandsn(_args, 10);
+    if (num == 0) {
+        free (_args);
+        return;
+    }
     const char** args = (const char**)_args;
     if (! (strcmp(args[0], "echo"))) {
         chkerr(CMD_NAME(echo)(num, args));
@@ -224,6 +234,9 @@ PRIVATE void deal_cmd(void) {
     else if (! (strcmp(args[0], "ls"))) {
         chkerr(CMD_NAME(ls)(num, args));
     }
+    else if (! (strcmp(args[0], "set"))) {
+        chkerr(CMD_NAME(set)(num, args));
+    }
     else {
         printf ("unknown command \"%s\"!\n", args[0]);
         printf ("Parse result:\n");
@@ -233,6 +246,7 @@ PRIVATE void deal_cmd(void) {
             printf ("        [%d]:%s\n", i - 1, args[i]);
         }
     }
+    free (_args);
     clear_buffer();
 }
 

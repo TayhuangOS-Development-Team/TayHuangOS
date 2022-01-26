@@ -17,7 +17,7 @@
 #include "commands.h"
 #include <string.h>
 #include "../heap.h"
-#include "ctype.h"
+#include <ctype.h>
 #include "../tools.h"
 #include "../printf.h"
 #include "../scanf.h"
@@ -25,19 +25,138 @@
 #include "../drivers/disk/disk_driver.h"
 #include "../drivers/drivers.h"
 
+typedef struct {
+    char* name;
+    char* value;
+    void* nxt;
+} cmd_var;
+
+PRIVATE cmd_var* cmd_variables;
+
+PRIVATE void delete_variable(char *name) {
+    cmd_var* current_var = cmd_variables;
+    if (cmd_variables->nxt == NULL) return;
+    while (strcmp(((cmd_var*)current_var->nxt)->name, name)) {
+        current_var = current_var->nxt;
+    }
+    cmd_var* del_var = current_var->nxt;
+    current_var->nxt = del_var->nxt;
+    free(del_var->name);
+    free(del_var->value);
+    free(del_var);
+}
+
+PRIVATE bool terminate_variables(void) {
+    while (cmd_variables->nxt != NULL) {
+        cmd_var* nxt = cmd_variables->nxt;
+        delete_variable(nxt->name);
+    }
+    free(cmd_variables);
+    return true;
+}
+
+PUBLIC void init_variables(void) {
+    cmd_variables = malloc(sizeof(cmd_var));
+    register_terminater(terminate_variables);
+}
+
+PRIVATE void insert_variable(const char *name, const char *value) {
+    cmd_var* current_var = cmd_variables;
+    while (current_var->nxt != NULL) {
+        current_var = current_var->nxt;
+    }
+    current_var->nxt = malloc(sizeof(cmd_var));
+    cmd_var* new_var = current_var->nxt;
+    new_var->name = malloc(strlen(name) + 1);
+    strcpy(new_var->name, name);
+    new_var->value = malloc(strlen(value) + 1);
+    strcpy(new_var->value, value);
+}
+
+cmd_var* lookup_variable(const char* name) {
+    cmd_var* current_var = cmd_variables->nxt;
+    while (current_var != NULL) {
+        if (strcmp(current_var->name, name) == 0) {
+            break;
+        }
+        current_var = current_var->nxt;
+    }
+    return current_var;
+}
+
+PRIVATE void set_variable(const char *name, const char *value) {
+    cmd_var *var = lookup_variable(name);
+    if (var == NULL) {
+        return;
+    }
+    free(var->value);
+    var->value = malloc(strlen(value) + 1);
+    strcpy(var->value, value);
+}
+
+PRIVATE const char* rd_var_namen(const char* src, char* output, int n) {
+    while (isalnum(*src) && (n > 0)) {
+        *output = *src;
+        src ++;
+        output ++;
+        n --;
+    }
+    *output = '\0';
+    return src;
+}
+
+PRIVATE void do_echo(const char* sentence) {
+    while (*sentence != '\0') {
+        if (*sentence == '\\') {
+            sentence ++;
+            if (*sentence != '\0') {
+                putchar(escape(sentence));
+            }
+            else {
+                break;
+            }
+            sentence ++;
+        }
+        else if (*sentence == '$') {
+            char name[20];
+            sentence = rd_var_namen(++ sentence, name, 19);
+            if (lookup_variable(name) == NULL) {
+                printf (" ");
+            }
+            else {
+                printf ("%s", lookup_variable(name)->value);
+            }
+            if (*sentence == '$') {
+                sentence ++; //实现$name$
+            }
+        }
+        else {
+            putchar (*sentence);
+            sentence ++;
+        }
+    }
+}
+
 DEF_CONSOLE_CMD(echo) {
-    printf ("%s", argv[1]);
+    if (argc != 2)
+        return 3;
+    do_echo(argv[1]);
     return 0;
 }
 
 DEF_CONSOLE_CMD(echoln) {
-    printf ("%s\n", argv[1]);
+    if (argc != 2)
+        return 3;
+    do_echo(argv[1]);
+    printf ("\n");
     return 0;
 }
 
 DEF_CONSOLE_CMD(shutdown) {
     if (! logined)
         return -2;
+    if (argc != 1)
+        return 3;
     intargs_t args;
     reg_collect_t in_regs, out_regs;
     in_regs.eax = MKDWORD(0, 0x5307);
@@ -51,6 +170,8 @@ DEF_CONSOLE_CMD(shutdown) {
 }
 
 DEF_CONSOLE_CMD(time) {
+    if (argc != 1)
+        return 3;
     struct time_t time;
     struct date_t date;
     get_time(&time);
@@ -61,6 +182,8 @@ DEF_CONSOLE_CMD(time) {
 }
 
 DEF_CONSOLE_CMD(random) {
+    if (argc != 3)
+        return 3;
     int min, max;
     min = atoi(argv[1]);
     max = atoi(argv[2]);
@@ -79,6 +202,8 @@ extern PUBLIC char user_name[32];
 DEF_CONSOLE_CMD(change_name) {
     if (! logined)
         return -2;
+    if (argc != 1)
+        return 3;
     strcpy(user_name, argv[1]);
     return 0;
 }
@@ -97,11 +222,15 @@ DEF_CONSOLE_CMD(help) {
 DEF_CONSOLE_CMD(reboot) {
     if (! logined)
         return -2;
+    if (argc != 1)
+        return 3;
     asmv ("ljmp $0xffff, $0");
     return -1;
 }
 
 DEF_CONSOLE_CMD(guess_number) {
+    if (argc != 1)
+        return 3;
     struct time_t time;
     struct date_t date;
     get_time(&time);
@@ -152,6 +281,8 @@ DEF_CONSOLE_CMD(guess_number) {
 }
 
 DEF_CONSOLE_CMD(cls) {
+    if (argc != 1)
+        return 3;
     clrscr();
     return 0;
 }
@@ -176,6 +307,8 @@ PUBLIC dword hash_pwd(const char* pwd) {
 }
 
 DEF_CONSOLE_CMD(set_pwd) {
+    if (argc != 1)
+        return 3;
     if (! logined)
         return -2;
     FILE *fp = fopen("REALMODEPWD", "w");
@@ -218,6 +351,8 @@ DEF_CONSOLE_CMD(set_pwd) {
 }
 
 DEF_CONSOLE_CMD(login) {
+    if (argc != 1)
+        return 3;
     if (logined){
         printf ("success!welcome back!\n");
         logined = true;
@@ -251,6 +386,8 @@ DEF_CONSOLE_CMD(login) {
 }
 
 DEF_CONSOLE_CMD(ls) {
+    if (argc != 1)
+        return 3;
     char file_name[12];
     APACK(dk, foreach_file) arg;
     arg.next = 0;
@@ -262,5 +399,15 @@ DEF_CONSOLE_CMD(ls) {
     }
     while (file_name[0] != '\0');
     printf ("\n");
+    return 0;
+}
+
+DEF_CONSOLE_CMD(set) {
+    if (argc != 3)
+        return 3;
+    if (lookup_variable(argv[1]) == NULL)
+        insert_variable(argv[1], argv[2]);
+    else
+        set_variable(argv[1], argv[2]);
     return 0;
 }

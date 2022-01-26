@@ -37,3 +37,4 @@ PUBLIC void get_date(struct date_t *dt);
 PUBLIC byte bcd2num4(byte bcd);
 PUBLIC byte bcd2num8(byte bcd);
 PUBLIC int random(dword seed, int min, int max);
+PUBLIC char escape(const char* sentence);

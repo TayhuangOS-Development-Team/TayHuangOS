@@ -34,6 +34,10 @@ int isdigit(int ch) {
     return _macro_isdigit(ch);
 }
 
+int isalnum(int ch) {
+    return _macro_isalnum(ch);
+}
+
 int isblank(int ch) {
     return _macro_isblank(ch);
 }
