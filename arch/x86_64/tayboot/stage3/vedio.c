@@ -34,10 +34,20 @@ PUBLIC void draw_pixel(int pos_x, int pos_y, color_rgb color) {
     *(DPINFO.framebuffer + position * 3 + 2) = color.r;
 }
 
+PUBLIC void draw_rectangle(int lu_x, int lu_y, int rd_x, int rd_y, color_rgb color) {
+    for (int i = lu_x ; i < rd_x ; i ++) {
+        for (int j = lu_y ; j < rd_y ; j ++) {
+            draw_pixel(i, j, color);
+            draw_pixel(i, j, color);
+            draw_pixel(i, j, color); //for test
+        }
+    }
+}
+
 PUBLIC void draw_character(int pos_x, int pos_y, char ch, byte color) {
     if (DPINFO.type != DPM_CHARACTER)
         return;
-    int position = pos_y * DPINFO.screen_width + pos_x;
+    qword position = pos_y * DPINFO.screen_width + pos_x;
     *(DPINFO.framebuffer + position * 2) = ch;
     *(DPINFO.framebuffer + position * 2 + 1) = color;
 }

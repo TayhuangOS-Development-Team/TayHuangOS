@@ -71,8 +71,8 @@ PRIVATE void init_boot_args(void) {
     void* framebuffer = enable_graphic();
     if (framebuffer) {
         boot_args.is_graphic_mode = true;
-        boot_args.screen_height = 1024;
-        boot_args.screen_width = 768;
+        boot_args.screen_height = 768;
+        boot_args.screen_width = 1024;
         boot_args.framebuffer = framebuffer;
     }
     else {
@@ -101,7 +101,7 @@ PUBLIC void go_to_protect_mode(void) {
     }
     //关中断
     asmv ("cli");
-    outb(CMOS_RAM_ADR, 0x80);
+    outb(CMOS_RAM_ADDRESS, 0x80);
 	io_delay();
     //重置协处理器
     outb(CO_CPU_0, 0);

@@ -47,5 +47,7 @@ struct DP_INFO {
 extern struct DP_INFO DPINFO;
 
 PUBLIC void init_vedio(int screen_width, int screen_height, int type, char* framebuffer);
+PUBLIC void swap_buffer(void);
 PUBLIC void draw_pixel(int pos_x, int pos_y, color_rgb color);
+PUBLIC void draw_rectangle(int lu_x, int lu_y, int rd_x, int rd_y, color_rgb color);
 PUBLIC void draw_character(int pos_x, int pos_y, char ch, byte color);

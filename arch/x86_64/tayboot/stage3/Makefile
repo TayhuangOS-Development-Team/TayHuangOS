@@ -7,7 +7,7 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
 STD_C_SRC := std/ctype std/string
-C_SRC := stage3_main vedio printf int_handlers init \
+C_SRC := stage3_main vedio printf int_handlers init memory \
 		$(STD_C_SRC)
 ASM_SRC := stage3_entry _int_handlers
 C_DEFS := $(ARCHDEF)

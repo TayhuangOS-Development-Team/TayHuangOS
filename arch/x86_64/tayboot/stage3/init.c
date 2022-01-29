@@ -35,20 +35,20 @@ PUBLIC void init_gdt(void) {
 }
 
 PUBLIC void init_8259A(void) {
-    outb (M_8042A_CTL, 0x11);
-    outb (S_8042A_CTL, 0x11);
+    outb (M_8042A_CONTROL, 0x11);
+    outb (S_8042A_CONTROL, 0x11);
 
-    outb (M_8042A_CTLMASK, INT_VECTOR_IRQ0);
-    outb (S_8042A_CTLMASK, INT_VECTOR_IRQ8);
+    outb (M_8042A_CONTROLMASK, INT_VECTOR_IRQ0);
+    outb (S_8042A_CONTROLMASK, INT_VECTOR_IRQ8);
 
-    outb (M_8042A_CTLMASK, 0x4);
-    outb (S_8042A_CTLMASK, 0x2);
+    outb (M_8042A_CONTROLMASK, 0x4);
+    outb (S_8042A_CONTROLMASK, 0x2);
 
-    outb (M_8042A_CTLMASK, 0x1);
-    outb (S_8042A_CTLMASK, 0x1);
+    outb (M_8042A_CONTROLMASK, 0x1);
+    outb (S_8042A_CONTROLMASK, 0x1);
     
-    outb (M_8042A_CTLMASK, 0xFF);
-    outb (S_8042A_CTLMASK, 0xFF);
+    outb (M_8042A_CONTROLMASK, 0xFF);
+    outb (S_8042A_CONTROLMASK, 0xFF);
 }
 
 PUBLIC void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) {
