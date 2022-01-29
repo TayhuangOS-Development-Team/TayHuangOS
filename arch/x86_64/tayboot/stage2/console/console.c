@@ -237,6 +237,9 @@ PRIVATE void deal_cmd(void) {
     else if (! (strcmp(args[0], "set"))) {
         chkerr(CMD_NAME(set)(num, args));
     }
+    else if (! (strcmp(args[0], "goto_os"))) {
+        chkerr(CMD_NAME(goto_os)(num, args));
+    }
     else {
         printf ("unknown command \"%s\"!\n", args[0]);
         printf ("Parse result:\n");

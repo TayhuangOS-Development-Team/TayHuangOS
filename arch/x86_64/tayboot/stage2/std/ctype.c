@@ -7,7 +7,7 @@
  *
  * Author: Flysong
  *
- * kernel/boot/stage2/std/ctype.h
+ * kernel/boot/lib/std/ctype.h
  *
  * Standard lib ctype.h source here
  */

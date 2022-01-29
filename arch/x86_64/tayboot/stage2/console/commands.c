@@ -24,6 +24,7 @@
 #include "../intcall.h"
 #include "../drivers/disk/disk_driver.h"
 #include "../drivers/drivers.h"
+#include "../pm/entry.h"
 
 typedef struct {
     char* name;
@@ -410,4 +411,10 @@ DEF_CONSOLE_CMD(set) {
     else
         set_variable(argv[1], argv[2]);
     return 0;
+}
+
+DEF_CONSOLE_CMD(goto_os) {
+    clrscr();
+    go_to_protect_mode();
+    return -1;
 }

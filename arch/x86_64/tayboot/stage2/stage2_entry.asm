@@ -9,7 +9,7 @@
 ;
 ; kernel/boot/stage2/stage2_entry.asm
 ;
-; Stage entry here
+; Stage2 entry here
 ;
 
 

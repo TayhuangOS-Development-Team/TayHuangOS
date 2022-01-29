@@ -19,12 +19,14 @@
 #include "header.h"
 #include "file.h"
 
-struct {
+struct screen_info_t{
     int width;
     int height;
     int current_line;
     int scroll_line;
-} screen_info;
+};
+
+extern struct screen_info_t screen_info;
 
 PUBLIC void disp_char(char ch, byte color, byte x, byte y);
 PUBLIC void change_pos(word x, word y);

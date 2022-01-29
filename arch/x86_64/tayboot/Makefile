@@ -11,11 +11,13 @@ build:
 	$(ASM) boot.asm -o $(BOOT_OUTPUT)
 	$(ASM) loader.asm -o $(LOADER_OUTPUT)
 	cd stage2 ; make build
+	cd stage3 ; make build
 
 .PHONY: clean
 clean:
 	${RM} $(BOOT_OUTPUT) $(LOADER_OUTPUT)
 	cd stage2 ; make clean
+	cd stage3 ; make clean
 
 .PHONY: image
 image:
@@ -23,3 +25,4 @@ image:
 	sudo mount -o loop $(IMG) /mnt/tayhuangOS
 	sudo cp $(LOADER_OUTPUT) /mnt/tayhuangOS
 	cd stage2 ; make image
+	cd stage3 ; make image

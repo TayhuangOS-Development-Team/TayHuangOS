@@ -18,4 +18,9 @@
 
 #include "../header.h"
 
-PUBLIC void go_to_protect_mode(dword entrypoint);
+#define STAGE3_BIN_SEGMENT 0x1000
+#define STAGE3_BIN_OFFSET 0x0000
+#define STAGE3_SEGMENT 0x0000
+
+PUBLIC void go_to_protect_mode(void);
+PUBLIC void* load_stage3(void);

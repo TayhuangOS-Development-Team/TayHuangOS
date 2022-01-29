@@ -18,10 +18,10 @@
 #include "drivers/devices.h"
 
 #include "heap.h"
-#include "pm/entry.h"
 #include "console/console.h"
 #include "drivers/disk/disk_driver.h"
 #include "drivers/disk/filesystems/fs_fat16.h"
+#include "pm/entry.h"
 #include "printf.h"
 #include "scanf.h"
 #include "buffer.h"
@@ -65,17 +65,11 @@ void entry(void) {
 
     init_key_buffer();
 
+#ifdef GOTO_OS_AUTO
+    go_to_protect_mode();
+#else
     enter_console();
-    //go_to_protect_mode();
-
-    // int* ptr = malloc(sizeof(int));
-    // *ptr = 2;
-    // printf ("%d\n", *ptr);
-    // *ptr = 4;
-    // printf ("%d\n", *ptr);
-    // free(ptr);
-
-    while (true);
+#endif
 
     do_terminate();
 }

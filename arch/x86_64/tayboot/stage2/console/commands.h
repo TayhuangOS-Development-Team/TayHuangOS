@@ -36,4 +36,5 @@ DEF_CONSOLE_CMD(set_pwd);
 DEF_CONSOLE_CMD(login);
 DEF_CONSOLE_CMD(ls);
 DEF_CONSOLE_CMD(set);
+DEF_CONSOLE_CMD(goto_os);
 extern PUBLIC bool logined;

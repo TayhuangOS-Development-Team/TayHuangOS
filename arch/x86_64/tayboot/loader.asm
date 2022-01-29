@@ -21,39 +21,6 @@ start:
     mov es, ax
     mov ss, ax
     mov sp, 0x0100
-; %define ENABLE_GRAPH
-; %define ENABLE_256C_GRAPH_MODE
-
-%ifdef ENABLE_GRAPH
-    %ifdef ENABLE_16C_GRAPH_MODE
-        mov ax, 0x0012
-    %endif
-    %ifdef ENABLE_256C_GRAPH_MODE
-        mov ax, 0x0013
-    %endif
-    %ifdef ENABLE_MULTI_COLOR_GRAPH_MODE
-        mov ax, 0x0042
-    %endif
-    int 0x10
-%endif
-
-;     mov cx, 10
-;     mov ah, 0x0C
-;     mov al, 0x7f
-; .c:
-;     mov dx, 10
-;     cmp cx, 40
-;     je .d
-; .a:
-;     cmp dx, 40
-;     je .b
-;     int 0x10
-;     inc dx
-;     jmp .a
-; .b:
-;     inc cx
-;     jmp .c
-; .d:
 
     call ClrScreen
 

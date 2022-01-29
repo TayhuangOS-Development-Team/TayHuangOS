@@ -131,8 +131,10 @@ DEF_SUB_CMD(load_file) {
     if (*(dword*)fs == 0xD949FA99) {
         fat16_file_t file;
         get_fat16_file_info_by_name(args->name, driver, &file);
-        if (file.length == -1)
+        if (file.length == -1) {
+            printf ("!");
             return false;
+        }
         word clus = file.first_clus;
         addr_t offset = args->offset;
         while (clus != 0xFFFF) {

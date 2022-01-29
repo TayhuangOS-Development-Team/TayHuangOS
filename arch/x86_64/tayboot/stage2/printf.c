@@ -24,6 +24,8 @@
 #include <string.h>
 #include "buffer.h"
 
+PUBLIC struct screen_info_t screen_info;
+
 PRIVATE byte print_color = 0x0F;
 
 PUBLIC byte get_print_color(void) {

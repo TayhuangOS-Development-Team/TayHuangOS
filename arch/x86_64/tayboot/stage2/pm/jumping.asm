@@ -17,7 +17,7 @@
 [SECTION .text]
 [BITS 16]
 global the_finally_jump
-the_finally_jump: ;void the_finally_jump(dword entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector)
+the_finally_jump: ;void the_finally_jump(dword entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void* boot_args)
     xor ebx, ebx
     mov bx, cs
     shl ebx, 4
@@ -28,6 +28,7 @@ the_finally_jump: ;void the_finally_jump(dword entrypoint, sreg_t cs_selector, s
     mov word [.jmp_seg], cx ;cs -> cs_selector
     mov cx, word [esp + 8] ;cx -> ds_selector
     mov di, word [esp + 12] ;di -> tss_selector
+    mov edx, dword [esp + 16] ;edx -> boot_args
 
     mov ebx, cr0
     or ebx, 1
@@ -49,16 +50,19 @@ after_the_jump:
     mov es, cx
     mov fs, cx
     mov gs, cx
+    mov ss, cx
+    mov esp, eax
+    sub esp, 0x20
+    mov ebp, esp
 
     ltr di ;欺骗CPU
 
-    xor ebx, ebx
+    mov ebx, edx
+
     xor ecx, ecx
     xor edx, edx
     xor esi, esi
     xor edi, edi
-    xor ebp, ebp
-    xor esp, esp
 
     lldt dx ;欺骗CPU
 
