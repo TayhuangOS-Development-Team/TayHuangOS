@@ -16,13 +16,14 @@
 
 #include "entry.h"
 #include "a20.h"
-#include "gdt.h"
+#include <descs.h>
 #include "../printf.h"
 #include "../intcall.h"
 #include "vesa.h"
 #include "../drivers/drivers.h"
 #include "../drivers/memory/memory_driver.h"
 #include <boot_args.h>
+#include <ports.h>
 
 #define EMPTY_DESC_NO (0)
 #define CS_DESC_NO (1)
@@ -100,12 +101,12 @@ PUBLIC void go_to_protect_mode(void) {
     }
     //关中断
     asmv ("cli");
-    outb(0x70, 0x80);
+    outb(CMOS_RAM_ADR, 0x80);
 	io_delay();
     //重置协处理器
-    outb(0xF0, 0);
+    outb(CO_CPU_0, 0);
 	io_delay();
-	outb(0xF1, 0);
+	outb(CO_CPU_1, 0);
 	io_delay();
     //设置gdt
     setup_gdt();

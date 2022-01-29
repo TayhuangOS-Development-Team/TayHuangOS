@@ -16,6 +16,7 @@
 
 #include "a20.h"
 #include "../intcall.h"
+#include <ports.h>
 
 #define A20_TEST_ADDRESS (0x80 << 2)
 #define A20_FAST_TEST_TIME (2 << 4)
@@ -75,7 +76,7 @@ PUBLIC bool empty_8042(void) {//引用自linux
 
     while (loop_time --) {
         io_delay();
-        b8 status = inb(0x64);
+        b8 status = inb(KEYBOARD_8042_STATUS);
         if (status == 0xFF) {
             if (! (-- ff_time)) {
                 return false;
@@ -83,7 +84,7 @@ PUBLIC bool empty_8042(void) {//引用自linux
         }
         if (status & 1) {
             io_delay();
-            inb(0x60);
+            inb(KEYBOARD_8042_DATA0);
         }
         else if (!(status & 2))
             return true;
@@ -108,23 +109,23 @@ PUBLIC void enable_a20_by_bios(void) {//参考自linux
 PUBLIC void enable_a20_by_8042(void) {//引用自linux
     empty_8042();
 
-    outb(0x64, 0xD1);
+    outb(KEYBOARD_8042_STATUS, 0xD1);
     empty_8042();
 
-    outb(0x60, 0xDF);
+    outb(KEYBOARD_8042_DATA0, 0xDF);
     empty_8042();
 
-    outb(0xff, 0x64);
+    outb(CO_CPU_F, 0x64);
     empty_8042();
 }
 
 PUBLIC void enable_a20_by_portA(void) {//引用自linux
     b8 port_a;
 
-    port_a = inb(0x92);
+    port_a = inb(PORT_A);
     port_a = (port_a | 0x02) & ~0x01;
 
-    outb(0x92, port_a);
+    outb(PORT_A, port_a);
 }
 
 #define MAX_TRY_TIME (0xFF)

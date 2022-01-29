@@ -6,9 +6,11 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
-C_SRC := stage3_main std/ctype std/string vedio printf
-ASM_SRC := stage3_entry
-C_DEFS :=
+STD_C_SRC := std/ctype std/string
+C_SRC := stage3_main vedio printf int_handlers init \
+		$(STD_C_SRC)
+ASM_SRC := stage3_entry _int_handlers
+C_DEFS := $(ARCHDEF)
 C_INCLUDE := -I"../include/std/" -I"../include/tayhuang/"
 
 .PHONY: build
@@ -33,4 +35,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(STAGE3_OUPUT) /mnt/tayhuangBoot
+	sudo cp $(STAGE3_OUPUT) $(IMG_MNT)

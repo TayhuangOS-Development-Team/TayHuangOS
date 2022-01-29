@@ -1,5 +1,7 @@
 ARCHITECTURE := x86_64
 export ARCHITECTURE
+ARCHDEF_C := -DARCH_$(ARCHITECTURE)
+export ARCHDEF_C
 
 .PHONY: all
 all: build image
@@ -32,17 +34,17 @@ setup_workspace:
 .PHONY: build
 build:
 	cd arch/$(ARCHITECTURE)/ ; make build
-	cd kernel ; make build
+#	cd kernel ; make build
 
 .PHONY: clean
 clean:
 	cd arch/$(ARCHITECTURE)/ ; make clean
-	cd kernel ; make clean
+#	cd kernel ; make clean
 
 .PHONY: image
 image:
 	cd arch/$(ARCHITECTURE)/ ; make image
 	sudo umount /mnt/tayhuangBoot
-	sudo mount -o loop tayhuangOS.img /mnt/tayhuangOS
-	cd kernel ; make image
-	sudo umount /mnt/tayhuangOS
+#	sudo mount -o loop tayhuangOS.img /mnt/tayhuangOS
+#	cd kernel ; make image
+#	sudo umount /mnt/tayhuangOS

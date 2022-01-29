@@ -2,6 +2,6 @@
 hd
 flat
 512
-25
-tayhuangBoot.img
+128
+tayhuangOS.img
 yes

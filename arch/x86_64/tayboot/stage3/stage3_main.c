@@ -19,6 +19,7 @@
 #include <string.h>
 #include "vedio.h"
 #include "printf.h"
+#include "init.h"
 
 void graphic_test(int width, int height) {
     color_rgb color;
@@ -79,16 +80,15 @@ void graphic_test(int width, int height) {
     }
 }
 
-void int_test(void) {
-    
-}
-
 void entry(struct boot_args* boot_args) {
     if (boot_args->magic != BOOT_ARGS_MAGIC) {
         while (true);
     }
     init_vedio(boot_args->screen_width, boot_args->screen_height,
     boot_args->is_graphic_mode ? DPM_GRAPHIC : DPM_CHARACTER, boot_args->framebuffer);
+    init_8259A();
+    init_idt();
+    asmv ("sti");
     if (boot_args->is_graphic_mode) {
         graphic_test(boot_args->screen_width, boot_args->screen_height);
     }
@@ -98,5 +98,4 @@ void entry(struct boot_args* boot_args) {
         // printf ("Boot args Magic:%#8X!\n", boot_args->magic);
         // printf ("Memory Size: %d (B), %d (KB), %d (MB)", boot_args->memory_size, boot_args->memory_size / 1024, boot_args->memory_size / 1024 / 1024);
     }
-    int_test();
 }
