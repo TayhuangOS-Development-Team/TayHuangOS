@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/drivers/keyboard/keyboard_driver.c
+ * arch/x86_64/tayboot/stage2/drivers/keyboard/keyboard_driver.c
  *
  * Keyboard driver is implemented here
  */

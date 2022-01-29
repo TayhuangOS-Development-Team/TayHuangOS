@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/init.c
+ * arch/x86_64/tayboot/stage3/init.c
  *
  * Intterup Handlers are implemented here
  */

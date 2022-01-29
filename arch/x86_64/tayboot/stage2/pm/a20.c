@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/pm/a20.c
+ * arch/x86_64/tayboot/pm/a20.c
  *
  * A20 functions are implemented here
  */

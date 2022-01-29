@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/vedio.h
+ * arch/x86_64/tayboot/stage3/vedio.h
  *
  * Vedio functions are declared here
  */

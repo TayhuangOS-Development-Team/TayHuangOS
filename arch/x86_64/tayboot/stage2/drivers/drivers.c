@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/drivers/drivers.c
+ * arch/x86_64/tayboot/stage2/drivers/drivers.c
  *
  * Drivers were collected here
  */

@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/stage2_main.c
+ * arch/x86_64/tayboot/stage2/stage2_main.c
  *
  * Stage2 main function here
  */

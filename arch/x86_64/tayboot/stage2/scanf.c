@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/scanf.c
+ * arch/x86_64/tayboot/stage2/scanf.c
  *
  * Input functions are implemented here
  */

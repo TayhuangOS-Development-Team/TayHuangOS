@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/console/commands.h
+ * arch/x86_64/tayboot/stage2/console/commands.h
  *
  * Real mode console commands are declared here
  */

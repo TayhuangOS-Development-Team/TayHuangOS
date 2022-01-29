@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/include/std/stdarg.h
+ * arch/x86_64/tayboot/include/std/stdarg.h
  *
  * Standard lib stdarg.h header here
  */

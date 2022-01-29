@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/std/string.c
+ * arch/x86_64/tayboot/stage3/std/string.c
  *
  * Standard lib string.h source here
  */

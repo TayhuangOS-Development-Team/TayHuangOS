@@ -5,9 +5,9 @@
 ;
 ; --------------------------------------------------------------------------------
 ;
-; Author: Flysong
+; 作者: Flysong
 ;
-; kernel/boot/stage3/stage3_entry.asm
+; arch/x86_64/tayboot/stage3/stage3_entry.asm
 ;
 ; Stage3 entry here
 ;

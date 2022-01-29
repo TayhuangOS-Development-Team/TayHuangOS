@@ -5,11 +5,11 @@
 ;
 ; --------------------------------------------------------------------------------
 ;
-; Author: Flysong
+; 作者: Flysong
 ;
-; kernel/boot/stage3/_int_handlers.asm
+; arch/x86_64/tayboot/stage3/_int_handlers.asm
 ;
-; Intterup Handlers here
+; 中断处理函数
 ;
 
 

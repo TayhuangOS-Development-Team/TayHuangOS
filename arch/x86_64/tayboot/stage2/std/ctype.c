@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/lib/std/ctype.h
+ * arch/x86_64/tayboot/lib/std/ctype.h
  *
  * Standard lib ctype.h source here
  */

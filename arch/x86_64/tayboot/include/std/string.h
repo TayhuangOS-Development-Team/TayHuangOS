@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/include/std/string.h
+ * arch/x86_64/tayboot/include/std/string.h
  *
  * Standard lib string.h header here
  */

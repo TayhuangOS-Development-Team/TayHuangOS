@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/memory.h
+ * arch/x86_64/tayboot/stage3/memory.h
  *
  * Memory manage functions are declared here
  */

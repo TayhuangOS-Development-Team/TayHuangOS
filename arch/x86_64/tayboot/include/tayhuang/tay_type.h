@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/include/tayhuang/tay_type.h
+ * arch/x86_64/tayboot/include/tayhuang/tay_type.h
  *
  * Types are declared here
  */

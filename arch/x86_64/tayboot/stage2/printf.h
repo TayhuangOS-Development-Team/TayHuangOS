@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong Beanflame
+ * 作者: Flysong Beanflame
  *
- * kernel/boot/stage2/printf.h
+ * arch/x86_64/tayboot/stage2/printf.h
  *
  * Display functions are declared here
  */

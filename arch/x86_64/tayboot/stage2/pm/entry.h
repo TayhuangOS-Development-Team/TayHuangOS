@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/pm/entry.c
+ * arch/x86_64/tayboot/pm/entry.c
  *
  * Protect Mode Entry here
  */

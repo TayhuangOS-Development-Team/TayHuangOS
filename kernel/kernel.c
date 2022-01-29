@@ -5,11 +5,11 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/stage2.c
+ * kernel/kernel.c
  *
- * Kernel main here
+ * 内核主程序
  */
 
 

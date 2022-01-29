@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* -------------------------------Reference from linux----------------------------------
  *
- * kernel/boot/include/tayhuang/elf.h
+ * arch/x86_64/tayboot/include/tayhuang/elf.h
  *
  * Elf structs are defined here
  */

@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/file.h
+ * arch/x86_64/tayboot/stage2/file.h
  *
  * File functions are declared here
  */

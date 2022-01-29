@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/drivers/driver.c
+ * arch/x86_64/tayboot/stage2/drivers/driver.c
  *
  * Driver functions are implemented here
  */

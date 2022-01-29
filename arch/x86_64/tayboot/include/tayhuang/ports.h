@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/include/tayhuang/ports.h
+ * arch/x86_64/tayboot/include/tayhuang/ports.h
  *
  * Basic ports
  */

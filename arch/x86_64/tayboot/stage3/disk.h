@@ -5,11 +5,11 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/disk.h
+ * arch/x86_64/tayboot/stage3/disk.h
  *
- * Disk functions are declared here
+ * 实现硬盘操作函数
  */
 
 

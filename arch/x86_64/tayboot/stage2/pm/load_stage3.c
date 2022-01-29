@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/pm/load_stage3.c
+ * arch/x86_64/tayboot/pm/load_stage3.c
  *
  * Stage3 is loaded here
  */

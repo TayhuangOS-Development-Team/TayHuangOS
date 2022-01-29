@@ -5,9 +5,9 @@
 ;
 ; --------------------------------------------------------------------------------
 ;
-; Author: Flysong
+; 作者: Flysong
 ;
-; kernel/boot/stage2/io.asm
+; arch/x86_64/tayboot/stage2/io.asm
 ;
 ; Base io functions are implemented here
 ;

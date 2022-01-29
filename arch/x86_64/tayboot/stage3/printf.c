@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/printf.h
+ * arch/x86_64/tayboot/stage3/printf.h
  *
  * Print functions are implemented here
  */

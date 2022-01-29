@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/init.h
+ * arch/x86_64/tayboot/stage3/init.h
  *
  * Initialize functions are declared here
  */

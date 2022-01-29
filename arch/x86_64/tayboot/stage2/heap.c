@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/heap.h
+ * arch/x86_64/tayboot/stage2/heap.h
  *
  * Heap manage functions are declared here
  */

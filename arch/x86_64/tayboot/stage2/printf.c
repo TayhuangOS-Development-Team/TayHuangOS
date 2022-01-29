@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong Beanflame
+ * 作者: Flysong Beanflame
  *
- * kernel/boot/stage2/print.c
+ * arch/x86_64/tayboot/stage2/print.c
  *
  * Display functions are implemented here
  */

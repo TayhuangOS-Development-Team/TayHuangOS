@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* -------------------------------Reference from linux----------------------------------
  *
- * kernel/boot/include/tayhuang/descs.h
+ * arch/x86_64/tayboot/include/tayhuang/descs.h
  *
  * Desc macro & structures here
  */

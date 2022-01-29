@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/drivers/disk/disk_driver.h
+ * arch/x86_64/tayboot/stage2/drivers/disk/disk_driver.h
  *
  * Disk driver is declared here
  */

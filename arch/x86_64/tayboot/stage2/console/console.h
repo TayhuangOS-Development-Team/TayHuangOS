@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/console/console.h
+ * arch/x86_64/tayboot/stage2/console/console.h
  *
  * Real mode console here
  */

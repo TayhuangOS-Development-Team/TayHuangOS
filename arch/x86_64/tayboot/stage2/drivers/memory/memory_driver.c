@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/drivers/memory/memory_driver.c
+ * arch/x86_64/tayboot/stage2/drivers/memory/memory_driver.c
  *
  * Memory driver is implemented here
  */

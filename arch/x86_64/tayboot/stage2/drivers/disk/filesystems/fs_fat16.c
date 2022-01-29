@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/drivers/disk/filesystems/fs_fat16.h
+ * arch/x86_64/tayboot/stage2/drivers/disk/filesystems/fs_fat16.h
  *
  * Fat 16 file system functions are implemented here
  */

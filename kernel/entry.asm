@@ -5,11 +5,11 @@
 ;
 ; --------------------------------------------------------------------------------
 ;
-; Author: Flysong
+; 作者: Flysong
 ;
 ; kernel/entry.asm
 ;
-; Kernel entry here
+; K内核入口
 ;
 
 
@@ -23,7 +23,7 @@ _start:
     mov ax, 0xB800
     mov gs, ax
     mov ah, 0x0C
-    mov al, 'K'
+    mov al, 'K' ;打印'K'
     mov word [gs:((80 * 4 + 39) * 2)], ax
     ;call entry
     jmp $

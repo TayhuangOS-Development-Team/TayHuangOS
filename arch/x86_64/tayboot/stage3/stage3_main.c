@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage3/stage3_main.c
+ * arch/x86_64/tayboot/stage3/stage3_main.c
  *
  * Stage3 main function here
  */

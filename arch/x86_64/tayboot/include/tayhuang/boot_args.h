@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/include/tayhuang/boot_args.h
+ * arch/x86_64/tayboot/include/tayhuang/boot_args.h
  *
  * Struct boot_args defined here
  */

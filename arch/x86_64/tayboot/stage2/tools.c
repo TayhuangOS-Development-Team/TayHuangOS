@@ -5,9 +5,9 @@
  *
  * --------------------------------------------------------------------------------
  *
- * Author: Flysong
+ * 作者: Flysong
  *
- * kernel/boot/stage2/tools.c
+ * arch/x86_64/tayboot/stage2/tools.c
  *
  * Tool functions are implemented here
  */

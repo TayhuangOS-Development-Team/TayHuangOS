@@ -5,36 +5,36 @@
 ;
 ; --------------------------------------------------------------------------------
 ;
-; Author: Flysong
+; 作者: Flysong
 ;
 ; kernel/boot/functions.inc
 ;
-; Base functions are implemented here
+; 实现基本的汇编函数
 ;
 
 
 
-BASE_OF_DATA equ 0x0800
+BASE_OF_DATA equ 0x0800 ;数据保存段
 
-disk_address_packet: db 0x10 ; Size of Packet (+0, byte)
-                     db 0 ;Reversed (+1, byte)
-                     db 1 ;Block Count to Transfer (+2, byte)
-                     db 0 ;Reversed ;(+3, byte)
-                     dw 0 ;Address Of Dist - Offset (+4, word)
-                     dw 0 ;Address Of Dist - Segment (+6, word)
-                     dd 0 ;LBA - Low 32 Bits (+8, dword)
-                     dd 0 ;LBA - High 32 Bits (+12, dword)
+disk_address_packet: db 0x10 ; Packet大小 (+0, byte)
+                     db 0 ; 保留 (+1, byte)
+                     db 1 ; 传输扇区数 (+2, byte)
+                     db 0 ; 保留 (+3, byte)
+                     dw 0 ; 目标地址 - 偏移 (+4, word)
+                     dw 0 ; 目标地址 - 段 (+6, word)
+                     dd 0 ; LBA - 低32字节 (+8, dword)
+                     dd 0 ; LBA - 高32字节 (+12, dword)
 
 LoadFile: ;(ds:di = FILE NAME, es:si = Dist)
-    call FindRootEntry
-    push si
+    call FindRootEntry 
+    push si ;寻找目录项
 .READ:
     push ax
     push bx
-    mov ah, 0x0E
-    mov al, '.'
+    mov ah, 0x0E ;function number = 0x0E
+    mov al, '.' ;每读取一个扇区打印一个"."
     mov bh, 0
-    mov bl, 0x0C
+    mov bl, 0x0C ;红色
     int 0x10
     pop bx
     pop ax
@@ -42,203 +42,214 @@ LoadFile: ;(ds:di = FILE NAME, es:si = Dist)
     mov cx, 1
     push eax
     add eax, DATA_SECTION_START
-    call ReadSector
-    pop eax
-    add si, 512
-    call GetFatEntry
+    call ReadSector  ;读取扇区
+    pop eax ;获取下个项
+    add si, 512 
+    call GetFatEntry ;是否结束
     cmp ax, 0xFFFF
-    je .ed
-    jmp .READ
+    je .ed  ;结束
+    jmp .READ  ;未结束 继续读取
 .ed:
     pop si
-    ret
+    ret  ;退出
 
 GetFatEntry: ;(ax = entry_no/result)
     push si
     push di
     push es
-    push ax
+    push ax ;保护寄存器
 
     push ax
     mov ax, BASE_OF_DATA
-    mov es, ax
+    mov es, ax ;es > BASE_OF_DATA
     pop ax
-    xor si, si
-    shr ax, 8 ;equal to the sector of the fat entry in
-    inc eax
-    call ReadSector
+    xor si, si ;si -> 0
+    shr ax, 8 ;ax -> fat项所在扇区 - 1
+    inc eax ;ax -> fat项所在扇区
+    call ReadSector ;读取扇区
     pop ax
 
     mov di, ax
     and di, 0x00FF
-    shl di, 1
-    mov ax, word[es:di]
+    shl di, 1 ;dl -> fat项偏移
+    mov ax, word[es:di] ;ax -> fat项
 
     pop es
     pop di
-    pop si
-    ret
+    pop si ;保护寄存器
+    ret ;退出
 
 FindRootEntry: ;(ds:di = FILE NAME, ax = first clus of file, if ax equals to 0xffff, that not found)
     push si
-    push es
+    push es ;保护寄存器
     mov ax, BASE_OF_DATA
-    mov es, ax
+    mov es, ax ;es -> Base of data
     mov eax, ROOT_SECTION_START
-    push eax
-    xor si, si
+    push eax ; last sector = ROOT_SECTION_START
+    xor si, si ; ax -> 0
 .READ_A_SECTOR:
-    pop eax
+    pop eax ; eax -> last sector
     cmp eax, RootSectorNumber + ROOT_SECTION_START
-    jge .NOT_FOUND
-    xor si, si
-    mov cx, 1
-    call ReadSector
-    inc eax
-    push eax
-    jmp .CMP_A_ENTRY
+    jge .NOT_FOUND ;eax >= Root Section End
+    xor si, si ;si -> 0
+    mov cx, 1 ; num = 1
+    call ReadSector ;读取扇区
+    inc eax ; last sector ++
+    push eax ; (保存) last sector
+    jmp .CMP_A_ENTRY ; 进行比较
 .CMP_A_ENTRY:
-    call CMP_FILE_NAME
-    cmp ax, 0
-    jne .FOUND
-    add si, 0x20
-    cmp si, 512
-    jge .READ_A_SECTOR
-    jmp .CMP_A_ENTRY
+    call CMP_FILE_NAME ;比较文件名
+    cmp ax, 0 ;if (ax)
+    jne .FOUND ;相同
+    add si, 0x20 ;不同, 下个Entry
+    cmp si, 512 ;Sector是否到末尾
+    jge .READ_A_SECTOR ;读取扇区
+    jmp .CMP_A_ENTRY ;继续比较
 .NOT_FOUND:
-    mov ax, 0xffff
+    mov ax, 0xffff ;ax -> 0xFFFF
     pop es
-    pop si
-    ret
+    pop si ;保护寄存器
+    ret ;退出
 .FOUND:
-    pop eax
-    mov ax, word [es:(si + 0x1A)]
+    pop eax ;恢复堆栈
+    mov ax, word [es:(si + 0x1A)] ;ax -> first clus
     pop es
-    pop si
-    ret
+    pop si ;保护寄存器
+    ret ;退出
 
 CMP_FILE_NAME: ;(ds:di = FILE NAME 1, es:si = FILE NAME 2, ax = result)
-    push cx
+    push cx ; 保护寄存器
 
-    mov cx, 11
-    call CMP_STR
+    mov cx, 11 ;size = 11
+    call CMP_STR ;cmpstr(FILE NAME 1, FILE NAME 2, size)
 
-    pop cx
-    ret
+    pop cx ; 保护寄存器
+    ret ;退出
 
 CMP_STR: ;(ds:di = STR1, es:si = STR2, cx = len, ax = result)
     push cx
     push di
-    push si
-
+    push si ; 保护寄存器
+            ; loop begin
 .goon:
-    mov al, byte[ds:di]
-    mov ah, byte[es:si]
+    mov al, byte[ds:di] ;char ch1 = *(ds:di)
+    mov ah, byte[es:si] ;char ch2 = *(ds:di)
     cmp al, ah
-    jne .diff
-    dec cx
+    jne .diff ; if (ch1 != ch2) goto diff
+    dec cx ; len --
     cmp cx, 0
-    je .same
-    inc di
-    inc si
-    jmp .goon
+    je .same ; if (loops == 0) goto same
+    inc di ; di ++
+    inc si ; si ++
+    jmp .goon ; continue
+              ; loop end
 .same:
-    mov ax, 1
+    mov ax, 1 ;ret = true
     jmp .ed
 .diff:
-    mov ax, 0
+    mov ax, 0 ;ret = false
 .ed:
     pop si
     pop di
-    pop cx
-    ret
+    pop cx ; 保护寄存器
+    ret ;退出
 
 ReadSector: ;(es:si = Dist, ax = Sector No, cl = Sector Num)
     push si
     push ax
     push dx
     push ebx
-    push cx
+    push cx ; 保护寄存器
 
-    mov byte [disk_address_packet + 2], cl
+    mov byte [disk_address_packet + 2], cl ;disk_address_packet.transfer_num = 1
     mov cx, es
-    mov word [disk_address_packet + 6], cx
-    mov word [disk_address_packet + 4], si
-    mov word [disk_address_packet + 8], ax
-    xor ebx, ebx
-    mov ah, 0x42
-    mov dl, 0x80
-    mov si, disk_address_packet
+    mov word [disk_address_packet + 6], cx ;disk_address_packet.dst_segment = es
+    mov word [disk_address_packet + 4], si ;disk_address_packet.dst_offset = si
+    mov word [disk_address_packet + 8], ax ;disk_address_packet.lba_low = ax
+    xor ebx, ebx ; ebx -> 0
+    mov ah, 0x42 ; function number = 0x42
+    mov dl, 0x80 ; dl -> c盘驱动器号
+    mov si, disk_address_packet ;si -> &disk_address_packet
     int 0x13
 
     pop cx
     pop ebx
     pop dx
     pop ax
-    pop si
-    ret
+    pop si ; 保护寄存器
+    ret ;退出
 
 ClrScreen:
     push ax
     push bx
     push cx
-    push dx
+    push dx ; 保护寄存器
 
     mov ax, 0x0600
     mov bx, 0x0700
     mov cx, 0x0000
     mov dx, 0x184f
-    int 0x10
+    int 0x10 ;int 10h
+             ;function = 0x06 (scroll up)
+             ;scroll line = 0 (clear screen)
+             ;rect = (0,0)->(79, 24)
 
     pop dx
     pop cx
     pop bx
-    pop ax
-    ret
+    pop ax ; 保护寄存器
+    ret ;退出
 
 DispStr: ;(ds:di=str, dl = x, dh = y, bl = color)
     push es
     push bp
     push cx
-    push ax
+    push ax ; 保护寄存器
 
-    call Sten
-    mov cx, ax
+    call Strlen
+    mov cx, ax ;cx = strlen(str)
 
     mov ax, ds
-    mov es, ax
-    mov bp, di
+    mov es, ax ;es -> ds
+    mov bp, di ;bp -> di
 
     mov bh, 0
 
     mov ax, 0x1301
 
-    int 10h
+    int 10h ;int 10h
+            ;function = 0
+            ;color = color
+            ;str = es:bp
+            ;strlen = cx
+            ;position = (dl, dh)
 
     pop ax
     pop cx
     pop bp
-    pop es
-    ret
+    pop es ; 保护寄存器
+    ret ;退出
 
-Sten: ;(ds:di=str, ax=out)
+Strlen: ;(ds:di=str, ax=out)
     push di
-    push cx
+    push cx ; 保护寄存器
 
-    mov cx, 0
+    mov cx, 0 ;len = 0
+              ;loop start
 .goon:
-    mov al, byte [ds:di]
+    mov al, byte [ds:di] ;char ch = *(ds:di)
     cmp al, 0
-    je .tail
-    inc cx
-    inc di
-    jmp .goon
+    je .tail ; if(ch == '\0') goto tail
+    inc cx ; len ++
+    inc di ; di ++
+    jmp .goon ;continue
+              ;loop end
 .tail:
-    mov ax, cx
+    mov ax, cx ;ret = len
 
     pop cx
-    pop di
-    ret
+    pop di ; 保护寄存器
+    ret ;退出
 
 DispHex2B: ;(ax = data, bh = color, bl = disp_0x, dl = x, dh = y)
     push dx
