@@ -20,7 +20,14 @@ setup_workspace:
 	else \
 		echo "mount directory already created"; \
 	fi;
-	bximage < new_img_input.txt
+	if [ ! -d "/mnt/tayhuangBoot" ];then \
+		sudo mkdir /mnt/tayhuangBoot; \
+	else \
+		echo "mount directory already created"; \
+	fi;
+	bximage < ./setup/new_boot_img_input.txt
+	bximage < ./setup/new_system_img_input.txt
+	mkfs.msdos ./tayhuangOS.img
 
 .PHONY: build
 build:
@@ -35,5 +42,7 @@ clean:
 .PHONY: image
 image:
 	cd arch/$(ARCHITECTURE)/ ; make image
+	sudo umount /mnt/tayhuangBoot
+	sudo mount -o loop tayhuangOS.img /mnt/tayhuangOS
 	cd kernel ; make image
 	sudo umount /mnt/tayhuangOS

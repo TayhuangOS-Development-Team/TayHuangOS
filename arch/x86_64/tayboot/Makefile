@@ -1,4 +1,4 @@
-IMG := ../../../tayhuangOS.img
+IMG := ../../../tayhuangBoot.img
 BOOT_OUTPUT := boot.bin
 LOADER_OUTPUT := loader.bin
 DD := dd
@@ -22,7 +22,7 @@ clean:
 .PHONY: image
 image:
 	sudo ${DD} if=$(BOOT_OUTPUT) of=$(IMG) bs=512 conv=notrunc
-	sudo mount -o loop $(IMG) /mnt/tayhuangOS
-	sudo cp $(LOADER_OUTPUT) /mnt/tayhuangOS
+	sudo mount -o loop $(IMG) /mnt/tayhuangBoot
+	sudo cp $(LOADER_OUTPUT) /mnt/tayhuangBoot
 	cd stage2 ; make image
 	cd stage3 ; make image

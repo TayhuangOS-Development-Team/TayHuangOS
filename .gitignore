@@ -2,7 +2,9 @@
 *.log
 *.o
 .vscode/
+bios/
 bochsrc.bxrc
 bochsrc
 tayhuangOS.img
+tayhuangBoot.img
 bx_enh_dbg.ini

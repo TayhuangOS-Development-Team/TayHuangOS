@@ -33,4 +33,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(STAGE3_OUPUT) /mnt/tayhuangOS
+	sudo cp $(STAGE3_OUPUT) /mnt/tayhuangBoot

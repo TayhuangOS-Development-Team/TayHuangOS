@@ -1,0 +1,7 @@
+1
+hd
+flat
+512
+128
+tayhuangOS.img
+yes
