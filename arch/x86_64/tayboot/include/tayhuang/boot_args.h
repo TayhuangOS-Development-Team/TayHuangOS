@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/include/tayhuang/boot_args.h
  *
- * Struct boot_args defined here
+ * boot_args的结构
  */
 
 

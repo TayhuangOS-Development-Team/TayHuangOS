@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/heap.h
  *
- * Heap manage functions are declared here
+ * 堆管理函数
  */
 
 
@@ -18,14 +18,14 @@
 
 #include "header.h"
 
-PUBLIC void init_heap(void);
-PUBLIC void terminate_heap(void);
-PUBLIC void reset_heap(void);
-PUBLIC void* malloc(int size);
-PUBLIC void* calloc(int num, int size);
-PUBLIC void free(void* ptr);
-PUBLIC bool query_using(void* ptr, int size); //true when using
-PUBLIC void set_heap_top(void* top); //default = 0xFFFF
-PUBLIC void set_heap_limit(void* limit); //default = 0xC000
-PUBLIC int get_used(void);
-PUBLIC int get_remain(void);
+PUBLIC void init_heap(void); //初始化堆
+PUBLIC void terminate_heap(void); //释放堆
+PUBLIC void reset_heap(void); //重置堆
+PUBLIC void* malloc(int size); //分配内存
+PUBLIC void* calloc(int num, int size); //分配内存
+PUBLIC void free(void* ptr); //释放内存
+PUBLIC bool query_using(void* ptr, int size); //查询某段内存是否有被使用, 使用时为真
+PUBLIC void set_heap_top(void* top); //默认值为0xFFFF
+PUBLIC void set_heap_limit(void* limit); //默认值为0xC000
+PUBLIC int get_used(void); //已用的
+PUBLIC int get_remain(void); //剩余的

@@ -124,7 +124,7 @@ PUBLIC void clrscr(void) {
     screen_info.current_line = 0;
 }
 
-//vsprintf
+//基础vsprintf实现
 PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
     bool flag1, flag2;
     int flag3;
@@ -273,7 +273,6 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
     return buffer - store;
 }
 
-//输出内容到buffer中
 PUBLIC int vsprintf(char* buffer, const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -285,7 +284,6 @@ PUBLIC int vsprintf(char* buffer, const char* format, ...) {
     return res;
 }
 
-//输出内容到屏幕中
 PUBLIC int printf(const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -306,31 +304,33 @@ PUBLIC void scroll_screen(int offset) {
     args.in_regs = &in_regs;
     args.out_regs = &out_regs;
     args.int_no = 0x10;
-    in_regs.eax = MKWORD(((offset < 0) ? 0x7 : 0x6), abs(offset));
+    in_regs.eax = MKWORD(((offset < 0) ? 0x7 : 0x6), abs(offset)); //是负数下滚，否则上滚
     in_regs.ebx = 0;
-    in_regs.ecx = MKWORD(0, 0);
-    in_regs.edx = MKWORD(screen_info.height - 1, screen_info.width - 1);
+    in_regs.ecx = MKWORD(0, 0); //设定区域
+    in_regs.edx = MKWORD(screen_info.height - 1, screen_info.width - 1); //设定区域
     intcall(&args);
     screen_info.current_line += offset;
-    //printf ("offset: %d", offset);
 }
 
+//当前文件指针
 PRIVATE FILE *current_file;
 
+//利用当前文件指针制作的简单putc
 PUBLIC void __fputc(FILE *file, char ch) {
-    if (current_file->buffer_len < current_file->wrpos) {
-        int newlen = current_file->buffer_len * 41 / 25; //about golden radio
+    if (current_file->buffer_len < current_file->wrpos) { //如果file buffer不够大
+        //就扩大它呀!
+        int newlen = current_file->buffer_len * 41 / 25; //41/25约为黄金风格比例
         addr_t new_buffer = alloc_buffer(newlen, false);
-        cp_buffer_to_buffer(current_file->file_buffer, new_buffer, current_file->buffer_len);
+        cp_buffer_to_buffer(current_file->file_buffer, new_buffer, current_file->buffer_len); //把旧内容拷贝过来
         current_file->buffer_len = newlen;
-        free_buffer (current_file->file_buffer);
+        free_buffer (current_file->file_buffer); //清除原来的缓存
         current_file->file_buffer = new_buffer;
     }
-    set_buffer_byte(current_file->file_buffer + (current_file->wrpos ++), ch);
+    set_buffer_byte(current_file->file_buffer + (current_file->wrpos ++), ch); //写入文件buffer
 }
 
 PUBLIC void fputc(FILE *file, char ch) {
-    current_file = file;
+    current_file = file; //设置当前文件指针
     return __fputc(file, ch);
 }
 

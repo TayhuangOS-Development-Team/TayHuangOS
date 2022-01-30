@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/include/tayhuang/tay_mem.h
  *
- * Basic memory functions are implemented here
+ * 基础的内存函数
  */
 
 

@@ -9,21 +9,24 @@
  *
  * arch/x86_64/tayboot/include/tayhuang/ports.h
  *
- * Basic ports
+ * 基础端口
  */
 
 
 
 #pragma once
 
+//8042A
 #define M_8042A_CONTROL 0x20
 #define M_8042A_CONTROLMASK 0x21
 #define S_8042A_CONTROL 0xA0
 #define S_8042A_CONTROLMASK 0xA1
 
+//CMOS RAM
 #define CMOS_RAM_ADDRESS 0x70 
 #define CMOS_RAM_DATA 0x71
 
+//键盘8042
 #define KEYBOARD_8042_DATA0 0x60
 #define KEYBOARD_8042_DATA1 0x61
 #define KEYBOARD_8042_CONTROL 0x62
@@ -32,6 +35,7 @@
 #define KEYBOARD_8042_DATA2 0x64
 #define KEYBOARD_8042_STATUS 0x64
 
+//协处理器
 #define CO_CPU_0 0xF0
 #define CO_CPU_1 0xF1
 #define CO_CPU_2 0xF2
@@ -49,8 +53,10 @@
 #define CO_CPU_E 0xFE
 #define CO_CPU_F 0xFF
 
+//Port-A
 #define PORT_A 0x92
 
+//0号硬盘
 #define DISK0_DATA 0x1F0
 #define DISK0_ERROR 0x1F1
 #define DISK0_FEATURES 0x1F1
@@ -64,6 +70,7 @@
 #define DISK0_ALTERNATE_STATUS 0x3F6
 #define DISK0_DEVICE_CONTROL 0x3F6
 
+//1号硬盘
 #define DISK1_DATA 0x170
 #define DISK1_ERROR 0x171
 #define DISK1_FEATURES 0x171

@@ -7,9 +7,9 @@
  *
  * 作者: Flysong
  *
- * kernel/boot/stage2/intcall.h
+ * arch/x86_64/tayboot/stage2/intcall.h
  *
- * Int call function is implemented here
+ * 实现中断调用函数
  */
 
 

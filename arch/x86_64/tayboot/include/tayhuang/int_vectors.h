@@ -9,14 +9,15 @@
  *
  * arch/x86_64/tayboot/include/tayhuang/ports.h
  *
- * Basic int vectors
+ * 基础中断向量
  */
 
 
 
 #pragma once
 
-#define CALC_IRQ(x) (0x20 + x)
+#define CALC_IRQ(x) (0x20 + x) //计算IRQ的中断向量号
+//IRQ 0~10
 #define INT_VECTOR_IRQ0 CALC_IRQ(0)
 #define INT_VECTOR_IRQ1 CALC_IRQ(1)
 #define INT_VECTOR_IRQ2 CALC_IRQ(2)

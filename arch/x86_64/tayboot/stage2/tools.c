@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/tools.c
  *
- * Tool functions are implemented here
+ * 实现工具函数
  */
 
 
@@ -66,16 +66,16 @@ PUBLIC void get_date(struct date_t *dt) {
     dt->day = bcd2num8(LOWWORD(LOWBYTE(out_regs.edx)));
 }
 
-PRIVATE dword _random(dword seed) { //恶臭的随机数生成
-    if (seed == 0) return 0x11451419;
-    dword a = seed * seed % 114;
-    dword b = seed * seed * seed % 514;
-    dword c = (seed + 1919) % 810;
-    dword x = (seed + 114) * (seed + 514) >> 2;
+//随机数生成器
+PRIVATE dword _random(dword seed) { 
+    if (seed == 0) return 0x1234567890;
+    dword a = seed * seed % 123;
+    dword b = seed * seed * seed % 456;
+    dword c = (seed + 7890) % 123;
+    dword x = (seed + 456) * (seed + 789);
     return a * x * x + b * x + c;
 }
 
-//result 属于 [min, max)
 PUBLIC int random(dword seed, int min, int max) {
     dword step = max - min;
     return _random(seed) % step + min;

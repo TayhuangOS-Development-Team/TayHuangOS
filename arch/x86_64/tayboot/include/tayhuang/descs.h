@@ -3,7 +3,7 @@
  *
  * arch/x86_64/tayboot/include/tayhuang/descs.h
  *
- * Desc macro & structures here
+ * 描述符的结构及宏
  */
 
 

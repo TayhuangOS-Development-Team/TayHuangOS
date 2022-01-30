@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/tools.h
  *
- * Tool functions are declared here
+ * 定义工具函数
  */
 
 
@@ -31,10 +31,10 @@ struct date_t {
     int year;
 };
 
-PUBLIC dword get_clock_time(void);
-PUBLIC void get_time(struct time_t *tm);
-PUBLIC void get_date(struct date_t *dt);
-PUBLIC byte bcd2num4(byte bcd);
-PUBLIC byte bcd2num8(byte bcd);
-PUBLIC int random(dword seed, int min, int max);
-PUBLIC char escape(const char* sentence);
+PUBLIC dword get_clock_time(void); //获取tick
+PUBLIC void get_time(struct time_t *tm); //获取时间
+PUBLIC void get_date(struct date_t *dt); //获取日期
+PUBLIC byte bcd2num4(byte bcd); //bcd转数字
+PUBLIC byte bcd2num8(byte bcd); //bcd转数字
+PUBLIC int random(dword seed, int min, int max); //随机数生成器, result 属于 [min, max)
+PUBLIC char escape(const char* sentence); //低级转义器

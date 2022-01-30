@@ -9,7 +9,7 @@
 ;
 ; arch/x86_64/tayboot/stage2/stage2_entry.asm
 ;
-; Stage2 entry here
+; Stage2入口
 ;
 
 
@@ -26,8 +26,8 @@ _start:
     mov es, ax
     mov fs, ax
     mov gs, ax
-    mov ss, ax
-    mov sp, 0x0600
+    mov ss, ax ;初始化段寄存器
+    mov sp, 0x0600 ;初始化堆栈
     push word 0 ;补0，因为nasm与c的call, ret指令位长不同
     call entry
     jmp $

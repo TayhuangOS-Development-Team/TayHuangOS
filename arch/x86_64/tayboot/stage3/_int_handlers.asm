@@ -205,6 +205,6 @@ reserved8_excepetion:
 
 _exception:
     call exception_handler
-    add esp, 4 * 2
+    add esp, 4
     hlt
     jmp $

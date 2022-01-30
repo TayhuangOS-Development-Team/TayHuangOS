@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/include/tayhuang/tay_type.h
  *
- * Types are declared here
+ * 基础的类型
  */
 
 

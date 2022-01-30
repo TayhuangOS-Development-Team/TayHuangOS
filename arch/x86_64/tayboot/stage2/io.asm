@@ -9,7 +9,7 @@
 ;
 ; arch/x86_64/tayboot/stage2/io.asm
 ;
-; Base io functions are implemented here
+; 基础的io函数
 ;
 
 
@@ -17,7 +17,7 @@
 [SECTION .text]
 [BITS 16]
 
-
+;清屏函数
 global _clrscr
 _clrscr: ; void _clrscr(void)
     push eax
@@ -38,14 +38,16 @@ _clrscr: ; void _clrscr(void)
 
     ret
 
+;C下调用中断
 global _intcall
 _intcall: ; void _intcall(pintargs args)
     pushad
     mov bl, byte [eax + 8]
-    mov byte [cs:.intn], bl ;dirty hack
+    mov byte [cs:.intn], bl ;利用dirty hack把中断号写入代码(参考自linux)
     mov dword[.ax_store], eax
     mov eax, dword [eax + 0] ; eax -> in regs
 
+    ;设置入参
     mov ecx, dword [eax + 8]
     mov edx, dword [eax + 12]
     mov edi, dword [eax + 16]
@@ -59,11 +61,12 @@ _intcall: ; void _intcall(pintargs args)
     mov ebx, dword [eax + 4]
     mov eax, dword [eax + 0]
 
-db 0xcd
+db 0xcd ;int的opcode
 .intn: db 0
 
     xchg eax, dword [.ax_store]
 
+    ;获取出参
     mov eax, dword[eax + 4] ; eax -> out regs
     mov dword [eax + 4], ebx
     mov dword [eax + 8], ecx

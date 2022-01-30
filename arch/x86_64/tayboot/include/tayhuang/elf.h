@@ -3,7 +3,7 @@
  *
  * arch/x86_64/tayboot/include/tayhuang/elf.h
  *
- * Elf structs are defined here
+ * ELF结构及宏
  */
 
 

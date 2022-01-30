@@ -9,13 +9,19 @@
  *
  * arch/x86_64/tayboot/include/std/ctype.h
  *
- * Standard lib ctype.h header here
+ * 标准库 ctype.h 头文件
  */
 
 
 
 #pragma once
 
+/*
+ * ctype函数的宏实现
+ * 因为是利用宏, 所以可能会引发问题
+ * 不推荐直接使用
+ * 仅用于辅助函数实现
+*/
 #define _macro_isspace(ch) (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\v' || ch == '\f')
 #define _macro_isupper(ch) (ch >= 'A' && ch <= 'Z')
 #define _macro_islower(ch) (ch >= 'a' && ch <= 'z')
@@ -32,6 +38,7 @@
 #define _macro_tolower(ch) (_macro_isupper(ch) ? (ch - 'A' + 'a') : (ch))
 #define _macro_toupper(ch) (_macro_islower(ch) ? (ch - 'a' + 'A') : (ch))
 
+/* ctype函数 */
 int isspace(int ch);
 int isupper(int ch);
 int islower(int ch);

@@ -7,9 +7,9 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/tayhuang/tay_mem.h
+ * arch/x86_64/tayboot/include/tayhuang/tay_defs.h
  *
- * Basic macros ard defined here
+ * 基础的定义
  */
 
 

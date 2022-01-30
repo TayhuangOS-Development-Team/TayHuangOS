@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/header.h
  *
- * Global header here
+ * 公共头文件
  */
 
 
@@ -18,7 +18,8 @@
 
 #include <tay_defs.h>
 
+//数据段
 #define BASE_OF_DATA 0x1000
 typedef bool(*terminater_t)(void);
-PUBLIC bool register_terminater(terminater_t terminater);
-PUBLIC bool do_terminate(void);
+PUBLIC bool register_terminater(terminater_t terminater); //注册terminater
+PUBLIC bool do_terminate(void); //进行terminate

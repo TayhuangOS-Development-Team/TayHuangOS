@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/buffer.c
  *
- * Buffer manage functions are implemented here
+ * 缓存管理函数
  */
 
 
@@ -28,7 +28,7 @@ PRIVATE struct {
 
 #define LL_BUFFER_SEGMENT 0x0700
 #define LL_BUFFER_SZ 0x0100
-//低级堆
+//低级缓存
 PUBLIC void ll_init_buffer(void) {
     LL_BUFFER.buffer_seg = LL_BUFFER_SEGMENT;
     LL_BUFFER.buffer_top = LL_BUFFER.buffer_bottom = 0x0000;
@@ -126,7 +126,7 @@ PUBLIC sreg_t ll_get_buffer_seg(void) {
     return LL_BUFFER.buffer_seg;
 }
 
-//高级的利用驱动完成的堆
+//高级的利用驱动完成的缓存
 PUBLIC void init_buffer(void) {
     memory_driver.pc_handle(&memory_driver, MM_CMD_INIT_BUFFER, NULL);
 }

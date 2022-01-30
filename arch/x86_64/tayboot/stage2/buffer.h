@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/buffer.h
  *
- * Buffer manage functions are declared here
+ * 缓存管理函数
  */
 
 
@@ -18,7 +18,7 @@
 
 #include "header.h"
 
-//Low level buffer
+//低级缓存
 PUBLIC void ll_init_buffer(void);
 PUBLIC void ll_resize_buffer(word sz);
 PUBLIC word ll_get_buffer_used(void);
@@ -36,7 +36,7 @@ PUBLIC void ll_cp_to_buffer(void* src, addr_t dst, word num);
 PUBLIC void ll_cp_buffer_to_buffer(addr_t src, addr_t dst, word num);
 PUBLIC sreg_t ll_get_buffer_seg(void);
 
-//Buffer Base on Memory Driver
+//基于内存驱动的缓存
 PUBLIC void init_buffer(void);
 PUBLIC dword get_buffer_used(void);
 PUBLIC dword get_buffer_remain(void);
