@@ -87,7 +87,7 @@ LoadFile: ;(ds:di = FILE NAME, es:si = Dist)
 .READ:
     push ax
     push bx
-    mov ah, 0x0E function number = 0x0E
+    mov ah, 0x0E ;function number = 0x0E
     mov al, '.' ;每读取一个扇区打印一个"."
     mov bh, 0
     mov bl, 0x0C ;红色

@@ -68,7 +68,7 @@ PUBLIC void get_date(struct date_t *dt) {
 
 //随机数生成器
 PRIVATE dword _random(dword seed) { 
-    if (seed == 0) return 0x1234567890;
+    if (seed == 0) return 0x12345678;
     dword a = seed * seed % 123;
     dword b = seed * seed * seed % 456;
     dword c = (seed + 7890) % 123;

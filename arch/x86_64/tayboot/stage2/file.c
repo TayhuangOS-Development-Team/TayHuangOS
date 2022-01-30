@@ -130,7 +130,7 @@ PUBLIC FILE* fopen(const char* name, const char* mode) {
         fp->binary = false;
     }
     //其实fp->binary不必管它
-    if ((flags & FLAG_APPEND) && (! flags & FLAG_READONLY)) { //如果可写且append
+    if ((flags & FLAG_APPEND) && ((flags & FLAG_READONLY) == 0)) { //如果可写且append
         fp->replace = false; //不必覆盖
         fp->wrpos = fp->file_info->length; //设在末尾
     }
