@@ -17,6 +17,7 @@
 #include "int_handlers.h"
 #include "printf.h"
 #include <int_vectors.h>
+#include <ports.h>
 
 PUBLIC void exception_handler(int vector_no, int errcode, int eip, int cs, int eflags) {
     byte old_print_color = get_print_color();
@@ -83,6 +84,47 @@ PUBLIC void exception_handler(int vector_no, int errcode, int eip, int cs, int e
     printf ("esi: %#8X ; edi: %#8X\n", _esi, _edi);
     printf ("esp: %#8X ; ebp: %#8X\n", _esp, _ebp);
     printf ("cs:  %#4X     ;  ds:  %#4X\n", cs, rdds());
-    printf ("eip: %#8X ;eflags:%#8X\n", cs, rdds());
+    printf ("eip: %#8X ;eflags:%#8X\n", eip, eflags);
     set_print_color(old_print_color);
+}
+
+PRIVATE irq_handler IRQ_HANDLER_LIST[16] = {};
+
+PUBLIC void register_irq_handler(int irq, irq_handler handler) {
+    IRQ_HANDLER_LIST[irq] = handler;
+}
+
+PUBLIC void irq_interrup_handler(int irq) {
+    if (irq < 8) {
+        byte i = inb(M_PIC_DATA);
+        i |= (1 << irq);
+        outb(M_PIC_DATA, i);
+    }
+    else {
+        byte i = inb(S_PIC_DATA);
+        i |= (1 << (irq - 8));
+        outb(S_PIC_DATA, i);
+    }
+    outb(M_PIC_CONTROL, 0x20);
+    io_delay();
+    outb(S_PIC_CONTROL, 0x20);
+
+    asmv ("sti");
+
+    if (IRQ_HANDLER_LIST[irq] != NULL) {
+        IRQ_HANDLER_LIST[irq](irq);
+    }
+
+    asmv ("cli");
+
+    if (irq < 8) {
+        byte i = inb(M_PIC_DATA);
+        i &= ~(1 << irq);
+        outb(M_PIC_DATA, i);
+    }
+    else {
+        byte i = inb(S_PIC_DATA);
+        i &= ~(1 << (irq - 8));
+        outb(S_PIC_DATA, i);
+    }
 }

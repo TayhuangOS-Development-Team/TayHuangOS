@@ -34,21 +34,21 @@ PUBLIC void init_gdt(void) {
     asmv ("lgdtl %0" : : "m"(gdtr));
 }
 
-PUBLIC void init_8259A(void) {
-    outb (M_8042A_CONTROL, 0x11);
-    outb (S_8042A_CONTROL, 0x11);
+PUBLIC void init_pic(void) {
+    outb (M_PIC_CONTROL, 0x11);
+    outb (S_PIC_CONTROL, 0x11);
 
-    outb (M_8042A_CONTROLMASK, INT_VECTOR_IRQ0);
-    outb (S_8042A_CONTROLMASK, INT_VECTOR_IRQ8);
+    outb (M_PIC_DATA, INT_VECTOR_IRQ0);
+    outb (S_PIC_DATA, INT_VECTOR_IRQ8);
 
-    outb (M_8042A_CONTROLMASK, 0x4);
-    outb (S_8042A_CONTROLMASK, 0x2);
+    outb (M_PIC_DATA, 0x4);
+    outb (S_PIC_DATA, 0x2);
 
-    outb (M_8042A_CONTROLMASK, 0x1);
-    outb (S_8042A_CONTROLMASK, 0x1);
+    outb (M_PIC_DATA, 0x1);
+    outb (S_PIC_DATA, 0x1);
     
-    outb (M_8042A_CONTROLMASK, 0xFF);
-    outb (S_8042A_CONTROLMASK, 0xFF);
+    outb (M_PIC_DATA, 0);
+    outb (S_PIC_DATA, 0);
 }
 
 PUBLIC void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) {
@@ -100,6 +100,24 @@ PRIVATE void _int_idt_descs(void) {
     init_idt_desc(29, GATE_INTERRUPT, vmm_communication_exception, 0);
     init_idt_desc(30, GATE_INTERRUPT, security_exception, 0);
     init_idt_desc(31, GATE_INTERRUPT, reserved8_excepetion, 0);
+
+    init_idt_desc(CALC_IRQ(0), GATE_INTERRUPT, irq0_handler, 0);
+    init_idt_desc(CALC_IRQ(1), GATE_INTERRUPT, irq1_handler, 0);
+    init_idt_desc(CALC_IRQ(2), GATE_INTERRUPT, irq2_handler, 0);
+    init_idt_desc(CALC_IRQ(3), GATE_INTERRUPT, irq3_handler, 0);
+    init_idt_desc(CALC_IRQ(4), GATE_INTERRUPT, irq4_handler, 0);
+    init_idt_desc(CALC_IRQ(5), GATE_INTERRUPT, irq5_handler, 0);
+    init_idt_desc(CALC_IRQ(6), GATE_INTERRUPT, irq6_handler, 0);
+    init_idt_desc(CALC_IRQ(7), GATE_INTERRUPT, irq7_handler, 0);
+
+    init_idt_desc(CALC_IRQ(8), GATE_INTERRUPT, irq8_handler, 0);
+    init_idt_desc(CALC_IRQ(9), GATE_INTERRUPT, irq9_handler, 0);
+    init_idt_desc(CALC_IRQ(10), GATE_INTERRUPT, irq10_handler, 0);
+    init_idt_desc(CALC_IRQ(11), GATE_INTERRUPT, irq11_handler, 0);
+    init_idt_desc(CALC_IRQ(12), GATE_INTERRUPT, irq12_handler, 0);
+    init_idt_desc(CALC_IRQ(13), GATE_INTERRUPT, irq13_handler, 0);
+    init_idt_desc(CALC_IRQ(14), GATE_INTERRUPT, irq14_handler, 0);
+    init_idt_desc(CALC_IRQ(15), GATE_INTERRUPT, irq15_handler, 0);
 }
 
 PUBLIC void init_idt(void) {

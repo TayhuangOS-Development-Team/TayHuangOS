@@ -52,6 +52,6 @@ clean:
 image:
 	cd arch/$(ARCHITECTURE)/ ; make image
 	sudo umount /mnt/tayhuangBoot
-	sudo mount -o loop tayhuangOS.img /mnt/tayhuangOS
-	cd kernel ; make image
-	sudo umount /mnt/tayhuangOS
+#	sudo mount -o loop tayhuangOS.img /mnt/tayhuangOS
+#	cd kernel ; make image
+#	sudo umount /mnt/tayhuangOS

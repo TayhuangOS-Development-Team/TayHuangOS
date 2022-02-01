@@ -36,3 +36,4 @@ clean:
 .PHONY: image
 image:
 	sudo cp $(STAGE3_OUPUT) $(IMG_MNT)
+	sudo dd if=bailan.raw of=../../../../tayhuangOS.img bs=512 conv=notrunc
