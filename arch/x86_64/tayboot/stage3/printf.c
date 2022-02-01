@@ -32,31 +32,19 @@ PUBLIC void set_print_color(byte color) {
 }
 
 PRIVATE void set_cursor_pos(byte x, byte y) {
+    word position = x * DPINFO.screen_width + y;
+    outb(0x3D4, 0x0F);
+	outb(0x3D5, LOWBYTE(position));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, HIGHBYTE(position));
 }
 
 PUBLIC void scroll_screen(int num) {
-    for (int i = 0 ; i < DPINFO.screen_height ; i ++) {
-        for (int j = 0 ; j < DPINFO.screen_width ; j ++) {
-            int old_position = i * DPINFO.screen_width + j;
-            int new_position = (i + num) * DPINFO.screen_width + j;
-            stgs16(new_position * 2, rdgs16(old_position * 2));
-        }
-    }
-    if (num > 0) {
-        for (int i = DPINFO.screen_height - num ; i < DPINFO.screen_height ; i ++) {
-            for (int j = 0 ; j < DPINFO.screen_width ; j ++) {
-                int position = i * DPINFO.screen_width + j;
-                stgs16(position * 2, MKWORD(print_color, ' '));
-            }
-        }
-    }
-    else {
-        for (int i = 0 ; i < (-num) ; i ++) {
-            for (int j = 0 ; j < DPINFO.screen_width ; j ++) {
-                int position = i * DPINFO.screen_width + j;
-                stgs16(position * 2, MKWORD(print_color, ' '));
-            }
-        }
+    if (num > 0) { //上滚
+        //TODO
+    } 
+    else { //下滚
+        //TODO
     }
 }
 
@@ -121,6 +109,7 @@ PUBLIC word get_pos_y(void) {
 }
 
 PUBLIC void clrscr(void) {
+    //通过画 实现清屏
     for (int i = 0 ; i < DPINFO.screen_width ; i ++) {
         for (int j = 0 ; j < DPINFO.screen_height ; j ++) {
             draw_character(i, j, ' ', print_color);
@@ -130,6 +119,7 @@ PUBLIC void clrscr(void) {
     print_y = 0;
 }
 
+//基础vsprintf实现
 PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
     bool flag1, flag2;
     int flag3;
@@ -139,20 +129,20 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
     while (*format != 0) {
         if (*format == '%') {
             format ++;
-            if (*format == '%') {
+            if (*format == '%') { //输出%
                 *(buffer ++) = *format;
                 format ++;
                 continue;
             }
-            else if (*format == '#') {
+            else if (*format == '#') { //16进制加0x
                 flag1 = true;
                 format ++;
             }
-            else if (*format == '+') {
+            else if (*format == '+') { //输出+
                 flag2 = true;
                 format ++;
             }
-            if (isdigit(*format)) {
+            if (isdigit(*format)) { //设置长度
                 flag3 = 0;
                 while (isdigit(*format)) {
                     flag3 = flag3 * 10 + (*format) - '0';

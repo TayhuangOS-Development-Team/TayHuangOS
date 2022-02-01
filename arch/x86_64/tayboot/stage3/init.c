@@ -47,8 +47,8 @@ PUBLIC void init_pic(void) {
     outb (M_PIC_DATA, 0x1);
     outb (S_PIC_DATA, 0x1);
     
-    outb (M_PIC_DATA, 0xFF);
-    outb (S_PIC_DATA, 0xFF);
+    outb (M_PIC_DATA, 0x00);
+    outb (S_PIC_DATA, 0x00);
 }
 
 PUBLIC void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) {

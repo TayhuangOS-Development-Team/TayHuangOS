@@ -21,6 +21,6 @@ global _start
 extern entry
 
 _start:
-    mov eax, ebx
+    mov eax, ebx ;传参: Boot Arg
     call entry
     jmp $

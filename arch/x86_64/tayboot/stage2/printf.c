@@ -134,20 +134,20 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
     while (*format != 0) {
         if (*format == '%') {
             format ++;
-            if (*format == '%') {
+            if (*format == '%') { //输出%
                 *(buffer ++) = *format;
                 format ++;
                 continue;
             }
-            else if (*format == '#') {
+            else if (*format == '#') { //16进制加0x
                 flag1 = true;
                 format ++;
             }
-            else if (*format == '+') {
+            else if (*format == '+') { //输出+
                 flag2 = true;
                 format ++;
             }
-            if (isdigit(*format)) {
+            if (isdigit(*format)) { //设置长度
                 flag3 = 0;
                 while (isdigit(*format)) {
                     flag3 = flag3 * 10 + (*format) - '0';
