@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/driver.c
  *
- * Driver functions are implemented here
+ * 驱动相关函数
  */
 
 

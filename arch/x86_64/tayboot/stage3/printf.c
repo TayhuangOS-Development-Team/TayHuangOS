@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage3/printf.h
  *
- * Print functions are implemented here
+ * 打印函数
  */
 
 

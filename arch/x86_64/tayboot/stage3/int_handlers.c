@@ -7,9 +7,9 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/init.c
+ * arch/x86_64/tayboot/stage3/int_handlers.c
  *
- * Intterup Handlers are implemented here
+ * 中断处理函数
  */
 
 

@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage3/vedio.c
  *
- * Vedio functions are implemented here
+ * 视频函数
  */
 
 

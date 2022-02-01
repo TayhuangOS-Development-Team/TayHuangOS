@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/pm/a20.c
  *
- * A20 functions are implemented here
+ * A20函数
  */
 
 
@@ -18,11 +18,11 @@
 #include "../intcall.h"
 #include <ports.h>
 
-#define A20_TEST_ADDRESS (0x80 << 2)
-#define A20_FAST_TEST_TIME (2 << 4)
-#define A20_TEST_TIME (2 << 8)
-#define A20_SLOW_TEST_TIME (2 << 14)
-#define A20_LONG_TEST_TIME (2 << 20)
+#define A20_TEST_ADDRESS (0x80 << 2) //测试地址
+#define A20_FAST_TEST_TIME (2 << 4) //快速测试次数
+#define A20_TEST_TIME (2 << 8) //正常测试次数
+#define A20_SLOW_TEST_TIME (2 << 14) //慢测试次数
+#define A20_LONG_TEST_TIME (2 << 20) //久测试次数
 
 PUBLIC bool test_a20(int loop_time) {//引用自linux
     stfs(0x0000);
@@ -36,7 +36,7 @@ PUBLIC bool test_a20(int loop_time) {//引用自linux
     while (loop_time --) {
         stfs32(A20_TEST_ADDRESS, ++ control);
         io_delay();
-        flag = (rdgs32(A20_TEST_ADDRESS + 0x10) ^ control) != 0;
+        flag = (rdgs32(A20_TEST_ADDRESS + 0x10) ^ control) != 0; //检测是否有回滚
         if (flag)
             break;
     }
@@ -53,11 +53,11 @@ PUBLIC bool test_a20_normal(void) {
     return test_a20(A20_TEST_TIME);
 }
 
-PUBLIC bool test_a20_slow(void) {
+PUBLIC bool test_a20_slow(void) { //慢测试
     return test_a20(A20_SLOW_TEST_TIME);
 }
 
-PUBLIC bool test_a20_long(void) {
+PUBLIC bool test_a20_long(void) { 
     return test_a20(A20_LONG_TEST_TIME);
 }
 
@@ -77,16 +77,16 @@ PUBLIC bool empty_8042(void) {//引用自linux
     while (loop_time --) {
         io_delay();
         b8 status = inb(KEYBOARD_8042_STATUS);
-        if (status == 0xFF) {
+        if (status == 0xFF) { //错误
             if (! (-- ff_time)) {
                 return false;
             }
         }
-        if (status & 1) {
+        if (status & 1) { //还有
             io_delay();
             inb(KEYBOARD_8042_DATA0);
         }
-        else if (!(status & 2))
+        else if (!(status & 2)) //没了
             return true;
     }
     return false;
@@ -103,27 +103,27 @@ PUBLIC void enable_a20_by_bios(void) {//参考自linux
     args.in_regs = &in_regs;
     args.out_regs = &out_regs;
     args.int_no = 0x15;
-    intcall(&args);
+    intcall(&args); //BIOS中断
 }
 
 PUBLIC void enable_a20_by_8042(void) {//引用自linux
-    empty_8042();
+    empty_8042(); //清空8042
 
-    outb(KEYBOARD_8042_STATUS, 0xD1);
-    empty_8042();
+    outb(KEYBOARD_8042_STATUS, 0xD1); //写STATUS
+    empty_8042(); //清空8042
 
-    outb(KEYBOARD_8042_DATA0, 0xDF);
-    empty_8042();
+    outb(KEYBOARD_8042_DATA0, 0xDF); //写DATA
+    empty_8042(); //清空8042
 
-    outb(CO_CPU_F, 0x64);
-    empty_8042();
+    outb(CO_CPU_F, 0x64); //写协处理器
+    empty_8042(); //清空8042
 }
 
 PUBLIC void enable_a20_by_portA(void) {//引用自linux
     b8 port_a;
 
     port_a = inb(PORT_A);
-    port_a = (port_a | 0x02) & ~0x01;
+    port_a = (port_a | 0x02) & ~0x01; //portA
 
     outb(PORT_A, port_a);
 }
@@ -134,28 +134,28 @@ PUBLIC bool enable_a20(void) {//参考自linux
     int loop_time = MAX_TRY_TIME;
 
     while (loop_time --) {
-        if (test_a20_fast())
+        if (test_a20_fast()) //是否已经打开
             return true;
 
-        enable_a20_by_bios();
+        enable_a20_by_bios(); //先用BIOS
 
         io_delay();
         io_delay();
         io_delay();
         io_delay();
-        io_delay();
+        io_delay(); //延迟
 
-        if (test_a20_fast())
+        if (test_a20_fast()) //测试
             return true;
 
-        if (empty_8042()) {
-            enable_a20_by_8042();
-            if (test_a20_long())
+        if (empty_8042()) { //清空8042
+            enable_a20_by_8042(); //靠8042打开
+            if (test_a20_long()) //测试
                 return true;
         }
 
-        enable_a20_by_portA();
-        if (test_a20_long())
+        enable_a20_by_portA(); //靠portA打开
+        if (test_a20_long()) //测试
             return true;
     }
     return false;

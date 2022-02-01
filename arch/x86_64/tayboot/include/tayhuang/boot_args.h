@@ -19,12 +19,12 @@
 #include <tay_type.h>
 
 struct boot_args {
-    dword magic;
-    bool is_graphic_mode;
-    int screen_width;
-    int screen_height;
-    void* framebuffer;
-    int memory_size;
+    dword magic; //魔数 用于校验
+    bool is_graphic_mode; //是否为图形模式
+    int screen_width; //屏幕宽
+    int screen_height; //屏幕高
+    void* framebuffer; //屏幕显存
+    int memory_size; //内存大小
 };
 
 #define BOOT_ARGS_MAGIC (0x553DBB2) //MD5 of "BOOTARGS"(前32位)

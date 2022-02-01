@@ -9,7 +9,7 @@
 ;
 ; arch/x86_64/tayboot/stage3/stage3_entry.asm
 ;
-; Stage3 entry here
+; Stage3入口
 ;
 
 

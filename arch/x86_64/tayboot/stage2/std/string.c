@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/std/string.c
  *
- * Standard lib string.h source here
+ * 标准库string.h的源文件
  */
 
 

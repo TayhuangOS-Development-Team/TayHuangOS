@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/console/commands.h
  *
- * Real mode console commands are declared here
+ * 实模式命令
  */
 
 
@@ -18,10 +18,13 @@
 
 #include "../header.h"
 
+//命名宏
 #define CMD_NAME(x) __console_cmd_##x##__
 #define DEF_CONSOLE_CMD(x) PUBLIC int CMD_NAME(x)(int argc, const char** argv)
 
+//初始化变量表
 PUBLIC void init_variables(void);
+//命令列表
 DEF_CONSOLE_CMD(echo);
 DEF_CONSOLE_CMD(echoln);
 DEF_CONSOLE_CMD(shutdown);
@@ -37,4 +40,4 @@ DEF_CONSOLE_CMD(login);
 DEF_CONSOLE_CMD(ls);
 DEF_CONSOLE_CMD(set);
 DEF_CONSOLE_CMD(goto_os);
-extern PUBLIC bool logined;
+extern PUBLIC bool logined; //是否登陆

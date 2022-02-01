@@ -16,7 +16,7 @@
 
 #pragma once
 
-#define CALC_IRQ(x) (0x20 + x) //计算IRQ的中断向量号
+#define CALC_IRQ(x) (0x20 + (x)) //计算IRQ的中断向量号
 //IRQ 0~10
 #define INT_VECTOR_IRQ0 CALC_IRQ(0)
 #define INT_VECTOR_IRQ1 CALC_IRQ(1)

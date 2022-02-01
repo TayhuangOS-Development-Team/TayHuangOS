@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/pm/vesa.h
  *
- * Vesa functions are declared here
+ * vesa函数
  */
 
 
@@ -19,5 +19,5 @@
 #include "../header.h"
 #include "../intcall.h"
 
-PUBLIC bool support_vesa(void);
-PUBLIC void* enable_graphic(void);
+PUBLIC bool support_vesa(void); //是否支持vesa
+PUBLIC void* enable_graphic(void); //启用图形化

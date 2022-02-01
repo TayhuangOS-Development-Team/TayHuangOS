@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/disk/disk_driver.c
  *
- * Disk driver is implemented here
+ * 硬盘驱动
  */
 
 

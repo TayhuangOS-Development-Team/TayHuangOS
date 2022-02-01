@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/driver.h
  *
- * Driver structures are defined here
+ * 驱动结构
  */
 
 

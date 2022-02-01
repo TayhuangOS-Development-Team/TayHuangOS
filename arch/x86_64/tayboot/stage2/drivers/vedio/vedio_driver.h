@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/vedio/vedio_driver.h
  *
- * Vedio driver is declared here
+ * 视频驱动
  */
 
 

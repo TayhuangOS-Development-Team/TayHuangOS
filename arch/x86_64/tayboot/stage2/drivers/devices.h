@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/devices.h
  *
- * Devices were collected here
+ * 设备集合
  */
 
 

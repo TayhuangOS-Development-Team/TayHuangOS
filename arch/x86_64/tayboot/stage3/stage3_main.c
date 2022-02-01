@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage3/stage3_main.c
  *
- * Stage3 main function here
+ * Stage3主函数
  */
 
 

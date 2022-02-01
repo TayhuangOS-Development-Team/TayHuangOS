@@ -9,7 +9,8 @@
  *
  * arch/x86_64/tayboot/stage2/console/console.h
  *
- * Real mode console here
+ * 实模式控制台
+ * 没什么实际作用
  */
 
 
@@ -19,5 +20,5 @@
 #include "../header.h"
 
 PUBLIC void enter_console(void);
-extern PUBLIC char user_name[32];
-extern PUBLIC bool logined;
+extern PUBLIC char user_name[32]; //用户名
+extern PUBLIC bool logined; //是否登陆

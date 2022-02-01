@@ -32,7 +32,7 @@ the_finally_jump: ;void the_finally_jump(dword entrypoint, sreg_t cs_selector, s
 
     mov ebx, cr0
     or ebx, 1
-    mov cr0, ebx
+    mov cr0, ebx ;置PM位
 
 ;跳转指令
 ;之所以不用jmp dword
@@ -52,12 +52,12 @@ after_the_jump:
     mov gs, cx
     mov ss, cx
     mov esp, eax
-    sub esp, 0x20
+    sub esp, 0x20 ;设置esp
     mov ebp, esp
 
     ltr di ;欺骗CPU
 
-    mov ebx, edx
+    mov ebx, edx ;引导参数
 
     xor ecx, ecx
     xor edx, edx

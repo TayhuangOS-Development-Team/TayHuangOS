@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/drivers.c
  *
- * Drivers were collected here
+ * 驱动集合
  */
 
 

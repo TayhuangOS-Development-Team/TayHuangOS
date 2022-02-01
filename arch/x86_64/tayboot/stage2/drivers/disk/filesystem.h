@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/disk/filesystem.h
  *
- * File system functions are declared here
+ * 文件系统
  */
 
 

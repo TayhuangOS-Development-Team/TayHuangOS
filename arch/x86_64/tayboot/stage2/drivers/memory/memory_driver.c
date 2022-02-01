@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/memory/memory_driver.c
  *
- * Memory driver is implemented here
+ * 内存驱动
  */
 
 

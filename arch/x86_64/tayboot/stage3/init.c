@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage3/init.c
  *
- * Initialize functions are implemented here
+ * 初始化函数
  */
 
 

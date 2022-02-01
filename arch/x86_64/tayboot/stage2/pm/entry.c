@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/pm/entry.c
  *
- * Protect Mode Entry here
+ * 保护模式入口
  */
 
 
@@ -25,18 +25,18 @@
 #include <boot_args.h>
 #include <ports.h>
 
-#define EMPTY_DESC_NO (0)
-#define CS_DESC_NO (1)
-#define DS_DESC_NO (2)
-#define TSS_DESC_NO (3)
+#define EMPTY_DESC_NO (0) //空描述符
+#define CS_DESC_NO (1) //代码段描述符
+#define DS_DESC_NO (2) //数据段描述符
+#define TSS_DESC_NO (3) //TSS描述符
 
 PRIVATE void setup_gdt(void) {
     //一个临时的gdt
     PRIVATE const struct desc_struct BOOT_GDT[] __attribute__((aligned(16))) = {
         [EMPTY_DESC_NO] = GDT_ENTRY(0, 0, 0), //EMPTY
-        [CS_DESC_NO] = GDT_ENTRY(0xC09A, 0, 0xFFFFF),
-        [DS_DESC_NO] = GDT_ENTRY(0xC093, 0, 0xFFFFF),
-        [TSS_DESC_NO] = GDT_ENTRY(0x0089, 4096, 103) //没用，用于欺骗CPU
+        [CS_DESC_NO] = GDT_ENTRY(0xC09A, 0, 0xFFFFF), //代码段
+        [DS_DESC_NO] = GDT_ENTRY(0xC093, 0, 0xFFFFF), //数据段
+        [TSS_DESC_NO] = GDT_ENTRY(0x0089, 4096, 103) //没用的TSS，用于欺骗CPU
     };
 
     PRIVATE struct gdt_ptr gdtr;
@@ -47,16 +47,16 @@ PRIVATE void setup_gdt(void) {
 }
 
 PRIVATE void setup_idt(void) {
-    PRIVATE struct gdt_ptr idtr;
+    PRIVATE struct gdt_ptr idtr; //相同结构
     idtr.len = 0;
     idtr.ptr = 0;
     //欺骗CPU
     asmv ("lidtl %0" : : "m"(idtr));
 }
 
-PUBLIC void the_finally_jump(void* entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void* boot_args);
+PUBLIC void the_finally_jump(void* entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void* boot_args); //最终一跳
 
-struct boot_args boot_args;
+struct boot_args boot_args; //引导参数
 
 PRIVATE int get_mem_size(void) {
     int size = 0;
@@ -67,7 +67,7 @@ PRIVATE int get_mem_size(void) {
 PRIVATE void init_boot_args(void) {
     boot_args.magic = BOOT_ARGS_MAGIC;
     boot_args.memory_size = get_mem_size();
-#ifdef ENABLE_GRAPHIC_BEFORE_GOTO_OS
+#ifdef ENABLE_GRAPHIC_BEFORE_GOTO_OS //启用图形界面
     void* framebuffer = enable_graphic();
     if (framebuffer) {
         boot_args.is_graphic_mode = true;
@@ -75,7 +75,7 @@ PRIVATE void init_boot_args(void) {
         boot_args.screen_width = 1024;
         boot_args.framebuffer = framebuffer;
     }
-    else {
+    else { //不支持vesa
         printf ("Your vedio don't support vesa!");
 #else
     boot_args.is_graphic_mode = false;
@@ -88,14 +88,14 @@ PRIVATE void init_boot_args(void) {
 #endif
 }
 
-PUBLIC void go_to_protect_mode(void) {
-    init_boot_args();
-    void* entrypoint = load_stage3();
-    if (entrypoint == NULL) {
+PUBLIC void go_to_protect_mode(void) { //去到保护模式
+    init_boot_args(); //初始化引导参数
+    void* entrypoint = load_stage3(); //加载stage3并获取入口点
+    if (entrypoint == NULL) { //无法加载
         printf ("Error! We can't load stage3!Or reboot?");
         return;
     }
-    if (! enable_a20()) {
+    if (! enable_a20()) { //无法打开A20
         printf ("Error! We can't enable the A20 gate!Or reboot?");
         return;
     }
@@ -112,6 +112,6 @@ PUBLIC void go_to_protect_mode(void) {
     setup_gdt();
     //设置idt
     setup_idt();
-    //jump to protect mode
+    //保护模式 我来力
     the_finally_jump(entrypoint, CS_DESC_NO << 3, DS_DESC_NO << 3, TSS_DESC_NO << 3, (((dword)(&boot_args)) + (rdds() << 4)));
 }

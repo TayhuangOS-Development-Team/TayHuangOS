@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage3/memory.h
  *
- * Memory manage functions are declared here
+ * 内存管理函数
  */
 
 

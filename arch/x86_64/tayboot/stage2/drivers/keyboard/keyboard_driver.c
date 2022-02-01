@@ -9,7 +9,7 @@
  *
  * arch/x86_64/tayboot/stage2/drivers/keyboard/keyboard_driver.c
  *
- * Keyboard driver is implemented here
+ * 键盘驱动
  */
 
 

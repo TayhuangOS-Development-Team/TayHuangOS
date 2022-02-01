@@ -9,7 +9,8 @@
  *
  * arch/x86_64/tayboot/stage2/console/console.c
  *
- * Real mode console here
+ * 实模式控制台
+ * 没什么实际作用
  */
 
 
@@ -34,7 +35,7 @@
 
 PRIVATE char splash[33];
 
-PRIVATE void load_splash(void) {
+PRIVATE void load_splash(void) { //加载标语
     int cnt = 0;
     FILE *file = fopen("SPLASHESTXT", NULL);
     while (feof(file) == 0) {
@@ -56,7 +57,7 @@ PRIVATE void load_splash(void) {
 
 #define SPLASH_PRINT_LINE 5
 
-PRIVATE void print_splash(void) {
+PRIVATE void print_splash(void) { //打印标语
     word old_x = get_pos_x();
     word old_y = get_pos_y();
     byte old_color = get_print_color();
@@ -75,7 +76,7 @@ PRIVATE void print_splash(void) {
 PUBLIC char user_name[32] = "guest";
 PUBLIC bool logined = false;
 
-PRIVATE void print_intro(void) {
+PRIVATE void print_intro(void) { //打印简介
     word old_x = get_pos_x();
     word old_y = get_pos_y();
     byte old_color = get_print_color();
@@ -96,7 +97,7 @@ PRIVATE void print_intro(void) {
 
 #define TIME_PRINT_LINE 6
 
-PRIVATE void print_time(void) {
+PRIVATE void print_time(void) { //打印启动时间
     word old_x = get_pos_x();
     word old_y = get_pos_y();
     byte old_color = get_print_color();
@@ -119,68 +120,66 @@ PRIVATE void print_time(void) {
     change_pos(old_x, old_y);
 }
 
-PRIVATE void chkerr(int err_code) {
+PRIVATE void chkerr(int err_code) { //检查是否正常退出
     if (err_code == 0) return;
     byte old_color = get_print_color();
     set_print_color(0x0C);
     if (err_code == 1 || err_code == -1) {
-        printf ("Abnormal program exit!(Exit code %d)\n", err_code);
+        printf ("Abnormal program exit!(Exit code %d)\n", err_code); //不正常退出
     }
     else if (err_code == 2) {
-        printf ("Program exit because of wrong action!\n");
+        printf ("Program exit because of wrong action!\n"); //错误操作
     }
     else if (err_code == 3) {
-        printf ("Wrong arguments!\n");
+        printf ("Wrong arguments!\n"); //错误参数
     }
     else if (err_code == -2) {
-        printf ("Insufficient permissions!\n");
+        printf ("Insufficient permissions!\n"); //权限不足
     }
     else if (err_code > 0) {
-        printf ("Program exit with custom exit code (%d)\n", err_code);
+        printf ("Program exit with custom exit code (%d)\n", err_code); //自定义正常退出码
     }
     else {
-        printf ("Abnormal program exit with custom exit code (%d)\n", err_code);
+        printf ("Abnormal program exit with custom exit code (%d)\n", err_code); //自定义非正常退出码
     }
     set_print_color(old_color);
 }
 
-PRIVATE void get_argn(char *arg, int size) {
+PRIVATE void get_argn(char *arg, int size) { //获取一个参数
     char ch = getchar();
-    if (ch == '"') {
-        int i;
+    int i;
+    if (ch == '"') { //以"开头
         for (i = 0 ; i < size ; i ++) {
             arg[i] = getchar();
-            if (arg[i] == '"') {
+            if (arg[i] == '"') { //以"结束
                 break;
             }
-            if (arg[i] == '\n' || arg[i] == '\r') {
-                putchar('>');
+            if (arg[i] == '\n' || arg[i] == '\r') { //换行
+                putchar('>'); //继续键入
             }
         }
-        arg[i] = '\0';
     }
-    else {
+    else { //正常开头
         arg[0] = ch;
-        int i;
         for (i = 1 ; i < size ; i ++) {
             arg[i] = getchar();
-            if (isspace(arg[i])) {
+            if (isspace(arg[i])) { //空格结束
                 backchar(arg[i]);
                 break;
             }
         }
-        arg[i] = '\0';
     }
+    arg[i] = '\0';
 }
 
 
-PRIVATE int get_commandsn(char** args, int size) {
+PRIVATE int get_commandsn(char** args, int size) { //获取一行参数
     int i = 0;
     while ((size --) > 0) {
         args[i] = malloc(96);
         get_argn(args[i ++], 96);
         char ch = getchar();
-        if (ch == '\n' || ch == '\r') {
+        if (ch == '\n' || ch == '\r') { //直至换行
             break;
         }
     }
@@ -189,12 +188,13 @@ PRIVATE int get_commandsn(char** args, int size) {
 
 PRIVATE void deal_cmd(void) {
     char** _args = calloc(10, sizeof(char*));
-    int num = get_commandsn(_args, 10);
-    if (num == 0) {
+    int num = get_commandsn(_args, 10); //获取参数
+    if (num == 0) { //空操作
         free (_args);
         return;
     }
     const char** args = (const char**)_args;
+    //判断命令
     if (! (strcmp(args[0], "echo"))) {
         chkerr(CMD_NAME(echo)(num, args));
     }
@@ -241,7 +241,9 @@ PRIVATE void deal_cmd(void) {
         chkerr(CMD_NAME(goto_os)(num, args));
     }
     else {
+        //未知命令
         printf ("unknown command \"%s\"!\n", args[0]);
+        //解析结果
         printf ("Parse result:\n");
         printf ("    Command: %s\n", args[0]);
         printf ("    Args:\n");
@@ -250,30 +252,31 @@ PRIVATE void deal_cmd(void) {
         }
     }
     free (_args);
-    clear_buffer();
+    clear_buffer(); //清除缓冲区
 }
 
 PUBLIC void enter_console(void) {
-    print_intro();
-    load_splash();
-    print_splash();
-    print_time();
-    change_pos(0, 7);
-    logined = false;
+    print_intro(); //打印简介
+    load_splash(); //加载标语
+    print_splash(); //打印标语
+    print_time(); //打印启动时间
+    change_pos(0, 7); //更改位置
+    logined = false; //默认未登陆
     while (true) {
         byte old_color = get_print_color();
 
-        if (! logined) {
+        if (! logined) { //没登陆用绿色
             set_print_color(0x0A);
         }
-        else {
+        else { //登陆用红色
             set_print_color(0x0C);
         }
 
-        printf ("realmode%c%s>", logined ? '@' : ':', user_name);
+        printf ("realmode%c%s>", logined ? '@' : ':', user_name); //没登陆用@
+                                                                  //登陆用:
 
         set_print_color(old_color);
 
-        deal_cmd();
+        deal_cmd(); //处理命令
     }
 }
