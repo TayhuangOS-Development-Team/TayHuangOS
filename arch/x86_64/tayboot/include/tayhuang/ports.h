@@ -16,11 +16,11 @@
 
 #pragma once
 
-//8042A
-#define M_8042A_CONTROL 0x20
-#define M_8042A_CONTROLMASK 0x21
-#define S_8042A_CONTROL 0xA0
-#define S_8042A_CONTROLMASK 0xA1
+//PIC
+#define M_PIC_CONTROL 0x20
+#define M_PIC_DATA 0x21
+#define S_PIC_CONTROL 0xA0
+#define S_PIC_DATA 0xA1
 
 //CMOS RAM
 #define CMOS_RAM_ADDRESS 0x70 

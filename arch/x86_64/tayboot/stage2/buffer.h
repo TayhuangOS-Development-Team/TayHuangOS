@@ -19,37 +19,37 @@
 #include "header.h"
 
 //低级缓存
-PUBLIC void ll_init_buffer(void);
-PUBLIC void ll_resize_buffer(word sz);
-PUBLIC word ll_get_buffer_used(void);
-PUBLIC word ll_get_buffer_remain(void);
-PUBLIC addr_t ll_alloc_buffer(word sz);
-PUBLIC void ll_free_buffer(addr_t addr);
-PUBLIC byte ll_get_byte_buffer(addr_t addr);
-PUBLIC word ll_get_word_buffer(addr_t addr);
-PUBLIC dword ll_get_dword_buffer(addr_t addr);
-PUBLIC void ll_set_byte_buffer(addr_t addr, byte val);
-PUBLIC void ll_set_word_buffer(addr_t addr, word val);
-PUBLIC void ll_set_dword_buffer(addr_t addr, dword val);
-PUBLIC void ll_cp_from_buffer(addr_t src, void* dst, word num);
-PUBLIC void ll_cp_to_buffer(void* src, addr_t dst, word num);
-PUBLIC void ll_cp_buffer_to_buffer(addr_t src, addr_t dst, word num);
-PUBLIC sreg_t ll_get_buffer_seg(void);
+PUBLIC void ll_init_buffer(void); //初始化
+PUBLIC void ll_resize_buffer(word sz); //重置大小
+PUBLIC word ll_get_buffer_used(void); //用了多少
+PUBLIC word ll_get_buffer_remain(void); //还剩多少
+PUBLIC addr_t ll_alloc_buffer(word sz); //分配一块缓存
+PUBLIC void ll_free_buffer(addr_t addr); //释放一块缓存
+PUBLIC byte ll_get_byte_buffer(addr_t addr); //取字节
+PUBLIC word ll_get_word_buffer(addr_t addr); //取字
+PUBLIC dword ll_get_dword_buffer(addr_t addr); //取双字
+PUBLIC void ll_set_byte_buffer(addr_t addr, byte val); //设字节
+PUBLIC void ll_set_word_buffer(addr_t addr, word val); //设字
+PUBLIC void ll_set_dword_buffer(addr_t addr, dword val); //设双字
+PUBLIC void ll_cp_from_buffer(addr_t src, void* dst, word num); //从缓存中复制
+PUBLIC void ll_cp_to_buffer(void* src, addr_t dst, word num); //复制到缓存
+PUBLIC void ll_cp_buffer_to_buffer(addr_t src, addr_t dst, word num); //从缓存复制到缓存
+PUBLIC sreg_t ll_get_buffer_seg(void); //获取缓存段
 
 //基于内存驱动的缓存
-PUBLIC void init_buffer(void);
-PUBLIC dword get_buffer_used(void);
-PUBLIC dword get_buffer_remain(void);
-PUBLIC addr_t alloc_buffer(dword sz, bool weak);
-PUBLIC void free_buffer(addr_t addr);
-PUBLIC byte get_buffer_byte(addr_t addr);
-PUBLIC word get_buffer_word(addr_t addr);
-PUBLIC dword get_buffer_dword(addr_t addr);
-PUBLIC void set_buffer_byte(addr_t addr, byte val);
-PUBLIC void set_buffer_word(addr_t addr, word val);
-PUBLIC void set_buffer_dword(addr_t addr, dword val);
-PUBLIC void cp_from_buffer(addr_t src, void* dst, word num);
-PUBLIC void cp_to_buffer(void* src, addr_t dst, word num);
-PUBLIC void cp_buffer_to_buffer(addr_t src, addr_t dst, word num);
-PUBLIC sreg_t get_buffer_seg(void);
-PUBLIC void update_buffer(void);
+PUBLIC void init_buffer(void); //初始化
+PUBLIC dword get_buffer_used(void); //用了多少
+PUBLIC dword get_buffer_remain(void); //还剩多少
+PUBLIC addr_t alloc_buffer(dword sz, bool weak); //分配一块缓存
+PUBLIC void free_buffer(addr_t addr); //释放一块缓存
+PUBLIC byte get_buffer_byte(addr_t addr); //取字节
+PUBLIC word get_buffer_word(addr_t addr); //取字
+PUBLIC dword get_buffer_dword(addr_t addr); //取双字
+PUBLIC void set_buffer_byte(addr_t addr, byte val); //设字节
+PUBLIC void set_buffer_word(addr_t addr, word val); //设字
+PUBLIC void set_buffer_dword(addr_t addr, dword val); //设双字
+PUBLIC void cp_from_buffer(addr_t src, void* dst, word num); //从缓存中复制
+PUBLIC void cp_to_buffer(void* src, addr_t dst, word num); //复制到缓存
+PUBLIC void cp_buffer_to_buffer(addr_t src, addr_t dst, word num); //从缓存复制到缓存
+PUBLIC sreg_t get_buffer_seg(void); //获取缓存段
+PUBLIC void update_buffer(void); //更新 没啥用 暂时先不必管它

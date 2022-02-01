@@ -23,6 +23,7 @@ PUBLIC void memcpy(void* dst, void* src, int sz) {
         *(char*)(dst + i) = *(char*)(src + i);
     }
 }
+
 PUBLIC void memset(void* dst, byte val, int sz) {
     for (int i = 0 ; i < sz ; i ++) {
         *(char*)(dst + i) = val;
@@ -44,7 +45,8 @@ struct mem_entry {
 
 #define MEM_ENTRY_NUM (1024)
 #define HEAP_MAX_SIZE (128 * 1024)
-#define __HEAP_START (0xA8000)
+#define __HEAP_START (0x9FFFF)
+#define __HEAP_LIMIT (__HEAP_START - HEAP_MAX_SIZE)
 PRIVATE int HEAP_START = __HEAP_START;
 
 PUBLIC void init_heap(int memsz) {
@@ -54,7 +56,7 @@ PUBLIC void init_heap(int memsz) {
     HEAP_INFO.mem_map = HEAP_START;
     HEAP_INFO.mem_table = HEAP_START + HEAP_MAX_SIZE / 8;
     HEAP_INFO.bottom = HEAP_INFO.top = HEAP_START + HEAP_MAX_SIZE / 8 + MEM_ENTRY_NUM * sizeof(struct mem_entry);
-    HEAP_INFO.limit = 0x82000;
+    HEAP_INFO.limit = __HEAP_LIMIT;
     memset(HEAP_INFO.mem_map, 0, HEAP_MAX_SIZE / 8);
     memset(HEAP_INFO.mem_table, 0, (MEM_ENTRY_NUM * sizeof(struct mem_entry)));
 }
@@ -64,7 +66,7 @@ PUBLIC void terminate_heap(int memsz) {
         HEAP_START = (memsz - 0x400);
     }
     HEAP_INFO.bottom = HEAP_INFO.top = HEAP_START + HEAP_MAX_SIZE / 8 + MEM_ENTRY_NUM * sizeof(struct mem_entry);
-    HEAP_INFO.limit = 0x82000;
+    HEAP_INFO.limit = __HEAP_LIMIT;
     memset(HEAP_INFO.mem_map, 0, HEAP_MAX_SIZE / 8);
     memset(HEAP_INFO.mem_table, 0, (MEM_ENTRY_NUM * sizeof(struct mem_entry)));
 }

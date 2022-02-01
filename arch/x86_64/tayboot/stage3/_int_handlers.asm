@@ -208,3 +208,78 @@ _exception:
     add esp, 4
     hlt
     jmp $
+    
+extern irq_interrup_handler
+
+%macro irq_handler 1
+    push eax
+    mov eax, %1
+    call irq_interrup_handler
+    pop eax
+    iretd
+%endmacro
+
+global irq0_handler
+global irq1_handler
+global irq2_handler
+global irq3_handler
+global irq4_handler
+global irq5_handler
+global irq6_handler
+global irq7_handler
+global irq8_handler
+global irq9_handler
+global irq10_handler
+global irq11_handler
+global irq12_handler
+global irq13_handler
+global irq14_handler
+global irq15_handler
+
+irq0_handler:
+    irq_handler 0
+
+irq1_handler:
+    irq_handler 1
+
+irq2_handler:
+    irq_handler 2
+
+irq3_handler:
+    irq_handler 3
+
+irq4_handler:
+    irq_handler 4
+
+irq5_handler:
+    irq_handler 5
+
+irq6_handler:
+    irq_handler 6
+
+irq7_handler:
+    irq_handler 7
+
+irq8_handler:
+    irq_handler 8
+
+irq9_handler:
+    irq_handler 9
+
+irq10_handler:
+    irq_handler 10
+
+irq11_handler:
+    irq_handler 11
+
+irq12_handler:
+    irq_handler 12
+
+irq13_handler:
+    irq_handler 13
+
+irq14_handler:
+    irq_handler 14
+
+irq15_handler:
+    irq_handler 15
