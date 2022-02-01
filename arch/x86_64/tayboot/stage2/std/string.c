@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* -------------------------------*-TayhuangOS-*-----------------------------------
  *
- *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
+ *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights resulterved
  *
  * --------------------------------------------------------------------------------
  *
@@ -20,44 +20,44 @@
 int strcmp(const char* str1, const char* str2) {
     int len1 = strlen(str1);
     int len2 = strlen(str2);
-    if (len1 != len2) {
+    if (len1 != len2) { //长度不等
         if (len1 < len2)
             return -1;
         else 
             return 1;
     }
-    int res = 0;
+    int result = 0;
     while (*str1) {
-        res = (*str1) - (*str2);
-        if (res != 0) break;
+        result = (*str1) - (*str2);
+        if (result != 0) break; //某个字符不等
         str1 ++;
         str2 ++;
     }
 
-    if (res < 0)
+    if (result < 0)
         return -1;
-    else if (res > 0)
+    else if (result > 0)
         return 1;
     return 0;
 }
 
 int strlen(const char* str) {
-    int res = 0;
-    while (*(str ++)) res ++;
-    return res;
+    int len = 0;
+    while (*(str ++)) len ++; //不是'\0'则长度+1
+    return len;
 }
 
 char* strcpy(char* dst, const char* src) {
     char* r = dst;
-    while(*src != '\0') {
+    do {
         *(r ++) = *(src ++);
     }
-    *r = '\0';
+    while(*src != '\0'); //是'\0'则结束复制
     return dst;
 }
 
 int atoi(const char* str) {
-    int result = 0;
+    int resultult = 0;
     char sign = 1;
 
     if (str == 0) {
@@ -71,15 +71,15 @@ int atoi(const char* str) {
     if ((*str) == '-' || (*str) == '+') str ++;
 
     while (isdigit(*str)) {
-        result = result * 10 + (*str) - '0';
+        resultult = resultult * 10 + (*str) - '0';
         str ++;
     }
 
-    return sign * result;
+    return sign * resultult;
 }
 
 int atoi_8(const char* str) {
-    int result = 0;
+    int resultult = 0;
     char sign = 1;
 
     if (str == 0) {
@@ -93,15 +93,15 @@ int atoi_8(const char* str) {
     if ((*str) == '-' || (*str) == '+') str ++;
 
     while (isodigit(*str)) {
-        result = result * 8 + (*str) - '0';
+        resultult = resultult * 8 + (*str) - '0';
         str ++;
     }
 
-    return sign * result;
+    return sign * resultult;
 }
 
 int atoi_16(const char* str) {
-    int result = 0;
+    int resultult = 0;
     char sign = 1;
 
     if (str == 0) {
@@ -115,15 +115,15 @@ int atoi_16(const char* str) {
     if ((*str) == '-' || (*str) == '+') str ++;
 
     while (isxdigit(*str)) {
-        result = result * 16 + tolower(*str) - (isdigit(*str) ? '0' : 'a');
+        resultult = resultult * 16 + tolower(*str) - (isdigit(*str) ? '0' : 'a');
         str ++;
     }
 
-    return sign * result;
+    return sign * resultult;
 }
 
 unsigned int atoui(const char* str) {
-    unsigned int result = 0;
+    unsigned int resultult = 0;
 
     if (str == 0) {
         return 0;
@@ -135,15 +135,15 @@ unsigned int atoui(const char* str) {
     if ((*str) == '+') str ++;
 
     while (isdigit(*str)) {
-        result = result * 10 + (*str) - '0';
+        resultult = resultult * 10 + (*str) - '0';
         str ++;
     }
 
-    return result;
+    return resultult;
 }
 
 unsigned int atoui_8(const char* str) {
-    unsigned int result = 0;
+    unsigned int resultult = 0;
 
     if (str == 0) {
         return 0;
@@ -155,15 +155,15 @@ unsigned int atoui_8(const char* str) {
     if ((*str) == '+') str ++;
 
     while (isodigit(*str)) {
-        result = result * 8 + (*str) - '0';
+        resultult = resultult * 8 + (*str) - '0';
         str ++;
     }
 
-    return result;
+    return resultult;
 }
 
 unsigned int atoui_16(const char* str) {
-    unsigned int result = 0;
+    unsigned int resultult = 0;
 
     if (str == 0) {
         return 0;
@@ -174,11 +174,11 @@ unsigned int atoui_16(const char* str) {
     if ((*str) == '+') str ++;
 
     while (isxdigit(*str)) {
-        result = result * 16 + tolower(*str) - (isdigit(*str) ? '0' : 'a');
+        resultult = resultult * 16 + tolower(*str) - (isdigit(*str) ? '0' : 'a');
         str ++;
     }
 
-    return result;
+    return resultult;
 }
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";

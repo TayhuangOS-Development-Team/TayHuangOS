@@ -38,7 +38,7 @@ void entry(struct boot_args* boot_args) {
     if (! boot_args->is_graphic_mode) { //不是图形模式
         print_info.scroll_line = 18;
         printf ("STAGE3 Now!\n");
-        printf ("Boot args Magic:%#8X!\n", boot_args->magic);
+        printf ("Boot args Magic:%#8X!\n", boot_args->magic); //打印信息
         printf ("Memory Size: %d (B), %d (KB), %d (MB)\n", boot_args->memory_size, boot_args->memory_size / 1024, boot_args->memory_size / 1024 / 1024);
     }
 }

@@ -52,7 +52,7 @@ PRIVATE short print_x = 0;
 PRIVATE short print_y = 0;
 
 PUBLIC void putchar(char ch) {
-    if (ch == '\r' || ch == '\n') {
+    if (ch == '\r' || ch == '\n') { //制表符
         print_x = 0;
         print_y ++;
     }
@@ -72,14 +72,14 @@ PUBLIC void putchar(char ch) {
         print_x = 0;
         print_y = 0;
     }
-    else {
+    else { //普通字符
         draw_character(print_x ++, print_y, ch, print_color);
     }
-    if (print_x == DPINFO.screen_width) {
+    if (print_x == DPINFO.screen_width) { //自动换行
         print_x = 0;
         print_y ++;
     }
-    if (print_y - print_info.scroll_line > 0) {
+    if (print_y - print_info.scroll_line > 0) { //滚动屏幕
         scroll_screen(print_y - print_info.scroll_line);
         print_y = print_info.scroll_line;
     }
@@ -109,7 +109,7 @@ PUBLIC word get_pos_y(void) {
 }
 
 PUBLIC void clrscr(void) {
-    //通过画 实现清屏
+    //通过画空格实现清屏
     for (int i = 0 ; i < DPINFO.screen_width ; i ++) {
         for (int j = 0 ; j < DPINFO.screen_height ; j ++) {
             draw_character(i, j, ' ', print_color);
