@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/init.c
+ * init.c
  *
  * 初始化函数
  *

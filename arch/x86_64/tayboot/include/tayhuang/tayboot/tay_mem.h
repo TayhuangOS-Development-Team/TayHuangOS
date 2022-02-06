@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/tayhuang/tayboot/tay_mem.h
+ * tay_mem.h
  *
  * 基础的内存函数
  *

@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/console/commands.h
+ * commands.h
  *
  * 实模式命令
  *

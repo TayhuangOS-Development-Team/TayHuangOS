@@ -8,9 +8,9 @@
  *
  * 作者: Flysong Beanflame
  *
- * arch/x86_64/tayboot/stage2/printf.h
+ * printf.h
  *
- * Display functions are declared here
+ * 显示函数
  *
  */
 

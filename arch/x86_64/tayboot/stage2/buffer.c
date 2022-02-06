@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/buffer.c
+ * buffer.c
  *
  * 缓存管理函数
  *

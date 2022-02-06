@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/lm/setup_longmode.h
+ * setup_longmode.h
  *
  * 设置长模式
  *

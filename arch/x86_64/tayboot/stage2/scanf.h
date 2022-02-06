@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/scanf.h
+ * scanf.h
  *
- * Input functions are declared here
+ * 输入函数
  *
  */
 

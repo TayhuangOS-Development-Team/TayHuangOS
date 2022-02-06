@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------Reference from linux----------------------------------
  *
- * arch/x86_64/tayboot/include/tayhuang/tayboot/descs.h
+ * descs.h
  *
  * 描述符的结构及宏
  *

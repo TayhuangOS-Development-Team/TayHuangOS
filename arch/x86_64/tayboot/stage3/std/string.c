@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/std/string.c
+ * string.c
  *
  * Standard lib string.h source here
  *

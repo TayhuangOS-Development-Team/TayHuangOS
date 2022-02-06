@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/stage3_main.c
+ * stage3_main.c
  *
  * Stage3主函数
  *

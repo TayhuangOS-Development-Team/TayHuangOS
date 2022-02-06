@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/lm/setup_paging.h
+ * setup_paging.h
  *
  * 设置页表
  *

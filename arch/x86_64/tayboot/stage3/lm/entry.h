@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/lm/entry.h
+ * entry.h
  *
  * 长模式入口
  *

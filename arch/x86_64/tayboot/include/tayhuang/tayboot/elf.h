@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------Reference from linux----------------------------------
  *
- * arch/x86_64/tayboot/include/tayhuang/tayboot/elf.h
+ * elf.h
  *
  * ELF结构及宏
  *

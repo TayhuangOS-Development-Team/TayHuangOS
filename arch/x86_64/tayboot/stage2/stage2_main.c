@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/stage2_main.c
+ * stage2_main.c
  *
  * Stage2主函数
  *

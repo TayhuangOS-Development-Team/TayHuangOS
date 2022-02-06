@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/drivers/disk/disk_driver.h
+ * disk_driver.h
  *
  * 硬盘驱动
  *

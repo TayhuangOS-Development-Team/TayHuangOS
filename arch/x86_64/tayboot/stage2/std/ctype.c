@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/lib/std/ctype.h
+ * ctype.h
  *
  * 标准库ctype.h的源文件
  *

@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/drivers/driver.c
+ * driver.c
  *
  * 驱动相关函数
  *

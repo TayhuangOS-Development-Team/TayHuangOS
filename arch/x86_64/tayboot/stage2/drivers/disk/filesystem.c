@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/drivers/disk/filesystem.h
+ * filesystem.h
  *
  * 文件系统
  *

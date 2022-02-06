@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/tayhuang/tayboot/tay_type.h
+ * tay_type.h
  *
  * 基础的类型
  *

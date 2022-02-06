@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/heap.h
+ * heap.h
  *
  * 堆管理函数
  *

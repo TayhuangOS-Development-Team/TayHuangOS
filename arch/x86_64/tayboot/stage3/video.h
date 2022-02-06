@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/video.h
+ * video.h
  *
  * 视频函数
  *

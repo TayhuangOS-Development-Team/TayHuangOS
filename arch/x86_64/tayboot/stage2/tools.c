@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/tools.c
+ * tools.c
  *
- * 实现工具函数
+ * 工具函数
  *
  */
 

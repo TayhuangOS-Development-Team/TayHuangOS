@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/tayhuang/tayboot/ports.h
+ * ports.h
  *
  * 基础中断向量
  *

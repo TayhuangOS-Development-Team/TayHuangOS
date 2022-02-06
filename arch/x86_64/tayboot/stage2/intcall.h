@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/intcall.h
+ * intcall.h
  *
- * 定义中断调用函数
+ * 中断调用函数
  *
  */
 

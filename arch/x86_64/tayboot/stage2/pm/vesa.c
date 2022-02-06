@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/pm/vesa.c
+ * vesa.c
  *
  * 实现vesa函数
  *

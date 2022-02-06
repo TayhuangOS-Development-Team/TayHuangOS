@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/file.c
+ * file.c
  *
  * 文件的函数
  *

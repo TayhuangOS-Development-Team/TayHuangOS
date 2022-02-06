@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/fs/fat32.c
+ * fat32.c
  *
  * FAT32文件系统
  *

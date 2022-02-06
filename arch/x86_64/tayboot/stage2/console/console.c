@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/console/console.c
+ * console.c
  *
  * 实模式控制台
  * 没什么实际作用

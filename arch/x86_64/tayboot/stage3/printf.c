@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/printf.h
+ * printf.h
  *
  * 打印函数
  *

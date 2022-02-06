@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/heap.h
+ * heap.h
  *
- * Heap manage functions are declared here
+ * 堆管理函数
  *
  */
 

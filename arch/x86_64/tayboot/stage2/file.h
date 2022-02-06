@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/file.h
+ * file.h
  *
- * File functions are declared here
+ * 文件函数
  *
  */
 

@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/drivers/keyboard/keyboard_driver.c
+ * keyboard_driver.c
  *
  * 键盘驱动
  *

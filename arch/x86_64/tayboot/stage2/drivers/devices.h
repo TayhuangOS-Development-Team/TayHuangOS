@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/drivers/devices.h
+ * devices.h
  *
  * 设备集合
  *
