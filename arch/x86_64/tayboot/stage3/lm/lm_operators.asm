@@ -94,8 +94,6 @@ goto_ia32e:
     xor edx, edx
     xor esi, esi
 
-    xchg bx, bx
-
 db 0xEA
 .jmp_pos: dd 0
 .jmp_seg: dw 0
