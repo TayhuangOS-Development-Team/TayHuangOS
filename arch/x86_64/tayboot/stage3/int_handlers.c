@@ -16,12 +16,12 @@
 
 #include "int_handlers.h"
 #include "printf.h"
-#include <int_vectors.h>
-#include <ports.h>
+#include <tayboot/int_vectors.h>
+#include <tayboot/ports.h>
 
 PUBLIC void exception_handler(int vector_no, int errcode, int eip, int cs, int eflags) {
     byte old_print_color = get_print_color();
-    const char* exception_msg[] = {
+    const char* exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!\n",
         "[#DB] Single step\n",
         "[None] Non-maskable interrup!\n",
@@ -58,13 +58,13 @@ PUBLIC void exception_handler(int vector_no, int errcode, int eip, int cs, int e
 
     set_print_color(0xFC);
     clrscr();
-    printf ("Oops!There is a exception throwing!The followings are its information:\n");
+    printf ("Oops!There is a exception throwing!The followings are its information:\n"); //
     if (vector_no < 32) {
-        printf ("Message: %s", exception_msg[vector_no]);
+        printf ("Message: %s", exception_msg[vector_no]); //打印信息
     }
-    printf ("Vector = %d", vector_no);
+    printf ("Vector = %d", vector_no); //打印Vector号
     if (errcode != 0xFFFFFFFF) {
-        printf (";\tError code = %d", errcode);
+        printf (";\tError code = %d", errcode); //打印错误码
     }
 
     printf ("\n");
@@ -78,13 +78,13 @@ PUBLIC void exception_handler(int vector_no, int errcode, int eip, int cs, int e
     asmv ("movl %%esi, %0" : "=m"(_esi));
     asmv ("movl %%edi, %0" : "=m"(_edi));
     asmv ("movl %%esp, %0" : "=m"(_esp));
-    asmv ("movl %%ebp, %0" : "=m"(_ebp));
+    asmv ("movl %%ebp, %0" : "=m"(_ebp)); //获取寄存器
     printf ("eax: %#8X ; ebx: %#8X\n", _eax, _ebx);
     printf ("ecx: %#8X ; edx: %#8X\n", _ecx, _edx);
     printf ("esi: %#8X ; edi: %#8X\n", _esi, _edi);
     printf ("esp: %#8X ; ebp: %#8X\n", _esp, _ebp);
     printf ("cs:  %#4X     ;  ds:  %#4X\n", cs, rdds());
-    printf ("eip: %#8X;eflags:%#8X\n", eip, eflags);
+    printf ("eip: %#8X;eflags:%#8X\n", eip, eflags); //打印寄存器
     set_print_color(old_print_color);
 }
 
@@ -94,37 +94,46 @@ PUBLIC void register_irq_handler(int irq, irq_handler handler) {
     IRQ_HANDLER_LIST[irq] = handler;
 }
 
-PUBLIC void irq_interrup_handler(int irq) {
+PUBLIC void enable_irq(int irq) {
     if (irq < 8) {
-        byte i = inb(M_PIC_DATA);
-        i |= (1 << irq);
-        outb(M_PIC_DATA, i);
-    }
-    else {
-        byte i = inb(S_PIC_DATA);
-        i |= (1 << (irq - 8));
-        outb(S_PIC_DATA, i);
-    }
-    outb(M_PIC_CONTROL, 0x20);
-    io_delay();
-    outb(S_PIC_CONTROL, 0x20);
-
-    asmv ("sti");
-
-    if (IRQ_HANDLER_LIST[irq] != NULL) {
-        IRQ_HANDLER_LIST[irq](irq);
-    }
-
-    asmv ("cli");
-
-    if (irq < 8) {
-        byte i = inb(M_PIC_DATA);
+        byte i = inb(M_PIC_DATA); //主片
         i &= ~(1 << irq);
         outb(M_PIC_DATA, i);
     }
     else {
-        byte i = inb(S_PIC_DATA);
+        byte i = inb(S_PIC_DATA); //从片
         i &= ~(1 << (irq - 8));
         outb(S_PIC_DATA, i);
     }
+}
+
+PUBLIC void disable_irq(int irq) {
+    if (irq < 8) {
+        byte i = inb(M_PIC_DATA); //主片
+        i |= (1 << irq);
+        outb(M_PIC_DATA, i);
+    }
+    else {
+        byte i = inb(S_PIC_DATA); //从片
+        i |= (1 << (irq - 8));
+        outb(S_PIC_DATA, i);
+    }
+}
+
+PUBLIC void irq_interrup_handler(int irq) {
+    disable_irq(irq); //禁用IRQ
+
+    outb(M_PIC_CONTROL, 0x20); //EOI
+    io_delay();
+    outb(S_PIC_CONTROL, 0x20); //EOI
+
+    asmv ("sti"); //CPU会自动关中断
+
+    if (IRQ_HANDLER_LIST[irq] != NULL) { //存在对应的IRQ处理器
+        IRQ_HANDLER_LIST[irq](irq);
+    }
+
+    asmv ("cli"); //恢复原来状态
+
+    enable_irq(irq); //启用IRQ
 }

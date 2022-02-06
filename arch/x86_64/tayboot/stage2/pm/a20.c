@@ -16,7 +16,7 @@
 
 #include "a20.h"
 #include "../intcall.h"
-#include <ports.h>
+#include <tayboot/ports.h>
 
 #define A20_TEST_ADDRESS (0x80 << 2) //测试地址
 #define A20_FAST_TEST_TIME (2 << 4) //快速测试次数

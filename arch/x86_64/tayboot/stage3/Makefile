@@ -2,16 +2,21 @@ STAGE3_OUPUT := stage3.bin
 ASM := nasm
 RM := rm
 GCC := gcc
-CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 \
+LD := ld
+CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
-		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
+		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop #-Os
 STD_C_SRC := std/ctype std/string
-C_SRC := stage3_main vedio printf int_handlers init memory \
-		$(STD_C_SRC)
-ASM_SRC := stage3_entry _int_handlers
-C_DEFS := $(ARCHDEF)
-C_INCLUDE := -I"../include/std/" -I"../include/tayhuang/"
+LM_C_SRC := lm/entry lm/load_kernel lm/setup_longmode lm/setup_paging
+FS_SRC := fs/fat32
+C_SRC := stage3_main video printf int_handlers init memory disk \
+		$(STD_C_SRC) \
+		$(LM_C_SRC) \
+		$(FS_SRC)
+ASM_SRC := stage3_entry _int_handlers ./lm/lm_operators
+C_DEFS := $(ARCHDEF_C)
+C_INCLUDE := -I"../include/std/" -I"../include/tayhuang/" -I"../../../../include/"
 
 .PHONY: build
 build:

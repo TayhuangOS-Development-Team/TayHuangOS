@@ -16,14 +16,14 @@
 
 #include "entry.h"
 #include "a20.h"
-#include <descs.h>
+#include <tayboot/descs.h>
 #include "../printf.h"
 #include "../intcall.h"
 #include "vesa.h"
 #include "../drivers/drivers.h"
 #include "../drivers/memory/memory_driver.h"
-#include <boot_args.h>
-#include <ports.h>
+#include <tayboot/stage3_args.h>
+#include <tayboot/ports.h>
 
 #define EMPTY_DESC_NO (0) //空描述符
 #define CS_DESC_NO (1) //代码段描述符
@@ -54,9 +54,9 @@ PRIVATE void setup_idt(void) {
     asmv ("lidtl %0" : : "m"(idtr));
 }
 
-PUBLIC void the_finally_jump(void* entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void* boot_args); //最终一跳
+PUBLIC void the_finally_jump(void* entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void* stage3_args); //最终一跳
 
-struct boot_args boot_args; //引导参数
+struct stage3_args stage3_args; //STAGE3引导参数
 
 PRIVATE int get_mem_size(void) {
     int size = 0;
@@ -64,24 +64,25 @@ PRIVATE int get_mem_size(void) {
     return size;
 }
 
-PRIVATE void init_boot_args(void) {
-    boot_args.magic = BOOT_ARGS_MAGIC;
-    boot_args.memory_size = get_mem_size();
+PRIVATE void init_stage3_args(void) {
+    stage3_args.magic = STAGE3_ARGS_MAGIC;
+    stage3_args.memory_size = get_mem_size();
+    stage3_args.memory_size_high = get_memsz_high();
 #ifdef ENABLE_GRAPHIC_BEFORE_GOTO_OS //启用图形界面
     void* framebuffer = enable_graphic();
     if (framebuffer) {
-        boot_args.is_graphic_mode = true;
-        boot_args.screen_height = 768;
-        boot_args.screen_width = 1024;
-        boot_args.framebuffer = framebuffer;
+        stage3_args.is_graphic_mode = true;
+        stage3_args.screen_height = 768;
+        stage3_args.screen_width = 1024;
+        stage3_args.framebuffer = framebuffer;
     }
     else { //不支持vesa
         printf ("Your vedio don't support vesa!");
 #else
-    boot_args.is_graphic_mode = false;
-    boot_args.screen_height = 25;
-    boot_args.screen_width = 80;
-    boot_args.framebuffer = (void*)0xB8000;
+    stage3_args.is_graphic_mode = false;
+    stage3_args.screen_height = 25;
+    stage3_args.screen_width = 80;
+    stage3_args.framebuffer = (void*)0xB8000;
 #endif
 #ifdef ENABLE_GRAPHIC_BEFORE_GOTO_OS
     }
@@ -89,7 +90,7 @@ PRIVATE void init_boot_args(void) {
 }
 
 PUBLIC void go_to_protect_mode(void) { //去到保护模式
-    init_boot_args(); //初始化引导参数
+    init_stage3_args(); //初始化引导参数
     void* entrypoint = load_stage3(); //加载stage3并获取入口点
     if (entrypoint == NULL) { //无法加载
         printf ("Error! We can't load stage3!Or reboot?");
@@ -113,5 +114,5 @@ PUBLIC void go_to_protect_mode(void) { //去到保护模式
     //设置idt
     setup_idt();
     //保护模式 我来力
-    the_finally_jump(entrypoint, CS_DESC_NO << 3, DS_DESC_NO << 3, TSS_DESC_NO << 3, (((dword)(&boot_args)) + (rdds() << 4)));
+    the_finally_jump(entrypoint, CS_DESC_NO << 3, DS_DESC_NO << 3, TSS_DESC_NO << 3, (((dword)(&stage3_args)) + (rdds() << 4)));
 }

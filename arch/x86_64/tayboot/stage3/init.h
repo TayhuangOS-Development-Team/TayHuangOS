@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <descs.h>
+#include <tayboot/descs.h>
 
 typedef void(*int_handler)(void);
 

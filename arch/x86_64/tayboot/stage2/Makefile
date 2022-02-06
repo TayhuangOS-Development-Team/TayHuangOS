@@ -2,11 +2,12 @@ STAGE2_OUPUT := stage2.bin
 ASM := nasm
 RM := rm
 GCC := gcc
-REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 \
+LD := ld
+REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
-DRIVER_C_SRC := ./drivers/vedio/vedio_driver ./drivers/memory/memory_driver ./drivers/disk/disk_driver \
+DRIVER_C_SRC := ./drivers/video/video_driver ./drivers/memory/memory_driver ./drivers/disk/disk_driver \
 				./drivers/keyboard/keyboard_driver \
 			    ./drivers/driver ./drivers/drivers ./drivers/devices \
 				./drivers/disk/filesystems/fs_fat16 ./drivers/disk/filesystem
@@ -18,8 +19,9 @@ C_SRC := stage2_main intcall buffer heap tools file \
 	$(STDLIB_C_SRC) \
 	$(PM_C_SRC) \
     $(CONSOLE_C_SRC)
-C_INCLUDE := -I "../include/std/" -I"../include/tayhuang"
-C_DEFS := -DREALMODE_CONSOLE_MAJOR_VERSION=1 -DREALMODE_CONSOLE_MINOR_VERSION=0 -DREALMODE_CONSOLE_REVISION_VERSION=0 -DREALMODE_CONSOLE_BUILD_VERSION=3 \
+C_INCLUDE := -I "../include/std/" -I"../include/tayhuang/"
+C_DEFS := $(ARCHDEF_C) \
+	      -DREALMODE_CONSOLE_MAJOR_VERSION=1 -DREALMODE_CONSOLE_MINOR_VERSION=0 -DREALMODE_CONSOLE_REVISION_VERSION=0 -DREALMODE_CONSOLE_BUILD_VERSION=3 \
 		  -DREALMODE -DGOTO_OS_AUTO #-DENABLE_GRAPHIC_BEFORE_GOTO_OS
 ASM_SRC := stage2_entry io ./pm/jumping
 SPLASHES := splashes.txt

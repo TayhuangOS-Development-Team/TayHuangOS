@@ -18,7 +18,7 @@
 
 #include "driver.h"
 
-extern driver_t vedio_driver;
+extern driver_t video_driver;
 extern driver_t memory_driver;
 extern driver_t a_disk_driver;
 extern driver_t keyboard_driver;

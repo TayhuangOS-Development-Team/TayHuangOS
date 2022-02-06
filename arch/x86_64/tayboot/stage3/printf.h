@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <tay_defs.h>
+#include <tayboot/tay_defs.h>
 
 struct print_info_t {
     int scroll_line;

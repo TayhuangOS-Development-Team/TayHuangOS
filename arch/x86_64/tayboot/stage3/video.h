@@ -7,7 +7,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/vedio.h
+ * arch/x86_64/tayboot/stage3/video.h
  *
  * 视频函数
  */
@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <tay_defs.h>
+#include <tayboot/tay_defs.h>
 
 typedef struct {
     byte r;
@@ -41,12 +41,12 @@ struct DP_INFO {
     int screen_width;
     int screen_height;
     int type;
-    char* framebuffer;
+    char *framebuffer;
 }; //显示信息
 
 extern struct DP_INFO DPINFO; //显示信息
 
-PUBLIC void init_vedio(int screen_width, int screen_height, int type, char* framebuffer); //初始化视频
-PUBLIC void draw_pixel(int pos_x, int pos_y, color_rgb* color); //画像素点
-PUBLIC void draw_rectangle(int lu_x, int lu_y, int rd_x, int rd_y, color_rgb* color); //画矩形
+PUBLIC void init_video(int screen_width, int screen_height, int type, char *framebuffer); //初始化视频
+PUBLIC void draw_pixel(int pos_x, int pos_y, color_rgb *color); //画像素点
+PUBLIC void draw_rectangle(int lu_x, int lu_y, int rd_x, int rd_y, color_rgb *color); //画矩形
 PUBLIC void draw_character(int pos_x, int pos_y, char ch, byte color); //画字符

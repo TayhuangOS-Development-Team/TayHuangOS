@@ -7,25 +7,25 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage3/vedio.c
+ * arch/x86_64/tayboot/stage3/video.c
  *
  * 视频函数
  */
 
 
 
-#include "vedio.h"
+#include "video.h"
 
 PUBLIC struct DP_INFO DPINFO;
 
-PUBLIC void init_vedio(int screen_width, int screen_height, int type, char* framebuffer) {
+PUBLIC void init_video(int screen_width, int screen_height, int type, char *framebuffer) {
     DPINFO.screen_width = screen_width; //设置屏幕宽高
     DPINFO.screen_height = screen_height;
     DPINFO.type = type; //设置类型
     DPINFO.framebuffer = framebuffer; //设置显存
 }
 
-PUBLIC void draw_pixel(int pos_x, int pos_y, color_rgb* color) {
+PUBLIC void draw_pixel(int pos_x, int pos_y, color_rgb *color) {
     if (DPINFO.type != DPM_GRAPHIC) //不是图形模式则不运行
         return;
     int position = pos_y * DPINFO.screen_width + pos_x;
@@ -34,7 +34,7 @@ PUBLIC void draw_pixel(int pos_x, int pos_y, color_rgb* color) {
     *(DPINFO.framebuffer + position * 3 + 2) = color->r;
 }
 
-PUBLIC void draw_rectangle(int lu_x, int lu_y, int rd_x, int rd_y, color_rgb* color) {
+PUBLIC void draw_rectangle(int lu_x, int lu_y, int rd_x, int rd_y, color_rgb *color) {
     //依靠循环实现
     for (int i = lu_x ; i < rd_x ; i ++) {
         for (int j = lu_y ; j < rd_y ; j ++) {

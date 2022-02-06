@@ -16,8 +16,8 @@
 
 #include "init.h"
 #include "int_handlers.h"
-#include <int_vectors.h>
-#include <ports.h>
+#include <tayboot/int_vectors.h>
+#include <tayboot/ports.h>
 
 struct desc_struct GDT[GDT_SIZE];
 struct gdt_ptr gdtr;
@@ -25,49 +25,47 @@ struct gate_struct IDT[IDT_SIZE];
 struct desc_ptr idtr;
 
 PUBLIC void init_gdt(void) {
-    GDT[0] = (struct desc_struct)GDT_ENTRY(0, 0, 0xFFFFF);
-    GDT[1] = (struct desc_struct)GDT_ENTRY(0xC09A, 0, 0xFFFFF);
-    GDT[2] = (struct desc_struct)GDT_ENTRY(0xC093, 0, 0xFFFFF);
-    GDT[3] = (struct desc_struct)GDT_ENTRY(0x0089, 4096, 103);
+    GDT[0] = (struct desc_struct)GDT_ENTRY(0, 0, 0xFFFFF); //空
+    GDT[1] = (struct desc_struct)GDT_ENTRY(0xC09A, 0, 0xFFFFF); //代码段
+    GDT[2] = (struct desc_struct)GDT_ENTRY(0xC093, 0, 0xFFFFF); //数据段
+    GDT[3] = (struct desc_struct)GDT_ENTRY(0x0089, 4096, 103); //TSS
+    GDT[4] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF); //代码段64bit
     gdtr.ptr = GDT;
     gdtr.len = sizeof (GDT) - 1;
-    asmv ("lgdtl %0" : : "m"(gdtr));
+    asmv ("lgdtl %0" : : "m"(gdtr)); //加载GDT
 }
 
 PUBLIC void init_pic(void) {
     outb (M_PIC_CONTROL, 0x11);
-    outb (S_PIC_CONTROL, 0x11);
+    outb (S_PIC_CONTROL, 0x11); //ICW1
 
     outb (M_PIC_DATA, INT_VECTOR_IRQ0);
-    outb (S_PIC_DATA, INT_VECTOR_IRQ8);
+    outb (S_PIC_DATA, INT_VECTOR_IRQ8); //ICW2
 
     outb (M_PIC_DATA, 0x4);
-    outb (S_PIC_DATA, 0x2);
+    outb (S_PIC_DATA, 0x2); //ICW3
 
     outb (M_PIC_DATA, 0x1);
-    outb (S_PIC_DATA, 0x1);
+    outb (S_PIC_DATA, 0x1); //ICW4
     
-    outb (M_PIC_DATA, 0x00);
-    outb (S_PIC_DATA, 0x00);
+    outb (M_PIC_DATA, 0xFF); //OCW1
+    outb (S_PIC_DATA, 0xFF);
 }
 
-PUBLIC void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) {
+PUBLIC void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) { //初始化一个IDT描述符
     dword base = (dword)handler;
-    IDT[vector].offset_low = base & 0xFFFF;
-    IDT[vector].segment = rdcs();
+    IDT[vector].offset_low = base & 0xFFFF; //偏移
+    IDT[vector].segment = rdcs(); //段
     IDT[vector].bits.ist = 0;
     IDT[vector].bits.zero = 0;
-    IDT[vector].bits.type = type;
-    IDT[vector].bits.dpl = privilege;
-    IDT[vector].bits.p = 1;
-    IDT[vector].offset_middle = base >> 16;
-#ifdef ARCH_x86_64
-    IDT[vector].offset_high = 0;
-    IDT[vector].reserved = 0;
-#endif
+    IDT[vector].bits.type = type; //类型
+    IDT[vector].bits.dpl = privilege; //权限
+    IDT[vector].bits.p = 1; //存在
+    IDT[vector].offset_middle = base >> 16; //偏移
 }
 
 PRIVATE void _int_idt_descs(void) {
+    //异常的IDT
     init_idt_desc(0, GATE_INTERRUPT, divide_by_zero_error, 0);
     init_idt_desc(1, GATE_INTERRUPT, single_step_debug, 0);
     init_idt_desc(2, GATE_INTERRUPT, non_maskable_interrup, 0);
@@ -101,6 +99,7 @@ PRIVATE void _int_idt_descs(void) {
     init_idt_desc(30, GATE_INTERRUPT, security_exception, 0);
     init_idt_desc(31, GATE_INTERRUPT, reserved8_excepetion, 0);
 
+    //主片IRQ
     init_idt_desc(CALC_IRQ(0), GATE_INTERRUPT, irq0_handler, 0);
     init_idt_desc(CALC_IRQ(1), GATE_INTERRUPT, irq1_handler, 0);
     init_idt_desc(CALC_IRQ(2), GATE_INTERRUPT, irq2_handler, 0);
@@ -110,6 +109,7 @@ PRIVATE void _int_idt_descs(void) {
     init_idt_desc(CALC_IRQ(6), GATE_INTERRUPT, irq6_handler, 0);
     init_idt_desc(CALC_IRQ(7), GATE_INTERRUPT, irq7_handler, 0);
 
+    //从片IRQ
     init_idt_desc(CALC_IRQ(8), GATE_INTERRUPT, irq8_handler, 0);
     init_idt_desc(CALC_IRQ(9), GATE_INTERRUPT, irq9_handler, 0);
     init_idt_desc(CALC_IRQ(10), GATE_INTERRUPT, irq10_handler, 0);
@@ -121,8 +121,9 @@ PRIVATE void _int_idt_descs(void) {
 }
 
 PUBLIC void init_idt(void) {
+    //初始化IDT
     idtr.address = IDT;
     idtr.size = sizeof(IDT) - 1;
-    asmv ("lidtl %0" : : "m"(idtr));
     _int_idt_descs();
+    asmv ("lidtl %0" : : "m"(idtr));
 }

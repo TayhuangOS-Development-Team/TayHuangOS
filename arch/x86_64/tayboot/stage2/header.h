@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <tay_defs.h>
+#include <tayboot/tay_defs.h>
 
 //数据段
 #define BASE_OF_DATA 0x1000

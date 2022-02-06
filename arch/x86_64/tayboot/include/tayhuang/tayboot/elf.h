@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* -------------------------------Reference from linux----------------------------------
  *
- * arch/x86_64/tayboot/include/tayhuang/elf.h
+ * arch/x86_64/tayboot/include/tayhuang/tayboot/elf.h
  *
  * ELF结构及宏
  */
@@ -11,16 +11,31 @@
 
 #pragma once
 
-typedef unsigned short Elf32_Half;
-typedef unsigned int Elf32_Word;
-typedef unsigned long long Elf32_Xword;
-typedef int Elf32_Sword;
-typedef long long Elf32_Sxword;
+#include "stdint.h"
+
+//Types
+typedef uint16_t Elf32_Half;
+typedef uint32_t Elf32_Word;
+typedef uint64_t Elf32_Xword;
+typedef int32_t Elf32_Sword;
+typedef int64_t Elf32_Sxword;
 typedef Elf32_Word Elf32_Off;
 typedef Elf32_Word Elf32_Addr;
 typedef Elf32_Half Elf32_Section;
 typedef Elf32_Half Elf32_Versym;
 
+
+typedef uint16_t Elf64_Half;
+typedef uint32_t Elf64_Word;
+typedef uint64_t Elf64_Xword;
+typedef int32_t Elf64_Sword;
+typedef int64_t Elf64_Sxword;
+typedef Elf64_Xword Elf64_Off;
+typedef Elf64_Xword Elf64_Addr;
+typedef Elf64_Half Elf64_Section;
+typedef Elf64_Half Elf64_Versym;
+
+//EHDR
 #define EI_NIDENT 16
 
 typedef struct
@@ -43,6 +58,25 @@ typedef struct
 
 typedef struct
 {
+  unsigned char	e_ident[EI_NIDENT];	/* Magic number and other info */
+  Elf64_Half	e_type;			/* Object file type */
+  Elf64_Half	e_machine;		/* Architecture */
+  Elf64_Word	e_version;		/* Object file version */
+  Elf64_Addr	e_entry;		/* Entry point virtual address */
+  Elf64_Off	e_phoff;		/* Program header table file offset */
+  Elf64_Off	e_shoff;		/* Section header table file offset */
+  Elf64_Word	e_flags;		/* Processor-specific flags */
+  Elf64_Half	e_ehsize;		/* ELF header size in bytes */
+  Elf64_Half	e_phentsize;		/* Program header table entry size */
+  Elf64_Half	e_phnum;		/* Program header table entry count */
+  Elf64_Half	e_shentsize;		/* Section header table entry size */
+  Elf64_Half	e_shnum;		/* Section header table entry count */
+  Elf64_Half	e_shstrndx;		/* Section header string table index */
+} Elf64_Ehdr;
+
+//SHDR
+typedef struct
+{
   Elf32_Word	sh_name;		/* Section name (string tbl index) */
   Elf32_Word	sh_type;		/* Section type */
   Elf32_Word	sh_flags;		/* Section flags */
@@ -57,11 +91,35 @@ typedef struct
 
 typedef struct
 {
+  Elf64_Word	sh_name;		/* Section name (string tbl index) */
+  Elf64_Word	sh_type;		/* Section type */
+  Elf64_Xword	sh_flags;		/* Section flags */
+  Elf64_Addr	sh_addr;		/* Section virtual addr at execution */
+  Elf64_Off	sh_offset;		/* Section file offset */
+  Elf64_Xword	sh_size;		/* Section size in bytes */
+  Elf64_Word	sh_link;		/* Link to another section */
+  Elf64_Word	sh_info;		/* Additional section information */
+  Elf64_Xword	sh_addralign;		/* Section alignment */
+  Elf64_Xword	sh_entsize;		/* Entry size if section holds table */
+} Elf64_Shdr;
+
+//CHDR
+typedef struct
+{
   Elf32_Word	ch_type;	/* Compression format.  */
   Elf32_Word	ch_size;	/* Uncompressed data size.  */
   Elf32_Word	ch_addralign;	/* Uncompressed data alignment.  */
 } Elf32_Chdr;
 
+typedef struct
+{
+  Elf64_Word	ch_type;	/* Compression format.  */
+  Elf64_Word	ch_reserved;
+  Elf64_Xword	ch_size;	/* Uncompressed data size.  */
+  Elf64_Xword	ch_addralign;	/* Uncompressed data alignment.  */
+} Elf64_Chdr;
+
+//Symbol
 typedef struct
 {
   Elf32_Word	st_name;		/* Symbol name (string tbl index) */
@@ -74,10 +132,27 @@ typedef struct
 
 typedef struct
 {
+  Elf64_Word	st_name;		/* Symbol name (string tbl index) */
+  unsigned char	st_info;		/* Symbol type and binding */
+  unsigned char st_other;		/* Symbol visibility */
+  Elf64_Section	st_shndx;		/* Section index */
+  Elf64_Addr	st_value;		/* Symbol value */
+  Elf64_Xword	st_size;		/* Symbol size */
+} Elf64_Sym;
+
+typedef struct
+{
   Elf32_Half si_boundto;		/* Direct bindings, symbol bound to */
   Elf32_Half si_flags;			/* Per symbol flags */
 } Elf32_Syminfo;
 
+typedef struct
+{
+  Elf64_Half si_boundto;		/* Direct bindings, symbol bound to */
+  Elf64_Half si_flags;			/* Per symbol flags */
+} Elf64_Syminfo;
+
+//Rel
 typedef struct
 {
   Elf32_Addr	r_offset;		/* Address */
@@ -86,11 +161,24 @@ typedef struct
 
 typedef struct
 {
+  Elf64_Addr	r_offset;		/* Address */
+  Elf64_Xword	r_info;			/* Relocation type and symbol index */
+} Elf64_Rel;
+
+typedef struct
+{
   Elf32_Addr	r_offset;		/* Address */
   Elf32_Word	r_info;			/* Relocation type and symbol index */
   Elf32_Sword	r_addend;		/* Addend */
 } Elf32_Rela;
 
+typedef struct
+{
+  Elf64_Addr	r_offset;		/* Address */
+  Elf64_Xword	r_info;			/* Relocation type and symbol index */
+} Elf64_Rela;
+
+//Phdr
 typedef struct
 {
   Elf32_Word	p_type;			/* Segment type */
@@ -105,6 +193,19 @@ typedef struct
 
 typedef struct
 {
+  Elf64_Word	p_type;			/* Segment type */
+  Elf64_Word	p_flags;		/* Segment flags */
+  Elf64_Off	p_offset;		/* Segment file offset */
+  Elf64_Addr	p_vaddr;		/* Segment virtual address */
+  Elf64_Addr	p_paddr;		/* Segment physical address */
+  Elf64_Xword	p_filesz;		/* Segment size in file */
+  Elf64_Xword	p_memsz;		/* Segment size in memory */
+  Elf64_Xword	p_align;		/* Segment alignment */
+} Elf64_Phdr;
+
+//Dyn
+typedef struct
+{
   Elf32_Sword	d_tag;			/* Dynamic entry type */
   union
     {
@@ -113,6 +214,7 @@ typedef struct
     } d_un;
 } Elf32_Dyn;
 
+//Version
 typedef struct
 {
   Elf32_Half	vd_version;		/* Version revision */
@@ -143,6 +245,7 @@ typedef struct
 					   entry */
 } Elf32_Verneed;
 
+//AUXV
 typedef struct
 {
   unsigned int a_type;		/* Entry type */
@@ -155,6 +258,7 @@ typedef struct
     } a_un;
 } Elf32_auxv_t;
 
+//Nhdr
 typedef struct
 {
   Elf32_Word n_namesz;			/* Length of the note's name.  */
@@ -162,6 +266,7 @@ typedef struct
   Elf32_Word n_type;			/* Type of the note.  */
 } Elf32_Nhdr;
 
+//Move
 typedef struct
 {
   Elf32_Xword m_value;		/* Symbol value.  */
@@ -171,6 +276,7 @@ typedef struct
   Elf32_Half m_stride;		/* Stride info.  */
 } Elf32_Move;
 
+//GPTAB
 typedef union
 {
   struct
@@ -185,6 +291,7 @@ typedef union
     } gt_entry;				/* Subsequent entries in section.  */
 } Elf32_gptab;
 
+//Register
 typedef struct
 {
   Elf32_Word ri_gprmask;		/* General registers used.  */
@@ -192,6 +299,7 @@ typedef struct
   Elf32_Sword ri_gp_value;		/* $gp register value.  */
 } Elf32_RegInfo;
 
+//Lib
 typedef struct
 {
   Elf32_Word l_name;		/* Name (string table index) */

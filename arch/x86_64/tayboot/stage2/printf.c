@@ -17,7 +17,7 @@
 #include "printf.h"
 #include "drivers/drivers.h"
 #include "drivers/devices.h"
-#include "drivers/vedio/vedio_driver.h"
+#include "drivers/video/video_driver.h"
 #include "intcall.h"
 #include <ctype.h>
 #include <stdarg.h>
@@ -59,7 +59,7 @@ PUBLIC void disp_char(char ch, byte color, byte x, byte y) {
     write_pack.pos_y = y;
     write_pack.ch = ch;
     write_pack.color = color;
-    vedio_driver.pc_handle(&vedio_driver, VD_CMD_WRITE_BYTE, &write_pack);
+    video_driver.pc_handle(&video_driver, VD_CMD_WRITE_BYTE, &write_pack);
 }
 
 PUBLIC void putchar(char ch) {
@@ -118,7 +118,7 @@ PUBLIC word get_pos_y(void) {
 }
 
 PUBLIC void clrscr(void) {
-    vedio_driver.pc_handle(&vedio_driver, VD_CMD_CLRSCR, NULL);
+    video_driver.pc_handle(&video_driver, VD_CMD_CLRSCR, NULL);
     print_x = 0;
     print_y = 0;
     screen_info.current_line = 0;

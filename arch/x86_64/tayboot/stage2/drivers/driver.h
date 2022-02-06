@@ -19,7 +19,7 @@
 #include "../header.h"
 
 typedef enum {
-    DT_VEDIO,
+    DT_VIDEO,
     DT_DISK,
     DT_KEYBOARD,
     DT_MEMORY

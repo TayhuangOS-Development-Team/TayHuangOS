@@ -15,7 +15,7 @@
 
 
 #include "printf.h"
-#include "vedio.h"
+#include "video.h"
 #include <stdarg.h>
 #include <ctype.h>
 #include <string.h>

@@ -7,7 +7,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/tayhuang/boot_args.h
+ * include/tayhuang/boot_args.h
  *
  * boot_args的结构
  */
@@ -16,15 +16,17 @@
 
 #pragma once
 
-#include <tay_type.h>
+#include <tayhuang/memory_segment.h>
 
 struct boot_args {
-    dword magic; //魔数 用于校验
-    bool is_graphic_mode; //是否为图形模式
+    int magic; //魔数 用于校验
+    unsigned char is_graphic_mode; //是否为图形模式
     int screen_width; //屏幕宽
     int screen_height; //屏幕高
-    void* framebuffer; //屏幕显存
+    void *framebuffer; //屏幕显存
     int memory_size; //内存大小
+    int memory_size_high; //内存大小(大)
+    memory_segment segments[32];
 };
 
-#define BOOT_ARGS_MAGIC (0x553DBB2) //MD5 of "BOOTARGS"(前32位)
+#define BOOT_ARGS_MAGIC (0x5A71F213) //MD5 of "BOOTARGS"(前32位)

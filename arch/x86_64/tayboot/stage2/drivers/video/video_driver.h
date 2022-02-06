@@ -7,7 +7,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/drivers/vedio/vedio_driver.h
+ * arch/x86_64/tayboot/stage2/drivers/video/video_driver.h
  *
  * 视频驱动
  */
@@ -41,4 +41,4 @@ typedef struct{
     b8 color;
 }DAPACK(vd, writebyte);
 
-PUBLIC void create_vedio_driver(pdriver driver);
+PUBLIC void create_video_driver(pdriver driver);

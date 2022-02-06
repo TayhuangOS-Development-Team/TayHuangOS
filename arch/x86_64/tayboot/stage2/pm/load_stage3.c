@@ -15,7 +15,7 @@
 
 
 #include "entry.h"
-#include <elf.h>
+#include <tayboot/elf.h>
 #include "../drivers/disk/disk_driver.h"
 #include "../drivers/drivers.h"
 #include "../printf.h"

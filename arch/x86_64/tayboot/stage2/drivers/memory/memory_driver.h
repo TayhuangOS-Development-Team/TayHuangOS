@@ -74,3 +74,4 @@ typedef struct {
 } DAPACK(mm, cp_data);
 
 PUBLIC void create_memory_driver(pdriver driver);
+PUBLIC dword get_memsz_high(void);

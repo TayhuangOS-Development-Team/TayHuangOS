@@ -106,7 +106,7 @@ PUBLIC word get_fat16_entry(word no, pdriver disk) {
 
 PUBLIC word get_fat16_file_no(const char *filename, pdriver disk) {
     if (strlen(filename) != 11)
-        return 0xFFFF;
+        return -1;
     char name[12] = "";
     name[11] = 0;
     short entry_no = 0;
@@ -123,17 +123,18 @@ PUBLIC word get_fat16_file_no(const char *filename, pdriver disk) {
         offset_of_entry = (entry_no % fs->entries_per_sector) * FAT16_ROOT_ENTRY_SIZE;
         cp_from_buffer(buffer + offset_of_entry, name, 11);
         if (! strcmp(filename, name)) {
+            free_buffer (buffer);
             return entry_no;
         }
         entry_no ++;
     }
     free_buffer (buffer);
-    return 0xFFFF;
+    return -1;
 }
 
 PUBLIC void get_fat16_file_info_by_name(const char *filename, pdriver disk, pfat16_file file) {
     word entry_no = get_fat16_file_no(filename, disk);
-    if (entry_no == 0xFFFF) {
+    if (entry_no == -1) {
         file->length = -1;
         return;
     }
@@ -205,7 +206,7 @@ PUBLIC void set_fat16_file_info(word entry_no, pdriver disk, pfat16_file file) {
 
 PUBLIC void set_fat16_file_info_by_name(const char *filename, pdriver disk, const pfat16_file file) {
     word entry_no = get_fat16_file_no(filename, disk);
-    if (entry_no == 0xFFFF) {
+    if (entry_no == -1) {
         file->length = 0xFFFF;
         return;
     }

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <tay_defs.h>
+#include <tayboot/tay_defs.h>
 
 PUBLIC void memcpy(void* dst, void* src, int sz);
 PUBLIC void memset(void* dst, byte val, int sz);

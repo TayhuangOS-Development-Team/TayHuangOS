@@ -7,7 +7,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/tayhuang/ports.h
+ * arch/x86_64/tayboot/include/tayhuang/tayboot/ports.h
  *
  * 基础端口
  */
@@ -71,7 +71,7 @@
 #define IDE0_LBA_LOW (IDE0_BASE + 3)
 #define IDE0_LBA_MID (IDE0_BASE + 4)
 #define IDE0_LBA_HIGH (IDE0_BASE + 5)
-#define IDE0_DRIVER (IDE0_BASE + 6)
+#define IDE0_DEVICE (IDE0_BASE + 6)
 #define IDE0_STATUS (IDE0_BASE + 7)
 #define IDE0_COMMAND (IDE0_BASE + 7)
 #define IDE0_ALTERNATE_STATUS (IDE0_BASE2 + 0)
@@ -87,7 +87,7 @@
 #define IDE1_LBA_LOW (IDE1_BASE + 3)
 #define IDE1_LBA_MID (IDE1_BASE + 4)
 #define IDE1_LBA_HIGH (IDE1_BASE + 5)
-#define IDE1_DRIVER (IDE1_BASE + 6)
+#define IDE1_DEVICE (IDE1_BASE + 6)
 #define IDE1_STATUS (IDE1_BASE + 7)
 #define IDE1_COMMAND (IDE1_BASE + 7)
 #define IDE1_ALTERNATE_STATUS (IDE1_BASE2 + 0)

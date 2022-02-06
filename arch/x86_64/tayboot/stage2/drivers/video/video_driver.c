@@ -7,19 +7,19 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/stage2/drivers/vedio/vedio_driver.c
+ * arch/x86_64/tayboot/stage2/drivers/video/video_driver.c
  *
  * 视频驱动
  */
 
 
 
-#include "vedio_driver.h"
+#include "video_driver.h"
 
 PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
-    if (driver->state != DS_UNINITIALIZE || device->type != DT_VEDIO)
+    if (driver->state != DS_UNINITIALIZE || device->type != DT_VIDEO)
         return false;
-    driver->dev_ty = DT_VEDIO;
+    driver->dev_ty = DT_VIDEO;
     driver->state = DS_IDLE;
     driver->extensions = NULL;
     driver->id = id;
@@ -58,7 +58,7 @@ DEF_SUB_CMD(writebyte) {
 }
 
 PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
-    if (driver->state != DS_IDLE || driver->device->type != DT_VEDIO)
+    if (driver->state != DS_IDLE || driver->device->type != DT_VIDEO)
         return false;
     switch (cmdty) {
     case VD_CMD_READ_BYTE:
@@ -72,13 +72,13 @@ PRIVATE bool process_center(pdriver driver, word cmdty, argpack_t pack) {
 }
 
 PRIVATE bool terminate_driver(pdriver driver) {
-    if (driver->state == DS_TERMAINATED || driver->device->type != DT_VEDIO)
+    if (driver->state == DS_TERMAINATED || driver->device->type != DT_VIDEO)
         return false;
     driver->state = DS_TERMAINATED;
     return true;
 }
 
-PUBLIC void create_vedio_driver(pdriver driver) {
+PUBLIC void create_video_driver(pdriver driver) {
     driver->init_handle = (initialize_handle_t)initialize_driver;
     driver->pc_handle = (pc_handle_t)process_center;
     driver->terminate_handle = (terminate_handle_t)terminate_driver;

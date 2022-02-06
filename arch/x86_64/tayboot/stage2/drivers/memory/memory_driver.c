@@ -22,7 +22,12 @@
 PRIVATE mem_prode_t prode_result;
 PRIVATE struct {
     dword mem_cnt;
+    dword mem_cnt_high;
 } MEM_INFO;
+
+PUBLIC dword get_memsz_high(void) {
+    return MEM_INFO.mem_cnt_high;
+}
 
 PRIVATE bool prode_memory(pmem_prode result) {
     intargs_t args;
@@ -64,10 +69,13 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     driver->device = device;
     while(! prode_memory(&prode_result));
     dword mem_cnt = 0;
+    dword mem_cnt_high = 0;
     for (int i = 0 ; i < prode_result.prode_cnt ; i ++) {
         mem_cnt = max(mem_cnt, prode_result.ards_list[i].base_address_low + prode_result.ards_list[i].length_low);
+        mem_cnt_high = max(mem_cnt, prode_result.ards_list[i].base_address_high + prode_result.ards_list[i].length_high);
     }
     MEM_INFO.mem_cnt = mem_cnt;
+    MEM_INFO.mem_cnt_high = mem_cnt_high;
     return true;
 }
 
@@ -167,17 +175,6 @@ PRIVATE int find_free_mse(pmse mse, word start) {
 PRIVATE void insert_new_mse(pmse mse) {
     write_mse(mse, BUFFER.mst_entry_num);
     BUFFER.mst_entry_num ++;
-}
-
-PRIVATE dword leading_zeros(dword x) {
-    if (x == 0) return 32;
-    int n = 1;
-    if (x >> 16 == 0) {n += 16; x <<= 16;}
-    if (x >> 24 == 0) {n += 8; x <<= 8;}
-    if (x >> 28 == 0) {n += 4; x <<= 4;}
-    if (x >> 30 == 0) {n += 2; x <<= 2;}
-    n -= x >> 31;
-    return n;
 }
 
 DEF_SUB_CMD(reset_buffer) {

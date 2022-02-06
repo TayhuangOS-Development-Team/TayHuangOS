@@ -16,15 +16,15 @@
 
 #include "devices.h"
 
-PUBLIC device_t vedio_device;
+PUBLIC device_t video_device;
 PUBLIC device_t memory_device;
 PUBLIC device_t a_disk_device;
 PUBLIC device_t keyboard_device;
 
 PUBLIC void init_devices(void) {
-    vedio_device.id = alloc_id();
-    vedio_device.type = DT_VEDIO;
-    vedio_device.drive_no = 0;
+    video_device.id = alloc_id();
+    video_device.type = DT_VIDEO;
+    video_device.drive_no = 0;
     memory_device.id = alloc_id();
     memory_device.type = DT_MEMORY;
     memory_device.drive_no = 0;

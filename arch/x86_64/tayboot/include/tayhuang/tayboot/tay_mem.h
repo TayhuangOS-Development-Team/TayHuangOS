@@ -7,14 +7,14 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/tayhuang/tay_mem.h
+ * arch/x86_64/tayboot/include/tayhuang/tayboot/tay_mem.h
  *
  * 基础的内存函数
  */
 
 
 
-#include <tay_type.h>
+#include <tayboot/tay_type.h>
 
 static inline sreg_t rdcs(void) { //读取cs值
     sreg_t reg;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* -------------------------------Reference from linux----------------------------------
  *
- * arch/x86_64/tayboot/include/tayhuang/descs.h
+ * include/tayhuang/descs.h
  *
  * 描述符的结构及宏
  */
@@ -10,58 +10,31 @@
 
 #pragma once
 
-#include <tay_defs.h>
+#include <tayhuang/defs.h>
 
-struct desc_struct {
-	b16	limit0;
-	b16	base0;
-	b16	base1: 8, type: 4, s: 1, dpl: 2, p: 1;
-	b16	limit1: 4, avl: 1, l: 1, d: 1, g: 1, base2: 8;
-} __attribute__((packed)); //引用自linux
-
-#define GDT_ENTRY(flags, base, limit)			\
-	{							\
-		.limit0		= (b16) (limit),		\
-		.limit1		= ((limit) >> 16) & 0x0F,	\
-		.base0		= (b16) (base),			\
-		.base1		= ((base) >> 16) & 0xFF,	\
-		.base2		= ((base) >> 24) & 0xFF,	\
-		.type		= (flags & 0x0f),		\
-		.s		= (flags >> 4) & 0x01,		\
-		.dpl		= (flags >> 5) & 0x03,		\
-		.p		= (flags >> 7) & 0x01,		\
-		.avl		= (flags >> 12) & 0x01,		\
-		.l		= (flags >> 13) & 0x01,		\
-		.d		= (flags >> 14) & 0x01,		\
-		.g		= (flags >> 15) & 0x01,		\
-	}//引用自linux
-
-struct gdt_ptr {
-	b16 len;
-	b32 ptr;
-} __attribute__((packed));//引用自linux
-
-struct ldttss_desc {
+struct tss_struct {
 	b16	limit0;
 	b16	base0;
 
-	b16	base1 : 8, type : 5, dpl : 2, p : 1;
-	b16	limit1 : 4, zero0 : 3, g : 1, base2 : 8;
+	b16	base1 : 8, type : 5, dpl : 2;
+	bool p : 1;
+	b16	limit1 : 4, zero0 : 3;
+	bool g : 1;
+	b16 base2 : 8;
 #ifdef ARCH_x86_64
 	b32	base3;
 	b32	zero1;
 #endif
 } __attribute__((packed));//引用自linux
 
-typedef struct ldttss_desc ldt_desc;
-typedef struct ldttss_desc tss_desc;
+typedef struct tss_struct tss_desc;
 
 struct idt_bits {
 	b16		ist	: 3,
 			zero	: 5,
 			type	: 5,
-			dpl	: 2,
-			p	: 1;
+			dpl	: 2;
+	bool	p	: 1;
 } __attribute__((packed));//引用自linux
 
 struct idt_data {
@@ -71,13 +44,13 @@ struct idt_data {
 	const void	*addr;
 };//引用自linux
 
-struct gate_struct {
+struct _gate_struct {
 	b16		offset_low;
 	b16		segment;
 	struct idt_bits	bits;
 	b16		offset_middle;
 #ifdef ARCH_x86_64
-	b32		offset_high;
+    b32		offset_high;
 	b32		reserved;
 #endif
 } __attribute__((packed));//引用自linux

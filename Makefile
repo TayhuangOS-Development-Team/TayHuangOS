@@ -33,7 +33,7 @@ setup_workspace:
 	fi;
 	bximage < ./setup/new_boot_img_input.txt
 	bximage < ./setup/new_system_img_input.txt
-	mkfs.msdos ./tayhuangOS.img
+	mkfs.msdos -F 32 ./tayhuangOS.img
 
 #编译
 .PHONY: build

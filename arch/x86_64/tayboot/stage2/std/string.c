@@ -244,6 +244,7 @@ char* uitoa(char* buffer, unsigned int value, int radix) {
     return store;
 }
 
+
 static const char upper_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 char* itoa_upper(char* buffer, int value, int radix) {
