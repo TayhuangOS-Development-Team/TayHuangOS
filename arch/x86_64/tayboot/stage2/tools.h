@@ -11,6 +11,7 @@
  * arch/x86_64/tayboot/stage2/tools.h
  *
  * 定义工具函数
+ *
  */
 
 

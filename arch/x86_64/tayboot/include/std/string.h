@@ -11,7 +11,7 @@
  * string.h
  *
  * 标准库string.h的头文件
- * 
+ *
  */
 
 #pragma once

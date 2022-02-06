@@ -11,6 +11,7 @@
  * arch/x86_64/tayboot/stage2/pm/vesa.h
  *
  * vesa函数
+ *
  */
 
 

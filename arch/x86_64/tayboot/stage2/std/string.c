@@ -11,6 +11,7 @@
  * arch/x86_64/tayboot/stage2/std/string.c
  *
  * 标准库string.h的源文件
+ *
  */
 
 

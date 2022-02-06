@@ -11,6 +11,7 @@
  * arch/x86_64/tayboot/stage2/print.c
  *
  * Display functions are implemented here
+ *
  */
 
 

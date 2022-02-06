@@ -11,6 +11,7 @@
  * arch/x86_64/tayboot/stage2/scanf.h
  *
  * Input functions are declared here
+ *
  */
 
 

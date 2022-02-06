@@ -11,6 +11,7 @@
  * arch/x86_64/tayboot/stage3/lm/entry.c
  *
  * 长模式入口
+ *
  */
 
 

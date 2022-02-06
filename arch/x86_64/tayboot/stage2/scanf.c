@@ -11,6 +11,7 @@
  * arch/x86_64/tayboot/stage2/scanf.c
  *
  * Input functions are implemented here
+ *
  */
 
 
