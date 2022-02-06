@@ -20,15 +20,18 @@
 
 enum {
     MST_FREE = 0,
+    MST_USING,
+    MST_PROTECT,
     MST_PAGE,
-    MST_KERNEL,
+    MST_HARDWARE,
     MST_RESERVED,
-    MST_BUSY,
-    MST_ERROR
+    MST_ERROR,
+    MST_UNPRESENT
 };
 
 typedef struct {
     void *base;
-    int limit;
+    void *limit;
     int type;
+    void *nxt;
 } memory_segment;

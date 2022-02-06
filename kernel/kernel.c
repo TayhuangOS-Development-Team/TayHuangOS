@@ -18,9 +18,11 @@
 
 #include <tayhuang/boot_args.h>
 #include <tayhuang/defs.h>
+#include "memory/segment.h"
 
 void entry(struct boot_args *_args) {
     if (_args->magic != BOOT_ARGS_MAGIC) {
         while (true);
     }
+    init_gdt();
 }

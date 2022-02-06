@@ -49,3 +49,39 @@ static inline dword ind(word port) { //in双字
 static inline void outd(word port, dword data) { //out双字
     asmv ("outl %0, %1" : : "a"(data), "dN"(port));
 }
+
+static inline sreg_t rdcs(void) { //读取cs值
+    sreg_t reg;
+    asmv ("movw %%cs, %0" : "=rm"(reg));
+    return reg;
+}
+
+static inline b16 rdds(void) { //读取ds值
+    sreg_t reg;
+    asmv("movw %%ds, %0" : "=rm"(reg));
+    return reg;
+}
+
+static inline sreg_t rdes(void) { //读取es值
+    sreg_t reg;
+    asmv("movw %%es, %0" : "=rm"(reg));
+    return reg;
+}
+
+static inline sreg_t rdfs(void) { //读取fs值
+    sreg_t reg;
+    asmv("movw %%fs, %0" : "=rm"(reg));
+    return reg;
+}
+
+static inline sreg_t rdgs(void) { //读取gs值
+    sreg_t reg;
+    asmv("movw %%gs, %0" : "=rm"(reg));
+    return reg;
+}
+
+static inline sreg_t rdss(void) { //读取ss值
+    sreg_t reg;
+    asmv("movw %%ss, %0" : "=rm"(reg));
+    return reg;
+}

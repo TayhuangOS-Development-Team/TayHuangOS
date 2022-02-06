@@ -3,15 +3,22 @@ ASM := as
 RM := rm
 GCC := gcc
 LD := ld
+
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
-ASMFLAGS := 
 STD_C_SRC := std/ctype std/string
+MEMORY_C_SRC := memory/paging memory/segment
+DISPLAY_C_SRC :=
 C_SRC := kernel \
-		$(STD_C_SRC)
+		$(STD_C_SRC) \
+		$(MEMORY_C_SRC) \
+		$(DISPLAY_C_SRC)
+
+ASMFLAGS := 
 ASM_SRC := entry
+
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"../include/std/"  -I"../include/"
 

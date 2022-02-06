@@ -28,51 +28,69 @@
 
 PRIVATE void init_boot_args(struct boot_args *output, struct stage3_args *args, void *page_start, void *page_limit,
                             void *kernel_start, void *kernel_limit) {
-    int cnt = 0;
-
     memset(output, 0, sizeof(struct boot_args));
+
+    int cnt = 0;
 
     output->segments[cnt].base = 0xA0000;
     output->segments[cnt].limit = 0xFFFFF;
-    output->segments[cnt ++].type = MST_RESERVED;
+    output->segments[cnt].type = MST_HARDWARE;
+    output->segments[cnt].nxt = &output[cnt + 1];
+    cnt ++;
 
     output->segments[cnt].base = 0xA0000000;
     output->segments[cnt].limit = 0xFFFFFFFF;
-    output->segments[cnt ++].type = MST_RESERVED;
+    output->segments[cnt].type = MST_HARDWARE;
+    output->segments[cnt].nxt = &output[cnt + 1];
+    cnt ++;
 
     output->segments[cnt].base = page_start;
     output->segments[cnt].limit = page_limit;
-    output->segments[cnt ++].type = MST_PAGE;
+    output->segments[cnt].type = MST_PAGE;
+    output->segments[cnt].nxt = &output[cnt + 1];
+    cnt ++;
 
     output->segments[cnt].base = kernel_start;
     output->segments[cnt].limit = kernel_limit;
-    output->segments[cnt ++].type = MST_KERNEL;
+    output->segments[cnt].type = MST_PROTECT;
+    output->segments[cnt].nxt = &output[cnt + 1];
+    cnt ++;
 
     output->segments[cnt].base = 0x00000;
     output->segments[cnt].limit = 0x9FFFF;
-    output->segments[cnt ++].type = MST_FREE;
+    output->segments[cnt].type = MST_FREE;
+    output->segments[cnt].nxt = &output[cnt + 1];
+    cnt ++;
 
     if (min(kernel_start, page_start) > (void*)0x100000) {
         output->segments[cnt].base = 0x100000;
         output->segments[cnt].limit = min(kernel_start, page_start) - 1;
-        output->segments[cnt ++].type = MST_FREE;
+        output->segments[cnt].type = MST_FREE;
+        output->segments[cnt].nxt = &output[cnt + 1];
+        cnt ++;
     }
 
     if (kernel_start > (page_limit + 1)) {
         output->segments[cnt].base = page_limit + 1;
         output->segments[cnt].limit = kernel_start - 1;
-        output->segments[cnt ++].type = MST_FREE;
+        output->segments[cnt].type = MST_FREE;
+        output->segments[cnt].nxt = &output[cnt + 1];
+        cnt ++;
     }
     else if ((kernel_limit + 1) < page_start) {
         output->segments[cnt].base = kernel_limit + 1;
         output->segments[cnt].limit = page_start - 1;
-        output->segments[cnt ++].type = MST_FREE;
+        output->segments[cnt].type = MST_FREE;
+        output->segments[cnt].nxt = &output[cnt + 1];
+        cnt ++;
     }
 
     if (max(kernel_limit, page_limit) < (void*)args->memory_size) {
         output->segments[cnt].base = max(kernel_limit, page_limit);
         output->segments[cnt].limit = args->memory_size - 1;
-        output->segments[cnt ++].type = MST_FREE;
+        output->segments[cnt].type = MST_FREE;
+        output->segments[cnt].nxt = &output[cnt + 1];
+        cnt ++;
     }
 
     output->magic = BOOT_ARGS_MAGIC;

@@ -36,6 +36,8 @@
 #define LOWBIT(x) ((x) & (-(x))) //取最低bit
 #define TO2POW(num, x) (((num) + (x) - 1) & (~((x) - 1))) //向上取为2的n次幂
 #define abs(x) ((x) < 0 ? (-(x)) : (x)) //绝对值
+#define _IN
+#define _OUT
 
 static inline dword leading_zeros(dword x) {
     if (x == 0) return 32;

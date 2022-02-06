@@ -14,6 +14,40 @@
 
 #include <tayhuang/defs.h>
 
+struct desc_struct {
+	b16	limit0;
+	b16	base0;
+	b16	base1: 8, type: 4;
+	bool s: 1;
+	b16 dpl: 2;
+	bool p: 1;
+	b16	limit1: 4;
+	bool avl: 1, l: 1, d: 1, g: 1;
+	b16 base2: 8;
+} __attribute__((packed)); //参考自linux
+
+#define GDT_ENTRY(flags, base, limit)			\
+	{							\
+		.limit0		= (b16) (limit),		\
+		.limit1		= ((limit) >> 16) & 0x0F,	\
+		.base0		= (b16) (base),			\
+		.base1		= ((base) >> 16) & 0xFF,	\
+		.base2		= ((base) >> 24) & 0xFF,	\
+		.type		= (flags & 0x0f),		\
+		.s		= (flags >> 4) & 0x01,		\
+		.dpl		= (flags >> 5) & 0x03,		\
+		.p		= (flags >> 7) & 0x01,		\
+		.avl		= (flags >> 12) & 0x01,		\
+		.l		= (flags >> 13) & 0x01,		\
+		.d		= (flags >> 14) & 0x01,		\
+		.g		= (flags >> 15) & 0x01,		\
+	}//引用自linux
+
+struct gdt_ptr {
+	b16 len;
+	b32 ptr;
+} __attribute__((packed));//引用自linux
+
 struct tss_struct {
 	b16	limit0;
 	b16	base0;
@@ -64,27 +98,27 @@ struct desc_ptr {
 	unsigned long address;
 } __attribute__((packed)) ;//引用自linux
 
-#define AR_TYPE_RODATA (0 * (1 << 9))//引用自linux
-#define AR_TYPE_RWDATA (1 * (1 << 9))//引用自linux
-#define AR_TYPE_RODATA_EXPDOWN	(2 * (1 << 9))//引用自linux
-#define AR_TYPE_RWDATA_EXPDOWN	(3 * (1 << 9))//引用自linux
-#define AR_TYPE_XOCODE (4 * (1 << 9))//引用自linux
-#define AR_TYPE_XRCODE 5 * (1 << 9))//引用自linux
-#define AR_TYPE_XOCODE_CONF	(6 * (1 << 9))//引用自linux
-#define AR_TYPE_XRCODE_CONF	(7 * (1 << 9))//引用自linux
-#define AR_TYPE_MASK (7 * (1 << 9))//引用自linux
+#define AR_TYPE_RODATA (0)//引用自linux
+#define AR_TYPE_RWDATA (1)//引用自linux
+#define AR_TYPE_RODATA_EXPDOWN	(2)//引用自linux
+#define AR_TYPE_RWDATA_EXPDOWN	(3)//引用自linux
+#define AR_TYPE_XOCODE (4)//引用自linux
+#define AR_TYPE_XRCODE (5)//引用自linux
+#define AR_TYPE_XOCODE_CONF	(6)//引用自linux
+#define AR_TYPE_XRCODE_CONF	(7)//引用自linux
+#define AR_TYPE_MASK (7)//引用自linux
 
-#define AR_DPL0 (0 * (1 << 13))//引用自linux
-#define AR_DPL3 (3 * (1 << 13))//引用自linux
-#define AR_DPL_MASK	(3 * (1 << 13))//引用自linux
+#define AR_DPL0 (0 * (1 << 5))//引用自linux
+#define AR_DPL3 (3 * (1 << 5))//引用自linux
+#define AR_DPL_MASK	(3 * (1 << 5))//引用自linux
 
-#define AR_A (1 << 8)   /* "Accessed" */
-#define AR_S (1 << 12)  /* If clear, "System" segment */
-#define AR_P (1 << 15)  /* "Present" */
-#define AR_AVL (1 << 20)  /* "AVaiLable" (no HW effect) */
-#define AR_L (1 << 21)  /* "Long mode" for code segments */
-#define AR_DB (1 << 22)  /* D/B, effect depends on type */
-#define AR_G (1 << 23)  /* "Granularity" (limit in pages) */
+#define AR_A (1 << 0)   /* "Accessed" */
+#define AR_S (1 << 4)  /* If clear, "System" segment */
+#define AR_P (1 << 7)  /* "Present" */
+#define AR_AVL (1 << 12)  /* "AVaiLable" (no HW effect) */
+#define AR_L (1 << 13)  /* "Long mode" for code segments */
+#define AR_DB (1 << 14)  /* D/B, effect depends on type */
+#define AR_G (1 << 15)  /* "Granularity" (limit in pages) */
 
 enum {
 	GATE_INTERRUPT = 0xE,

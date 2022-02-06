@@ -16,5 +16,9 @@
 
 
 
-void init_paging(int pml4_num, int pdpt_num, int pd_num, int pt_num);
-void set_mapping(void *from, void *to);
+#pragma once
+
+#include <tayhuang/defs.h>
+
+PUBLIC void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num);
+PUBLIC void set_mapping(_IN void *from, _IN void *to);
