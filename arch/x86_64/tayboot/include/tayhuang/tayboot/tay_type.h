@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -43,6 +44,6 @@ typedef word addr_t; //地址
 typedef word id_t; //编号
 #define ed_callasm() asmv("addw $2, %sp") //结束asm调用(非内联)
 #else
-typedef void* addr_t; //地址
+typedef void *addr_t; //地址
 typedef dword id_t; //编号
 #endif

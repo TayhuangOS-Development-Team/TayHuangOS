@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -37,4 +38,4 @@ PUBLIC void get_date(struct date_t *dt); //获取日期
 PUBLIC byte bcd2num4(byte bcd); //bcd转数字
 PUBLIC byte bcd2num8(byte bcd); //bcd转数字
 PUBLIC int random(dword seed, int min, int max); //随机数生成器, result 属于 [min, max)
-PUBLIC char escape(const char* sentence); //低级转义器
+PUBLIC char escape(const char *sentence); //低级转义器

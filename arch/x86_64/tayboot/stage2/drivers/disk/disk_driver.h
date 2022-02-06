@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -46,32 +47,32 @@ typedef struct {
 typedef struct {
     sreg_t segment;
     addr_t offset;
-    const char* name;
+    const char *name;
 } DAPACK(dk, load_file);
 
 typedef struct {
-    const char* name;
+    const char *name;
     file_info_t *info;
 } DAPACK(dk, load_file_info);
 
 typedef struct {
     sreg_t segment;
     addr_t offset;
-    const char* name;
+    const char *name;
 } DAPACK(dk, save_file);
 
 typedef struct {
-    const char* name;
+    const char *name;
     file_info_t *info;
 } DAPACK(dk, save_file_info);
 
 typedef struct {
-    const char* name;
+    const char *name;
     file_info_t *output;
 } DAPACK(dk, create_file);
 
 typedef struct {
-    char* output;
+    char *output;
     int next;
 } DAPACK(dk, foreach_file);
 

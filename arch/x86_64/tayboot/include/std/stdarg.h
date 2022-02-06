@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -7,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/std/stdarg.h
+ * stdarg.h
  *
  * 标准库 stdarg.h 头文件
  * 参考自linux

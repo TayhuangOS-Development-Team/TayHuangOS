@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -27,9 +28,9 @@
 #include "../pm/entry.h"
 
 typedef struct {
-    char* name;
-    char* value;
-    void* nxt;
+    char *name;
+    char *value;
+    void *nxt;
 } cmd_var; //变量链表
 
 PRIVATE cmd_var* cmd_variables; //变量链表
@@ -74,7 +75,7 @@ PRIVATE void insert_variable(const char *name, const char *value) { //插入变�
     strcpy(new_var->value, value);
 }
 
-cmd_var* lookup_variable(const char* name) { //寻找变量
+cmd_var* lookup_variable(const char *name) { //寻找变量
     cmd_var* current_var = cmd_variables->nxt;
     while (current_var != NULL) {
         if (strcmp(current_var->name, name) == 0) {
@@ -95,7 +96,7 @@ PRIVATE void set_variable(const char *name, const char *value) { //赋值变量
     strcpy(var->value, value);
 }
 
-PRIVATE const char* rd_var_namen(const char* src, char* output, int n) { //读取变量名
+PRIVATE const char *rd_var_namen(const char *src, char *output, int n) { //读取变量名
     while (isalnum(*src) && (n > 0)) {
         *output = *src;
         src ++;
@@ -106,7 +107,7 @@ PRIVATE const char* rd_var_namen(const char* src, char* output, int n) { //读�
     return src;
 }
 
-PRIVATE void do_echo(const char* sentence) { //echo实现
+PRIVATE void do_echo(const char *sentence) { //echo实现
     while (*sentence != '\0') {
         if (*sentence == '\\') { //转义字符
             sentence ++;
@@ -281,7 +282,7 @@ DEF_CONSOLE_CMD(cls) { //清屏
 extern PUBLIC bool print_key_typed; //保护用户密码
 
 //对密码进行hash操作
-PUBLIC dword hash_pwd(const char* pwd) {
+PUBLIC dword hash_pwd(const char *pwd) {
     dword _pwd = random(strlen(pwd), 0, 62);
     while (*pwd != '\0') {
         if (islower(*pwd)) {

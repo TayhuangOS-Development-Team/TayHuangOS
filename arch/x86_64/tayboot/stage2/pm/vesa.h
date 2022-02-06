@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -20,4 +21,4 @@
 #include "../intcall.h"
 
 PUBLIC bool support_vesa(void); //是否支持vesa
-PUBLIC void* enable_graphic(void); //启用图形化
+PUBLIC void *enable_graphic(void); //启用图形化

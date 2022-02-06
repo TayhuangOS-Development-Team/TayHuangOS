@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -81,7 +82,7 @@ PUBLIC int random(dword seed, int min, int max) {
     return _random(seed) % step + min;
 }
 
-PUBLIC char escape(const char* sentence) {
+PUBLIC char escape(const char *sentence) {
     char ch = *sentence;
     switch (ch) {
     case 'n': return '\n';

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------Reference from linux----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------Reference from linux----------------------------------
  *
  * arch/x86_64/tayboot/include/tayhuang/tayboot/elf.h
  *

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -23,7 +24,7 @@ struct stage3_args {
     bool is_graphic_mode; //是否为图形模式
     int screen_width; //屏幕宽
     int screen_height; //屏幕高
-    void* framebuffer; //屏幕显存
+    void *framebuffer; //屏幕显存
     dword memory_size; //内存大小
     dword memory_size_high; //内存大小(大)
 };

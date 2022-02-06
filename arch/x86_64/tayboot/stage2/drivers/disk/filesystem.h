@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -20,4 +21,4 @@
 
 #define FILESYSTEM_EXT_MAGIC (0x8C4BAD95)
 
-PUBLIC void* recognize_file_system(pdriver disk_driver);
+PUBLIC void *recognize_file_system(pdriver disk_driver);

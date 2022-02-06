@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -28,5 +29,5 @@
 #define DISK_SEL_IDE1_SLAVE (DISK_SEL_IDE1 | DISK_SEL_SLAVE)
 
 PUBLIC void init_disk_driver(void);
-PUBLIC void identify_disk(int selector, void* dst);
-PUBLIC void read_sector(dword lba, int num, int selector, void* dst);
+PUBLIC void identify_disk(int selector, void *dst);
+PUBLIC void read_sector(dword lba, int num, int selector, void *dst);

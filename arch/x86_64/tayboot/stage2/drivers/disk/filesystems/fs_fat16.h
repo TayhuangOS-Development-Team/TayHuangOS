@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -64,7 +65,7 @@ typedef struct {
 } fat16_file_t, *pfat16_file; //fat16文件
 
 PUBLIC bool chk_is_fat16(addr_t first_sector); //是否是fat16文件系统
-PUBLIC void* create_fat16_file_system(addr_t first_sector); //获取文件系统参数
+PUBLIC void *create_fat16_file_system(addr_t first_sector); //获取文件系统参数
 PUBLIC void print_fat16_file_system(const pfs_fat16 fat16_fs); //打印文件系统参数
 PUBLIC word get_fat16_entry(word no, pdriver disk); //获取fat16项
 PUBLIC void get_fat16_file_info_by_name(const char *filename, pdriver disk, pfat16_file file);

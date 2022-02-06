@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -29,4 +30,4 @@ PUBLIC int get_cr4(void);
 PUBLIC void set_efer(int efer);
 PUBLIC int get_efer(void);
 
-PUBLIC void setup_longmode(void* pml4);
+PUBLIC void setup_longmode(void *pml4);

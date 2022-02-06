@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -82,7 +83,7 @@ PRIVATE void init_boot_args(struct boot_args *output, struct stage3_args *args, 
     output->memory_size_high = args->memory_size_high;
 }
 
-PUBLIC void goto_ia32e(void* entrypoint, void* args, word selector64);
+PUBLIC void goto_ia32e(void *entrypoint, void *args, word selector64);
 
 PUBLIC void goto_longmode(struct stage3_args *args, word selector64) {
     void *kernel_start, *kernel_limit;

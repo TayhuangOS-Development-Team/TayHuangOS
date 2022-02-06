@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -19,7 +20,7 @@
 #include "../printf.h"
 #include "../memory.h"
 
-PUBLIC void* setup_paging(dword memsz, dword memsz_high, void** limit) {
+PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
     const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
     const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
     const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
@@ -50,7 +51,7 @@ PUBLIC void* setup_paging(dword memsz, dword memsz_high, void** limit) {
     PDPTE* const pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
     PDE* const pd_start_address = ((void*)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
     PTE* const pt_start_address = ((void*)pd_start_address) + pd_num * MEMUNIT_SZ;
-    void* const page_start_address = ((void*)pt_start_address) + pt_num * MEMUNIT_SZ;
+    void *const page_start_address = ((void*)pt_start_address) + pt_num * MEMUNIT_SZ;
 
     *limit = page_start_address;
 

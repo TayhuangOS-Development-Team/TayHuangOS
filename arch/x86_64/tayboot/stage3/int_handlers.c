@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -21,7 +22,7 @@
 
 PUBLIC void exception_handler(int vector_no, int errcode, int eip, int cs, int eflags) {
     byte old_print_color = get_print_color();
-    const char* exception_msg[] = { //异常信息
+    const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!\n",
         "[#DB] Single step\n",
         "[None] Non-maskable interrup!\n",

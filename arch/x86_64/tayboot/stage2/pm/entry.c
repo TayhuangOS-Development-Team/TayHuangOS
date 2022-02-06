@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -54,7 +55,7 @@ PRIVATE void setup_idt(void) {
     asmv ("lidtl %0" : : "m"(idtr));
 }
 
-PUBLIC void the_finally_jump(void* entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void* stage3_args); //最终一跳
+PUBLIC void the_finally_jump(void *entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void *stage3_args); //最终一跳
 
 struct stage3_args stage3_args; //STAGE3引导参数
 
@@ -69,7 +70,7 @@ PRIVATE void init_stage3_args(void) {
     stage3_args.memory_size = get_mem_size();
     stage3_args.memory_size_high = get_memsz_high();
 #ifdef ENABLE_GRAPHIC_BEFORE_GOTO_OS //启用图形界面
-    void* framebuffer = enable_graphic();
+    void *framebuffer = enable_graphic();
     if (framebuffer) {
         stage3_args.is_graphic_mode = true;
         stage3_args.screen_height = 768;
@@ -91,7 +92,7 @@ PRIVATE void init_stage3_args(void) {
 
 PUBLIC void go_to_protect_mode(void) { //去到保护模式
     init_stage3_args(); //初始化引导参数
-    void* entrypoint = load_stage3(); //加载stage3并获取入口点
+    void *entrypoint = load_stage3(); //加载stage3并获取入口点
     if (entrypoint == NULL) { //无法加载
         printf ("Error! We can't load stage3!Or reboot?");
         return;

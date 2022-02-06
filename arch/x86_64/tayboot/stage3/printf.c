@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -120,10 +121,10 @@ PUBLIC void clrscr(void) {
 }
 
 //基础vsprintf实现
-PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
+PRIVATE int _vsprintf(char *buffer, const char *format, va_list args) {
     bool flag1, flag2;
     int flag3;
-    char* store = buffer;
+    char *store = buffer;
     flag1 = flag2 = false;
     flag3 = 0;
     while (*format != 0) {
@@ -157,7 +158,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                     }
                 }
                 char _buff[100];
-                char* buff = _buff;
+                char *buff = _buff;
                 itoa(buff, num, 10);
                 int len = strlen(buff);
                 if (flag3 > len) {
@@ -177,7 +178,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                     }
                 }
                 char _buff[100];
-                char* buff = _buff;
+                char *buff = _buff;
                 uitoa(buff, num, 10);
                 int len = strlen(buff);
                 if (flag3 > len) {
@@ -194,7 +195,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                 *(buffer ++) = ch;
             }
             else if (*format == 's') { //字符串
-                const char* str;
+                const char *str;
                 str = va_arg(args, const char*);
                 while (*str != 0) {
                     *(buffer ++) = *(str ++);
@@ -206,7 +207,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                 }
                 unsigned int num = va_arg(args, unsigned int);
                 char _buff[100];
-                char* buff = _buff;
+                char *buff = _buff;
                 uitoa(buff, num, 8);
                 int len = strlen(buff);
                 if (flag3 > len) {
@@ -225,7 +226,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                 }
                 unsigned int num = va_arg(args, unsigned int);
                 char _buff[100];
-                char* buff = _buff;
+                char *buff = _buff;
                 uitoa(buff, num, 16);
                 int len = strlen(buff);
                 if (flag3 > len) {
@@ -244,7 +245,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
                 }
                 unsigned int num = va_arg(args, unsigned int);
                 char _buff[100];
-                char* buff = _buff;
+                char *buff = _buff;
                 uitoa_upper(buff, num, 16);
                 int len = strlen(buff);
                 if (flag3 > len) {
@@ -269,7 +270,7 @@ PRIVATE int _vsprintf(char* buffer, const char* format, va_list args) {
 }
 
 //输出内容到buffer中
-PUBLIC int vsprintf(char* buffer, const char* format, ...) {
+PUBLIC int vsprintf(char *buffer, const char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -281,7 +282,7 @@ PUBLIC int vsprintf(char* buffer, const char* format, ...) {
 }
 
 //输出内容到屏幕中
-PUBLIC int printf(const char* format, ...) {
+PUBLIC int printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
 

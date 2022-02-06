@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -20,7 +21,7 @@
 #include "../drivers/drivers.h"
 #include "../printf.h"
 
-PRIVATE void copy_from(sreg_t segment, addr_t offset, void* dst, int size) { //从...拷贝
+PRIVATE void copy_from(sreg_t segment, addr_t offset, void *dst, int size) { //从...拷贝
     stfs(segment);
     for (int i = 0 ; i < size ; i ++) {
         *(char*)(dst + i) = rdfs8(offset + i);
@@ -47,7 +48,7 @@ PRIVATE void load_stage3_programs(Elf32_Off offset) {
 }
 
 //加载stage3
-PRIVATE void* load_stage3_elf(void) {
+PRIVATE void *load_stage3_elf(void) {
     Elf32_Ehdr elf_header;
     copy_from(STAGE3_BIN_SEGMENT, STAGE3_BIN_OFFSET + 0, &elf_header, sizeof(Elf32_Ehdr)); //获取elf头
     for (int i = 0 ; i < elf_header.e_phnum ; i ++) { //program header数
@@ -56,7 +57,7 @@ PRIVATE void* load_stage3_elf(void) {
     return (void*)elf_header.e_entry; //返回起始点
 }
 
-PUBLIC void* load_stage3(void) {
+PUBLIC void *load_stage3(void) {
     APACK(dk, load_file) pack;
     pack.name = "STAGE3  BIN";
     pack.offset = STAGE3_BIN_OFFSET;

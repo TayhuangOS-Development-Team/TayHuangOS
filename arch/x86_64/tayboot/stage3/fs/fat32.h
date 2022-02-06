@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -18,7 +19,7 @@
 
 #include <tayboot/tay_defs.h>
 
-PUBLIC void* get_context(int selector);
-PUBLIC void print_fs_info(void* context);
-PUBLIC bool loadfile(void* context, const char* name, void* dst);
-PUBLIC void terminate_fs_context(void* context);
+PUBLIC void *get_context(int selector);
+PUBLIC void print_fs_info(void *context);
+PUBLIC bool loadfile(void *context, const char *name, void *dst);
+PUBLIC void terminate_fs_context(void *context);

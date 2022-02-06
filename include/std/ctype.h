@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -7,9 +8,10 @@
  *
  * 作者: Flysong
  *
- * arch/x86_64/tayboot/include/std/ctype.h
+ * ctype.h
  *
  * 标准库 ctype.h 头文件
+ * 
  */
 
 
@@ -18,7 +20,7 @@
 
 /*
  * ctype函数的宏实现
- * 因为是利用宏, 所以可能会引发问题
+ * 因为是利用宏, 所以可能会引发问题 如_macro_isaplha(getchar())
  * 不推荐直接使用
  * 仅用于辅助函数实现
 */

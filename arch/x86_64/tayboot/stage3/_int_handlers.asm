@@ -1,4 +1,5 @@
-; SPDX-License-Identifier: GPL-2.0-only
+;
+; SPDX-License-Identifier: GPL-3.0-only
 ; -------------------------------*-TayhuangOS-*-----------------------------------
 ;
 ;   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -20,6 +21,7 @@
 ;void exception_handler(int vector_no, int errno, int eip, int cs, int eflags);
 extern exception_handler
 
+;异常列表
 global divide_by_zero_error
 global single_step_debug
 global non_maskable_interrup
@@ -211,6 +213,7 @@ _exception:
     
 extern irq_interrup_handler
 
+;IRQ处理器宏
 %macro irq_handler 1
     push eax
     mov eax, %1

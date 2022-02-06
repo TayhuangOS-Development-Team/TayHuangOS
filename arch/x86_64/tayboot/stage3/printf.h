@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -28,12 +29,12 @@ PUBLIC void change_pos(word x, word y);
 PUBLIC word get_pos_x(void);
 PUBLIC word get_pos_y(void);
 PUBLIC void putchar(char ch);
-PUBLIC void puts(const char* str);
+PUBLIC void puts(const char *str);
 
 PUBLIC void clrscr(void);
 PUBLIC byte get_print_color(void);
 PUBLIC void set_print_color(byte color);
 
-PUBLIC int vsprintf(char* buffer, const char* format, ...);
-PUBLIC int printf(const char* format, ...);
+PUBLIC int vsprintf(char *buffer, const char *format, ...);
+PUBLIC int printf(const char *format, ...);
 PUBLIC void scroll_screen(int num);

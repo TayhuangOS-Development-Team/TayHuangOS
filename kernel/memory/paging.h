@@ -8,22 +8,13 @@
  * 
  * 作者: Flysong
  * 
- * kernel.ld
+ * paging.h
  * 
- * 内核LD脚本
+ * 页表
  * 
  */
 
 
 
-ENTRY(_start)
-OUTPUT_FORMAT("elf64-x86-64")
-OUTPUT_ARCH("i386:x86-64")
-
-SECTIONS
-{
-    . = 0x120000;
-    .text : { *(.text) }
-    .data : { *(.data) }
-    .bss : { *(.bss) }
-}
+void init_paging(int pml4_num, int pdpt_num, int pd_num, int pt_num);
+void set_mapping(void *from, void *to);

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -127,7 +128,7 @@ PUBLIC int getkey(void) {
 #define SCAN_SZ_WORD (1)
 #define SCAN_SZ_DWORD (2)
 
-PRIVATE void _assign(void* ptr, int sz, int value) { //赋值工具
+PRIVATE void _assign(void *ptr, int sz, int value) { //赋值工具
     if (sz == SCAN_SZ_BYTE) {
         *(char*)ptr = value;
     }
@@ -139,7 +140,7 @@ PRIVATE void _assign(void* ptr, int sz, int value) { //赋值工具
     }
 }
 
-PRIVATE void _assignu(void* ptr, int sz, unsigned int value) { //赋值工具
+PRIVATE void _assignu(void *ptr, int sz, unsigned int value) { //赋值工具
     if (sz == SCAN_SZ_BYTE) {
         *(byte*)ptr = value;
     }
@@ -152,7 +153,7 @@ PRIVATE void _assignu(void* ptr, int sz, unsigned int value) { //赋值工具
 }
 
 //基础vscanf实现
-PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_list args) {
+PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char *format, va_list args) {
     int sum = 0;
     while (*format != 0) { //format不为空字符
         if (*format == '%') { //为格式化字符
@@ -207,7 +208,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                     }
                     continue;
                 }
-                char* ch = va_arg(args, char*);
+                char *ch = va_arg(args, char*);
                 while (width --) { //读入
                     *(ch ++) = rd_func();
                 }
@@ -274,7 +275,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
                 _assign(va_arg(args, void*), sz, value); //赋值
             }
             else if (*format == 's') {
-                char* str = va_arg(args, char*);
+                char *str = va_arg(args, char*);
                 char ch = rd_func();
                 while (isspace(ch)) ch = rd_func(); //忽略前面的空格
                 if (flag1) {
@@ -304,7 +305,7 @@ PRIVATE int _vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, va_lis
     return sum; //返回输入的值域个数
 }
 
-PUBLIC int scanf(const char* format, ...) {
+PUBLIC int scanf(const char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -315,7 +316,7 @@ PUBLIC int scanf(const char* format, ...) {
     return res;
 }
 
-PUBLIC int vscanf(bkkey_t bk_func, rdkey_t rd_func, const char* format, ...) {
+PUBLIC int vscanf(bkkey_t bk_func, rdkey_t rd_func, const char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -358,7 +359,7 @@ PUBLIC int fscanf(FILE *file, const char *format, ...) {
     return res;
 }
 
-PUBLIC void getline(char* str) {
+PUBLIC void getline(char *str) {
     char ch = getchar();
     while (ch == '\n' || ch == '\r') { //忽略前面的'\n' '\r'
         ch = getchar();

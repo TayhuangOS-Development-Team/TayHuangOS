@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -17,7 +18,7 @@
 #include <string.h>
 #include <ctype.h>
 
-int strcmp(const char* str1, const char* str2) {
+int strcmp(const char *str1, const char *str2) {
     int len1 = strlen(str1);
     int len2 = strlen(str2);
     if (len1 != len2) {
@@ -41,14 +42,14 @@ int strcmp(const char* str1, const char* str2) {
     return 0;
 }
 
-int strlen(const char* str) {
+int strlen(const char *str) {
     int res = 0;
     while (*(str ++)) res ++;
     return res;
 }
 
-char* strcpy(char* dst, const char* src) {
-    char* r = dst;
+char *strcpy(void *dst, const char *src) {
+    char *r = dst;
     while(*src != '\0') {
         *(r ++) = *(src ++);
     }
@@ -56,7 +57,7 @@ char* strcpy(char* dst, const char* src) {
     return dst;
 }
 
-int atoi(const char* str) {
+int atoi(const char *str) {
     int result = 0;
     char sign = 1;
 
@@ -78,7 +79,7 @@ int atoi(const char* str) {
     return sign * result;
 }
 
-int atoi_8(const char* str) {
+int atoi_8(const char *str) {
     int result = 0;
     char sign = 1;
 
@@ -100,7 +101,7 @@ int atoi_8(const char* str) {
     return sign * result;
 }
 
-int atoi_16(const char* str) {
+int atoi_16(const char *str) {
     int result = 0;
     char sign = 1;
 
@@ -122,7 +123,7 @@ int atoi_16(const char* str) {
     return sign * result;
 }
 
-unsigned int atoui(const char* str) {
+unsigned int atoui(const char *str) {
     unsigned int result = 0;
 
     if (str == 0) {
@@ -142,7 +143,7 @@ unsigned int atoui(const char* str) {
     return result;
 }
 
-unsigned int atoui_8(const char* str) {
+unsigned int atoui_8(const char *str) {
     unsigned int result = 0;
 
     if (str == 0) {
@@ -162,7 +163,7 @@ unsigned int atoui_8(const char* str) {
     return result;
 }
 
-unsigned int atoui_16(const char* str) {
+unsigned int atoui_16(const char *str) {
     unsigned int result = 0;
 
     if (str == 0) {
@@ -183,8 +184,8 @@ unsigned int atoui_16(const char* str) {
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-char* itoa(char* buffer, int value, int radix) {
-    char* store = buffer;
+char *itoa(char *buffer, int value, int radix) {
+    char *store = buffer;
     if (radix < 2 || radix >= 36) {
         *buffer = 0;
         return store;
@@ -216,8 +217,8 @@ char* itoa(char* buffer, int value, int radix) {
     return store;
 }
 
-char* uitoa(char* buffer, unsigned int value, int radix) {
-    char* store = buffer;
+char *uitoa(char *buffer, unsigned int value, int radix) {
+    char *store = buffer;
     if (radix < 2 || radix >= 36) {
         *buffer = 0;
         return store;
@@ -246,8 +247,8 @@ char* uitoa(char* buffer, unsigned int value, int radix) {
 
 static const char upper_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-char* itoa_upper(char* buffer, int value, int radix) {
-    char* store = buffer;
+char *itoa_upper(char *buffer, int value, int radix) {
+    char *store = buffer;
     if (radix < 2 || radix >= 36) {
         *buffer = 0;
         return store;
@@ -279,8 +280,8 @@ char* itoa_upper(char* buffer, int value, int radix) {
     return store;
 }
 
-char* uitoa_upper(char* buffer, unsigned int value, int radix) {
-    char* store = buffer;
+char *uitoa_upper(char *buffer, unsigned int value, int radix) {
+    char *store = buffer;
     if (radix < 2 || radix >= 36) {
         *buffer = 0;
         return store;
@@ -312,8 +313,8 @@ char* uitoa_upper(char* buffer, unsigned int value, int radix) {
     return store;
 }
 
-char* ftoa(char* buffer, float value) {
-    char* store = buffer;
+char *ftoa(char *buffer, float value) {
+    char *store = buffer;
     if ((value - 0) < 0.0001f) {
         *(buffer ++) = '0';
         *buffer = 0;

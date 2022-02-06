@@ -1,4 +1,5 @@
-; SPDX-License-Identifier: GPL-2.0-only
+;
+; SPDX-License-Identifier: GPL-3.0-only
 ; -------------------------------*-TayhuangOS-*-----------------------------------
 ;
 ;   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -7,7 +8,7 @@
 ;
 ; 作者: Flysong
 ;
-; kernel/boot/functions.inc
+; functions.inc
 ;
 ; 实现基本的汇编函数
 ;

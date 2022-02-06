@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -136,13 +137,13 @@ PRIVATE void buffer_set_byte(addr_t addr, byte val) {
     stes(essv);
 }
 
-PRIVATE void buffer_cp_from(addr_t src, void* dst, word num) {
+PRIVATE void buffer_cp_from(addr_t src, void *dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
         *((byte*)dst + i) = buffer_get_byte(src + i);
     }
 }
 
-PRIVATE void buffer_cp_to(void* src, addr_t dst, word num) {
+PRIVATE void buffer_cp_to(void *src, addr_t dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
         buffer_set_byte(dst + i, *((byte*)src + i));
     }

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -86,7 +87,7 @@ PRIVATE void print_intro(void) { //打印简介
 
     printf ("TayhuangOS Real Mode Console  [Version %d.%d.%d Build %d]\n",
         REALMODE_CONSOLE_MAJOR_VERSION, REALMODE_CONSOLE_MINOR_VERSION, REALMODE_CONSOLE_REVISION_VERSION, REALMODE_CONSOLE_BUILD_VERSION);
-    printf ("                SPDX-License-Identifier: GPL-2.0-only                     \n");
+    printf ("                SPDX-License-Identifier: GPL-3.0-only                     \n");
     printf ("-------------------------------*-TayhuangOS-*-----------------------------\n");
     printf ("Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved\n");
     printf ("--------------------------------------------------------------------------\n");

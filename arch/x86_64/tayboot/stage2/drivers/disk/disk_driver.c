@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -36,7 +37,7 @@ PRIVATE struct {
 } disk_address_packet;
 
 PRIVATE struct {
-    void* file_system;
+    void *file_system;
     dword drive_no;
     enum {
         DK_TY_FLOOPY,
@@ -112,7 +113,7 @@ DEF_SUB_CMD(read_sector) {
     return true;
 }
 
-PRIVATE void* get_file_system(pdriver driver) {
+PRIVATE void *get_file_system(pdriver driver) {
     for (int i = 0 ; i < disk_cnt ; i ++) {
         if (disk_infos[i].drive_no == driver->device->drive_no)
             return disk_infos->file_system;
@@ -127,7 +128,7 @@ DEF_SUB_CMD(get_filesystem) {
 
 DEF_SUB_CMD(load_file) {
     PAPACK(dk, load_file) args = (PAPACK(dk, load_file))pack;
-    void* fs = get_file_system(driver);
+    void *fs = get_file_system(driver);
     if (*(dword*)fs == 0xD949FA99) {
         fat16_file_t file;
         get_fat16_file_info_by_name(args->name, driver, &file);
@@ -149,7 +150,7 @@ DEF_SUB_CMD(load_file) {
 
 DEF_SUB_CMD(load_file_info) {
     PAPACK(dk, load_file_info) args = (PAPACK(dk, load_file_info))pack;
-    void* fs = get_file_system(driver);
+    void *fs = get_file_system(driver);
     if (*(dword*)fs == 0xD949FA99) {
         fat16_file_t file;
         get_fat16_file_info_by_name(args->name, driver, &file);
@@ -168,7 +169,7 @@ DEF_SUB_CMD(load_file_info) {
 
 DEF_SUB_CMD(save_file) {
     PAPACK(dk, save_file) args = (PAPACK(dk, save_file))pack;
-    void* fs = get_file_system(driver);
+    void *fs = get_file_system(driver);
     if (*(dword*)fs == 0xD949FA99) {
         if (strlen(args->name) != 11)
             return false;
@@ -197,7 +198,7 @@ DEF_SUB_CMD(save_file) {
 
 DEF_SUB_CMD(save_file_info) {
     PAPACK(dk, save_file_info) args = (PAPACK(dk, save_file_info))pack;
-    void* fs = get_file_system(driver);
+    void *fs = get_file_system(driver);
     if (*(dword*)fs == 0xD949FA99) {
         if (strlen(args->name) != 11)
             return false;
@@ -220,7 +221,7 @@ DEF_SUB_CMD(save_sector) {
 
 DEF_SUB_CMD(foreach_file) {
     PAPACK(dk, foreach_file) args = (PAPACK(dk, foreach_file))pack;
-    void* fs = get_file_system(driver);
+    void *fs = get_file_system(driver);
     if (*(dword*)fs == 0xD949FA99) {
         fat16_file_t file;
         do {
@@ -244,8 +245,8 @@ DEF_SUB_CMD(init) {
 }
 
 DEF_SUB_CMD(create_file) {
-    const char* args = (const char*)pack;
-    void* fs = get_file_system(driver);
+    const char *args = (const char*)pack;
+    void *fs = get_file_system(driver);
     if (*(dword*)fs == 0xD949FA99) {
         if (strlen(args) != 11)
             return false;

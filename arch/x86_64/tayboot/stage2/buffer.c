@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -104,13 +105,13 @@ PUBLIC void ll_set_dword_buffer(addr_t addr, dword val) {
     stes(essv);
 }
 
-PUBLIC void ll_cp_from_buffer(addr_t src, void* dst, word num) {
+PUBLIC void ll_cp_from_buffer(addr_t src, void *dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
         *((byte*)dst + i) = ll_get_byte_buffer(src + i);
     }
 }
 
-PUBLIC void ll_cp_to_buffer(void* src, addr_t dst, word num) {
+PUBLIC void ll_cp_to_buffer(void *src, addr_t dst, word num) {
     for (word i = 0 ; i < num ; i ++) {
         ll_set_byte_buffer(dst + i, *((byte*)src + i));
     }
@@ -210,14 +211,14 @@ PUBLIC void set_buffer_dword(addr_t addr, dword val) {
     memory_driver.pc_handle(&memory_driver, MM_CMD_SET_DATA, &set_data_pack);
 }
 
-PUBLIC void cp_from_buffer(addr_t src, void* dst, word num) {
+PUBLIC void cp_from_buffer(addr_t src, void *dst, word num) {
     get_data_pack.src = src;
     get_data_pack.dst = dst;
     get_data_pack.size = num;
     memory_driver.pc_handle(&memory_driver, MM_CMD_GET_DATA, &get_data_pack);
 }
 
-PUBLIC void cp_to_buffer(void* src, addr_t dst, word num) {
+PUBLIC void cp_to_buffer(void *src, addr_t dst, word num) {
     set_data_pack.src = src;
     set_data_pack.dst = dst;
     set_data_pack.size = num;

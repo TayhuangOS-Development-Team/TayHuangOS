@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -32,7 +33,7 @@ PUBLIC bool chk_is_fat16(addr_t first_sector) {
     return true;
 }
 
-PUBLIC void* create_fat16_file_system(addr_t first_sector) {
+PUBLIC void *create_fat16_file_system(addr_t first_sector) {
     fs_fat16_t *fat16_fs = malloc(sizeof(fs_fat16_t));
     fat16_fs->magic = 0xD949FA99;
     cp_from_buffer(first_sector + 0x3, &fat16_fs->oem_name, 8);

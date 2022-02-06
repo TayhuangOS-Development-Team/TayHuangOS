@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -10,6 +11,7 @@
  * arch/x86_64/tayboot/stage3/disk.h
  *
  * 实现硬盘操作函数
+ * 
  */
 
 
@@ -71,7 +73,7 @@ PRIVATE inline void relax_ide1(void) { //延迟
     inb (IDE1_STATUS);
 }
 
-PRIVATE void identify_ide0_disk(bool slave, void* dst) { //获取IDE0参数
+PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     outb (IDE0_DEVICE, MAKE_DEVICE_REG(0, slave, 0));
     relax_ide0();
     wait_for_ide0_free();
@@ -91,7 +93,7 @@ PRIVATE void identify_ide0_disk(bool slave, void* dst) { //获取IDE0参数
     FLAG_IDE0 = false;
 }
 
-PRIVATE void identify_ide1_disk(bool slave, void* dst) { //获取IDE1参数
+PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
     outb (IDE1_DEVICE, MAKE_DEVICE_REG(0, slave, 0));
     relax_ide1();
     wait_for_ide1_free();
@@ -111,7 +113,7 @@ PRIVATE void identify_ide1_disk(bool slave, void* dst) { //获取IDE1参数
     ENABLE_PROCCESS_IDE1 = false;
 }
 
-PUBLIC void identify_disk(int selector, void* dst) {
+PUBLIC void identify_disk(int selector, void *dst) {
     if ((selector & IDE_MASK) == 0) {
         identify_ide0_disk((selector & SLAVE_MASK) != 0, dst);
     }
@@ -120,7 +122,7 @@ PUBLIC void identify_disk(int selector, void* dst) {
     }
 }
 
-PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void* dst) { //读IDE0的扇区
+PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void *dst) { //读IDE0的扇区
     outb (IDE0_DEVICE, MAKE_DEVICE_REG(1, slave, lba >> 24));
     relax_ide0();
     wait_for_ide0_free();
@@ -143,7 +145,7 @@ PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void* dst) { //读
 }
 
 
-PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void* dst) { //读IDE1的扇区
+PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void *dst) { //读IDE1的扇区
     outb (IDE1_DEVICE, MAKE_DEVICE_REG(1, slave, lba >> 24));
     relax_ide1();
     wait_for_ide1_free();
@@ -165,7 +167,7 @@ PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void* dst) { //读
     ENABLE_PROCCESS_IDE1 = false;
 }
 
-PUBLIC void read_sector(dword lba, int num, int selector, void* dst) {
+PUBLIC void read_sector(dword lba, int num, int selector, void *dst) {
     if ((selector & IDE_MASK) == 0) {
         read_ide0_sector(lba, num, (selector & SLAVE_MASK) != 0, dst);
     }

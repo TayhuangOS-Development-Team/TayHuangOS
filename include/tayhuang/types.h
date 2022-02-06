@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/*
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -7,9 +8,10 @@
  *
  * 作者: Flysong
  *
- * include/tayhuang/tay_type.h
+ * types.h
  *
  * 基础的类型
+ * 
  */
 
 
@@ -37,5 +39,5 @@ typedef void *handle_t; //处理器
 #define NULL (0) //空地址
 
 #define asmv asm volatile //简写
-typedef void* addr_t; //地址
+typedef void *addr_t; //地址
 typedef dword id_t; //编号

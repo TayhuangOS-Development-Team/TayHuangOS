@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -41,9 +42,9 @@ typedef struct {
 }FILE;
 
 //打开文件
-PUBLIC FILE* fopen(const char* name, const char* mode);
+PUBLIC FILE* fopen(const char *name, const char *mode);
 //文件是否存在
-PUBLIC bool file_existed(const char* name);
+PUBLIC bool file_existed(const char *name);
 //关闭文件
 PUBLIC void fclose(FILE* fp);
 #define SEEK_SET (0) //相对于开头

@@ -1,4 +1,5 @@
-; SPDX-License-Identifier: GPL-2.0-only
+;
+; SPDX-License-Identifier: GPL-3.0-only
 ; -------------------------------*-TayhuangOS-*-----------------------------------
 ;
 ;   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -17,7 +18,7 @@
 [SECTION .text]
 [BITS 16]
 global the_finally_jump
-the_finally_jump: ;void the_finally_jump(dword entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void* boot_args)
+the_finally_jump: ;void the_finally_jump(dword entrypoint, sreg_t cs_selector, sreg_t ds_selector, sreg_t tss_selector, void *boot_args)
     xor ebx, ebx
     mov bx, cs
     shl ebx, 4

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -21,11 +22,11 @@
 PUBLIC void init_heap(void); //初始化堆
 PUBLIC void terminate_heap(void); //释放堆
 PUBLIC void reset_heap(void); //重置堆
-PUBLIC void* malloc(int size); //分配内存
-PUBLIC void* calloc(int num, int size); //分配内存
-PUBLIC void free(void* ptr); //释放内存
-PUBLIC bool query_using(void* ptr, int size); //查询某段内存是否有被使用, 使用时为真
-PUBLIC void set_heap_top(void* top); //默认值为0xFFFF
-PUBLIC void set_heap_limit(void* limit); //默认值为0xC000
+PUBLIC void *malloc(int size); //分配内存
+PUBLIC void *calloc(int num, int size); //分配内存
+PUBLIC void free(void *ptr); //释放内存
+PUBLIC bool query_using(void *ptr, int size); //查询某段内存是否有被使用, 使用时为真
+PUBLIC void set_heap_top(void *top); //默认值为0xFFFF
+PUBLIC void set_heap_limit(void *limit); //默认值为0xC000
 PUBLIC int get_used(void); //已用的
 PUBLIC int get_remain(void); //剩余的

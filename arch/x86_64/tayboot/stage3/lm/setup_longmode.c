@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -18,7 +19,7 @@
 #include <tayboot/control_registers.h>
 #include "../printf.h"
 
-PUBLIC void setup_longmode(void* pml4) {
+PUBLIC void setup_longmode(void *pml4) {
     cr0_t cr0;
     *((int*)&cr0) = get_cr0();
     cr3_t cr3;

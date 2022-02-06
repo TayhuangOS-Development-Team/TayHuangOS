@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -22,7 +23,7 @@
 #include <string.h>
 #include "printf.h"
 
-PRIVATE file_info_t* __get_file_info(const char* name) { //获取文件信息
+PRIVATE file_info_t* __get_file_info(const char *name) { //获取文件信息
     file_info_t *info = malloc(sizeof(file_info_t));
     APACK(dk, load_file_info) args;
     args.name = name;
@@ -35,7 +36,7 @@ PRIVATE file_info_t* __get_file_info(const char* name) { //获取文件信息
     return info;
 }
 
-PUBLIC bool file_existed(const char* name) {
+PUBLIC bool file_existed(const char *name) {
     file_info_t *info = __get_file_info(name);
     if (info == NULL) //没找到
         return true;
@@ -51,7 +52,7 @@ PRIVATE void __free_file_info(file_info_t *info) { //释放file info
     free(info);
 }
 
-PUBLIC FILE* fopen(const char* name, const char* mode) {
+PUBLIC FILE* fopen(const char *name, const char *mode) {
 #define FLAG_APPEND 1
 #define FLAG_READONLY 2
 #define FLAG_BINARY 4 //标志位
@@ -144,7 +145,7 @@ PUBLIC FILE* fopen(const char* name, const char* mode) {
 #undef FLAG_APPEND //可别让别人用这些东西
 }
 
-PRIVATE void __save_file_info(const char* name, file_info_t* info) { //保存文件信息
+PRIVATE void __save_file_info(const char *name, file_info_t* info) { //保存文件信息
     //利用驱动
     APACK(dk, save_file_info) args;
     args.name = name;
@@ -152,7 +153,7 @@ PRIVATE void __save_file_info(const char* name, file_info_t* info) { //保存文
     a_disk_driver.pc_handle(&a_disk_driver, DK_CMD_SAVE_FILE_INFO, &args);
 }
 
-PRIVATE void __save_file(const char* name, addr_t buffer) { //保存文件内容
+PRIVATE void __save_file(const char *name, addr_t buffer) { //保存文件内容
     //利用驱动
     APACK(dk, save_file) args;
     args.name = name;

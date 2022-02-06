@@ -1,16 +1,20 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
-/* -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
+/*
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
+ * 
+ *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+ * 
  * --------------------------------------------------------------------------------
- *
+ * 
  * 作者: Flysong
- *
- * kernel/entry.asm
- *
+ * 
+ * entry.S
+ * 
  * 内核入口
+ * 
  */
+
+
 
     .code64
     .text

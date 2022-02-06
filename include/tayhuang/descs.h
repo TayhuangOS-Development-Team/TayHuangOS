@@ -1,9 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------Reference from linux----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------Reference from linux----------------------------------
  *
- * include/tayhuang/descs.h
+ * descs.h
  *
  * 描述符的结构及宏
+ * 
  */
 
 

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -19,4 +20,4 @@
 #include <tayboot/tay_defs.h>
 
 #define PAGE_ADDRESS (0x620000)
-PUBLIC void* setup_paging(dword memsz, dword memsz_high, void** limit);
+PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit);

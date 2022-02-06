@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -49,7 +50,7 @@ typedef struct {
     //Extension
     dword fat1_start; //fat1起始
     dword data_start; //数据区起始
-    void* root_directory; //根目录数据
+    void *root_directory; //根目录数据
 } FAT32_CONTEXT;
 
 #define FAT32_CONTEXT_MAGIC (0x93186A8E)
@@ -58,7 +59,7 @@ typedef struct {
 #define FAT32_ENTRY_SIZE (4)
 #define FAT32_ENTRIES_PER_SECTOR (0x200 / FAT32_ENTRY_SIZE)
 
-PRIVATE dword get_fat32_entry(void* context, dword last) {
+PRIVATE dword get_fat32_entry(void *context, dword last) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     int _sector = (last / FAT32_ENTRIES_PER_SECTOR) + _context->fat1_start;
     int _offset = last % FAT32_ENTRIES_PER_SECTOR;
@@ -81,7 +82,7 @@ PRIVATE void __loadfile(void *context, dword clus, void *dst) {
     }
 }
 
-PUBLIC void* get_context(int selector) {
+PUBLIC void *get_context(int selector) {
     void *boot = malloc(512);
     FAT32_CONTEXT *context = malloc(sizeof(FAT32_CONTEXT));
     read_sector(0, 1, selector, boot);
@@ -125,12 +126,12 @@ PUBLIC void* get_context(int selector) {
     return context;
 }
 
-PUBLIC void terminate_fs_context(void* context) {
+PUBLIC void terminate_fs_context(void *context) {
     free (((FAT32_CONTEXT*)context)->root_directory);
     free (context);
 }
 
-PUBLIC void print_fs_info(void* context) {
+PUBLIC void print_fs_info(void *context) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     printf ("OEM Name: %s;  Bytes per Sector : %d;  Sectors per Clus: %d\n",
         _context->oem_name, _context->bytes_per_sector, _context->sectors_per_clus);
@@ -148,7 +149,7 @@ PUBLIC void print_fs_info(void* context) {
     printf ("Data Start: %#8X\n", _context->data_start);
 }
 
-PRIVATE word get_file_start_clus(void* context, const char* name) {
+PRIVATE word get_file_start_clus(void *context, const char *name) {
     if (strlen(name) != 11)
         return -1;
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
@@ -163,8 +164,8 @@ PRIVATE word get_file_start_clus(void* context, const char* name) {
     return -1;
 }
 
-PRIVATE char* convert(const char* name, char* buffer) {
-    char* backup = buffer;
+PRIVATE char *convert(const char *name, char *buffer) {
+    char *backup = buffer;
     int cnt = 0;
     while (*name != '.') {
         *buffer = toupper(*name);
@@ -190,7 +191,7 @@ PRIVATE char* convert(const char* name, char* buffer) {
     return backup;
 }
 
-PUBLIC bool loadfile(void* context, const char* name, void* dst) {
+PUBLIC bool loadfile(void *context, const char *name, void *dst) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     char _name[12];
     if (convert(name, _name) == NULL) {

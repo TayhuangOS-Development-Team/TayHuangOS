@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -23,4 +24,4 @@
 #define STAGE3_SEGMENT 0x0000 //stage3所在段
 
 PUBLIC void go_to_protect_mode(void); //进入保护模式
-PUBLIC void* load_stage3(void); //加载stage3
+PUBLIC void *load_stage3(void); //加载stage3

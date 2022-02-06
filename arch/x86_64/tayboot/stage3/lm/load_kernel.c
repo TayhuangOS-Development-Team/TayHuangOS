@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
@@ -56,7 +57,7 @@ void *load_elf(void **kernel_start, void **kernel_limit) {
     return elf_header->e_entry;
 }
 
-void* load_kernel(void** kernel_start, void** kernel_limit) {
+void *load_kernel(void** kernel_start, void** kernel_limit) {
     void *context = get_context(DISK_SEL_IDE1_MASTER);
     bool success = loadfile(context, "kernel.bin", KERNEL_BIN_ADDRESS);
     terminate_fs_context(context);

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/* -------------------------------*-TayhuangOS-*-----------------------------------
+/* 
+ * SPDX-License-Identifier: GPL-3.0-only
+ * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
  *
@@ -57,12 +58,12 @@ typedef struct {
 
 typedef struct {
     addr_t src;
-    void* dst;
+    void *dst;
     dword size;
 } DAPACK(mm, get_data);
 
 typedef struct {
-    void* src;
+    void *src;
     addr_t dst;
     dword size;
 } DAPACK(mm, set_data);
