@@ -36,8 +36,10 @@ void entry(struct stage3_args* _stage3_args) {
         while (true);
     }
     struct stage3_args stage3_args;
-    memcpy(&stage3_args, _stage3_args, sizeof(struct stage3_args));
-    asmv ("finit");
+    memcpy(&stage3_args, _stage3_args, sizeof(struct stage3_args)); //参数
+
+    asmv ("finit"); //初始化FPU
+
     init_gdt();
     init_pic();
     init_idt();
@@ -46,14 +48,10 @@ void entry(struct stage3_args* _stage3_args) {
     stage3_args.is_graphic_mode ? DPM_GRAPHIC : DPM_CHARACTER, stage3_args.framebuffer);
     print_info.scroll_line = 18;
     //初始化GDT PIC IDT 堆 视频
+
     asmv ("sti"); //开中断
-    enable_irq(2);
+    enable_irq(2); //开启IRQ2(桥接)
     init_disk_driver(); //初始化硬盘驱动
-    if (! stage3_args.is_graphic_mode) { //不是图形模式
-        printf ("STAGE3 Now!\n");
-        printf ("Boot args Magic:%#8X!\n", stage3_args.magic); //打印信息
-        printf ("Memory Size: %u (B), %u (KB), %u (MB), %u (GB)\n", stage3_args.memory_size, stage3_args.memory_size / 1024,
-        stage3_args.memory_size / 1024 / 1024, stage3_args.memory_size / 1024 / 1024 / 1024);
-    }
-    goto_longmode(&stage3_args, 4 << 3);
+
+    goto_longmode(&stage3_args, 4 << 3); //进入长模式
 }

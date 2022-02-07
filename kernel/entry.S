@@ -22,6 +22,7 @@
 
     .global _start
 _start:
+    finit
     call entry
     jmp .
 

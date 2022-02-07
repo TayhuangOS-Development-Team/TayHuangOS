@@ -18,17 +18,18 @@
 
 #pragma once
 
-#include <tayhuang/memory_segment.h>
-
 struct boot_args {
     int magic; //魔数 用于校验
     unsigned char is_graphic_mode; //是否为图形模式
     int screen_width; //屏幕宽
     int screen_height; //屏幕高
-    void *framebuffer; //屏幕显存
+    long long framebuffer; //屏幕显存
     int memory_size; //内存大小
     int memory_size_high; //内存大小(大)
-    memory_segment segments[32];
+    long long kernel_start;
+    long long kernel_limit;
+    long long page_start;
+    long long page_limit;
 };
 
 #define BOOT_ARGS_MAGIC (0x5A71F213) //MD5 of "BOOTARGS"(前32位)

@@ -17,6 +17,7 @@
 
 
 #include "segment.h"
+#include "../kheap.h"
 #include <tayhuang/io.h>
 #include <tayhuang/descs.h>
 
@@ -34,4 +35,72 @@ PUBLIC void init_gdt(void) {
     gdtr.ptr = GDT;
     gdtr.len = sizeof (GDT);
     asmv ("lgdt %0" : : "m"(gdtr));
+}
+
+PRIVATE memory_segment *MEM_SEGMENTS;
+
+PRIVATE qword calc_token(_IN void *base, _IN void *limit, _IN int type) {
+    return ((qword)base) * ((qword)limit) * type;
+}
+
+PUBLIC SEGMENT_TOKEN add_segment(_IN void *base, _IN void *limit, _IN int type) {
+    memory_segment* new_seg = malloc (sizeof(memory_segment));
+    new_seg->base = base;
+    new_seg->limit = limit;
+    new_seg->type = type;
+    new_seg->nxt = NULL;
+    if (MEM_SEGMENTS == NULL) {
+        MEM_SEGMENTS = new_seg;
+    }
+    else {
+        memory_segment *seg = MEM_SEGMENTS;
+        while (seg->nxt)
+            seg = seg->nxt;
+        seg->nxt = new_seg;
+    }
+    return calc_token(base, limit, type);
+}
+
+PUBLIC void delete_segment(_IN SEGMENT_TOKEN token, _IN void *base) {
+    if (MEM_SEGMENTS == NULL) {
+        return;
+    }
+    if (MEM_SEGMENTS->base == base) {
+        if (calc_token(MEM_SEGMENTS->base, MEM_SEGMENTS->limit, MEM_SEGMENTS->type) == token) {
+            free (MEM_SEGMENTS);
+            MEM_SEGMENTS = NULL;
+        }
+        return;
+    }
+    memory_segment *seg = MEM_SEGMENTS;
+    while (seg->nxt) {
+        memory_segment *nxt_seg = seg->nxt;
+        if (nxt_seg->base == base) {
+            if (calc_token(nxt_seg->base, nxt_seg->limit, nxt_seg->type) == token) {
+                seg->nxt = nxt_seg->nxt;
+                free (nxt_seg);
+            }
+        }
+    }
+    return;
+}
+
+PUBLIC void query_segment(_IN SEGMENT_TOKEN token, _IN void *base, _OUT void **limit, _OUT int *type) {
+    memory_segment *seg = MEM_SEGMENTS;
+    while (seg) {
+        if (seg->base == base) {
+            if (calc_token(seg->base, seg->limit, seg->type) == token) {
+                *limit = seg->limit;
+                *type = seg->type;
+            }
+        }
+    }
+}
+
+PUBLIC int query_memory_state(_IN void *start, _IN void *limit) {
+
+}
+
+PUBLIC void *find_free_memory(_IN int size) {
+
 }

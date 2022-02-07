@@ -10,8 +10,9 @@ CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmod
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 STD_C_SRC := std/ctype std/string
 MEMORY_C_SRC := memory/paging memory/segment
-DISPLAY_C_SRC :=
-C_SRC := kernel \
+DISPLAY_C_SRC := display/printk display/video
+TOOL_C_SRC := tool/tostring
+C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \
 		$(DISPLAY_C_SRC)
