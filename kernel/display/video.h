@@ -26,6 +26,21 @@ typedef int color_rgba;
 #define MAKE_RGB(r, g, b) ((((int)(r)) << 16) | (((int)(g)) << 8) | ((int)(b)))
 //#define MAKE_RGBA(r, g, b, a)
 
+struct VIDEO_INFO_STRUCT {
+    void *framebuffer;
+    void *graphic_font;
+    int width;
+    int height;
+    int columns;
+    int lines;
+    int shell_start_x;
+    int shell_start_y;
+    int character_width;
+    int character_height;
+    bool graphic;
+};
+extern struct VIDEO_INFO_STRUCT VIDEO_INFO;
+
 enum {
     VGA_COLOR16_BLACK = 0,
     VGA_COLOR16_BLUE = 1,

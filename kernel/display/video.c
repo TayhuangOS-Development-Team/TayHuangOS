@@ -18,19 +18,7 @@
 
 #include "video.h"
 
-PRIVATE struct {
-    void *framebuffer;
-    void *graphic_font;
-    int width;
-    int height;
-    int columns;
-    int lines;
-    int shell_start_x;
-    int shell_start_y;
-    int character_width;
-    int character_height;
-    bool graphic;
-} VIDEO_INFO;
+PUBLIC struct VIDEO_INFO_STRUCT VIDEO_INFO;
 
 PUBLIC void init_video(void *framebuffer, int width, int height, bool graphic) {
     VIDEO_INFO.framebuffer = framebuffer;
