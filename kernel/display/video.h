@@ -23,6 +23,9 @@
 typedef int color_rgb;
 typedef int color_rgba;
 
+#define MAKE_RGB(r, g, b) ((((int)(r)) << 16) | (((int)(g)) << 8) | ((int)(b)))
+//#define MAKE_RGBA(r, g, b, a)
+
 enum {
     VGA_COLOR16_BLACK = 0,
     VGA_COLOR16_BLUE = 1,

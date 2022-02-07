@@ -31,68 +31,6 @@ void entry(struct boot_args *_args) {
 
     init_video(args.framebuffer, args.screen_width, args.screen_height, args.is_graphic_mode);
 
-    int cnt = 0;
-
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-
-
-    draw_character(cnt ++, 0, '*', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '*', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'K', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'E', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'R', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'N', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'E', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'L', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, ' ', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, ' ', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'H', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'E', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'R', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, 'E', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '*', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '*', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-    draw_character(cnt ++, 0, '-', VGA_COLOR16_RED | VGA_COLOR16_LIGHTING);
-
     init_gdt();
     init_kheap();
 }

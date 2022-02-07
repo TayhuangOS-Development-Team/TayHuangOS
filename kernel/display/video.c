@@ -75,5 +75,7 @@ PUBLIC void draw_character(int column, int line, char ch, int color) {
 }
 
 PUBLIC void draw_pixel(int x, int y, color_rgb color) {
-    *(((dword*)VIDEO_INFO.framebuffer) + y * VIDEO_INFO.width + x) = color;
+    byte save = *(char*)(VIDEO_INFO.framebuffer + (y * VIDEO_INFO.width + x + 1) * 3);
+    *(dword*)(VIDEO_INFO.framebuffer + (y * VIDEO_INFO.width + x) * 3) = color;
+    *(char*)(VIDEO_INFO.framebuffer + (y * VIDEO_INFO.width + x + 1) * 3) = save;
 }
