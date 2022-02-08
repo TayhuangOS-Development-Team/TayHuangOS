@@ -20,5 +20,5 @@
 
 #include <tayboot/tay_defs.h>
 
-#define PAGE_ADDRESS (0x620000)
+#define PAGE_ADDRESS (0x1C00000)
 PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit);

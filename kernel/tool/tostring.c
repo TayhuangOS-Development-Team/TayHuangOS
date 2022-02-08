@@ -67,6 +67,7 @@ char *uitoa(unsigned int val, char *buffer, int base) {
         *buffer = _buffer[i];
         buffer ++;
     }
+    return save;
 }
 
 char *lltoa(long long val, char *buffer, int base) {
@@ -93,6 +94,7 @@ char *lltoa(long long val, char *buffer, int base) {
         *buffer = _buffer[i];
         buffer ++;
     }
+    return save;
 }
 
 char *ulltoa(unsigned long long val, char *buffer, int base) {
@@ -114,10 +116,29 @@ char *ulltoa(unsigned long long val, char *buffer, int base) {
         *buffer = _buffer[i];
         buffer ++;
     }
+    return save;
 }
 
 char *ftoa(float val, char *buffer, int round) {
+    return buffer;
 }
 
 char *dtoa(double val, char *buffer, int round) {
+    return buffer;
+}
+
+char *ftoea(float val, char *buffer, unsigned char upper_e) {
+    // int v = *(int*)&val;
+    // int sign = v >> 31;
+    // int exponent = (v >> 23 & 0xFF) - 128;
+    // int fraction = v & 0x7FFFFF;
+    return buffer;
+}
+
+char *dtoea(double val, char *buffer, unsigned char upper_e) {
+    // long long v = *(long long*)&val;
+    // int sign = v >> 63;
+    // int exponent = (v >> 51 & 0x7FF) - 128;
+    // long long fraction = v & 0x7FFFFFFFFFFFF;
+    return buffer;
 }

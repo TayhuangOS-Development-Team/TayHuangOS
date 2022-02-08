@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-#define KHEAP_BASE (0x00000)
+#define KHEAP_BASE (0x00001)
 #define KHEAP_LIMIT (0x9FFFF)
 
 PUBLIC void memset(void *dst, byte val, int sz);

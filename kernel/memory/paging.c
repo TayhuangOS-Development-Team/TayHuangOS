@@ -17,6 +17,7 @@
 
 
 #include "paging.h"
+#include <tayhuang/paging.h>
 
 #define PAGING1_ADDRESS (0x320000)
 #define PAGING1_LIMIT_LOWEST (0x5A0000)
@@ -28,7 +29,22 @@
 PRIVATE int paging1_limit = PAGING1_LIMIT_LOW;
 
 void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num) {
-
+    long long paging_sz = (pml4_num + pdpt_num + pd_num + pt_num) * MEMUNIT_SZ;
+    if (paging_sz < (PAGING1_LIMIT_LOWEST - PAGING1_ADDRESS)) {
+        paging1_limit = PAGING1_LIMIT_LOWEST;
+    }
+    else if (paging_sz < (PAGING1_LIMIT_LOW - PAGING1_ADDRESS)) {
+        paging1_limit = PAGING1_LIMIT_LOW;
+    }
+    else if (paging_sz < (PAGING1_LIMIT_MID - PAGING1_ADDRESS)) {
+        paging1_limit = PAGING1_LIMIT_MID;
+    }
+    else if (paging_sz < (PAGING1_LIMIT_HIGH - PAGING1_ADDRESS)) {
+        paging1_limit = PAGING1_LIMIT_HIGH;
+    }
+    else if (paging_sz < (PAGING1_LIMIT_HIGHEST - PAGING1_ADDRESS)) {
+        paging1_limit = PAGING1_LIMIT_HIGHEST;
+    }
 }
 
 void set_mapping(_IN void *from, _IN void *to) {

@@ -34,17 +34,10 @@ void entry(struct boot_args *_args) {
 
     set_print_color(0x0F);
     set_scroll_line(18);
-    puts ("Hello, World0!\n");
-    puts ("Hello, World1!\n");
-    puts ("Hello, World2!\n");
-    puts ("Hello, World3!\n");
-    puts ("Hello, World4!\n");
-    puts ("Hello, World5!\n");
-    puts ("Hello, World6!\n");
-    puts ("Hello, World7!\n");
-    
-    scroll_screen(-1);
+    printk ("Hello, World!%d\n", 114514);
 
-    init_gdt();
     init_kheap();
+    init_gdt();
+
+    
 }

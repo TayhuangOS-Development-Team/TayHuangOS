@@ -47,10 +47,10 @@ PUBLIC void init_kheap(void) {
     memset(KHEAP_SEGMENTS, 0, sizeof(kh_seg) * KH_SEG_NUM);
 }
 
-PRIVATE void *__query_using(void *base, int size) {
+PRIVATE void *__get_segment_limit(void *base, int size) {
     for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
-        if (max(KHEAP_SEGMENTS[i].start, base) >= min(KHEAP_SEGMENTS[i].limit, (base + size))) {
-            return KHEAP_SEGMENTS[i].limit + 1;
+        if (max(KHEAP_SEGMENTS[i].start, base) < min(KHEAP_SEGMENTS[i].limit, (base + size))) {
+            return KHEAP_SEGMENTS[i].limit;
         }
     }
     return NULL;
@@ -58,11 +58,10 @@ PRIVATE void *__query_using(void *base, int size) {
 
 PRIVATE void *__lookup_free_mem(int size) {
     for (void *i = KHEAP_BOTTOM ; i < KHEAP_TOP ;) {
-        void *result = __query_using(i, size);
-        if (result == NULL) {
+        void *lim = __get_segment_limit(i, size);
+        if (lim == NULL)
             return i;
-        }
-        i = result;
+        i = lim + 1;
     }
     return NULL;
 }
@@ -100,7 +99,7 @@ PUBLIC void *malloc(int size) {
     void *mem = __lookup_free_mem(size);
     if (mem == NULL)
         return NULL;
-    if (! __insert_kh_seg(mem, mem + size))
+    if (! __insert_kh_seg(mem, mem + size - 1))
         return NULL;
     return mem;
 }

@@ -98,9 +98,9 @@ PUBLIC void query_segment(_IN SEGMENT_TOKEN token, _IN void *base, _OUT void **l
 }
 
 PUBLIC int query_memory_state(_IN void *start, _IN void *limit) {
-
+    return MST_ERROR;
 }
 
 PUBLIC void *find_free_memory(_IN int size) {
-
+    return NULL;
 }
