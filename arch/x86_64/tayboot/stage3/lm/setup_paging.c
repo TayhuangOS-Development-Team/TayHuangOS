@@ -60,7 +60,8 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
     for (int i = 0 ; i < pt_num ; i ++) {
         for (int j = 0 ; j < pte_pmu ; j ++) {
             int no = i * pte_pmu + j;
-            PTE* pte = pt_start_address + no;
+            PTE *pte = pt_start_address + no;
+            memset (pte, 0, sizeof(PTE));
             if (no >= pte_num) {
                 pte->p = false;
             }
@@ -83,7 +84,8 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
     for (int i = 0 ; i < pd_num ; i ++) {
         for (int j = 0 ; j < pde_pmu ; j ++) {
             int no = i * pde_pmu + j;
-            PDE* pde = pd_start_address + no;
+            PDE *pde = pd_start_address + no;
+            memset (pde, 0, sizeof(PDE));
             if (no >= pde_num) {
                 pde->p = false;
             }
@@ -103,7 +105,8 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
     for (int i = 0 ; i < pdpt_num ; i ++) {
         for (int j = 0 ; j < pdpte_pmu ; j ++) {
             int no = i * pdpte_pmu + j;
-            PDPTE* pdpte = pdpt_start_address + no;
+            PDPTE *pdpte = pdpt_start_address + no;
+            memset (pdpte, 0, sizeof(PDPTE));
             if (no >= pdpte_num) {
                 pdpte->p = false;
             }
@@ -123,7 +126,8 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
     for (int i = 0 ; i < pml4_num ; i ++) {
         for (int j = 0 ; j < pml4e_pmu ; j ++) {
             int no = i * pml4e_pmu + j;
-            PML4E* pml4e = pml4_start_address + no;
+            PML4E *pml4e = pml4_start_address + no;
+            memset (pml4e, 0, sizeof(PML4E));
             if (no >= pml4e_num) {
                 memset(pml4e, 0, sizeof(PML4E));
             }

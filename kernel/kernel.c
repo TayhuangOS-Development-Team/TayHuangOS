@@ -19,6 +19,7 @@
 #include <tayhuang/boot_args.h>
 #include <tayhuang/defs.h>
 #include "memory/segment.h"
+#include "memory/paging.h"
 #include "kheap.h"
 #include "display/video.h"
 #include "display/printk.h"
@@ -39,6 +40,8 @@ void entry(_IN struct boot_args *_args) {
     init_kheap();
     init_gdt();
 
-    SEGMENT_TOKEN KERNEL_TOKEN, KHEAP_TOKEN;
+    SEGMENT_TOKEN KERNEL_TOKEN, KHEAP_TOKEN, PAGING_TOKEN;
     init_segments(args.kernel_start, args.kernel_limit, &KERNEL_TOKEN, &KHEAP_TOKEN);
+
+    init_paging(1, 1, 1, 2, &PAGING_TOKEN);
 }

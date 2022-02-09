@@ -35,7 +35,7 @@ __set_cr0:
     .global __get_cr0
     .type __get_cr0, @function
 __get_cr0:
-    movq %cr0, %rdi
+    movq %cr0, %rax
     ret
 
     .global __set_cr2
@@ -47,37 +47,36 @@ __set_cr2:
     .global __get_cr2
     .type __get_cr2, @function
 __get_cr2:
-    movq %cr2, %rdi
+    movq %cr2, %rax
     ret
 
     .global __set_cr3
     .type __set_cr3, @function
 __set_cr3:
-    movq %cr3, %rdi
+    movq %rdi, %cr3
     ret
 
     .global __get_cr3
     .type __get_cr3, @function
 __get_cr3:
-    movq %rdi, %cr3
+    movq %cr3, %rax
     ret
 
     .global __set_cr4
     .type __set_cr4, @function
 __set_cr4:
-    movq %cr4, %rdi
+    movq %rdi, %cr4
     ret
 
     .global __get_cr4
     .type __get_cr4, @function
 __get_cr4:
-    movq %rdi, %cr4
+    movq %cr4, %rax
     ret
 
     .global __set_efer
     .type __set_efer, @function
 __get_efer:
-    pushq %rax
     pushq %rdx
     pushq %rcx
     xorq %rdx, %rdx
@@ -85,8 +84,6 @@ __get_efer:
     rdmsr
     popq %rcx
     popq %rdx
-    popq %rax
-    movq %rax, %rdi
     ret
 
     .global __get_efer

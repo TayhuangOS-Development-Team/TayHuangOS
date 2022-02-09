@@ -45,13 +45,16 @@ typedef struct {
 #endif
 } cr2_t; //CR2
 
-typedef struct {
-    byte reserved2 : 3; 
-    bool pwt : 1; 
-    bool pcd : 1; 
-    byte reserved3 : 7; 
-    qword page_entry : 39;
-    word reserved : 13;
+typedef union cr3_t {
+    struct {
+        byte reserved2 : 3; 
+        bool pwt : 1; 
+        bool pcd : 1; 
+        byte reserved3 : 7; 
+        qword _page_entry : 39;
+        word reserved : 13;
+    };
+    qword page_entry;
 } cr3_t; //CR3
 
 typedef struct {
