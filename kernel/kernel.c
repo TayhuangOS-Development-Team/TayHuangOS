@@ -23,7 +23,7 @@
 #include "display/video.h"
 #include "display/printk.h"
 
-void entry(struct boot_args *_args) {
+void entry(_IN struct boot_args *_args) {
     if (_args->magic != BOOT_ARGS_MAGIC) {
         while (true);
     }
@@ -39,5 +39,6 @@ void entry(struct boot_args *_args) {
     init_kheap();
     init_gdt();
 
-    
+    SEGMENT_TOKEN KERNEL_TOKEN, KHEAP_TOKEN;
+    init_segments(args.kernel_start, args.kernel_limit, &KERNEL_TOKEN, &KHEAP_TOKEN);
 }

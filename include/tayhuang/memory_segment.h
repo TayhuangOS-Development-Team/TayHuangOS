@@ -20,13 +20,15 @@
 
 enum {
     MST_FREE = 0,
-    MST_USING,
-    MST_PROTECT,
-    MST_PAGE,
-    MST_HARDWARE,
-    MST_RESERVED,
-    MST_ERROR,
-    MST_UNPRESENT
+    MST_USING = 1,
+    MST_PAGE = 2,
+    MST_HARDWARE = 3,
+    MST_RESERVED = 4,
+    MST_ERROR = 5,
+    MST_UNPRESENT = 6,
+    MST_SWAP = 8,
+    MST_PROTECT = 16,
+    MST_DATA = 32
 };
 
 typedef struct {

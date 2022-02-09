@@ -19,6 +19,7 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include "segment.h"
 
-PUBLIC void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num);
+PUBLIC void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT SEGMENT_TOKEN *PAGING_TOKEN);
 PUBLIC void set_mapping(_IN void *from, _IN void *to);

@@ -18,13 +18,13 @@
 
 #include "kheap.h"
 
-PUBLIC void memset(void *dst, byte val, int sz) {
+PUBLIC void memset(_OUT void *dst, _IN byte val, _IN int sz) {
     for (int i = 0 ; i < sz ; i ++) {
         *(char*)(dst + i) = val;
     }
 }
 
-PUBLIC void memcpy(void *dst, void *src, int sz) {
+PUBLIC void memcpy(_OUT void *dst, _IN void *src, _IN int sz) {
     for (int i = 0 ; i < sz ; i ++) {
         *(char*)(dst + i) = *(char*)(src + i);
     }
@@ -47,7 +47,7 @@ PUBLIC void init_kheap(void) {
     memset(KHEAP_SEGMENTS, 0, sizeof(kh_seg) * KH_SEG_NUM);
 }
 
-PRIVATE void *__get_segment_limit(void *base, int size) {
+PRIVATE void *__get_segment_limit(_IN void *base, _IN int size) {
     for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
         if (max(KHEAP_SEGMENTS[i].start, base) < min(KHEAP_SEGMENTS[i].limit, (base + size))) {
             return KHEAP_SEGMENTS[i].limit;
@@ -56,7 +56,7 @@ PRIVATE void *__get_segment_limit(void *base, int size) {
     return NULL;
 }
 
-PRIVATE void *__lookup_free_mem(int size) {
+PRIVATE void *__lookup_free_mem(_IN int size) {
     for (void *i = KHEAP_BOTTOM ; i < KHEAP_TOP ;) {
         void *lim = __get_segment_limit(i, size);
         if (lim == NULL)
@@ -75,7 +75,7 @@ PRIVATE int __lookup_free_kh_seg(void) {
     return -1;
 }
 
-PRIVATE bool __insert_kh_seg(void *start, void *limit) {
+PRIVATE bool __insert_kh_seg(_IN void *start, _IN void *limit) {
     int idx = __lookup_free_kh_seg();
     if (idx == -1) {
         return false;
@@ -85,7 +85,7 @@ PRIVATE bool __insert_kh_seg(void *start, void *limit) {
     return true;
 }
 
-PRIVATE void __delete_kh_seg(void *start) {
+PRIVATE void __delete_kh_seg(_IN void *start) {
     for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
         if ((KHEAP_SEGMENTS[i].start == start)) {
             KHEAP_SEGMENTS[i].start = NULL;
@@ -95,7 +95,7 @@ PRIVATE void __delete_kh_seg(void *start) {
     }
 }
 
-PUBLIC void *malloc(int size) {
+PUBLIC void *malloc(_IN int size) {
     void *mem = __lookup_free_mem(size);
     if (mem == NULL)
         return NULL;
@@ -104,6 +104,6 @@ PUBLIC void *malloc(int size) {
     return mem;
 }
 
-PUBLIC void free(void *ptr) {
+PUBLIC void free(_IN void *ptr) {
     __delete_kh_seg(ptr);
 }

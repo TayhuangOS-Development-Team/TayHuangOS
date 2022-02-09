@@ -39,7 +39,7 @@
 #define _IN
 #define _OUT
 
-static inline dword leading_zeros(dword x) {
+static inline dword leading_zeros(_IN dword x) {
     if (x == 0) return 32;
     int n = 1;
     if (x >> 16 == 0) {n += 16; x <<= 16;}

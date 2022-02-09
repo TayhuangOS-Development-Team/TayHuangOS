@@ -24,6 +24,7 @@
 typedef qword SEGMENT_TOKEN;
 
 PUBLIC void init_gdt(void); //初始化GDT
+PUBLIC void init_segments(_IN void *kernel_start, _IN void *kernel_limit, _OUT SEGMENT_TOKEN *KERNEL_TOKEN, _OUT SEGMENT_TOKEN *KHEAP_TOKEN);
 PUBLIC SEGMENT_TOKEN add_segment(_IN void *base, _IN void *limit, _IN int type); //添加段
 PUBLIC void delete_segment(_IN SEGMENT_TOKEN token, _IN void *base); //删除段
 PUBLIC void query_segment(_IN SEGMENT_TOKEN token, _IN void *base, _OUT void **limit, _OUT int *type); //查询段

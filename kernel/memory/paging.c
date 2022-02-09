@@ -17,6 +17,7 @@
 
 
 #include "paging.h"
+#include "segment.h"
 #include <tayhuang/paging.h>
 
 #define PAGING1_ADDRESS (0x320000)
@@ -28,7 +29,7 @@
 
 PRIVATE int paging1_limit = PAGING1_LIMIT_LOW;
 
-void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num) {
+void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT SEGMENT_TOKEN *PAGING_TOKEN) {
     long long paging_sz = (pml4_num + pdpt_num + pd_num + pt_num) * MEMUNIT_SZ;
     if (paging_sz < (PAGING1_LIMIT_LOWEST - PAGING1_ADDRESS)) {
         paging1_limit = PAGING1_LIMIT_LOWEST;
@@ -45,6 +46,10 @@ void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_
     else if (paging_sz < (PAGING1_LIMIT_HIGHEST - PAGING1_ADDRESS)) {
         paging1_limit = PAGING1_LIMIT_HIGHEST;
     }
+    
+    *PAGING_TOKEN = add_segment(PAGING1_ADDRESS, paging1_limit, MST_PROTECT | MST_PAGE | MST_DATA);
+
+    
 }
 
 void set_mapping(_IN void *from, _IN void *to) {
