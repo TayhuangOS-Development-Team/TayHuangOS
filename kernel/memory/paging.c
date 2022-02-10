@@ -18,9 +18,17 @@
 
 #include "paging.h"
 #include "segment.h"
-#include "../display/printk.h"
 #include <tayhuang/paging.h>
 #include <tayhuang/control_registers.h>
+
+PUBLIC void init_paging(_IN qword _vmemsz, _OUT SEGMENT_TOKEN *PAGING_TOKEN) {
+    const int page_num = _vmemsz / MEMUNIT_SZ;
+    const int pt_num = page_num / (MEMUNIT_SZ / sizeof(PTE));
+    const int pd_num = page_num / (MEMUNIT_SZ / sizeof(PDE));
+    const int pdpt_num = page_num / (MEMUNIT_SZ / sizeof(PDPTE));
+    const int pml4_num = page_num / (MEMUNIT_SZ / sizeof(PML4E));
+    _init_paging(pml4_num, pdpt_num, pd_num, pt_num, PAGING_TOKEN);
+}
 
 #define PAGING1_ADDRESS (0x320000)
 #define PAGING1_LIMIT_LOWEST (0x5A0000)
@@ -30,8 +38,9 @@
 #define PAGING1_LIMIT_HIGHEST (0x1B20000)
 
 PRIVATE int paging1_limit = PAGING1_LIMIT_LOW;
+PRIVATE PML4E *pml4_start_address = NULL;
 
-void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT SEGMENT_TOKEN *PAGING_TOKEN) {
+PUBLIC void _init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT SEGMENT_TOKEN *PAGING_TOKEN) {
     long long paging_sz = (pml4_num + pdpt_num + pd_num + pt_num) * MEMUNIT_SZ;
     if (paging_sz < (PAGING1_LIMIT_LOWEST - PAGING1_ADDRESS)) {
         paging1_limit = PAGING1_LIMIT_LOWEST;
@@ -56,17 +65,10 @@ void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_
     const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
     const int pml4e_pmu = (MEMUNIT_SZ / sizeof(PML4E)); //PML4E Per MEMUNIT
 
-    printk ("paging size: %#16X ; paging base: %#16X ; paging limit: %#16X\n", paging_sz, PAGING1_ADDRESS, paging1_limit);
-    printk ("pmu: %d\n", pte_pmu);
-
-    PML4E* const pml4_start_address = PAGING1_ADDRESS;
-    PDPTE* const pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
-    PDE* const pd_start_address = ((void*)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
-    PTE* const pt_start_address = ((void*)pd_start_address) + pd_num * MEMUNIT_SZ;
-    printk ("pml4 start: %p ; ", pml4_start_address);
-    printk ("pdpt start: %p ;\n", pdpt_start_address);
-    printk ("pd start: %p ; ", pd_start_address);
-    printk ("pt start: %p ;\n", pt_start_address);
+    pml4_start_address = PAGING1_ADDRESS;
+    PDPTE *const pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
+    PDE *const pd_start_address = ((void*)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
+    PTE *const pt_start_address = ((void*)pd_start_address) + pd_num * MEMUNIT_SZ;
 
     //初始化PT
     for (int i = 0 ; i < pt_num * pte_pmu; i ++) {
@@ -96,7 +98,7 @@ void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_
         pde->pcd = false;
         pde->a = false;
         pde->xd = false;
-        pde->address = (((qword)pt_start_address) >> 12) + i;
+        pde->address = (((qword)pt_start_address) / MEMUNIT_SZ) + i;
     }
     //初始化PDPT
     for (int i = 0 ; i < pdpt_num * pdpte_pmu ; i ++) {
@@ -110,7 +112,7 @@ void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_
         pdpte->pcd = false;
         pdpte->a = false;
         pdpte->xd = false;
-        pdpte->address = ((((qword)pd_start_address)) >> 12) + i;
+        pdpte->address = ((((qword)pd_start_address)) / MEMUNIT_SZ) + i;
     }
     //初始化PML4
     for (int i = 0 ; i < pml4_num * pml4e_pmu ; i ++) {
@@ -124,14 +126,23 @@ void init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_
         pml4e->pcd = false;
         pml4e->a = false;
         pml4e->xd = false;
-        pml4e->address = ((((qword)pdpt_start_address)) >> 12) + i;
+        pml4e->address = ((((qword)pdpt_start_address)) / MEMUNIT_SZ) + i;
     }
     cr3_t cr3 = get_cr3();
     cr3.page_entry = (qword)pml4_start_address;
-    asmv ("xchg %bx, %bx");
     set_cr3(cr3);
 }
 
-void set_mapping(_IN void *from, _IN void *to) {
+PRIVATE void __set_mapping(_IN void *from, _IN void *to) { 
+    PML4E *pml4e = pml4_start_address + ((((qword)from) >> 39) & 0x1FF);
+    PDPTE *pdpte = ((PDPTE*)(pml4e->address * MEMUNIT_SZ)) + ((((qword)from) >> 30) & 0x1FF);
+    PDE *pde = ((PDE*)(pdpte->address * MEMUNIT_SZ)) + ((((qword)from) >> 21) & 0x1FF);
+    PTE *pte = ((PTE*)(pde->address * MEMUNIT_SZ)) + ((((qword)from) >> 12) & 0x1FF);
+    pte->address = ((qword)to) / MEMUNIT_SZ;
+}
 
+PUBLIC void set_mapping(_IN void *from, _IN void *to, _IN int pages) {
+    for (int i = 0 ; i < pages ; i ++) {
+        __set_mapping(from + i * MEMUNIT_SZ, to + i * MEMUNIT_SZ);
+    }
 }

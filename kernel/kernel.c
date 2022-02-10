@@ -23,6 +23,21 @@
 #include "kheap.h"
 #include "display/video.h"
 #include "display/printk.h"
+#include <tayhuang/paging.h>
+
+qword init_video_info(_IN struct boot_args *args, _IN qword mapping_start) {
+    int buffersz = (args->is_graphic_mode ? 3 : 2) * args->screen_width * args->screen_height;
+
+    if (args->framebuffer < mapping_start) {
+        init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode);
+        return mapping_start;
+    }
+
+    set_mapping(mapping_start, args->framebuffer, buffersz / 4096 + 1);
+    init_video(mapping_start, args->screen_width, args->screen_height, args->is_graphic_mode);
+
+    return mapping_start + buffersz;
+}
 
 void entry(_IN struct boot_args *_args) {
     if (_args->magic != BOOT_ARGS_MAGIC) {
@@ -31,17 +46,37 @@ void entry(_IN struct boot_args *_args) {
     struct boot_args args;
     memcpy(&args, _args, sizeof(struct boot_args));
 
-    init_video(args.framebuffer, args.screen_width, args.screen_height, args.is_graphic_mode);
-
-    set_print_color(0x0F);
-    set_scroll_line(18);
-    printk ("Hello, World!%d\n", 114514);
-
     init_kheap();
     init_gdt();
 
     SEGMENT_TOKEN KERNEL_TOKEN, KHEAP_TOKEN, PAGING_TOKEN;
     init_segments(args.kernel_start, args.kernel_limit, &KERNEL_TOKEN, &KHEAP_TOKEN);
 
-    init_paging(1, 1, 1, 2, &PAGING_TOKEN);
+    qword pmemsz = (((qword)args.memory_size_high) << 32) + args.memory_size;
+    qword vmemsz = TO2POW(pmemsz * 2467 / 1525, MEMUNIT_SZ);
+
+    init_paging(vmemsz, &PAGING_TOKEN);
+
+    qword mapping_start = pmemsz;
+
+    mapping_start = init_video_info(&args, mapping_start);
+
+    if(args.is_graphic_mode) {
+        color_rgba color = 0xFFFF0000;
+
+        for (int i = 0 ; i < 512 ; i ++) {
+            for (int j = 0 ; j < 512 ; j ++) {
+                draw_pixel(i, j, color);
+            }
+        }
+    }
+    else {
+        set_print_color(0x0F);
+        set_scroll_line(18);
+
+        printk ("pmemsz: %#016X\n", pmemsz);
+        printk ("vmemsz: %#016X\n", vmemsz);
+
+        printk ("Hello, World!%d\n", 114514);
+    }
 }

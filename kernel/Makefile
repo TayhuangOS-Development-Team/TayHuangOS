@@ -43,7 +43,7 @@ clean:
 	for c_file in $(C_SRC); do \
 	    $(RM) $$c_file.o; \
 	done
-	$(RM) $(KERNEL_OUPUT)
+	$(RM) $(KERNEL_OUTPUT)
 
 .PHONY: image
 image:

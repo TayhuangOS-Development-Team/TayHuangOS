@@ -48,10 +48,10 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
         printf ("Error!Too much memory!\n");
     }
 
-    PML4E* const pml4_start_address = PAGE_ADDRESS;
-    PDPTE* const pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
-    PDE* const pd_start_address = ((void*)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
-    PTE* const pt_start_address = ((void*)pd_start_address) + pd_num * MEMUNIT_SZ;
+    PML4E *const pml4_start_address = PAGE_ADDRESS;
+    PDPTE *const pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
+    PDE *const pd_start_address = ((void*)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
+    PTE *const pt_start_address = ((void*)pd_start_address) + pd_num * MEMUNIT_SZ;
     void *const page_start_address = ((void*)pt_start_address) + pt_num * MEMUNIT_SZ;
 
     *limit = page_start_address;

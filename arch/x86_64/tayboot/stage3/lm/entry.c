@@ -36,6 +36,7 @@ PRIVATE void init_boot_args(struct boot_args *output, struct stage3_args *args, 
     output->screen_width = args->screen_width;
     output->screen_height = args->screen_height;
     output->framebuffer = args->framebuffer; //视频
+    output->framebuffer &= 0xFFFFFFFF;
 
     output->memory_size = args->memory_size;
     output->memory_size_high = args->memory_size_high; //内存
