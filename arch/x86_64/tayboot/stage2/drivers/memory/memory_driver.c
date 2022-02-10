@@ -74,7 +74,7 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
     dword mem_cnt_high = 0;
     for (int i = 0 ; i < prode_result.prode_cnt ; i ++) {
         mem_cnt = max(mem_cnt, prode_result.ards_list[i].base_address_low + prode_result.ards_list[i].length_low);
-        mem_cnt_high = max(mem_cnt, prode_result.ards_list[i].base_address_high + prode_result.ards_list[i].length_high);
+        mem_cnt_high = max(mem_cnt_high, prode_result.ards_list[i].base_address_high + prode_result.ards_list[i].length_high);
     }
     MEM_INFO.mem_cnt = mem_cnt;
     MEM_INFO.mem_cnt_high = mem_cnt_high;
