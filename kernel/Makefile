@@ -8,7 +8,7 @@ CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmod
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
-STD_C_SRC := std/ctype std/string
+STD_C_SRC := std/ctype std/string std/math
 MEMORY_C_SRC := memory/paging memory/segment
 DISPLAY_C_SRC := display/printk display/video
 TOOL_C_SRC := tool/tostring
