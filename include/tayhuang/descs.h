@@ -91,7 +91,7 @@ struct _gate_struct {
 #endif
 } __attribute__((packed));//引用自linux
 
-typedef struct gate_struct gate_desc;
+typedef struct _gate_struct gate_desc;
 
 struct desc_ptr {
 	unsigned short size;

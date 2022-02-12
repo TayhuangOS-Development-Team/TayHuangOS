@@ -24,6 +24,7 @@
 _start:
     finit
     call entry
+    ud2
     jmp .
 
     .global __set_cr0

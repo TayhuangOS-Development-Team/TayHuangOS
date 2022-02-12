@@ -24,6 +24,7 @@
 #include "display/video.h"
 #include "display/printk.h"
 #include <tayhuang/paging.h>
+#include "intterup/init_int.h"
 
 qword init_video_info(_IN struct boot_args *args, _IN qword mapping_start) {
     int buffersz = (args->is_graphic_mode ? 3 : 2) * args->screen_width * args->screen_height;
@@ -61,22 +62,10 @@ void entry(_IN struct boot_args *_args) {
 
     mapping_start = init_video_info(&args, mapping_start);
 
-    if(args.is_graphic_mode) {
-        color_rgba color = 0xFFFF0000;
+    set_print_color(0x0F);
+    set_scroll_line(18);
 
-        for (int i = 0 ; i < 512 ; i ++) {
-            for (int j = 0 ; j < 512 ; j ++) {
-                draw_pixel(i, j, color);
-            }
-        }
-    }
-    else {
-        set_print_color(0x0F);
-        set_scroll_line(18);
+    init_pic();
 
-        printk ("pmemsz: %#016X\n", pmemsz);
-        printk ("vmemsz: %#016X\n", vmemsz);
-
-        printk ("Hello, World!%d\n", 114514);
-    }
+    init_idt();
 }
