@@ -1,17 +1,17 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * init_int.c
- * 
+ *
  * 初始化中断
- * 
+ *
  */
 
 
@@ -35,7 +35,7 @@ PUBLIC void init_pic(void) {
 
     outb (M_PIC_DATA, 0x1);
     outb (S_PIC_DATA, 0x1); //ICW4
-    
+
     outb (M_PIC_DATA, 0xFF); //OCW1
     outb (S_PIC_DATA, 0xFF);
 }
@@ -92,7 +92,7 @@ PRIVATE void init_idt_desc(byte vector, byte type, int_handler handler, byte pri
     IDT[vector].offset_middle = base >> 16; //偏移
     IDT[vector].offset_high = base >> 32;
     IDT[vector].reserved = 0;
-}    
+}
 
 PRIVATE void __init_descs(void) {
     //异常的IDT

@@ -1,21 +1,61 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * int_handlers.S
- * 
+ *
  * 中断处理
- * 
+ *
  */
 
 .extern general_irq_handler
 .extern general_exception_handler
+
+.macro i_x64_pushad
+    pushq %rsp
+    pushq %rbp
+    pushq %rax
+    pushq %rbx
+    pushq %rcx
+    pushq %rdx
+    pushq %rsi
+    pushq %rdi
+    pushq %r8
+    pushq %r9
+    pushq %r10
+    pushq %r11
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    pushq %r15
+    pushfq
+.endm
+
+.macro i_x64_popad
+    popfq
+    popq %r15
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %r11
+    popq %r10
+    popq %r9
+    popq %r8
+    popq %rdi
+    popq %rsi
+    popq %rdx
+    popq %rcx
+    popq %rbx
+    popq %rax
+    popq %rbp
+    popq %rsp
+.endm
 
 .macro irq_handler irq
     pushq %rdi
@@ -26,41 +66,40 @@
 .endm
 
 .macro nonerrcode_exception vector
-    pushq %rsi
-    pushq %rdi
-    pushq %rcx
-    pushq %rdx
-    pushq %r8
+    subq $8, %rsp
+    movl $0xFFFFFFFF, (%rsp)
+    i_x64_pushad
+    movq %rsp, %rbp
+    addq $136, %rbp
+    addq $24, 128(%rsp)
     movq $\vector, %rdi
-    movq $0xFFFFFFFF, %rsi
-    movq 40(%rsp), %rcx
-    movq 48(%rsp), %rdx
-    movzx 56(%rsp), %r8
+    movq 0(%rbp), %rsi
+    movq 8(%rbp), %rcx
+    movq 16(%rbp), %rdx
+    movzx 24(%rbp), %r8
+    movq %rsp, %r9
     jmp _exception
 .endm
 
 .macro errcode_exception vector
-    pushq %rsi
-    pushq %rdi
-    pushq %rcx
-    pushq %rdx
-    pushq %r8
+    i_x64_pushad
+    movq %rsp, %rbp
+    addq $136, %rbp
+    addq $24, 128(%rsp)
     movq $\vector, %rdi
-    movq 40(%rsp), %rsi
-    movq 48(%rsp), %rcx
-    movq 56(%rsp), %rdx
-    movzx 64(%rsp), %r8
+    movq 0(%rbp), %rsi
+    movq 8(%rbp), %rcx
+    movq 16(%rbp), %rdx
+    movzx 24(%rbp), %r8
+    movq %rsp, %r9
     jmp _exception
 .endm
 
 _exception:
     call general_exception_handler
-    popq %r8
-    popq %rdx
-    popq %rcx
-    popq %rdi
-    popq %rsi
-    iret
+    popq %rax
+    i_x64_popad
+    iretq
 
 
 .global divide_by_zero_error
@@ -72,7 +111,7 @@ _exception:
 .global breakpoint
 .type   breakpoint, @function
 .global overflow
-.type   overflowr, @function
+.type   overflow, @function
 .global bound_range_exceeded
 .type   bound_range_exceeded, @function
 .global invalid_opcode
@@ -95,13 +134,13 @@ _exception:
 .type   page_fault, @function
 .global reserved1_excepetion
 .type   reserved1_excepetion, @function
-.global x87_floating_point_exception	
+.global x87_floating_point_exception
 .type   x87_floating_point_exception, @function
 .global alignment_check
 .type   alignment_check, @function
 .global machine_check
 .type   machine_check, @function
-.global simd_floating_point_exception	
+.global simd_floating_point_exception
 .type   simd_floating_point_exception, @function
 .global virtualization_exception
 .type   virtualization_exception, @function

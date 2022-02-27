@@ -1,4 +1,4 @@
-/* 
+/*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  *
@@ -25,7 +25,7 @@ int strcmp(const char *str1, const char *str2) {
     if (len1 != len2) {
         if (len1 < len2)
             return -1;
-        else 
+        else
             return 1;
     }
     int res = 0;

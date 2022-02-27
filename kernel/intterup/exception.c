@@ -1,17 +1,17 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * exception.c
- * 
+ *
  * 异常处理
- * 
+ *
  */
 
 
@@ -20,7 +20,27 @@
 #include "../display/printk.h"
 #include <tayhuang/io.h>
 
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags) {
+struct pushad_regs {
+    b64 rflags,
+        r15,
+        r14,
+        r13,
+        r12,
+        r11,
+        r10,
+        r9,
+        r8,
+        rdi,
+        rsi,
+        rdx,
+        rcx,
+        rbx,
+        rax,
+        rsp,
+        rbp;
+};
+
+PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, void *registers) {
     byte old_print_color = get_print_color();
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!\n",
@@ -53,7 +73,7 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
         "[Reserved] Reserved exception!\n",
         "[#HV] Hypervisor injection exception!\n",
         "[#VC] VMM communication exception!\n",
-        "[#SX] Security exception!\n", 
+        "[#SX] Security exception!\n",
         "[Reserved] Reserved exception!\n"
     };
 
@@ -71,8 +91,14 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
     printk ("\n");
     printk ("\n");
     printk ("Registers:\n");
-    printk ("cs:  %#04X ;  ds:  %#04X\n", cs, rdds());
-    printk ("rip: %#016X;eflags:%#04X\n", rip, eflags); //打印寄存器
+    printk ("cs: %#04X;rip: %#016X;eflags:%#04X\n", cs, rip, eflags); //打印寄存器
+    struct pushad_regs *regs = (struct pushad_regs*)registers;
+    printk ("rax: %#016X;rbx: %#016X;rcx: %#016X;\n", regs->rax, regs->rbx, regs->rcx);
+    printk ("rdx: %#016X;rsi: %#016X;rdi: %#016X;\n", regs->rdx, regs->rsi, regs->rdi);
+    printk ("rsp: %#016X;rbp: %#016X;r8 : %#016X;\n", regs->rsp, regs->rbp, regs->r8);
+    printk ("r9 : %#016X;r10: %#016X;r11: %#016X;\n", regs->r9, regs->r10, regs->r11);
+    printk ("r12: %#016X;r13: %#016X;r14: %#016X;\n", regs->r12, regs->r13, regs->r14);
+    printk ("r15: %#016X;rflags: %#016X;\n", regs->r15, regs->rflags);
     set_print_color(old_print_color);
 
     while (true);

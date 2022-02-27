@@ -1,17 +1,17 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * exception.h
- * 
+ *
  * 异常处理
- * 
+ *
  */
 
 
@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags);
+PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, void *registers);
 PUBLIC void divide_by_zero_error(void);
 PUBLIC void single_step_debug(void);
 PUBLIC void non_maskable_interrup(void);

@@ -1,15 +1,15 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * kernel.c
- * 
+ *
  * 内核主程序
  *
  */
@@ -63,7 +63,7 @@ void entry(_IN struct boot_args *_args) {
     mapping_start = init_video_info(&args, mapping_start);
 
     set_print_color(0x0F);
-    set_scroll_line(18);
+    set_scroll_line(24);
 
     init_pic();
 
