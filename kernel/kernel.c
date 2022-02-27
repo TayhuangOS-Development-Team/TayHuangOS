@@ -29,6 +29,7 @@
 #include "display/printk.h"
 
 #include "intterup/init_int.h"
+#include "intterup/irq_handler.h"
 
 #include "init/init_clock.h"
 #include "init/init_misc.h"
@@ -45,6 +46,15 @@ qword init_video_info(_IN struct boot_args *args, _IN qword mapping_start) {
     init_video(mapping_start, args->screen_width, args->screen_height, args->is_graphic_mode);
 
     return mapping_start + buffersz;
+}
+
+short printstar(int irq) {
+    if (! IRQ_FLAGS[irq]) {
+        putchar('*');
+        return 1;
+    }
+    while (true);
+    return 1;
 }
 
 void entry(_IN struct boot_args *_args) {
@@ -79,4 +89,9 @@ void entry(_IN struct boot_args *_args) {
     init_sse();
 
     init_pit(18.20679f);
+
+    asmv ("sti");
+
+    register_irq_handler(0, printstar);
+    enable_irq(0);
 }

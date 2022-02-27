@@ -14,33 +14,13 @@
  *
  */
 
-
-
-#include "exception.h"
-#include "../display/printk.h"
 #include <tayhuang/io.h>
 
-struct pushad_regs {
-    b64 rflags,
-        r15,
-        r14,
-        r13,
-        r12,
-        r11,
-        r10,
-        r9,
-        r8,
-        rdi,
-        rsi,
-        rdx,
-        rcx,
-        rbx,
-        rax,
-        rsp,
-        rbp;
-};
+#include "exception.h"
 
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, void *registers) {
+#include "../display/printk.h"
+
+PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct pushad_regs *regs) {
     byte old_print_color = get_print_color();
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!\n",
@@ -92,7 +72,7 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
     printk ("\n");
     printk ("Registers:\n");
     printk ("cs: %#04X;rip: %#016X;eflags:%#04X\n", cs, rip, eflags); //打印寄存器
-    struct pushad_regs *regs = (struct pushad_regs*)registers;
+
     printk ("rax: %#016X;rbx: %#016X;rcx: %#016X;\n", regs->rax, regs->rbx, regs->rcx);
     printk ("rdx: %#016X;rsi: %#016X;rdi: %#016X;\n", regs->rdx, regs->rsi, regs->rdi);
     printk ("rsp: %#016X;rbp: %#016X;r8 : %#016X;\n", regs->rsp, regs->rbp, regs->r8);

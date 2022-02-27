@@ -20,6 +20,26 @@
 
 #include <tayhuang/defs.h>
 
+struct pushad_regs {
+    b64 rflags,
+        r15,
+        r14,
+        r13,
+        r12,
+        r11,
+        r10,
+        r9,
+        r8,
+        rdi,
+        rsi,
+        rdx,
+        rcx,
+        rbx,
+        rax,
+        rsp,
+        rbp;
+};
+
 PUBLIC void init_pic(void);
 PUBLIC void disable_irq(_IN int irq);
 PUBLIC void enable_irq(_IN int irq);

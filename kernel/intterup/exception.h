@@ -20,7 +20,9 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, void *registers);
+#include "init_int.h"
+
+PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct pushad_regs *regs);
 PUBLIC void divide_by_zero_error(void);
 PUBLIC void single_step_debug(void);
 PUBLIC void non_maskable_interrup(void);
