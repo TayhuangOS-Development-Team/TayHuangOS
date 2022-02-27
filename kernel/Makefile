@@ -13,14 +13,16 @@ MEMORY_C_SRC := memory/paging memory/segment
 DISPLAY_C_SRC := display/printk display/video
 TOOL_C_SRC := tool/tostring
 INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception
+INIT_C_SRC := init/init_clock
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \
 		$(DISPLAY_C_SRC) \
 		$(TOOL_C_SRC) \
-		$(INTTERUP_C_SRC)
+		$(INTTERUP_C_SRC) \
+		$(INIT_C_SRC)
 
-ASMFLAGS := 
+ASMFLAGS :=
 ASM_SRC := entry intterup/int_handlers
 
 C_DEFS := $(ARCHDEF_C)

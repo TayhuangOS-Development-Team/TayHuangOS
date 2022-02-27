@@ -18,13 +18,20 @@
 
 #include <tayhuang/boot_args.h>
 #include <tayhuang/defs.h>
+#include <tayhuang/paging.h>
+
+#include "kheap.h"
+
 #include "memory/segment.h"
 #include "memory/paging.h"
-#include "kheap.h"
+
 #include "display/video.h"
 #include "display/printk.h"
-#include <tayhuang/paging.h>
+
 #include "intterup/init_int.h"
+
+#include "init/init_clock.h"
+#include "init/init_misc.h"
 
 qword init_video_info(_IN struct boot_args *args, _IN qword mapping_start) {
     int buffersz = (args->is_graphic_mode ? 3 : 2) * args->screen_width * args->screen_height;
@@ -68,4 +75,8 @@ void entry(_IN struct boot_args *_args) {
     init_pic();
 
     init_idt();
+
+    init_sse();
+
+    init_pit(18.20679f);
 }

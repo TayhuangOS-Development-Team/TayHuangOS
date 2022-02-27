@@ -1,4 +1,4 @@
-/* 
+/*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  *
@@ -47,10 +47,10 @@ typedef struct {
 
 typedef union cr3_t {
     struct {
-        byte reserved2 : 3; 
-        bool pwt : 1; 
-        bool pcd : 1; 
-        byte reserved3 : 7; 
+        byte reserved2 : 3;
+        bool pwt : 1;
+        bool pcd : 1;
+        byte reserved3 : 7;
         qword _page_entry : 39;
         word reserved : 13;
     };
@@ -111,47 +111,47 @@ PUBLIC void __set_efer(int efer);
 PUBLIC int __get_efer(void);
 
 //CR操作
-PUBLIC void set_cr0(cr0_t cr0) {
+static inline void set_cr0(cr0_t cr0) {
     __set_cr0(*(int*)&cr0);
 }
 
-PUBLIC cr0_t get_cr0(void) {
+static inline cr0_t get_cr0(void) {
     int cr0 = __get_cr0();
     return *(cr0_t*)&cr0;
 }
 
-PUBLIC void set_cr2(cr2_t cr2) {
+static inline void set_cr2(cr2_t cr2) {
     __set_cr2(*(int*)&cr2);
 }
 
-PUBLIC cr2_t get_cr2(void) {
+static inline cr2_t get_cr2(void) {
     int cr2 = __get_cr2();
     return *(cr2_t*)&cr2;
 }
 
-PUBLIC void set_cr3(cr3_t cr3) {
+static inline void set_cr3(cr3_t cr3) {
     __set_cr3(*(int*)&cr3);
 }
 
-PUBLIC cr3_t get_cr3(void) {
+static inline cr3_t get_cr3(void) {
     int cr3 = __get_cr3();
     return *(cr3_t*)&cr3;
 }
 
-PUBLIC void set_cr4(cr4_t cr4) {
+static inline void set_cr4(cr4_t cr4) {
     __set_cr4(*(int*)&cr4);
 }
 
-PUBLIC cr4_t get_cr4(void) {
+static inline cr4_t get_cr4(void) {
     int cr4 = __get_cr4();
     return *(cr4_t*)&cr4;
 }
 
-PUBLIC void set_efer(efer_t efer) {
+static inline void set_efer(efer_t efer) {
     __set_efer(*(int*)&efer);
 }
 
-PUBLIC efer_t get_efer(void) {
+static inline efer_t get_efer(void) {
     int efer = __get_efer();
     return *(efer_t*)&efer;
 }
