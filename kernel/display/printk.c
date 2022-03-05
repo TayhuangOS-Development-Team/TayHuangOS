@@ -1,17 +1,17 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * printk.c
- * 
+ *
  * 内核printk
- * 
+ *
  */
 
 
@@ -75,7 +75,7 @@ PUBLIC void clrscr(void) {
     current_pos = 0;
 }
 
-PRIVATE void flush_to_screen(void) {
+PUBLIC void flush_to_screen(void) {
     memset(VIDEO_INFO.framebuffer, 0, VIDEO_INFO.width * VIDEO_INFO.height * 2);
     for (int i = start_pos ; i < current_pos ; i ++) {
         int position = i - start_pos;
@@ -423,7 +423,7 @@ PUBLIC int printk(const char *format, ...) {
 PUBLIC int sprintk(char *buffer, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    
+
     int ret = _vsprintk(buffer, format, args);
 
     va_end(args);

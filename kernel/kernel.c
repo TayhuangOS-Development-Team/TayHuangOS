@@ -49,12 +49,12 @@ qword init_video_info(_IN struct boot_args *args, _IN qword mapping_start) {
 }
 
 short printstar(int irq) {
-    if (! IRQ_FLAGS[irq]) {
+    if (IRQ_FLAGS[irq] == 0) {
         putchar('*');
-        return 1;
+        flush_to_screen();
+        return 6;
     }
-    while (true);
-    return 1;
+    return IRQ_FLAGS[irq] - 1;
 }
 
 void entry(_IN struct boot_args *_args) {

@@ -64,7 +64,7 @@
     call general_irq_handler
     popq %rax
     i_x64_popad
-    iret
+    iretq
 .endm
 
 .macro nonerrcode_exception vector
