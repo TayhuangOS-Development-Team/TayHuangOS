@@ -1,34 +1,22 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * kheap.c
- * 
+ *
  * 内核堆
- * 
+ *
  */
 
 
 
 #include "kheap.h"
-
-PUBLIC void memset(_OUT void *dst, _IN byte val, _IN int sz) {
-    for (int i = 0 ; i < sz ; i ++) {
-        *(char*)(dst + i) = val;
-    }
-}
-
-PUBLIC void memcpy(_OUT void *dst, _IN void *src, _IN int sz) {
-    for (int i = 0 ; i < sz ; i ++) {
-        *(char*)(dst + i) = *(char*)(src + i);
-    }
-}
 
 typedef struct {
     void *start;
@@ -36,13 +24,13 @@ typedef struct {
 } kh_seg;
 
 #define KH_SEG_NUM (8192)
-PRIVATE kh_seg *KHEAP_SEGMENTS = (kh_seg*)(KHEAP_LIMIT - sizeof(kh_seg) * KH_SEG_NUM);
-PRIVATE void *KHEAP_TOP = (void*)(KHEAP_LIMIT - sizeof(kh_seg) * KH_SEG_NUM);
-PRIVATE void *KHEAP_BOTTOM = (void*)KHEAP_BASE;
+PRIVATE kh_seg *KHEAP_SEGMENTS = NULL;
+PRIVATE void *KHEAP_TOP = NULL;
+PRIVATE void *KHEAP_BOTTOM = NULL;
 
-PUBLIC void init_kheap(void) {
-    KHEAP_SEGMENTS = (kh_seg*)(KHEAP_LIMIT - sizeof(kh_seg) * KH_SEG_NUM);
-    KHEAP_TOP = (void*)(KHEAP_LIMIT - sizeof(kh_seg) * KH_SEG_NUM);
+PUBLIC void init_kheap(_IN void *kheap_limit) {
+    KHEAP_SEGMENTS = (kh_seg*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
+    KHEAP_TOP = (void*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
     KHEAP_BOTTOM = (void*)KHEAP_BASE;
     memset(KHEAP_SEGMENTS, 0, sizeof(kh_seg) * KH_SEG_NUM);
 }

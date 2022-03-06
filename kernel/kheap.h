@@ -21,11 +21,20 @@
 #include <tayhuang/defs.h>
 
 #define KHEAP_BASE (0x00001)
-#define KHEAP_LIMIT (0x9FFFF)
 
-PUBLIC void memset(_OUT void *dst, _IN byte val, _IN int sz);
-PUBLIC void memcpy(_OUT void *dst, _IN void *src, _IN int sz);
-PUBLIC void init_kheap(void);
+static inline void memset(_OUT void *dst, _IN byte val, _IN int sz) {
+    for (int i = 0 ; i < sz ; i ++) {
+        *(char*)(dst + i) = val;
+    }
+}
+
+static inline void memcpy(_OUT void *dst, _IN void *src, _IN int sz) {
+    for (int i = 0 ; i < sz ; i ++) {
+        *(char*)(dst + i) = *(char*)(src + i);
+    }
+}
+
+PUBLIC void init_kheap(_IN void *kheap_limit);
 PUBLIC void *malloc(_IN int size);
 static inline void *calloc(_IN int num, _IN int size) {
     return malloc(num * size);

@@ -26,25 +26,18 @@ PRIVATE const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
 PRIVATE const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
 PRIVATE const int pml4e_pmu = (MEMUNIT_SZ / sizeof(PML4E)); //PML4E Per MEMUNIT
 
-PUBLIC void *init_paging(_IN qword _vmemsz, _OUT qword *pagingsz) {
-    const int page_num = _vmemsz / MEMUNIT_SZ;
-    const int pt_num = page_num / pte_pmu + ((page_num % pte_pmu) != 0);
-    const int pd_num = pt_num / pde_pmu + ((pt_num % pde_pmu) != 0);
-    const int pdpt_num = pd_num / pdpte_pmu + ((pd_num % pdpte_pmu) != 0);
-    const int pml4_num = pdpt_num / pml4e_pmu + ((pdpt_num % pml4e_pmu) != 0);
+PUBLIC void *init_paging(_IN qword _vmemsz, _IN qword paging1_start, _OUT qword *pagingsz) {
+    const int page_num = _vmemsz / MEMUNIT_SZ; //页数
+    const int pt_num = (page_num / pte_pmu + ((page_num % pte_pmu) != 0)) * 3 / 2; //PT数
+    const int pd_num = max(16, ((pt_num / pde_pmu + ((pt_num % pde_pmu) != 0))) * 3 / 2); //PD数
+    const int pdpt_num = max(16, (pd_num / pdpte_pmu + ((pd_num % pdpte_pmu) != 0)) * 3 / 2); //PDPT数
+    const int pml4_num = (pdpt_num / pml4e_pmu + ((pdpt_num % pml4e_pmu) != 0)); //PML4数
     if (pml4_num != 1)
         return NULL;
-    return _init_paging(1, pdpt_num, pd_num, pt_num, pagingsz);
+    return _init_paging(paging1_start, pml4_num, pdpt_num, pd_num, pt_num, pagingsz); //初始化分页
 }
 
-#define PAGING1_ADDRESS (0x320000)
-#define PAGING1_LIMIT_LOWEST (0x5A0000)
-#define PAGING1_LIMIT_LOW (0x720000)
-#define PAGING1_LIMIT_MID (0xA20000)
-#define PAGING1_LIMIT_HIGH (0x1320000)
-#define PAGING1_LIMIT_HIGHEST (0x1B20000)
-
-PRIVATE int paging1_limit = PAGING1_LIMIT_LOW;
+PRIVATE int paging1_limit = NULL;
 PRIVATE PML4E *pml4_start_address = NULL;
 PRIVATE void *pdpt_start_address = NULL;
 PRIVATE void *pd_start_address = NULL;
@@ -54,40 +47,26 @@ PRIVATE int _pdpt_num = 0;
 PRIVATE int _pd_num = 0;
 PRIVATE int _pt_num = 0;
 
+PUBLIC void *_init_paging(_IN qword paging1_start, _IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT qword *pagingsz) {
+    qword paging_sz = (pml4_num + pdpt_num + pd_num + pt_num) * MEMUNIT_SZ;
+    *pagingsz = paging_sz;
 
-PUBLIC void *_init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT qword *pagingsz) {
-    long long paging_sz = (pml4_num + pdpt_num + pd_num + pt_num) * MEMUNIT_SZ;
-    if (paging_sz < (PAGING1_LIMIT_LOWEST - PAGING1_ADDRESS)) {
-        paging1_limit = PAGING1_LIMIT_LOWEST;
-    }
-    else if (paging_sz < (PAGING1_LIMIT_LOW - PAGING1_ADDRESS)) {
-        paging1_limit = PAGING1_LIMIT_LOW;
-    }
-    else if (paging_sz < (PAGING1_LIMIT_MID - PAGING1_ADDRESS)) {
-        paging1_limit = PAGING1_LIMIT_MID;
-    }
-    else if (paging_sz < (PAGING1_LIMIT_HIGH - PAGING1_ADDRESS)) {
-        paging1_limit = PAGING1_LIMIT_HIGH;
-    }
-    else if (paging_sz < (PAGING1_LIMIT_HIGHEST - PAGING1_ADDRESS)) {
-        paging1_limit = PAGING1_LIMIT_HIGHEST;
-    }
-    *pagingsz = paging1_limit - PAGING1_ADDRESS;
+    paging1_limit = paging1_start + *pagingsz;
 
     _pml4_num = pml4_num;
     _pdpt_num = pdpt_num;
     _pd_num = pd_num;
     _pt_num = pt_num;
 
-    pml4_start_address = PAGING1_ADDRESS;
-
+    pml4_start_address = paging1_start;
     pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
     pd_start_address = pdpt_start_address + pdpt_num * MEMUNIT_SZ;
     pt_start_address = pd_start_address + pd_num * MEMUNIT_SZ;
-    memset (pml4_start_address, 0, pml4_num * MEMUNIT_SZ);
-    memset (pdpt_start_address, 0, pdpt_num * MEMUNIT_SZ);
-    memset (pd_start_address, 0, pd_num * MEMUNIT_SZ);
-    memset (pt_start_address, 0, pt_num * MEMUNIT_SZ);
+
+    memset (pml4_start_address, 0, pml4_num * MEMUNIT_SZ); //设0
+    memset (pdpt_start_address, 0, pdpt_num * MEMUNIT_SZ); //设0
+    memset (pd_start_address, 0, pd_num * MEMUNIT_SZ); //设0
+    memset (pt_start_address, 0, pt_num * MEMUNIT_SZ); //设0
 
     return pml4_start_address;
 }
@@ -147,7 +126,7 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
     int pte_idx = (((qword)from) >> 12) & 0x1FF;
 
     PML4E *pml4 = pml4_start_address;
-    if (pml4[pml4e_idx].p == false) {
+    if (pml4[pml4e_idx].p == false) { //当前PML4E未分配
         pml4[pml4e_idx].p = true;
         pml4[pml4e_idx].rw = false;
         pml4[pml4e_idx].us = false;
@@ -159,7 +138,7 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
 
     PDPTE *pdpt = (PDPTE*)(pml4[pml4e_idx].address << 12);
     if (pdpt == NULL) return false;
-    if (pdpt[pdpte_idx].p == false) {
+    if (pdpt[pdpte_idx].p == false) { //当前PDPTE未分配
         pdpt[pdpte_idx].p = true;
         pdpt[pdpte_idx].rw = false;
         pdpt[pdpte_idx].us = false;
@@ -171,7 +150,7 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
 
     PDE *pd = (PDE*)(pdpt[pdpte_idx].address << 12);
     if (pd == NULL) return false;
-    if (pd[pde_idx].p == false) {
+    if (pd[pde_idx].p == false) { //当前PDE未分配
         pd[pde_idx].p = true;
         pd[pde_idx].rw = false;
         pd[pde_idx].us = false;
@@ -183,7 +162,7 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
 
     PTE *pt = (PTE*)(pd[pde_idx].address << 12);
     if (pt == NULL) return false;
-    if (pt[pte_idx].p == false) {
+    if (pt[pte_idx].p == false) { //当前PTE未分配
         pt[pte_idx].p = true;
         pt[pte_idx].rw = rw;
         pt[pte_idx].us = us;
@@ -193,8 +172,8 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
         pt[pte_idx].d = false;
         pt[pte_idx].pat = false;
         pt[pte_idx].g = false;
-        pt[pte_idx].address = (((qword)to) >> 12);
     }
+    pt[pte_idx].address = (((qword)to) >> 12);
 
     return true;
 }

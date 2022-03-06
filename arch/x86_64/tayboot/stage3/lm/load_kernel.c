@@ -30,7 +30,7 @@ void load_program(Elf64_Phdr *program_header, void **limit) {
     if (program_header->p_type != PT_LOAD) //不是要被加载的段
         return;
     memcpy(program_header->p_vaddr, KERNEL_BIN_ADDRESS + program_header->p_offset, program_header->p_filesz);
-    *limit = program_header->p_vaddr + program_header->p_filesz;
+    *limit = program_header->p_vaddr + program_header->p_memsz;
 }
 
 void *load_elf(void **kernel_limit) {
@@ -50,5 +50,6 @@ void *load_kernel(void** kernel_start, void** kernel_limit) {
     if (! success) {
         return NULL;
     }
+    *kernel_limit = NULL;
     return *kernel_start = load_elf(kernel_limit);
 }
