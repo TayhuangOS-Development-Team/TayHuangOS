@@ -26,20 +26,18 @@
 
 #define KERNEL_BIN_ADDRESS (0x320000)
 
-void load_program(Elf64_Phdr *program_header, void **start, void **limit) {
+void load_program(Elf64_Phdr *program_header, void **limit) {
     if (program_header->p_type != PT_LOAD) //不是要被加载的段
         return;
     memcpy(program_header->p_vaddr, KERNEL_BIN_ADDRESS + program_header->p_offset, program_header->p_filesz);
-    *start = program_header->p_vaddr;
     *limit = program_header->p_vaddr + program_header->p_filesz;
 }
 
-void *load_elf(void **kernel_start, void **kernel_limit) {
+void *load_elf(void **kernel_limit) {
     Elf64_Ehdr *elf_header = KERNEL_BIN_ADDRESS;
     for (int i = 0 ; i < elf_header->e_phnum ; i ++) {
-        void *pstart, *plimit;
-        load_program(KERNEL_BIN_ADDRESS + elf_header->e_phoff + i * elf_header->e_phentsize, &pstart, &plimit);
-        *kernel_start = min(*kernel_start, pstart);
+        void *plimit = NULL;
+        load_program(KERNEL_BIN_ADDRESS + elf_header->e_phoff + i * elf_header->e_phentsize, &plimit);
         *kernel_limit = max(*kernel_limit, plimit);
     }
     return elf_header->e_entry;
@@ -52,5 +50,5 @@ void *load_kernel(void** kernel_start, void** kernel_limit) {
     if (! success) {
         return NULL;
     }
-    return load_elf(kernel_start, kernel_limit);
+    return *kernel_start = load_elf(kernel_limit);
 }

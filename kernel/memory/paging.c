@@ -1,33 +1,40 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
+ *
  * paging.c
- * 
+ *
  * 页表
- * 
+ *
  */
 
 
 
 #include "paging.h"
-#include "segment.h"
+#include "../kheap.h"
 #include <tayhuang/paging.h>
 #include <tayhuang/control_registers.h>
 
-PUBLIC void init_paging(_IN qword _vmemsz, _OUT SEGMENT_TOKEN *PAGING_TOKEN) {
+PRIVATE const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
+PRIVATE const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
+PRIVATE const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
+PRIVATE const int pml4e_pmu = (MEMUNIT_SZ / sizeof(PML4E)); //PML4E Per MEMUNIT
+
+PUBLIC void *init_paging(_IN qword _vmemsz, _OUT qword *pagingsz) {
     const int page_num = _vmemsz / MEMUNIT_SZ;
-    const int pt_num = page_num / (MEMUNIT_SZ / sizeof(PTE));
-    const int pd_num = page_num / (MEMUNIT_SZ / sizeof(PDE));
-    const int pdpt_num = page_num / (MEMUNIT_SZ / sizeof(PDPTE));
-    const int pml4_num = page_num / (MEMUNIT_SZ / sizeof(PML4E));
-    _init_paging(pml4_num, pdpt_num, pd_num, pt_num, PAGING_TOKEN);
+    const int pt_num = page_num / pte_pmu + ((page_num % pte_pmu) != 0);
+    const int pd_num = pt_num / pde_pmu + ((pt_num % pde_pmu) != 0);
+    const int pdpt_num = pd_num / pdpte_pmu + ((pd_num % pdpte_pmu) != 0);
+    const int pml4_num = pdpt_num / pml4e_pmu + ((pdpt_num % pml4e_pmu) != 0);
+    if (pml4_num != 1)
+        return NULL;
+    return _init_paging(1, pdpt_num, pd_num, pt_num, pagingsz);
 }
 
 #define PAGING1_ADDRESS (0x320000)
@@ -39,8 +46,16 @@ PUBLIC void init_paging(_IN qword _vmemsz, _OUT SEGMENT_TOKEN *PAGING_TOKEN) {
 
 PRIVATE int paging1_limit = PAGING1_LIMIT_LOW;
 PRIVATE PML4E *pml4_start_address = NULL;
+PRIVATE void *pdpt_start_address = NULL;
+PRIVATE void *pd_start_address = NULL;
+PRIVATE void *pt_start_address = NULL;
+PRIVATE int _pml4_num = 0;
+PRIVATE int _pdpt_num = 0;
+PRIVATE int _pd_num = 0;
+PRIVATE int _pt_num = 0;
 
-PUBLIC void _init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT SEGMENT_TOKEN *PAGING_TOKEN) {
+
+PUBLIC void *_init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT qword *pagingsz) {
     long long paging_sz = (pml4_num + pdpt_num + pd_num + pt_num) * MEMUNIT_SZ;
     if (paging_sz < (PAGING1_LIMIT_LOWEST - PAGING1_ADDRESS)) {
         paging1_limit = PAGING1_LIMIT_LOWEST;
@@ -57,92 +72,138 @@ PUBLIC void _init_paging(_IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN
     else if (paging_sz < (PAGING1_LIMIT_HIGHEST - PAGING1_ADDRESS)) {
         paging1_limit = PAGING1_LIMIT_HIGHEST;
     }
-    
-    *PAGING_TOKEN = add_segment(PAGING1_ADDRESS, paging1_limit, MST_PROTECT | MST_PAGE | MST_DATA);
+    *pagingsz = paging1_limit - PAGING1_ADDRESS;
 
-    const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
-    const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
-    const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
-    const int pml4e_pmu = (MEMUNIT_SZ / sizeof(PML4E)); //PML4E Per MEMUNIT
+    _pml4_num = pml4_num;
+    _pdpt_num = pdpt_num;
+    _pd_num = pd_num;
+    _pt_num = pt_num;
 
     pml4_start_address = PAGING1_ADDRESS;
-    PDPTE *const pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
-    PDE *const pd_start_address = ((void*)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
-    PTE *const pt_start_address = ((void*)pd_start_address) + pd_num * MEMUNIT_SZ;
 
-    //初始化PT
-    for (int i = 0 ; i < pt_num * pte_pmu; i ++) {
-        PTE *pte = pt_start_address + i;
-        pte->reserved = 0;
-        pte->p = true;
-        pte->rw = true;
-        pte->us = false;
-        pte->pwt = false;
-        pte->pcd = false;
-        pte->a = false;
-        pte->d = false;
-        pte->pat = false;
-        pte->g = false;
-        pte->xd = false;
-        pte->address = i;
-    }
-    //初始化PD
-    for (int i = 0 ; i < pd_num * pde_pmu; i ++) {
-        PDE *pde = pd_start_address + i;
-        pde->reserved = 0;
-        pde->reserved2 = 0;
-        pde->p = true;
-        pde->rw = true;
-        pde->us = false;
-        pde->pwt = false;
-        pde->pcd = false;
-        pde->a = false;
-        pde->xd = false;
-        pde->address = (((qword)pt_start_address) / MEMUNIT_SZ) + i;
-    }
-    //初始化PDPT
-    for (int i = 0 ; i < pdpt_num * pdpte_pmu ; i ++) {
-        PDPTE *pdpte = pdpt_start_address + i;
-        pdpte->reserved = 0;
-        pdpte->reserved2 = 0;
-        pdpte->p = true;
-        pdpte->rw = true;
-        pdpte->us = false;
-        pdpte->pwt = false;
-        pdpte->pcd = false;
-        pdpte->a = false;
-        pdpte->xd = false;
-        pdpte->address = ((((qword)pd_start_address)) / MEMUNIT_SZ) + i;
-    }
-    //初始化PML4
-    for (int i = 0 ; i < pml4_num * pml4e_pmu ; i ++) {
-        PML4E *pml4e = pml4_start_address + i;
-        pml4e->reserved = 0;
-        pml4e->reserved2 = 0;
-        pml4e->p = true;
-        pml4e->rw = true;
-        pml4e->us = false;
-        pml4e->pwt = false;
-        pml4e->pcd = false;
-        pml4e->a = false;
-        pml4e->xd = false;
-        pml4e->address = ((((qword)pdpt_start_address)) / MEMUNIT_SZ) + i;
-    }
-    cr3_t cr3 = get_cr3();
-    cr3.page_entry = (qword)pml4_start_address;
-    set_cr3(cr3);
+    pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
+    pd_start_address = pdpt_start_address + pdpt_num * MEMUNIT_SZ;
+    pt_start_address = pd_start_address + pd_num * MEMUNIT_SZ;
+    memset (pml4_start_address, 0, pml4_num * MEMUNIT_SZ);
+    memset (pdpt_start_address, 0, pdpt_num * MEMUNIT_SZ);
+    memset (pd_start_address, 0, pd_num * MEMUNIT_SZ);
+    memset (pt_start_address, 0, pt_num * MEMUNIT_SZ);
+
+    return pml4_start_address;
 }
 
-PRIVATE void __set_mapping(_IN void *from, _IN void *to) { 
-    PML4E *pml4e = pml4_start_address + ((((qword)from) >> 39) & 0x1FF);
-    PDPTE *pdpte = ((PDPTE*)(pml4e->address * MEMUNIT_SZ)) + ((((qword)from) >> 30) & 0x1FF);
-    PDE *pde = ((PDE*)(pdpte->address * MEMUNIT_SZ)) + ((((qword)from) >> 21) & 0x1FF);
-    PTE *pte = ((PTE*)(pde->address * MEMUNIT_SZ)) + ((((qword)from) >> 12) & 0x1FF);
-    pte->address = ((qword)to) / MEMUNIT_SZ;
+PRIVATE PTE *__get_free_pt(void) {
+    for (int i = 0 ; i < _pt_num ; i ++) {
+        bool flag = false;
+        qword *pt = (qword*)(pt_start_address + i * MEMUNIT_SZ);
+        for (int j = 0 ; j < pte_pmu ; j ++) {
+            if (pt[j] != 0) {
+                flag = true;
+            }
+        }
+        if (! flag) {
+            return (PTE*)pt;
+        }
+    }
+    return NULL;
 }
 
-PUBLIC void set_mapping(_IN void *from, _IN void *to, _IN int pages) {
+PRIVATE PDE *__get_free_pd(void) {
+    for (int i = 0 ; i < _pd_num ; i ++) {
+        bool flag = false;
+        qword *pd = (qword*)(pd_start_address + i * MEMUNIT_SZ);
+        for (int j = 0 ; j < pde_pmu ; j ++) {
+            if (pd[j] != 0) {
+                flag = true;
+            }
+        }
+        if (! flag) {
+            return (PDE*)pd;
+        }
+    }
+    return NULL;
+}
+
+PRIVATE PDPTE *__get_free_pdpt(void) {
+    for (int i = 0 ; i < _pdpt_num ; i ++) {
+        bool flag = false;
+        qword *pdpt = (qword*)(pdpt_start_address + i * MEMUNIT_SZ);
+        for (int j = 0 ; j < pdpte_pmu ; j ++) {
+            if (pdpt[j] != 0) {
+                flag = true;
+            }
+        }
+        if (! flag) {
+            return (PDPTE*)pdpt;
+        }
+    }
+    return NULL;
+}
+
+PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool us) {
+    int pml4e_idx = (((qword)from) >> 39) & 0x1FF;
+    int pdpte_idx = (((qword)from) >> 30) & 0x1FF;
+    int pde_idx = (((qword)from) >> 21) & 0x1FF;
+    int pte_idx = (((qword)from) >> 12) & 0x1FF;
+
+    PML4E *pml4 = pml4_start_address;
+    if (pml4[pml4e_idx].p == false) {
+        pml4[pml4e_idx].p = true;
+        pml4[pml4e_idx].rw = false;
+        pml4[pml4e_idx].us = false;
+        pml4[pml4e_idx].pcd = false;
+        pml4[pml4e_idx].pwt = false;
+        pml4[pml4e_idx].a = false;
+        pml4[pml4e_idx].address = (((qword)__get_free_pdpt()) >> 12);
+    }
+
+    PDPTE *pdpt = (PDPTE*)(pml4[pml4e_idx].address << 12);
+    if (pdpt == NULL) return false;
+    if (pdpt[pdpte_idx].p == false) {
+        pdpt[pdpte_idx].p = true;
+        pdpt[pdpte_idx].rw = false;
+        pdpt[pdpte_idx].us = false;
+        pdpt[pdpte_idx].pcd = false;
+        pdpt[pdpte_idx].pwt = false;
+        pdpt[pdpte_idx].a = false;
+        pdpt[pdpte_idx].address = (((qword)__get_free_pd()) >> 12);
+    }
+
+    PDE *pd = (PDE*)(pdpt[pdpte_idx].address << 12);
+    if (pd == NULL) return false;
+    if (pd[pde_idx].p == false) {
+        pd[pde_idx].p = true;
+        pd[pde_idx].rw = false;
+        pd[pde_idx].us = false;
+        pd[pde_idx].pcd = false;
+        pd[pde_idx].pwt = false;
+        pd[pde_idx].a = false;
+        pd[pde_idx].address = (((qword)__get_free_pt()) >> 12);
+    }
+
+    PTE *pt = (PTE*)(pd[pde_idx].address << 12);
+    if (pt == NULL) return false;
+    if (pt[pte_idx].p == false) {
+        pt[pte_idx].p = true;
+        pt[pte_idx].rw = rw;
+        pt[pte_idx].us = us;
+        pt[pte_idx].pcd = false;
+        pt[pte_idx].pwt = false;
+        pt[pte_idx].a = false;
+        pt[pte_idx].d = false;
+        pt[pte_idx].pat = false;
+        pt[pte_idx].g = false;
+        pt[pte_idx].address = (((qword)to) >> 12);
+    }
+
+    return true;
+}
+
+PUBLIC bool set_mapping(_IN void *from, _IN void *to, _IN int pages, _IN bool rw, _IN bool us) {
     for (int i = 0 ; i < pages ; i ++) {
-        __set_mapping(from + i * MEMUNIT_SZ, to + i * MEMUNIT_SZ);
+        if (! __set_mapping(from + i * MEMUNIT_SZ, to + i * MEMUNIT_SZ, rw, us)) {
+            return false;
+        }
     }
+    return true;
 }
