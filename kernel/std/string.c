@@ -44,11 +44,14 @@ int strcmp(const char *str1, const char *str2) {
 }
 
 int strlen(const char *str) {
-    int res = 0;
-    while (*(str ++)) res ++;
-    return res;
+    int cnt;
+    asm volatile(
+      "cld\n"
+      "repnz\n"
+      "scasb"  :
+      "=c" (cnt) : "D" (str), "a" (0));
+    return -2 - cnt;
 }
-
 char *strcpy(void *dst, const char *src) {
     char *r = dst;
     while(*src != '\0') {

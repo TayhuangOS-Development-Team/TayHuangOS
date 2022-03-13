@@ -27,7 +27,7 @@ typedef short(*irq_handler)(int);
 PUBLIC void register_irq_handler(int irq, irq_handler handler);
 PUBLIC void general_irq_handler(int irq);
 
-void irq0_handler(void);
+void clock_irq_handler(void);
 void irq1_handler(void);
 void irq2_handler(void);
 void irq3_handler(void);

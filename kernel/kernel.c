@@ -25,6 +25,7 @@
 #include "kheap.h"
 
 #include "memory/paging.h"
+#include "memory/pmm.h"
 
 #include "display/video.h"
 #include "display/printk.h"
@@ -35,55 +36,97 @@
 #include "init/init_clock.h"
 #include "init/init_misc.h"
 
+#include "process/task_manager.h"
+
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
+PRIVATE struct tss TSS;
 
-void init_gdt(void) {
+PRIVATE void init_gdt(void) {
     int cs_idx = rdcs() >> 3;
     int ds_idx = rdds() >> 3;
     int tr_idx = 3;
     GDT[0] = (struct desc_struct)GDT_ENTRY(0, 0, 0);
     GDT[cs_idx] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF);
     GDT[ds_idx] = (struct desc_struct)GDT_ENTRY(0xA093, 0, 0xFFFFF);
-    GDT[tr_idx] = (struct desc_struct)GDT_ENTRY(0, 0, 0); //WIP
+    GDT[tr_idx] = (struct desc_struct)GDT_ENTRY(0x0089, ((qword)&TSS), sizeof(TSS));
     gdtr.ptr = GDT;
     gdtr.len = sizeof (GDT);
     asmv ("lgdt %0" : : "m"(gdtr));
+    //asmv ("movq $0x18, %rax\n"
+    //      "ltr %ax");
 }
 
-qword init_video_info(_IN struct boot_args *args, _IN qword mapping_start) {
+PRIVATE void init_video_info(_IN struct boot_args *args) {
     int buffersz = (args->is_graphic_mode ? 3 : 2) * args->screen_width * args->screen_height;
 
-    set_mapping(mapping_start, args->framebuffer, buffersz / 4096 + 1, true, true);
-    init_video(mapping_start, args->screen_width, args->screen_height, args->is_graphic_mode);
-
-    return mapping_start + buffersz;
+    set_mapping(args->framebuffer, args->framebuffer, buffersz / 4096 + 1, true, true);
+    init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode);
 }
 
-// void procA(void) {
-//     while (true) {
-//         putchar ('A');
-//         flush_to_screen();
-//     }
-// }
+void clock_int_handler(int irq, struct pushad_regs *regs) { //WIP
+    while (true);
+    disable_irq(irq);
+    asmv ("sti");
 
-// void procB(void) {
-//     while (true) {
-//         putchar ('B');
-//         flush_to_screen();
-//     }
-// }
+    send_eoi(irq);
 
-short printstar(int irq) {
-    if (IRQ_FLAGS[irq] == 0) {
-        putchar('*');
-        flush_to_screen();
-        return 1;
-    }
-    return IRQ_FLAGS[irq] - 1;
+    asmv ("cli");
+    enable_irq(irq);
 }
 
 #define MMIO_START (0x30000000000)
+
+PRIVATE void *kernel_pml4 = NULL;
+
+void init(void) {
+    printk ("Hello, World!I'm init, the first process!\n");
+    while (true);
+}
+
+#define CLOCK_FREQUENCY (18.20679f)
+
+void initialize(_IN struct boot_args *args) {
+    init_gdt();
+
+    qword pmemsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
+
+    init_kheap(args->kernel_start - 0x40000);
+    init_pmm(pmemsz);
+    mark_used(0);
+    for (int i = 0xA0000 ; i < args->kernel_limit ; i += 4096) {
+        mark_used(i);
+    }
+
+    //vmem map
+    //----------------------------------------------------------------------------------------
+    //|  FREE   |   KHEAP   |  STACK  |  KERNEL  |  PAGING  |      FREE       |     MMIO     |
+    //----------------------------------------------------------------------------------------
+    kernel_pml4 = init_paging();
+    set_pml4(kernel_pml4);
+    qword kernel_length = args->kernel_limit - 0x100000;
+
+    set_mapping(0, 0, pmemsz / 4096, true, true); //全部映射到自身
+    set_mapping(0x100000, 0x100000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, false); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
+
+    cr3_t cr3 = get_cr3();
+    cr3.page_entry = (qword)kernel_pml4; //设置CR3
+    set_cr3(cr3);
+
+    init_video_info(args);
+
+    set_print_color(0x0F);
+    set_scroll_line(15);
+
+    init_sse();
+
+    init_pit(CLOCK_FREQUENCY);
+
+    init_pic();
+    init_idt();
+
+    asmv ("sti");
+}
 
 void entry(_IN struct boot_args *_args) {
     //Boot Arg
@@ -93,54 +136,7 @@ void entry(_IN struct boot_args *_args) {
     struct boot_args args;
     memcpy(&args, _args, sizeof(struct boot_args));
 
-    //Memory
-    init_gdt();
+    initialize(&args);
 
-    qword pmemsz = (((qword)args.memory_size_high) << 32) + args.memory_size;
-    qword vmemsz = TO2POW(pmemsz * 2467 / 1525, MEMUNIT_SZ);
-
-    init_sse(); //SSE
-
-    qword pagingsz;
-
-    void *pml4_start_address = init_paging(vmemsz, (args.kernel_limit & 0xFFFFFFFFFFFFF000) + 0x1000, &pagingsz);
-
-    set_mapping(0x0, 0x0, pmemsz / 4096, true, false); //全部映射至原来位置
-
-    qword mapping_start = MMIO_START;
-
-    mapping_start = init_video_info(&args, mapping_start); //MMIO映射到高处(显存)
-
-    set_mapping(args.kernel_start - 0x40000, args.kernel_start - 0x40000, (args.kernel_limit - args.kernel_start + 0x40000) / 4096, true, false); //内核&栈
-
-    set_mapping(0xA0000, (pml4_start_address + pagingsz), 0x60000 / 4096, true, false); //KHEAP2
-    set_mapping(pml4_start_address, pml4_start_address, pagingsz / 4096, true, false); //页表
-
-    cr3_t cr3 = get_cr3();
-    cr3.page_entry = (qword)pml4_start_address; //设置CR3
-    set_cr3(cr3);
-
-    init_kheap(args.kernel_start - 0x40000); //0x00001 ~ args.kernel_start - 0x40000: KHEAP
-    //vmem map
-    //------------------------------------------------------------------------------
-    //|   KHEAP   |  STACK  |  KERNEL  |  PAGING  |      FREE       |     MMIO     |
-    //------------------------------------------------------------------------------
-
-    set_print_color(0x0F); //设置显示信息
-    set_scroll_line(24);
-
-    printk ("Hello, World!\n");
-
-    //中断
-
-    init_pic();
-
-    init_idt();
-
-    init_pit(18.20679f);
-
-    asmv ("sti");
-
-    register_irq_handler(0, printstar); //时钟中断
-    enable_irq(0);
+    do_kernel_fork(1, init);
 }

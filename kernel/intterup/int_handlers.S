@@ -235,8 +235,8 @@ security_exception:
 reserved8_excepetion:
     nonerrcode_exception 31
 
-.global irq0_handler
-.type   irq0_handler, @function
+.global clock_irq_handler
+.type   clock_irq_handler, @function
 .global irq1_handler
 .type   irq1_handler, @function
 .global irq2_handler
@@ -268,8 +268,17 @@ reserved8_excepetion:
 .global irq15_handler
 .type   irq15_handler, @function
 
-irq0_handler:
-    irq_handler 0
+.extern clock_int_handler
+
+clock_irq_handler:
+    xchg %bx, %bx
+    i_x64_pushad
+    movq $0, %rdi
+    leaq 128(%rsp), %rsi
+    call clock_int_handler
+    i_x64_popad
+    iretq
+
 irq1_handler:
     irq_handler 1
 irq2_handler:

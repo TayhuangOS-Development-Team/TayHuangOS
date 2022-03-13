@@ -20,6 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void *init_paging(_IN qword _vmemsz, _IN qword paging1_start, _OUT qword *pagingsz);
-PUBLIC void *_init_paging(_IN qword paging1_start, _IN int pml4_num, _IN int pdpt_num, _IN int pd_num, _IN int pt_num, _OUT qword *pagingsz);
+PUBLIC void set_pml4(_IN void *pml4);
+PUBLIC void *get_pml4(void);
+PUBLIC void *init_paging(void);
 PUBLIC bool set_mapping(_IN void *from, _IN void *to, _IN int pages, _IN bool rw, _IN bool us);

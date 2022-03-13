@@ -8,12 +8,19 @@
  *
  * 作者: Flysong
  *
- * balance_tree.c
+ * pmm.h
  *
- * 平衡树
+ * 物理内存管理器
  *
  */
 
 
 
-#include <tool/balance_tree.h>
+#pragma once
+
+#include <tayhuang/defs.h>
+
+PUBLIC void init_pmm(qword pmemsz);
+PUBLIC void *lookup_free_page(void);
+PUBLIC void mark_used(void *page);
+PUBLIC void mark_unused(void *page);

@@ -8,12 +8,18 @@
  *
  * 作者: Flysong
  *
- * balance_tree.h
+ * task_manager.h
  *
- * 平衡树
+ * 进程管理器
  *
  */
 
 
 
 #pragma once
+
+#include "task_struct.h"
+
+PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, word cs, void *pgd);
+PUBLIC void do_fork(int priority, void(*entry)(void), qword rflags, word cs, void *pgd);
+PUBLIC void do_kernel_fork(int priority, void(*entry)(void));

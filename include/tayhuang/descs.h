@@ -74,8 +74,8 @@ struct idt_bits {
 } __attribute__((packed));//引用自linux
 
 struct idt_data {
-	unsigned int	vector;
-	unsigned int	segment;
+	dword	vector;
+	dword	segment;
 	struct idt_bits	bits;
 	const void	*addr;
 };//引用自linux
@@ -94,8 +94,8 @@ struct _gate_struct {
 typedef struct _gate_struct gate_desc;
 
 struct desc_ptr {
-	unsigned short size;
-	unsigned long address;
+	word size;
+	qword address;
 } __attribute__((packed)) ;//引用自linux
 
 #define AR_TYPE_RODATA (0)//引用自linux
@@ -132,3 +132,21 @@ enum {
 	DESC_LDT = 0x2,
 	DESCTYPE_S = 0x10,	/* !system */
 };
+
+struct tss {
+	dword reserved0;
+	qword rsp0;
+	qword rsp1;
+	qword rsp2;
+	qword reserved1;
+	qword ist1;
+	qword ist2;
+	qword ist3;
+	qword ist4;
+	qword ist5;
+	qword ist6;
+	qword ist7;
+	qword reserved2;
+	word reserved3;
+	word iopb;
+} __attribute__((packed));

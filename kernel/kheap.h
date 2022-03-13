@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-#define KHEAP_BASE (0x00001)
+#define KHEAP_BASE (0x100000)
 
 static inline void memset(_OUT void *dst, _IN byte val, _IN int sz) {
     for (int i = 0 ; i < sz ; i ++) {

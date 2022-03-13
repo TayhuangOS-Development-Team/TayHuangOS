@@ -16,18 +16,20 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 STD_C_SRC := std/ctype std/string std/math
-MEMORY_C_SRC := memory/paging
+MEMORY_C_SRC := memory/paging memory/pmm
 DISPLAY_C_SRC := display/printk display/video
-TOOL_C_SRC := tool/tostring tool/balance_tree
+TOOL_C_SRC := tool/tostring
 INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception
 INIT_C_SRC := init/init_clock
+PROCESS_C_SRC := process/vmareas process/task_manager
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \
 		$(DISPLAY_C_SRC) \
 		$(TOOL_C_SRC) \
 		$(INTTERUP_C_SRC) \
-		$(INIT_C_SRC)
+		$(INIT_C_SRC) \
+		$(PROCESS_C_SRC)
 
 CPP_SRC :=
 

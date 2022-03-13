@@ -130,7 +130,7 @@ PRIVATE void __init_descs(void) {
     init_idt_desc(30, GATE_INTERRUPT, security_exception, 0);
     init_idt_desc(31, GATE_INTERRUPT, reserved8_excepetion, 0);
 
-    init_idt_desc(CALC_IRQ(0), GATE_INTERRUPT, irq0_handler, 0);
+    init_idt_desc(CALC_IRQ(0), GATE_INTERRUPT, clock_irq_handler, 0);
     init_idt_desc(CALC_IRQ(1), GATE_INTERRUPT, irq1_handler, 0);
     init_idt_desc(CALC_IRQ(2), GATE_INTERRUPT, irq2_handler, 0);
     init_idt_desc(CALC_IRQ(3), GATE_INTERRUPT, irq3_handler, 0);

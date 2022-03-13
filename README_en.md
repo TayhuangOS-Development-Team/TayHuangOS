@@ -1,6 +1,8 @@
-# English Version
+---
 
-# 英文版
+# Chinese Version
+
+# 中文版
 
 <div align="center">
 <a href="#">

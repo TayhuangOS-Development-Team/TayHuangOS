@@ -1,4 +1,4 @@
-/* 
+/*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  *
@@ -49,7 +49,7 @@ PUBLIC void init_pic(void) {
 
     outb (M_PIC_DATA, 0x1);
     outb (S_PIC_DATA, 0x1); //ICW4
-    
+
     outb (M_PIC_DATA, 0xFF); //OCW1
     outb (S_PIC_DATA, 0xFF);
 }
