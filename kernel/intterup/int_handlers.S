@@ -271,10 +271,9 @@ reserved8_excepetion:
 .extern clock_int_handler
 
 clock_irq_handler:
-    xchg %bx, %bx
     i_x64_pushad
     movq $0, %rdi
-    leaq 128(%rsp), %rsi
+    movq %rsp, %rsi
     call clock_int_handler
     i_x64_popad
     iretq

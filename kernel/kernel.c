@@ -64,12 +64,36 @@ PRIVATE void init_video_info(_IN struct boot_args *args) {
     init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode);
 }
 
-void clock_int_handler(int irq, struct pushad_regs *regs) { //WIP
-    while (true);
+struct clock_intterup_args {
+    b64 rflags,
+        r15,
+        r14,
+        r13,
+        r12,
+        r11,
+        r10,
+        r9,
+        r8,
+        rdi,
+        rsi,
+        rdx,
+        rcx,
+        rbx,
+        rax,
+        rbp,
+        rsp,
+        cs,
+        rip;
+    b64 rflags2;
+} __attribute__((packed));
+
+void clock_int_handler(int irq, struct clock_intterup_args *regs) { //WIP
     disable_irq(irq);
     asmv ("sti");
 
     send_eoi(irq);
+
+    while (true);
 
     asmv ("cli");
     enable_irq(irq);
@@ -138,5 +162,7 @@ void entry(_IN struct boot_args *_args) {
 
     initialize(&args);
 
-    do_kernel_fork(1, init);
+    enable_irq(0);
+
+    //do_kernel_fork(1, init);
 }

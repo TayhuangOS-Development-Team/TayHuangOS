@@ -11,7 +11,7 @@
 
 </div>
 
-> There is a person called Pangu. He borned in Tayhuang.
+> There was a person called Pangu. He borned in Tayhuang.
 
 It's a personal ONLY-FOR-LEARN OS.
 
