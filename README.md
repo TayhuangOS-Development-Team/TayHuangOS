@@ -13,13 +13,13 @@
 
 > There was a person called Pangu. He borned in Tayhuang.
 
-It's a personal ONLY-FOR-LEARN OS.
+It's a OS made by me
 
-It has a poor usage experience.
+If you want to download a operating system for use, please look for other repo.It has not done.
 
-So, if you want to download a operating system for use, please go away and look for other repo.
+Everyone is welcome to program OS with me, if you have some experience about it.
 
-But if you want to learn the theory of operating system, I'd like to chat with you.
+I'm glad to talk with you about the theory of OS.
 
 There's my QQ number: 2715626245
 
@@ -44,13 +44,13 @@ Or you can send an email to me, my email address is: song_of_the_fly@163.com
 
 > 粤自盘古，生于太荒。
 
-这是个人的学习用OS
+这是我自制的CPU
 
-使用感不好
+如果你想要下载一个操作系统来用，请去找别的repo,因为它还没做好
 
-所以， 如果你想要下载一个操作系统来用，请去找别的repo
+我欢迎任何人和我一起写OS,只要你有这方面的一点知识
 
-但是如果你想要学习操作系统原理，我会乐于和你交谈
+我也乐于和你一起交谈操作系统原理
 
 QQ号: 2715626245
 
