@@ -24,6 +24,7 @@
 _start:
     finit
     call entry
+    xorq %rax, %rax
     jmp .
 
     .global __set_cr0

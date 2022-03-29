@@ -30,34 +30,33 @@ typedef struct {
 } mm_struct;
 
 typedef struct {
-    b64 rsp0;
-    b16 cs;
-    b16 fs;
-    b16 gs;
-    b16 ss;
-
-    b64 rip;
-    b64 rflags;
-
-    b64 rax;
-    b64 rbx;
-    b64 rcx;
-    b64 rdx;
-    b64 rsp;
-    b64 rbp;
-    b64 rsi;
-    b64 rdi;
-    b64 r8;
-    b64 r9;
-    b64 r10;
-    b64 r11;
-    b64 r12;
-    b64 r13;
-    b64 r14;
-    b64 r15;
+    b64 r15,
+        r14,
+        r13,
+        r12,
+        r11,
+        r10,
+        r9,
+        r8,
+        rdi,
+        rsi,
+        rdx,
+        rcx,
+        rbx,
+        rax,
+        rbp,
+        rip,
+        cs,
+        rflags,
+        rsp,
+        ss,
+        ds,
+        es,
+        fs,
+        gs;
 } thread_struct;
 
-typedef struct _task_struct{
+typedef struct _task_struct {
     thread_struct thread_info;
     mm_struct *mm_info;
 
@@ -107,4 +106,7 @@ typedef struct _task_struct{
 
     struct _task_struct *next;
     struct _task_struct *last;
+    struct _task_struct *parent;
+    struct _task_struct *bro;
+    struct _task_struct *child;
 } task_struct;

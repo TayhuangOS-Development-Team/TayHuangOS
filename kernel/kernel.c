@@ -21,6 +21,7 @@
 #include <tayhuang/paging.h>
 #include <tayhuang/descs.h>
 #include <tayhuang/io.h>
+#include <string.h>
 
 #include "kheap.h"
 
@@ -42,19 +43,45 @@ PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
 
+PRIVATE inline void set_tss(void *addr, qword base, dword limit, byte type) {
+    struct tss_struct *desc = (struct tss_struct*)addr;
+    memset(desc, 0, sizeof(struct tss_struct));
+
+    desc->limit0 = (word)limit;
+    desc->limit1 = (limit >> 16) & 0xF;
+    desc->base0 = (word)base;
+    desc->base1 = (base >> 16) & 0xFF;
+    desc->base2 = (base >> 24) & 0xFF;
+    desc->base3 = (dword)(base >> 32);
+    desc->type = type;
+    desc->p = 1;
+}
+
+#define cs0_idx (4)
+#define cs3_idx (6)
+#define ds0_idx (3)
+#define ds3_idx (5)
+#define tr_idx (1)
+
 PRIVATE void init_gdt(void) {
-    int cs_idx = rdcs() >> 3;
-    int ds_idx = rdds() >> 3;
-    int tr_idx = 3;
     GDT[0] = (struct desc_struct)GDT_ENTRY(0, 0, 0);
-    GDT[cs_idx] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF);
-    GDT[ds_idx] = (struct desc_struct)GDT_ENTRY(0xA093, 0, 0xFFFFF);
-    GDT[tr_idx] = (struct desc_struct)GDT_ENTRY(0x0089, ((qword)&TSS), sizeof(TSS));
+    GDT[cs0_idx] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF);
+    GDT[cs3_idx] = (struct desc_struct)GDT_ENTRY(0xA0FA, 0, 0xFFFFF);
+    GDT[ds0_idx] = (struct desc_struct)GDT_ENTRY(0xA093, 0, 0xFFFFF);
+    GDT[ds3_idx] = (struct desc_struct)GDT_ENTRY(0xA0F3, 0, 0xFFFFF);
+
+    set_tss(&GDT[tr_idx], &TSS, sizeof(TSS), DESC_TSS);
+
     gdtr.ptr = GDT;
     gdtr.len = sizeof (GDT);
     asmv ("lgdt %0" : : "m"(gdtr));
-    //asmv ("movq $0x18, %rax\n"
-    //      "ltr %ax");
+    stds(ds0_idx << 3);
+    stes(ds0_idx << 3);
+    stfs(ds0_idx << 3);
+    stgs(ds0_idx << 3);
+    stss(ds0_idx << 3);
+    int _tr_idx = tr_idx << 3;
+    asmv ("ltr %0" : : "m"(_tr_idx));
 }
 
 PRIVATE void init_video_info(_IN struct boot_args *args) {
@@ -64,36 +91,35 @@ PRIVATE void init_video_info(_IN struct boot_args *args) {
     init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode);
 }
 
-struct clock_intterup_args {
-    b64 rflags,
-        r15,
-        r14,
-        r13,
-        r12,
-        r11,
-        r10,
-        r9,
-        r8,
-        rdi,
-        rsi,
-        rdx,
-        rcx,
-        rbx,
-        rax,
-        rbp,
-        rsp,
-        cs,
-        rip;
-    b64 rflags2;
-} __attribute__((packed));
+void printA(void) {
+    while (true) {
+        putchar ('A');
+        flush_to_screen();
+        for (int i = 0 ; i < 750000 ; i ++);
+    }
+}
 
-void clock_int_handler(int irq, struct clock_intterup_args *regs) { //WIP
+void printB(void) {
+    asmv ("xchg %bx, %bx");
+    while (true) {
+        putchar ('B');
+        flush_to_screen();
+        for (int i = 0 ; i < 750000 ; i ++);
+    }
+}
+
+void clock_int_handler(int irq, struct intterup_args *regs) {
     disable_irq(irq);
     asmv ("sti");
 
     send_eoi(irq);
 
-    while (true);
+    if (current_task != NULL) {
+        if (current_task->counter <= 0) {
+            do_switch(regs);
+        }
+        current_task->counter --;
+    }
 
     asmv ("cli");
     enable_irq(irq);
@@ -126,12 +152,12 @@ void initialize(_IN struct boot_args *args) {
     //----------------------------------------------------------------------------------------
     //|  FREE   |   KHEAP   |  STACK  |  KERNEL  |  PAGING  |      FREE       |     MMIO     |
     //----------------------------------------------------------------------------------------
-    kernel_pml4 = init_paging();
+    kernel_pml4 = create_pgd();
     set_pml4(kernel_pml4);
     qword kernel_length = args->kernel_limit - 0x100000;
 
     set_mapping(0, 0, pmemsz / 4096, true, true); //全部映射到自身
-    set_mapping(0x100000, 0x100000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, false); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
+    set_mapping(0x100000, 0x100000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, true); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
 
     cr3_t cr3 = get_cr3();
     cr3.page_entry = (qword)kernel_pml4; //设置CR3
@@ -162,7 +188,16 @@ void entry(_IN struct boot_args *_args) {
 
     initialize(&args);
 
+    TSS.ist1 = 0x140000;
+    TSS.rsp0 = 0x125000;
+
     enable_irq(0);
 
-    //do_kernel_fork(1, init);
+    create_task(1, printB, (1 << 9), 0x135000, cs3_idx << 3 | 3, get_pml4());
+    create_task(1, printA, 1 << 9, 0x130000, rdcs(), get_pml4());
+    current_task = create_task(1, init, 1 << 9, 0x125000, rdcs(), get_pml4());
+    current_task->counter = 19;
+
+    asmv ("movq $0x125000, %rsp");
+    asmv ("jmp init");
 }

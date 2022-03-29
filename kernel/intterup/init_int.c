@@ -81,6 +81,20 @@ PUBLIC void send_eoi(_IN int irq) {
 PRIVATE gate_desc IDT[IDT_SIZE];
 PRIVATE struct desc_ptr IDTR;
 
+PRIVATE void init_idt_desc_ist(byte vector, byte type, int_handler handler, byte privilege, byte ist) {
+    qword base = (qword)handler;
+    IDT[vector].offset_low = base & 0xFFFF; //偏移
+    IDT[vector].segment = rdcs(); //段
+    IDT[vector].bits.ist = ist;
+    IDT[vector].bits.zero = 0;
+    IDT[vector].bits.type = type; //类型
+    IDT[vector].bits.dpl = privilege; //权限
+    IDT[vector].bits.p = 1; //存在
+    IDT[vector].offset_middle = base >> 16; //偏移
+    IDT[vector].offset_high = base >> 32;
+    IDT[vector].reserved = 0;
+}
+
 PRIVATE void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) { //初始化一个IDT描述符
     qword base = (qword)handler;
     IDT[vector].offset_low = base & 0xFFFF; //偏移
@@ -130,7 +144,7 @@ PRIVATE void __init_descs(void) {
     init_idt_desc(30, GATE_INTERRUPT, security_exception, 0);
     init_idt_desc(31, GATE_INTERRUPT, reserved8_excepetion, 0);
 
-    init_idt_desc(CALC_IRQ(0), GATE_INTERRUPT, clock_irq_handler, 0);
+    init_idt_desc_ist(CALC_IRQ(0), GATE_INTERRUPT, clock_irq_handler, 0, 1);
     init_idt_desc(CALC_IRQ(1), GATE_INTERRUPT, irq1_handler, 0);
     init_idt_desc(CALC_IRQ(2), GATE_INTERRUPT, irq2_handler, 0);
     init_idt_desc(CALC_IRQ(3), GATE_INTERRUPT, irq3_handler, 0);

@@ -48,6 +48,8 @@ PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qwor
     task->thread_info.rip = entry;
     task->thread_info.rflags = rflags;
     task->thread_info.cs = cs;
+    task->thread_info.ss = cs - 8;
+    task->thread_info.ds = cs - 8;
 
     task->counter = 0;
     task->priority = priority;
@@ -61,29 +63,54 @@ PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qwor
     return task;
 }
 
-PRIVATE task_struct *task_table;
+PUBLIC task_struct *task_table;
 PRIVATE int __cur_pid = 0;
 
 PRIVATE int alloc_pid(void) {
     return __cur_pid ++;
 }
 
-PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, word cs, void *pgd) {
+PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, word cs, void *pgd) {
     task_struct *task = create_task_struct(alloc_pid(), priority, entry, rflags, cs, pgd,
          0, 0, 0, 0, 0 ,0 ,0 ,0 ,0);
     task->next = task_table;
-    task_table = task;
     if (task_table != NULL)
         task_table->last = task;
+    task_table = task;
+    task->thread_info.rsp = rsp;
     return task;
 }
 
-PUBLIC void do_fork(int priority, void(*entry)(void), qword rflags, word cs, void *pgd) {
-    create_task(priority, entry, rflags, cs, pgd);
+PUBLIC void do_fork(int priority, void(*entry)(void), qword rflags, qword rsp, word cs, void *pgd) {
+    create_task(priority, entry, rflags, rsp, cs, pgd);
     //TODO
 }
 
-PUBLIC void do_kernel_fork(int priority, void(*entry)(void)) {
-    create_task(priority, entry, 1 << 9, rdcs(), get_pml4());
-    entry();
+PUBLIC task_struct *current_task = NULL;
+
+PUBLIC void do_switch(struct intterup_args *regs) {
+    //down task
+    current_task->thread_info.rsp = regs->rsp;
+    current_task->thread_info.rip = regs->rip;
+    current_task->thread_info.cs = regs->cs;
+    current_task->thread_info.ds = regs->ds;
+    current_task->thread_info.es = regs->es;
+    current_task->thread_info.fs = regs->fs;
+    current_task->thread_info.gs = regs->gs;
+    current_task->thread_info.rflags = regs->rflags;
+    memcpy(current_task->thread_info.r15, &regs->r15, &regs->rbp - &regs->r15);
+    current_task = current_task->next ? current_task->next : task_table;
+    //up task
+    regs->rsp = current_task->thread_info.rsp;
+    regs->rip = current_task->thread_info.rip;
+    regs->cs = current_task->thread_info.cs;
+    regs->ss = current_task->thread_info.ss;
+    regs->ds = current_task->thread_info.ds;
+    regs->es = current_task->thread_info.es;
+    regs->fs = current_task->thread_info.fs;
+    regs->gs = current_task->thread_info.gs;
+    regs->rflags = current_task->thread_info.rflags;
+    memcpy(&regs->r15, current_task->thread_info.r15, &regs->rbp - &regs->r15);
+
+    current_task->counter = current_task->priority * 20;
 }

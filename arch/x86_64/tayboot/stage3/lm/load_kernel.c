@@ -45,6 +45,7 @@ void *load_elf(void **kernel_limit) {
 
 void *load_kernel(void** kernel_start, void** kernel_limit) {
     void *context = get_context(DISK_SEL_IDE1_MASTER);
+    printf ("Loading kernel...\n");
     bool success = loadfile(context, "kernel.bin", KERNEL_BIN_ADDRESS);
     terminate_fs_context(context);
     if (! success) {

@@ -37,7 +37,7 @@ PUBLIC void *get_pml4(void) {
     return current_pml4;
 }
 
-PUBLIC void *init_paging(void) {
+PUBLIC void *create_pgd(void) {
     if (current_pml4 == NULL)
         current_pml4 = lookup_free_page();
     mark_used(current_pml4);
@@ -61,8 +61,8 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
     PML4E *pml4 = current_pml4;
     if (pml4[pml4e_idx].p == false) { //当前PML4E未分配
         pml4[pml4e_idx].p = true;
-        pml4[pml4e_idx].rw = false;
-        pml4[pml4e_idx].us = false;
+        pml4[pml4e_idx].rw = rw;
+        pml4[pml4e_idx].us = us;
         pml4[pml4e_idx].pcd = false;
         pml4[pml4e_idx].pwt = false;
         pml4[pml4e_idx].a = false;
@@ -73,8 +73,8 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
     if (pdpt == NULL) return false;
     if (pdpt[pdpte_idx].p == false) { //当前PDPTE未分配
         pdpt[pdpte_idx].p = true;
-        pdpt[pdpte_idx].rw = false;
-        pdpt[pdpte_idx].us = false;
+        pdpt[pdpte_idx].rw = rw;
+        pdpt[pdpte_idx].us = us;
         pdpt[pdpte_idx].pcd = false;
         pdpt[pdpte_idx].pwt = false;
         pdpt[pdpte_idx].a = false;
@@ -85,8 +85,8 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
     if (pd == NULL) return false;
     if (pd[pde_idx].p == false) { //当前PDE未分配
         pd[pde_idx].p = true;
-        pd[pde_idx].rw = false;
-        pd[pde_idx].us = false;
+        pd[pde_idx].rw = rw;
+        pd[pde_idx].us = us;
         pd[pde_idx].pcd = false;
         pd[pde_idx].pwt = false;
         pd[pde_idx].a = false;

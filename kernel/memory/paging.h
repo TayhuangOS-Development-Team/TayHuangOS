@@ -22,5 +22,5 @@
 
 PUBLIC void set_pml4(_IN void *pml4);
 PUBLIC void *get_pml4(void);
-PUBLIC void *init_paging(void);
+PUBLIC void *create_pgd(void);
 PUBLIC bool set_mapping(_IN void *from, _IN void *to, _IN int pages, _IN bool rw, _IN bool us);

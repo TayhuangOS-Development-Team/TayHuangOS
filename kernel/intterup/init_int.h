@@ -20,9 +20,8 @@
 
 #include <tayhuang/defs.h>
 
-struct pushad_regs {
-    b64 rflags,
-        r15,
+struct intterup_args {
+    b64 r15,
         r14,
         r13,
         r12,
@@ -36,9 +35,18 @@ struct pushad_regs {
         rcx,
         rbx,
         rax,
+        gs,
+        fs,
+        es,
+        ds,
+        rbp,
+        ist_clock,
+        rip,
+        cs,
+        rflags,
         rsp,
-        rbp;
-};
+        ss;
+} __attribute__((packed));
 
 PUBLIC void init_pic(void);
 PUBLIC void disable_irq(_IN int irq);

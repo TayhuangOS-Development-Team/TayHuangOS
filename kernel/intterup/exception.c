@@ -20,7 +20,7 @@
 
 #include "../display/printk.h"
 
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct pushad_regs *regs) {
+PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs) {
     byte old_print_color = get_print_color();
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!\n",
@@ -78,7 +78,7 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
     printk ("rsp: %#016X;rbp: %#016X;r8 : %#016X;\n", regs->rsp, regs->rbp, regs->r8);
     printk ("r9 : %#016X;r10: %#016X;r11: %#016X;\n", regs->r9, regs->r10, regs->r11);
     printk ("r12: %#016X;r13: %#016X;r14: %#016X;\n", regs->r12, regs->r13, regs->r14);
-    printk ("r15: %#016X;rflags: %#016X;\n", regs->r15, regs->rflags);
+    printk ("r15: %#016X;\n", regs->r15);
     set_print_color(old_print_color);
 
     while (true);

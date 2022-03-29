@@ -17,8 +17,16 @@
 .extern general_irq_handler
 .extern general_exception_handler
 
-.macro i_x64_pushad
+.macro int_x64_pushad
     pushq %rsp
+    pushq %rbp
+    movw %ds, %bp
+    pushq %rbp
+    movw %es, %bp
+    pushq %rbp
+    movw %fs, %bp
+    pushq %rbp
+    movw %gs, %bp
     pushq %rbp
     pushq %rax
     pushq %rbx
@@ -34,11 +42,9 @@
     pushq %r13
     pushq %r14
     pushq %r15
-    pushfq
 .endm
 
-.macro i_x64_popad
-    popfq
+.macro int_x64_popad
     popq %r15
     popq %r14
     popq %r13
@@ -54,23 +60,31 @@
     popq %rbx
     popq %rax
     popq %rbp
+    movw %bp, %gs
+    popq %rbp
+    movw %bp, %fs
+    popq %rbp
+    movw %bp, %es
+    popq %rbp
+    movw %bp, %ds
+    popq %rbp
     popq %rsp
 .endm
 
 .macro irq_handler irq
-    i_x64_pushad
+    int_x64_pushad
     pushq %rdi
     movq $\irq, %rdi
     call general_irq_handler
     popq %rax
-    i_x64_popad
+    int_x64_popad
     iretq
 .endm
 
 .macro nonerrcode_exception vector
     subq $8, %rsp
     movl $0xFFFFFFFF, (%rsp)
-    i_x64_pushad
+    int_x64_pushad
     movq %rsp, %rbp
     addq $136, %rbp
     addq $24, 128(%rsp)
@@ -84,7 +98,7 @@
 .endm
 
 .macro errcode_exception vector
-    i_x64_pushad
+    int_x64_pushad
     movq %rsp, %rbp
     addq $136, %rbp
     addq $24, 128(%rsp)
@@ -100,7 +114,7 @@
 _exception:
     call general_exception_handler
     popq %rax
-    i_x64_popad
+    int_x64_popad
     iretq
 
 
@@ -271,11 +285,11 @@ reserved8_excepetion:
 .extern clock_int_handler
 
 clock_irq_handler:
-    i_x64_pushad
+    int_x64_pushad
     movq $0, %rdi
     movq %rsp, %rsi
     call clock_int_handler
-    i_x64_popad
+    int_x64_popad
     iretq
 
 irq1_handler:

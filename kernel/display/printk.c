@@ -25,9 +25,9 @@
 #include <ctype.h>
 #include <string.h>
 
-#define OUTPUT_BUFFER_SIZE (1024)
+#define OUTPUT_BUFFER_SIZE (2000 + 80 * 250)
 
-PRIVATE char output_buffer[OUTPUT_BUFFER_SIZE];
+PRIVATE word output_buffer[OUTPUT_BUFFER_SIZE];
 PRIVATE int current_pos = 0;
 PRIVATE int start_pos = 0;
 PRIVATE int print_color = 0;
@@ -71,16 +71,14 @@ PUBLIC void set_scroll_line(int line) {
 
 PUBLIC void clrscr(void) {
     memset(VIDEO_INFO.framebuffer, 0, VIDEO_INFO.width * VIDEO_INFO.height * 2);
+    memset(output_buffer, 0, 0);
     start_pos = 0;
     current_pos = 0;
 }
 
 PUBLIC void flush_to_screen(void) {
     memset(VIDEO_INFO.framebuffer, 0, VIDEO_INFO.width * VIDEO_INFO.height * 2);
-    for (int i = start_pos ; i < current_pos ; i ++) {
-        int position = i - start_pos;
-        draw_character(position % VIDEO_INFO.width, position / VIDEO_INFO.width, output_buffer[i], print_color);
-    }
+    memcpy(VIDEO_INFO.framebuffer, &output_buffer[start_pos], VIDEO_INFO.width * VIDEO_INFO.height * 2);
 }
 
 PUBLIC void scroll_screen(int lines) {
@@ -116,7 +114,7 @@ PUBLIC void putchar(char ch) {
         start_pos = 0;
     }
     else { //普通字符
-        output_buffer[current_pos ++] = ch;
+        output_buffer[current_pos ++] = MKWORD(print_color, ch);
     }
     int y = (current_pos - start_pos) / VIDEO_INFO.width;
     if (y - scroll_line > 0) { //滚动屏幕

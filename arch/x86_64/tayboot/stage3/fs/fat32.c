@@ -79,6 +79,7 @@ PRIVATE void __loadfile(void *context, dword clus, void *dst) {
             read_sector(_context->data_start + (clus - 2) * _context->sectors_per_clus + i, 1, _context->selector, dst);
             dst += 512;
         }
+        putchar('.');
         clus = get_fat32_entry(context, clus);
     }
 }

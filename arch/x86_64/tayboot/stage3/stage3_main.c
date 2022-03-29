@@ -17,7 +17,7 @@
 
 
 #include <tayboot/stage3_args.h>
-#include <tayboot/tay_defs.h>   
+#include <tayboot/tay_defs.h>
 #include <string.h>
 #include "int_handlers.h"
 #include "video.h"

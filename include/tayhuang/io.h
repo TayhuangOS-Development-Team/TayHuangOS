@@ -62,10 +62,18 @@ static inline b16 rdds(void) { //读取ds值
     return reg;
 }
 
+static inline void stds(sreg_t reg) {
+    asmv("movw %0, %%ds" : : "rm"(reg));
+}
+
 static inline sreg_t rdes(void) { //读取es值
     sreg_t reg;
     asmv("movw %%es, %0" : "=rm"(reg));
     return reg;
+}
+
+static inline void stes(sreg_t reg) {
+    asmv("movw %0, %%es" : : "rm"(reg));
 }
 
 static inline sreg_t rdfs(void) { //读取fs值
@@ -74,14 +82,26 @@ static inline sreg_t rdfs(void) { //读取fs值
     return reg;
 }
 
+static inline void stfs(sreg_t reg) {
+    asmv("movw %0, %%fs" : : "rm"(reg));
+}
+
 static inline sreg_t rdgs(void) { //读取gs值
     sreg_t reg;
     asmv("movw %%gs, %0" : "=rm"(reg));
     return reg;
 }
 
+static inline void stgs(sreg_t reg) {
+    asmv("movw %0, %%gs" : : "rm"(reg));
+}
+
 static inline sreg_t rdss(void) { //读取ss值
     sreg_t reg;
     asmv("movw %%ss, %0" : "=rm"(reg));
     return reg;
+}
+
+static inline void stss(sreg_t reg) {
+    asmv("movw %0, %%ss" : : "rm"(reg));
 }
