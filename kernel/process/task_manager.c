@@ -98,8 +98,27 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     current_task->thread_info.fs = regs->fs;
     current_task->thread_info.gs = regs->gs;
     current_task->thread_info.rflags = regs->rflags;
-    memcpy(current_task->thread_info.r15, &regs->r15, &regs->rbp - &regs->r15);
+    //common registers
+    current_task->thread_info.rax = regs->rax;
+    current_task->thread_info.rbx = regs->rbx;
+    current_task->thread_info.rcx = regs->rcx;
+    current_task->thread_info.rdx = regs->rdx;
+    current_task->thread_info.rsi = regs->rsi;
+    current_task->thread_info.rdi = regs->rdi;
+    current_task->thread_info.rbp = regs->rbp;
+
+    current_task->thread_info.r8 = regs->r8;
+    current_task->thread_info.r9 = regs->r9;
+    current_task->thread_info.r10 = regs->r10;
+    current_task->thread_info.r11 = regs->r11;
+    current_task->thread_info.r12 = regs->r12;
+    current_task->thread_info.r13 = regs->r13;
+    current_task->thread_info.r14 = regs->r14;
+    current_task->thread_info.r15 = regs->r15;
+
+    //switch
     current_task = current_task->next ? current_task->next : task_table;
+
     //up task
     regs->rsp = current_task->thread_info.rsp;
     regs->rip = current_task->thread_info.rip;
@@ -110,7 +129,23 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     regs->fs = current_task->thread_info.fs;
     regs->gs = current_task->thread_info.gs;
     regs->rflags = current_task->thread_info.rflags;
-    memcpy(&regs->r15, current_task->thread_info.r15, &regs->rbp - &regs->r15);
+    //common registers
+    regs->rax = current_task->thread_info.rax;
+    regs->rbx = current_task->thread_info.rbx;
+    regs->rcx = current_task->thread_info.rcx;
+    regs->rdx = current_task->thread_info.rdx;
+    regs->rsi = current_task->thread_info.rsi;
+    regs->rdi = current_task->thread_info.rdi;
+    regs->rbp = current_task->thread_info.rbp;
 
-    current_task->counter = current_task->priority * 20;
+    regs->r8 = current_task->thread_info.r8;
+    regs->r9 = current_task->thread_info.r9;
+    regs->r10 = current_task->thread_info.r10;
+    regs->r11 = current_task->thread_info.r11;
+    regs->r12 = current_task->thread_info.r12;
+    regs->r13 = current_task->thread_info.r13;
+    regs->r14 = current_task->thread_info.r14;
+    regs->r15 = current_task->thread_info.r15;
+    //set counter
+    current_task->counter = current_task->priority * 50;
 }

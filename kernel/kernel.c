@@ -67,8 +67,8 @@ PRIVATE void init_gdt(void) {
     GDT[0] = (struct desc_struct)GDT_ENTRY(0, 0, 0);
     GDT[cs0_idx] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF);
     GDT[cs3_idx] = (struct desc_struct)GDT_ENTRY(0xA0FA, 0, 0xFFFFF);
-    GDT[ds0_idx] = (struct desc_struct)GDT_ENTRY(0xA093, 0, 0xFFFFF);
-    GDT[ds3_idx] = (struct desc_struct)GDT_ENTRY(0xA0F3, 0, 0xFFFFF);
+    GDT[ds0_idx] = (struct desc_struct)GDT_ENTRY(0xA092, 0, 0xFFFFF);
+    GDT[ds3_idx] = (struct desc_struct)GDT_ENTRY(0xA0F2, 0, 0xFFFFF);
 
     set_tss(&GDT[tr_idx], &TSS, sizeof(TSS), DESC_TSS);
 
@@ -92,19 +92,21 @@ PRIVATE void init_video_info(_IN struct boot_args *args) {
 }
 
 void printA(void) {
+    int cnt = 0;
     while (true) {
-        putchar ('A');
-        flush_to_screen();
-        for (int i = 0 ; i < 750000 ; i ++);
+        printk ("A: 1 + %d = %d\n", cnt, 1 + cnt);
+        cnt ++;
+        for (int i = 0 ; i < 1500000 ; i ++);
     }
 }
 
 void printB(void) {
     asmv ("xchg %bx, %bx");
+    int cnt = 0;
     while (true) {
-        putchar ('B');
-        flush_to_screen();
-        for (int i = 0 ; i < 750000 ; i ++);
+        printk ("B: 2 + %d = %d\n", cnt, 2 + cnt);
+        cnt ++;
+        for (int i = 0 ; i < 1500000 ; i ++);
     }
 }
 
@@ -157,7 +159,7 @@ void initialize(_IN struct boot_args *args) {
     qword kernel_length = args->kernel_limit - 0x100000;
 
     set_mapping(0, 0, pmemsz / 4096, true, true); //全部映射到自身
-    set_mapping(0x100000, 0x100000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, true); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
+    set_mapping(0x1000000, 0x1000000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, true); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
 
     cr3_t cr3 = get_cr3();
     cr3.page_entry = (qword)kernel_pml4; //设置CR3
@@ -188,16 +190,16 @@ void entry(_IN struct boot_args *_args) {
 
     initialize(&args);
 
-    TSS.ist1 = 0x140000;
-    TSS.rsp0 = 0x125000;
+    TSS.ist1 = 0x1400000;
+    TSS.rsp0 = 0x1250000;
 
-    enable_irq(0);
-
-    create_task(1, printB, (1 << 9), 0x135000, cs3_idx << 3 | 3, get_pml4());
-    create_task(1, printA, 1 << 9, 0x130000, rdcs(), get_pml4());
-    current_task = create_task(1, init, 1 << 9, 0x125000, rdcs(), get_pml4());
-    current_task->counter = 19;
+    create_task(1, printB, (1 << 9) | (3 << 12), 0x1350000, cs3_idx << 3 | 3, get_pml4());
+    create_task(1, printA, (1 << 9) | (3 << 12), 0x1300000, cs3_idx << 3 | 3, get_pml4());
+    current_task = create_task(1, init, (1 << 9), 0x1250000, rdcs(), get_pml4());
+    current_task->counter = 49;
 
     asmv ("movq $0x125000, %rsp");
+    enable_irq(0);
+    asmv ("xchg %bx, %bx");
     asmv ("jmp init");
 }

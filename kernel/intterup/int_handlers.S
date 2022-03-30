@@ -20,6 +20,7 @@
 .macro int_x64_pushad
     pushq %rsp
     pushq %rbp
+
     movw %ds, %bp
     pushq %rbp
     movw %es, %bp
@@ -28,6 +29,7 @@
     pushq %rbp
     movw %gs, %bp
     pushq %rbp
+
     pushq %rax
     pushq %rbx
     pushq %rcx
@@ -59,6 +61,7 @@
     popq %rcx
     popq %rbx
     popq %rax
+
     popq %rbp
     movw %bp, %gs
     popq %rbp
@@ -67,6 +70,7 @@
     movw %bp, %es
     popq %rbp
     movw %bp, %ds
+
     popq %rbp
     popq %rsp
 .endm
@@ -85,36 +89,30 @@
     subq $8, %rsp
     movl $0xFFFFFFFF, (%rsp)
     int_x64_pushad
-    movq %rsp, %rbp
-    addq $136, %rbp
-    addq $24, 128(%rsp)
     movq $\vector, %rdi
-    movq 0(%rbp), %rsi
-    movq 8(%rbp), %rcx
-    movq 16(%rbp), %rdx
-    movzx 24(%rbp), %r8
+    movq 160(%rsp), %rsi
+    movq 168(%rsp), %rcx
+    movq 176(%rsp), %rdx
+    movzx 184(%rsp), %r8
     movq %rsp, %r9
     jmp _exception
 .endm
 
 .macro errcode_exception vector
     int_x64_pushad
-    movq %rsp, %rbp
-    addq $136, %rbp
-    addq $24, 128(%rsp)
     movq $\vector, %rdi
-    movq 0(%rbp), %rsi
-    movq 8(%rbp), %rcx
-    movq 16(%rbp), %rdx
-    movzx 24(%rbp), %r8
+    movq 160(%rsp), %rsi
+    movq 168(%rsp), %rcx
+    movq 176(%rsp), %rdx
+    movzx 184(%rsp), %r8
     movq %rsp, %r9
     jmp _exception
 .endm
 
 _exception:
     call general_exception_handler
-    popq %rax
     int_x64_popad
+    addq $8, %rsp
     iretq
 
 
@@ -290,6 +288,7 @@ clock_irq_handler:
     movq %rsp, %rsi
     call clock_int_handler
     int_x64_popad
+//    xchg %bx, %bx
     iretq
 
 irq1_handler:
