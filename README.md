@@ -15,7 +15,7 @@
 
 It's a OS made by me
 
-If you want to download a operating system for use, please look for other repo.It has not done.
+If you want to download a operating system for use, please look for other repo.It has not be done.
 
 Everyone is welcome to program OS with me, if you have some experience about it.
 
@@ -44,7 +44,7 @@ Or you can send an email to me, my email address is: song_of_the_fly@163.com
 
 > 粤自盘古，生于太荒。
 
-这是我自制的CPU
+这是我自制的OS
 
 如果你想要下载一个操作系统来用，请去找别的repo,因为它还没做好
 
