@@ -38,11 +38,10 @@ PUBLIC void *get_pml4(void) {
 }
 
 PUBLIC void *create_pgd(void) {
-    if (current_pml4 == NULL)
-        current_pml4 = lookup_free_page();
-    mark_used(current_pml4);
-    memset(current_pml4, 0, 4096);
-    return current_pml4;
+    void *pml4pg = lookup_free_page();
+    mark_used(pml4pg);
+    memset(pml4pg, 0, 4096);
+    return pml4pg;
 }
 
 PRIVATE void *__get_free_page(void) {

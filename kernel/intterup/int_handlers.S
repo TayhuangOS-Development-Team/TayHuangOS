@@ -21,6 +21,9 @@
     pushq %rsp
     pushq %rbp
 
+    movq %cr3, %rbp
+    pushq %rbp
+
     movw %ds, %bp
     pushq %rbp
     movw %es, %bp
@@ -70,6 +73,9 @@
     movw %bp, %es
     popq %rbp
     movw %bp, %ds
+
+    popq %rbp
+    movq %rbp, %cr3
 
     popq %rbp
     popq %rsp

@@ -39,6 +39,7 @@ struct intterup_args {
         fs,
         es,
         ds,
+        pgd,
         rbp,
         ist_clock,
         rip,

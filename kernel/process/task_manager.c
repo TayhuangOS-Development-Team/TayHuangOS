@@ -98,6 +98,7 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     current_task->thread_info.fs = regs->fs;
     current_task->thread_info.gs = regs->gs;
     current_task->thread_info.rflags = regs->rflags;
+    current_task->mm_info->pgd = (void*)(regs->pgd & 0xFFFFFFFFFFFFF000);
     //common registers
     current_task->thread_info.rax = regs->rax;
     current_task->thread_info.rbx = regs->rbx;
@@ -129,6 +130,8 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     regs->fs = current_task->thread_info.fs;
     regs->gs = current_task->thread_info.gs;
     regs->rflags = current_task->thread_info.rflags;
+    regs->pgd &= 0xFFF;
+    regs->pgd |= (((qword)current_task->mm_info->pgd) & 0xFFFFFFFFFFFFF000);
     //common registers
     regs->rax = current_task->thread_info.rax;
     regs->rbx = current_task->thread_info.rbx;

@@ -158,8 +158,8 @@ void initialize(_IN struct boot_args *args) {
     set_pml4(kernel_pml4);
     qword kernel_length = args->kernel_limit - 0x100000;
 
-    set_mapping(0, 0, pmemsz / 4096, true, true); //全部映射到自身
-    set_mapping(0x1000000, 0x1000000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, true); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
+    set_mapping(0, 0, pmemsz / 4096, true, false); //全部映射到自身
+    set_mapping(0x1000000, 0x1000000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, false); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
 
     cr3_t cr3 = get_cr3();
     cr3.page_entry = (qword)kernel_pml4; //设置CR3
@@ -193,8 +193,12 @@ void entry(_IN struct boot_args *_args) {
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
 
-    create_task(1, printB, (1 << 9) | (3 << 12), 0x1350000, cs3_idx << 3 | 3, get_pml4());
-    create_task(1, printA, (1 << 9) | (3 << 12), 0x1300000, cs3_idx << 3 | 3, get_pml4());
+    void *level3_pml4 = create_pgd();
+    set_pml4(level3_pml4);
+    set_mapping(0, 0, args.memory_size / 4096, true, true);
+
+    create_task(1, printB, (1 << 9) | (3 << 12), 0x1350000, cs3_idx << 3 | 3, level3_pml4);
+    create_task(1, printA, (1 << 9) | (3 << 12), 0x1300000, cs3_idx << 3 | 3, level3_pml4);
     current_task = create_task(1, init, (1 << 9), 0x1250000, rdcs(), get_pml4());
     current_task->counter = 49;
 
