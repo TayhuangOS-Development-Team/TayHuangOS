@@ -1,4 +1,6 @@
-STAGE3_OUPUT := stage3.bin
+OBJECTSDIR := $(OBJECTSDIR)/stage3/
+
+STAGE3_OUTPUT := $(BINDIR)/stage3.bin
 ASM := nasm
 RM := rm
 GCC := gcc
@@ -18,26 +20,25 @@ ASM_SRC := stage3_entry _int_handlers ./lm/lm_operators
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"../include/std/" -I"../include/tayhuang/" -I"../../../../include/"
 
+OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
+           $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o)
+
+$(OBJECTSDIR)/%.o : %.c
+	mkdir -p -v $(dir $@)
+	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
+
+$(OBJECTSDIR)/%.o : %.asm
+	mkdir -p -v $(dir $@)
+	$(ASM) $^ -f elf -o $@
+
 .PHONY: build
-build:
-	for asm_file in $(ASM_SRC); do \
-		$(ASM) $$asm_file.asm -f elf -o $$asm_file.o; \
-	done
-	for c_file in $(C_SRC); do \
-	    $(GCC) $(CFLAGS) $(C_INCLUDE) $(C_DEFS) $$c_file.c -c -o $$c_file.o;\
-	done
-	$(LD) -m elf_i386 -s -Ttext 0x1000 $(foreach asm_obj, $(ASM_SRC), $(asm_obj).o) $(foreach c_obj, $(C_SRC), $(c_obj).o) -o $(STAGE3_OUPUT)
+build: $(OBJECTS)
+	$(LD) -m elf_i386 -s -Ttext 0x1000 -o $(STAGE3_OUTPUT) $(OBJECTS)
 
 .PHONY: clean
 clean:
-	for asm_file in $(ASM_SRC); do \
-		$(RM) $$asm_file.o; \
-	done
-	for c_file in $(C_SRC); do \
-	    $(RM) $$c_file.o; \
-	done
-	$(RM) $(STAGE3_OUPUT)
+	$(RM) $(STAGE3_OUTPUT) $(OBJECTS)
 
 .PHONY: image
 image:
-	sudo cp $(STAGE3_OUPUT) $(IMG_MNT)
+	sudo cp $(STAGE3_OUTPUT) $(IMG_MNT)

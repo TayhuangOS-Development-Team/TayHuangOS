@@ -1,7 +1,15 @@
 ARCHITECTURE := x86_64 #架构
-export ARCHITECTURE
 ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
+
+export ARCHITECTURE
 export ARCHDEF_C
+
+ROOTDIR := $(shell pwd)
+MODE ?= debug
+BUILDDIR := $(ROOTDIR)/build/$(MODE)/
+BINDIR := $(BUILDDIR)/bin/
+OBJECTSDIR := $(BUILDDIR)/objects/
+export ROOTDIR MODE BUILDDIR BINDIR OBJECTSDIR
 
 #编译并写入映像
 .PHONY: all
@@ -34,6 +42,9 @@ setup_workspace:
 	bximage < ./setup/new_boot_img_input.txt
 	bximage < ./setup/new_system_img_input.txt
 	mkfs.msdos -F 32 ./tayhuangOS.img
+	sudo mkdir -v -p $(OBJECTSDIR)
+	sudo mkdir -v -p $(BINDIR)
+	cd ./kernel/ ; $(MAKE) setup_workspace
 
 #编译
 .PHONY: build

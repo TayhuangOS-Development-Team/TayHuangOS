@@ -1,9 +1,11 @@
-STAGE2_OUPUT := stage2.bin
+OBJECTSDIR := $(OBJECTSDIR)/stage2/
+
+STAGE2_OUTPUT := $(BINDIR)/stage2.bin
 ASM := nasm
 RM := rm
 GCC := gcc
 LD := ld
-REALMODE_CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
+CFLAGS := -m16 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -Os
@@ -26,27 +28,26 @@ C_DEFS := $(ARCHDEF_C) \
 ASM_SRC := stage2_entry io ./pm/jumping
 SPLASHES := splashes.txt
 
+OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
+           $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o)
+
+$(OBJECTSDIR)/%.o : %.c
+	mkdir -p -v $(dir $@)
+	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
+
+$(OBJECTSDIR)/%.o : %.asm
+	mkdir -p -v $(dir $@)
+	$(ASM) $^ -f elf -o $@
+
 .PHONY: build
-build:
-	for asm_file in $(ASM_SRC); do \
-		$(ASM) $$asm_file.asm -f elf -o $$asm_file.o; \
-	done
-	for c_file in $(C_SRC); do \
-	    $(GCC) $(REALMODE_CFLAGS) $(C_INCLUDE) $(C_DEFS) $$c_file.c -c -o $$c_file.o;\
-	done
-	$(LD) -m elf_i386 -s -Ttext 0x0600 $(foreach asm_obj, $(ASM_SRC), $(asm_obj).o) $(foreach c_obj, $(C_SRC), $(c_obj).o) -o $(STAGE2_OUPUT)
+build: $(OBJECTS)
+	$(LD) -m elf_i386 -s -Ttext 0x0600 -o $(STAGE2_OUTPUT) $^
 
 .PHONY: clean
 clean:
-	for asm_file in $(ASM_SRC); do \
-		$(RM) $$asm_file.o; \
-	done
-	for c_file in $(C_SRC); do \
-	    $(RM) $$c_file.o; \
-	done
-	$(RM) $(STAGE2_OUPUT)
+	$(RM) $(STAGE2_OUTPUT) $(OBJECTS)
 
 .PHONY: image
 image:
-	sudo cp $(STAGE2_OUPUT) $(IMG_MNT)
+	sudo cp $(STAGE2_OUTPUT) $(IMG_MNT)
 	sudo cp $(SPLASHES) $(IMG_MNT)

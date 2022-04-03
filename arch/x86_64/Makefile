@@ -1,3 +1,5 @@
+export ROOTDIR MODE BUILDDIR BINDIR OBJECTSDIR
+
 #编译
 .PHONY: build
 build:

@@ -1,4 +1,6 @@
-KERNEL_OUTPUT := kernel.bin
+OBJECTSDIR := $(OBJECTSDIR)/kernel/
+
+KERNEL_OUTPUT := $(BINDIR)/kernel.bin
 ASM := as
 RM := rm
 GCC := gcc
@@ -37,38 +39,40 @@ ASMFLAGS :=
 ASM_SRC := entry intterup/int_handlers
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"../include/std/"  -I"../include/"
+C_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"../include/std/"  -I"../include/"
+CPP_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/"
 
+OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
+           $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
+		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
+
+$(OBJECTSDIR)/%.o : %.cpp
+	mkdir -p -v $(dir $@)
+	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
+
+$(OBJECTSDIR)/%.o : %.c
+	mkdir -p -v $(dir $@)
+	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
+
+$(OBJECTSDIR)/%.o : %.S
+	mkdir -p -v $(dir $@)
+	$(ASM) -o $@ $^
 
 .PHONY: build
-build:
-	for asm_file in $(ASM_SRC); do \
-		$(ASM) $$asm_file.S -o $$asm_file.o; \
-	done
-	for c_file in $(C_SRC); do \
-	    $(GCC) $(CFLAGS) $(C_INCLUDE) $(C_DEFS) $$c_file.c -c -o $$c_file.o;\
-	done
-	for cpp_file in $(CPP_SRC); do \
-	    $(GPP) $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) $$cpp_file.cpp -c -o $$cpp_file.o;\
-	done
-	$(LD) -s -T kernel.ld $(foreach asm_obj, $(ASM_SRC), $(asm_obj).o) $(foreach c_obj, $(C_SRC), $(c_obj).o) $(foreach cpp_obj, $(CPP_SRC), $(cpp_obj).o) -o $(KERNEL_OUTPUT)
+build: $(OBJECTS)
+	$(LD) -s -T kernel.ld -o $(KERNEL_OUTPUT) $^
 
 .PHONY: clean
 clean:
-	for asm_file in $(ASM_SRC); do \
-		$(RM) $$asm_file.o; \
-	done
-	for c_file in $(C_SRC); do \
-	    $(RM) $$c_file.o; \
-	done
-	for cpp_file in $(CPP_SRC); do \
-	    $(RM) $$cpp_file.o; \
-	done
-	$(RM) $(KERNEL_OUTPUT)
+	$(RM) $(KERNEL_OUTPUT) $(OBJECTS)
 
 .PHONY: image
 image:
 	sudo cp $(KERNEL_OUTPUT) /mnt/tayhuangOS
+
+
+.PHONY: setup_workspace
+setup_workspace:
+	sudo mkdir -v -p $(OBJECTSDIR)

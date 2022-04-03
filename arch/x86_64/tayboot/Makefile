@@ -1,16 +1,23 @@
-IMG := ../../../tayhuangBoot.img #镜像文件
+IMG := $(ROOTDIR)/tayhuangBoot.img #镜像文件
 IMG_MNT := /mnt/tayhuangBoot/ #挂载点
 export IMG_MNT
-BOOT_OUTPUT := boot.bin #BOOT输出
-LOADER_OUTPUT := loader.bin #Loader输出
+BOOT_OUTPUT := $(BINDIR)/boot.bin #BOOT输出
+LOADER_OUTPUT := $(BINDIR)/loader.bin #Loader输出
 DD := dd #写磁盘工具
 ASM := nasm #汇编器
 RM := rm #删除工具
 GCC := gcc #C编译器
+TAYBOOT_ROOT := $(shell pwd)
+export TAYBOOT_ROOT
+OBJECTSDIR := $(OBJECTSDIR)/tayboot/
+export OBJECTSDIR
+
+export ROOTDIR MODE BUILDDIR BINDIR OBJECTSDIR
 
 #构建
 .PHONY: build
 build:
+	sudo mkdir -p -v $(dir $(BOOT_OUTPUT))
 	$(ASM) boot.asm -o $(BOOT_OUTPUT)
 	$(ASM) loader.asm -o $(LOADER_OUTPUT)
 	cd stage2 ; make build
