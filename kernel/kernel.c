@@ -154,6 +154,19 @@ void keyboard_handler(void) {
     }
 }
 
+void tick_display(void) {
+    while (true) {
+        int posx = get_pos_x(), posy = get_pos_y();
+        change_pos(0, 0);
+        int color = get_print_color();
+        set_print_color(0x0D);
+        printk ("Current Startup Time(s): %d\n", ticks / 500);
+        set_print_color(color);
+        change_pos(posx, posy);
+        delay(250 * 2);
+    }
+}
+
 void after_syscall(struct intterup_args *regs) {
     if (current_task != NULL) {
         if (current_task->counter <= 0) {
@@ -175,7 +188,7 @@ short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handle
 PRIVATE void *kernel_pml4 = NULL;
 
 void init(void) {
-    printk ("Hello, World!I'm init, the first process!\n");
+    printk ("\n");
 
     void *level3_pml4 = create_pgd();
     set_pml4(level3_pml4);
@@ -183,6 +196,7 @@ void init(void) {
 
     create_task(1, keyboard_handler, (1 << 9), 0x1350000, rdcs(), kernel_pml4);
     create_task(1, fake_shell, (1 << 9), 0x1300000, rdcs(), kernel_pml4);
+    create_task(1, tick_display, (1 << 9), 0x1200000, rdcs(), kernel_pml4);
     while (true);
 }
 
