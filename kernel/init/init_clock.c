@@ -23,14 +23,17 @@
 #define PIT_FREQUENCY (1193181.6666f)
 
 PUBLIC bool init_pit(_IN float frequency) {
-    if ((frequency > PIT_FREQUENCY) || (frequency < (PIT_FREQUENCY / 65535)))
+    if (frequency > PIT_FREQUENCY)
         return false;
 
-    word count = (word)(PIT_FREQUENCY / frequency);
+    int count = (int)(PIT_FREQUENCY / frequency);
     if ((PIT_FREQUENCY - count * frequency) > (frequency / 2))
         count ++;
 
-    outw(PIT_CHANNEL0, count);
+    if (count >= 65535) return false;
+
+    outb(PIT_CHANNEL0, (byte)count);
+    outb(PIT_CHANNEL0, (byte)(count >> 8));
 
     return true;
 }

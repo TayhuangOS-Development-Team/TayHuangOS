@@ -144,22 +144,22 @@ PRIVATE void __init_descs(void) {
     init_idt_desc(30, GATE_INTERRUPT, security_exception, 0);
     init_idt_desc(31, GATE_INTERRUPT, reserved8_excepetion, 0);
 
-    init_idt_desc_ist(CALC_IRQ(0), GATE_INTERRUPT, clock_irq_handler, 0, 1);
-    init_idt_desc(CALC_IRQ(1), GATE_INTERRUPT, irq1_handler, 0);
-    init_idt_desc(CALC_IRQ(2), GATE_INTERRUPT, irq2_handler, 0);
-    init_idt_desc(CALC_IRQ(3), GATE_INTERRUPT, irq3_handler, 0);
-    init_idt_desc(CALC_IRQ(4), GATE_INTERRUPT, irq4_handler, 0);
-    init_idt_desc(CALC_IRQ(5), GATE_INTERRUPT, irq5_handler, 0);
-    init_idt_desc(CALC_IRQ(6), GATE_INTERRUPT, irq6_handler, 0);
-    init_idt_desc(CALC_IRQ(7), GATE_INTERRUPT, irq7_handler, 0);
-    init_idt_desc(CALC_IRQ(8), GATE_INTERRUPT, irq8_handler, 0);
-    init_idt_desc(CALC_IRQ(9), GATE_INTERRUPT, irq9_handler, 0);
-    init_idt_desc(CALC_IRQ(10), GATE_INTERRUPT, irq10_handler, 0);
-    init_idt_desc(CALC_IRQ(11), GATE_INTERRUPT, irq11_handler, 0);
-    init_idt_desc(CALC_IRQ(12), GATE_INTERRUPT, irq12_handler, 0);
-    init_idt_desc(CALC_IRQ(13), GATE_INTERRUPT, irq13_handler, 0);
-    init_idt_desc(CALC_IRQ(14), GATE_INTERRUPT, irq14_handler, 0);
-    init_idt_desc(CALC_IRQ(15), GATE_INTERRUPT, irq15_handler, 0);
+    init_idt_desc_ist(CALC_IRQ(0), GATE_INTERRUPT, irq0_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(1), GATE_INTERRUPT, irq1_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(2), GATE_INTERRUPT, irq2_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(3), GATE_INTERRUPT, irq3_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(4), GATE_INTERRUPT, irq4_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(5), GATE_INTERRUPT, irq5_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(6), GATE_INTERRUPT, irq6_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(7), GATE_INTERRUPT, irq7_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(8), GATE_INTERRUPT, irq8_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(9), GATE_INTERRUPT, irq9_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(10), GATE_INTERRUPT, irq10_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(11), GATE_INTERRUPT, irq11_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(12), GATE_INTERRUPT, irq12_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(13), GATE_INTERRUPT, irq13_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(14), GATE_INTERRUPT, irq14_handler, 0, 1);
+    init_idt_desc_ist(CALC_IRQ(15), GATE_INTERRUPT, irq15_handler, 0, 1);
 }
 
 PUBLIC void init_idt(void) {

@@ -39,6 +39,8 @@
 
 #include "process/task_manager.h"
 
+#include "keyboard/keyboard.h"
+
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
@@ -91,40 +93,81 @@ PRIVATE void init_video_info(_IN struct boot_args *args) {
     init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode);
 }
 
-void printA(void) {
-    int cnt = 0;
+#define CLOCK_FREQUENCY (500.0f)
+
+PRIVATE volatile int ticks = 0;
+
+void delay(int wait_ticks) {
+    int last_ticks = ticks;
+    while (ticks - last_ticks < wait_ticks);
+}
+
+char *getline(char *buffer) {
+    char *result = buffer;
+    char ch = getchar();
+    while (ch != '\n') {
+        *buffer = ch;
+        ch = getchar();
+        buffer ++;
+    }
+    *buffer = '\0';
+    return result;
+}
+
+bool start_with(const char *str, const char *prefix) {
+    int len = strlen(prefix);
+    for (int i = 0 ; i < len ; i ++) {
+        if (str[i] != prefix[i])
+            return false;
+    }
+    return true;
+}
+
+void fake_shell(void) {
+    char buffer[64];
     while (true) {
-        printk ("A: 1 + %d = %d\n", cnt, 1 + cnt);
-        cnt ++;
-        for (int i = 0 ; i < 1500000 ; i ++);
+        int color = get_print_color();
+        set_print_color(0x0A);
+        putchar ('>');
+        set_print_color(color);
+        flush_to_screen();
+        getline (buffer);
+        if (start_with(buffer, "echo ")) {
+            int color = get_print_color();
+            set_print_color(0x0A);
+            int len = strlen(buffer);
+            for (int i = 5 ; i < len ; i ++) {
+                putchar (buffer[i]);
+            }
+            set_print_color(color);
+            putchar ('\n');
+        }
+        else {
+            printk ("Wrong Input!\n");
+        }
     }
 }
 
-void printB(void) {
-    asmv ("xchg %bx, %bx");
-    int cnt = 0;
+void keyboard_handler(void) {
     while (true) {
-        printk ("B: 2 + %d = %d\n", cnt, 2 + cnt);
-        cnt ++;
-        for (int i = 0 ; i < 1500000 ; i ++);
+        deal_key();
     }
 }
 
-void clock_int_handler(int irq, struct intterup_args *regs) {
-    disable_irq(irq);
-    asmv ("sti");
-
-    send_eoi(irq);
-
+void after_syscall(struct intterup_args *regs) {
     if (current_task != NULL) {
         if (current_task->counter <= 0) {
             do_switch(regs);
         }
-        current_task->counter --;
     }
+}
 
-    asmv ("cli");
-    enable_irq(irq);
+short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) {
+    ticks ++;
+    if (! entered_handler)
+        after_syscall(regs);
+    current_task->counter --;
+    return 0;
 }
 
 #define MMIO_START (0x30000000000)
@@ -133,10 +176,15 @@ PRIVATE void *kernel_pml4 = NULL;
 
 void init(void) {
     printk ("Hello, World!I'm init, the first process!\n");
+
+    void *level3_pml4 = create_pgd();
+    set_pml4(level3_pml4);
+    set_mapping(0, 0, 16384, true, true);
+
+    create_task(1, keyboard_handler, (1 << 9), 0x1350000, rdcs(), kernel_pml4);
+    create_task(1, fake_shell, (1 << 9), 0x1300000, rdcs(), kernel_pml4);
     while (true);
 }
-
-#define CLOCK_FREQUENCY (18.20679f)
 
 void initialize(_IN struct boot_args *args) {
     init_gdt();
@@ -177,7 +225,9 @@ void initialize(_IN struct boot_args *args) {
     init_pic();
     init_idt();
 
-    asmv ("sti");
+    en_int();
+
+    init_keyboard();
 }
 
 void entry(_IN struct boot_args *_args) {
@@ -192,18 +242,14 @@ void entry(_IN struct boot_args *_args) {
 
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
-
-    void *level3_pml4 = create_pgd();
-    set_pml4(level3_pml4);
-    set_mapping(0, 0, args.memory_size / 4096, true, true);
-
-    create_task(1, printB, (1 << 9) | (3 << 12), 0x1350000, cs3_idx << 3 | 3, level3_pml4);
-    create_task(1, printA, (1 << 9) | (3 << 12), 0x1300000, cs3_idx << 3 | 3, level3_pml4);
     current_task = create_task(1, init, (1 << 9), 0x1250000, rdcs(), get_pml4());
-    current_task->counter = 49;
+    current_task->counter = 9;
+
+    register_irq_handler(0, clock_int_handler);
+    register_irq_handler(1, keyboard_int_handler);
 
     asmv ("movq $0x125000, %rsp");
     enable_irq(0);
-    asmv ("xchg %bx, %bx");
+    enable_irq(1);
     asmv ("jmp init");
 }

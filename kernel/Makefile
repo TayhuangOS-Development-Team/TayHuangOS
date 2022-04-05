@@ -24,6 +24,7 @@ TOOL_C_SRC := tool/tostring
 INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception
 INIT_C_SRC := init/init_clock
 PROCESS_C_SRC := process/vmareas process/task_manager
+KEYBOARD_C_SRC := keyboard/keyboard keyboard/keymap
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \
@@ -31,7 +32,8 @@ C_SRC := kernel kheap \
 		$(TOOL_C_SRC) \
 		$(INTTERUP_C_SRC) \
 		$(INIT_C_SRC) \
-		$(PROCESS_C_SRC)
+		$(PROCESS_C_SRC) \
+		$(KEYBOARD_C_SRC)
 
 CPP_SRC :=
 

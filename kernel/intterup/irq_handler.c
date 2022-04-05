@@ -28,14 +28,22 @@ PUBLIC void register_irq_handler(int irq, irq_handler handler) {
     IRQ_HANDLERS[irq] = handler;
 }
 
-PUBLIC void general_irq_handler(int irq) {
+PRIVATE bool entered_handler = false;
+
+PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
+    bool flag = entered_handler;
+    if (! flag)
+        entered_handler = true;
+
     disable_irq(irq);
-    asmv ("sti");
 
     send_eoi(irq);
-    if (IRQ_HANDLERS[irq] != NULL)
-        IRQ_FLAGS[irq] = IRQ_HANDLERS[irq](irq);
 
-    asmv ("cli");
+    if (IRQ_HANDLERS[irq] != NULL)
+        IRQ_FLAGS[irq] = IRQ_HANDLERS[irq](irq, args, flag);
+
     enable_irq(irq);
+
+    if (! flag)
+        entered_handler = false;
 }

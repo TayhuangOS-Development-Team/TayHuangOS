@@ -97,6 +97,7 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     current_task->thread_info.es = regs->es;
     current_task->thread_info.fs = regs->fs;
     current_task->thread_info.gs = regs->gs;
+    current_task->thread_info.ss = regs->ss;
     current_task->thread_info.rflags = regs->rflags;
     current_task->mm_info->pgd = (void*)(regs->pgd & 0xFFFFFFFFFFFFF000);
     //common registers
@@ -150,5 +151,5 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     regs->r14 = current_task->thread_info.r14;
     regs->r15 = current_task->thread_info.r15;
     //set counter
-    current_task->counter = current_task->priority * 50;
+    current_task->counter = current_task->priority * 10;
 }

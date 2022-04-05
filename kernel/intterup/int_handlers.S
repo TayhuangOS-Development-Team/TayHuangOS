@@ -83,10 +83,9 @@
 
 .macro irq_handler irq
     int_x64_pushad
-    pushq %rdi
     movq $\irq, %rdi
+    movq %rsp, %rsi
     call general_irq_handler
-    popq %rax
     int_x64_popad
     iretq
 .endm
@@ -187,7 +186,6 @@ _exception:
 .global reserved8_excepetion
 .type   reserved8_excepetion, @function
 
-
 divide_by_zero_error:
     nonerrcode_exception 0
 single_step_debug:
@@ -253,8 +251,8 @@ security_exception:
 reserved8_excepetion:
     nonerrcode_exception 31
 
-.global clock_irq_handler
-.type   clock_irq_handler, @function
+.global irq0_handler
+.type   irq0_handler, @function
 .global irq1_handler
 .type   irq1_handler, @function
 .global irq2_handler
@@ -286,17 +284,8 @@ reserved8_excepetion:
 .global irq15_handler
 .type   irq15_handler, @function
 
-.extern clock_int_handler
-
-clock_irq_handler:
-    int_x64_pushad
-    movq $0, %rdi
-    movq %rsp, %rsi
-    call clock_int_handler
-    int_x64_popad
-//    xchg %bx, %bx
-    iretq
-
+irq0_handler:
+    irq_handler 0
 irq1_handler:
     irq_handler 1
 irq2_handler:

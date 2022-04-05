@@ -23,11 +23,11 @@
 #include "init_int.h"
 
 extern short IRQ_FLAGS[16];
-typedef short(*irq_handler)(int);
+typedef short(*irq_handler)(int, struct intterup_args*, bool);
 PUBLIC void register_irq_handler(int irq, irq_handler handler);
-PUBLIC void general_irq_handler(int irq);
+PUBLIC void general_irq_handler(int irq, struct intterup_args *args);
 
-void clock_irq_handler(void);
+void irq0_handler(void);
 void irq1_handler(void);
 void irq2_handler(void);
 void irq3_handler(void);

@@ -79,6 +79,7 @@ PUBLIC void clrscr(void) {
 PUBLIC void flush_to_screen(void) {
     memset(VIDEO_INFO.framebuffer, 0, VIDEO_INFO.width * VIDEO_INFO.height * 2);
     memcpy(VIDEO_INFO.framebuffer, &output_buffer[start_pos], VIDEO_INFO.width * VIDEO_INFO.height * 2);
+    set_cursor_pos(current_pos - start_pos);
 }
 
 PUBLIC void scroll_screen(int lines) {
@@ -91,27 +92,25 @@ PUBLIC void putchar(char ch) {
         int line = current_pos / VIDEO_INFO.width;
         current_pos = (line + 1) * VIDEO_INFO.width;
         flush_to_screen();
-        set_cursor_pos(current_pos - start_pos);
     }
     else if (ch == '\t') {
         current_pos += 4;
         flush_to_screen();
-        set_cursor_pos(current_pos - start_pos);
     }
     else if (ch == '\v') {
         current_pos += VIDEO_INFO.width;
         flush_to_screen();
-        set_cursor_pos(current_pos - start_pos);
     }
     else if (ch == '\b') {
+        output_buffer[current_pos - 1] = ' ';
         current_pos --;
-        set_cursor_pos(current_pos - start_pos);
+        flush_to_screen();
     }
     else if(ch == '\f') {
         clrscr();
-        flush_to_screen();
         current_pos = 0;
         start_pos = 0;
+        flush_to_screen();
     }
     else { //普通字符
         output_buffer[current_pos ++] = MKWORD(print_color, ch);
@@ -119,7 +118,6 @@ PUBLIC void putchar(char ch) {
     int y = (current_pos - start_pos) / VIDEO_INFO.width;
     if (y - scroll_line > 0) { //滚动屏幕
         scroll_screen(y - scroll_line);
-        set_cursor_pos(current_pos - start_pos);
     }
 }
 

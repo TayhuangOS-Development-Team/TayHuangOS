@@ -36,6 +36,8 @@
 #define abs(x) ((x) < 0 ? (-(x)) : (x))               //绝对值
 #define _IN
 #define _OUT
+#define en_int() asmv("sti")
+#define dis_int() asmv("cli")
 
 static inline dword leading_zeros(_IN dword x)
 {
