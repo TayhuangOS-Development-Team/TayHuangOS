@@ -20,7 +20,6 @@
 #include "drivers/devices.h"
 
 #include "heap.h"
-#include "console/console.h"
 #include "drivers/disk/disk_driver.h"
 #include "drivers/disk/filesystems/fs_fat16.h"
 #include "pm/entry.h"
@@ -67,11 +66,7 @@ void entry(void) {
 
     init_key_buffer(); //初始化击键缓存
 
-#ifdef GOTO_OS_AUTO
     go_to_protect_mode(); //进入保护模式
-#else
-    enter_console(); //进入realmode console
-#endif
 
     do_terminate(); //清理
 }

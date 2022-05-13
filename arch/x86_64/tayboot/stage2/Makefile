@@ -15,16 +15,13 @@ DRIVER_C_SRC := ./drivers/video/video_driver ./drivers/memory/memory_driver ./dr
 				./drivers/disk/filesystems/fs_fat16 ./drivers/disk/filesystem
 STDLIB_C_SRC := ./std/string ./std/ctype printf scanf
 PM_C_SRC := ./pm/entry ./pm/a20 ./pm/load_stage3 ./pm/vesa
-CONSOLE_C_SRC := ./console/console ./console/commands
 C_SRC := stage2_main intcall buffer heap tools file \
 	$(DRIVER_C_SRC) \
 	$(STDLIB_C_SRC) \
-	$(PM_C_SRC) \
-    $(CONSOLE_C_SRC)
+	$(PM_C_SRC)
 C_INCLUDE := -I "../include/std/" -I"../include/tayhuang/"
 C_DEFS := $(ARCHDEF_C) \
-	      -DREALMODE_CONSOLE_MAJOR_VERSION=1 -DREALMODE_CONSOLE_MINOR_VERSION=0 -DREALMODE_CONSOLE_REVISION_VERSION=0 -DREALMODE_CONSOLE_BUILD_VERSION=3 \
-		  -DREALMODE -DGOTO_OS_AUTO #-DENABLE_GRAPHIC_BEFORE_GOTO_OS
+		  -DREALMODE -DENABLE_GRAPHIC_BEFORE_GOTO_OS
 ASM_SRC := stage2_entry io ./pm/jumping
 SPLASHES := splashes.txt
 
