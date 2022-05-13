@@ -19,7 +19,7 @@
 #include "keymap.h"
 
 short KEYMAP[128][3] = {
-//             NORMAL       SHIFT   E0/E1  XX
+//                             NORMAL           SHIFT           E0/E1
 /*0x00 - none       */    {            0,              0,               0},
 /*0x01 - esc        */    {          ESC,            ESC,               0},
 /*0x02 - 1          */    {          '1',            '!',               0},

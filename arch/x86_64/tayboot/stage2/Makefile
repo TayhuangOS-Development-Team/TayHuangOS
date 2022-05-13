@@ -21,7 +21,7 @@ C_SRC := stage2_main intcall buffer heap tools file \
 	$(PM_C_SRC)
 C_INCLUDE := -I "../include/std/" -I"../include/tayhuang/"
 C_DEFS := $(ARCHDEF_C) \
-		  -DREALMODE -DENABLE_GRAPHIC_BEFORE_GOTO_OS
+		  -DREALMODE #-DENABLE_GRAPHIC_BEFORE_GOTO_OS
 ASM_SRC := stage2_entry io ./pm/jumping
 SPLASHES := splashes.txt
 

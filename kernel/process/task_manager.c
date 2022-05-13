@@ -151,5 +151,5 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     regs->r14 = current_task->thread_info.r14;
     regs->r15 = current_task->thread_info.r15;
     //set counter
-    current_task->counter = current_task->priority * 10;
+    current_task->counter = current_task->priority;
 }

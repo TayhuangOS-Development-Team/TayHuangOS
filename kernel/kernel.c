@@ -93,7 +93,7 @@ PRIVATE void init_video_info(_IN struct boot_args *args) {
     init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode);
 }
 
-#define CLOCK_FREQUENCY (500.0f)
+#define CLOCK_FREQUENCY (50.0f)
 
 PRIVATE volatile int ticks = 0;
 
@@ -160,10 +160,10 @@ void tick_display(void) {
         change_pos(0, 0);
         int color = get_print_color();
         set_print_color(0x0D);
-        printk ("Current Startup Time(s): %d\n", ticks / 500);
+        printk ("Current Startup Time(s): %d\n", ticks / 50);
         set_print_color(color);
         change_pos(posx, posy);
-        delay(250 * 2);
+        delay(25 * 2);
     }
 }
 
@@ -194,9 +194,9 @@ void init(void) {
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    create_task(1, keyboard_handler, (1 << 9), 0x1350000, rdcs(), kernel_pml4);
+    create_task(5, keyboard_handler, (1 << 9), 0x1350000, rdcs(), kernel_pml4);
     create_task(1, fake_shell, (1 << 9), 0x1300000, rdcs(), kernel_pml4);
-    create_task(1, tick_display, (1 << 9), 0x1200000, rdcs(), kernel_pml4);
+    create_task(2, tick_display, (1 << 9), 0x1200000, rdcs(), kernel_pml4);
     while (true);
 }
 
@@ -257,7 +257,7 @@ void entry(_IN struct boot_args *_args) {
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
     current_task = create_task(1, init, (1 << 9), 0x1250000, rdcs(), get_pml4());
-    current_task->counter = 9;
+    current_task->counter = 1;
 
     register_irq_handler(0, clock_int_handler);
     register_irq_handler(1, keyboard_int_handler);
