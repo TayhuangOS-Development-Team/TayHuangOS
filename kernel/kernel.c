@@ -187,6 +187,11 @@ short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handle
 
 PRIVATE void *kernel_pml4 = NULL;
 
+#define CS_USER (cs3_idx << 3 | 3)
+#define RFLAGS_USER ((1 << 9) | (3 << 12))
+#define CS_KERNEL (cs0_idx << 3)
+#define RFLAGS_KERNEL (1 << 9)
+
 void init(void) {
     printk ("\n");
 
@@ -194,9 +199,9 @@ void init(void) {
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    create_task(5, keyboard_handler, (1 << 9), 0x1350000, rdcs(), kernel_pml4);
-    create_task(1, fake_shell, (1 << 9), 0x1300000, rdcs(), kernel_pml4);
-    create_task(2, tick_display, (1 << 9), 0x1200000, rdcs(), kernel_pml4);
+    create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
+    create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
+    create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
     while (true);
 }
 
