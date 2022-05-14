@@ -49,6 +49,7 @@ PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
         entered_handler = false;
 }
 
+void after_syscall(struct intterup_args *regs);
 PUBLIC void syscall_int_handler(struct intterup_args *regs) {
     bool flag = entered_handler;
     if (! flag)
@@ -56,6 +57,8 @@ PUBLIC void syscall_int_handler(struct intterup_args *regs) {
 
     regs->rax = syscall(regs->rax, regs->rbx, regs->rcx, regs->rdx, (void*)regs->rsi, (void*)regs->rdi,
      regs->r8, regs->r9, regs->r10, regs->r11, regs->r12, regs->r13, regs->r14, regs->r15);
+
+    after_syscall(regs);
 
     if (! flag)
         entered_handler = false;

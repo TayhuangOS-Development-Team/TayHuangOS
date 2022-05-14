@@ -60,6 +60,10 @@ PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qwor
     memset (&task->signal, 0, sizeof (task->signal));
     task->mm_info = create_mm_struct(pgd, start_code, end_code, start_data, end_data,
         start_brk, end_brk, start_rodata, end_rodata, start_stack);
+
+    task->ipc_info.msg = NULL;
+    task->ipc_info.queue = NULL;
+    task->ipc_info.wait_for = 0;
     return task;
 }
 
@@ -117,9 +121,15 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     current_task->thread_info.r13 = regs->r13;
     current_task->thread_info.r14 = regs->r14;
     current_task->thread_info.r15 = regs->r15;
+    if (current_task->state == RUNNING)
+        current_task->state = READY;
 
     //switch
-    current_task = current_task->next ? current_task->next : task_table;
+    do {
+        current_task = current_task->next ? current_task->next : task_table;
+        //set counter
+        current_task->counter = ((current_task->counter >> 1) + current_task->priority);
+    } while (current_task->state != READY && current_task->state != SUBBMITED);
 
     //up task
     regs->rsp = current_task->thread_info.rsp;
@@ -150,6 +160,5 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     regs->r13 = current_task->thread_info.r13;
     regs->r14 = current_task->thread_info.r14;
     regs->r15 = current_task->thread_info.r15;
-    //set counter
-    current_task->counter = current_task->priority;
+    current_task->state = RUNNING;
 }

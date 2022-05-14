@@ -32,56 +32,83 @@ PRIVATE task_struct *__find_task(int pid) {
 }
 
 PRIVATE bool __receive_msg(void *msg, int source) {
-    task_struct *source_task = __find_task(source); //获取pid所对的task
-    if (source_task == NULL) { //不存在
-        return false;
+    for (msgpack_struct *pack = current_task->ipc_info.queue ; pack != NULL ; pack = pack->next_msg) {
+        if (pack->from == source) { //是期望消息
+            memcpy(msg, pack->msg, pack->len); //拷贝
+            if (pack->next_msg != NULL) //出队
+                pack->next_msg->last_msg = pack->last_msg;
+            if (pack->last_msg != NULL)
+                pack->last_msg->next_msg = pack->next_msg;
+            free(pack);
+            return true;
+        }
     }
-    int cur_pid = __get_pid();
-    if (source_task->ipc_info.recv_send && source_task->ipc_info.wait_for == cur_pid) { //对方已经发送
-        memcpy(msg, source_task->ipc_info.msg, source_task->ipc_info.len);
-        memset(&source_task->ipc_info, 0, sizeof(ipc_struct));
-        source_task->state = READY;
+    //没有期望消息
+    //等待
+    current_task->ipc_info.msg = msg;
+    current_task->ipc_info.wait_for = source;
+    current_task->state = WAITING_FOR_RECEIVING;
+    return false;
+}
+
+PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
+    if (current_task->ipc_info.queue == NULL) //无消息
+        return -1;
+
+    msgpack_struct *pack = current_task->ipc_info.queue;
+    current_task->ipc_info.queue = pack->next_msg;
+    if (pack->next_msg != NULL) {
+        pack->next_msg->last_msg = NULL; //出队
     }
-    else { //对方未发送
-        //死锁处理以后再做
-        current_task->ipc_info.msg = msg;
-        current_task->ipc_info.len = -1;
-        current_task->ipc_info.recv_send = false;
-        current_task->ipc_info.wait_for = source;
-        current_task->state = WAITING_FOR_RECEIVING; //等待对方发送
-    }
-    return true;
+
+    int from = pack->from;
+    memcpy(msg, pack->msg, pack->len);
+
+    free(pack); //释放
+
+    return from;
 }
 
 PRIVATE bool __send_msg(void *msg, int dest, int len) {
-    task_struct *dest_task = __find_task(dest); //获取pid所对的task
-    if (dest_task == NULL) { //不存在
+    task_struct *dest_task = __find_task(dest);
+    if (dest_task == NULL) //目标不存在
         return false;
-    }
-    int cur_pid = __get_pid();
-    if ((! dest_task->ipc_info.recv_send) && dest_task->ipc_info.wait_for == cur_pid) { //对方已经等待接收
+    int pid = __get_pid(); //获取pid
+    if (dest_task->ipc_info.wait_for == pid) { //是否在等待该进程来信
         memcpy(dest_task->ipc_info.msg, msg, len);
-        memset(&dest_task->ipc_info, 0, sizeof(ipc_struct));
-        dest_task->state = READY;
+        dest_task->ipc_info.wait_for = 0;
+        dest_task->ipc_info.msg = NULL;
+        dest_task->state = READY; //同步
+        return true;
     }
-    else { //对方未发送
-        //死锁处理以后再做
-        current_task->ipc_info.msg = msg;
-        current_task->ipc_info.len = len;
-        current_task->ipc_info.recv_send = true;
-        current_task->ipc_info.wait_for = dest;
-        current_task->state = WAITING_FOR_SENDING; //等待对方接收
+    msgpack_struct *pack = (msgpack_struct*)malloc(sizeof(msgpack_struct)); //打包
+    pack->next_msg = pack->last_msg = NULL;
+    pack->from = pid;
+    pack->len = len;
+    pack->msg = msg;
+    if (dest_task->ipc_info.queue == NULL) { //入队
+        dest_task->ipc_info.queue = pack;
     }
+    else {
+        msgpack_struct *queue_tail = dest_task->ipc_info.queue;
+        while (queue_tail->next_msg != NULL) queue_tail = queue_tail->next_msg;
+        queue_tail->next_msg = pack;
+        pack->last_msg = queue_tail;
+    }
+    current_task->state = WAITING_FOR_SENDING; //等待
     return true;
 }
 
 PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,
     qword arg1, qword arg2, qword arg3, qword arg4, qword arg5, qword arg6, qword arg7, qword arg8) { //系统调用
-    if (sysno == 0x00) {
+    if (sysno == 0) {
         return __send_msg(src, arg1, counter);
     }
-    if (sysno == 0x01) {
+    else if (sysno == 1) {
         return __receive_msg(dst, arg1);
+    }
+    else if (sysno == 2) {
+        return __receive_any_msg(dst);
     }
     return -1;
 }

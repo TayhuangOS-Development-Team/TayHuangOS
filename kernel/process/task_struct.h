@@ -56,11 +56,18 @@ typedef struct {
         gs;
 } thread_struct;
 
-typedef struct {
-    bool recv_send; //false: recv ; true: send
-    int wait_for;
-    int len;
+typedef struct _msgpack_struct {
     void *msg;
+    int len;
+    int from;
+    struct _msgpack_struct *next_msg;
+    struct _msgpack_struct *last_msg;
+} msgpack_struct;
+
+typedef struct {
+    int wait_for;
+    void *msg;
+    msgpack_struct *queue;
 } ipc_struct;
 
 typedef struct _task_struct {
