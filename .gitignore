@@ -1,8 +1,7 @@
-*.bin
 *.log
-*.o
 .vscode/
 bios/
+build/
 bochsrc.bxrc
 bochsrc
 tayhuangOS.img

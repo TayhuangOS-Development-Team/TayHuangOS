@@ -100,7 +100,7 @@ PRIVATE volatile int ticks;
 
 int get_ticks(void) {
     qword pack[] = {0x00, (qword)&ticks};
-    send_msg(pack, 20, sizeof(pack));
+    send_msg(pack, 0x10000, sizeof(pack));
     return ticks;
 }
 
@@ -234,7 +234,7 @@ void init(void) { //init进程
     create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
     create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
-    create_task(1, clock_api_process, RFLAGS_KERNEL, 0x1100000, CS_KERNEL, kernel_pml4)->pid = 20;
+    create_task(1, clock_api_process, RFLAGS_KERNEL, 0x1100000, CS_KERNEL, kernel_pml4)->pid = 0x10000;
     // pid1 = create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4)->pid;
     // pid2 = create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4)->pid;
     while (true);

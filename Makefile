@@ -44,19 +44,20 @@ setup_workspace:
 	mkfs.msdos -F 32 ./tayhuangOS.img
 	sudo mkdir -v -p $(OBJECTSDIR)
 	sudo mkdir -v -p $(BINDIR)
-	cd ./kernel/ ; $(MAKE) setup_workspace
 
 #编译
 .PHONY: build
 build:
 	cd arch/$(ARCHITECTURE)/ ; make build
 	cd kernel ; make build
+	cd libs ; make build
 
 #清理
 .PHONY: clean
 clean:
 	cd arch/$(ARCHITECTURE)/ ; make clean
 	cd kernel ; make clean
+	cd libs ; make clean
 
 #写入映像
 .PHONY: image
