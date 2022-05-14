@@ -25,7 +25,7 @@ INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception
 INIT_C_SRC := init/init_clock
 PROCESS_C_SRC := process/vmareas process/task_manager
 KEYBOARD_C_SRC := keyboard/keyboard keyboard/keymap
-SYSCALL_C_SRC := syscall/syscall
+SYSCALL_C_SRC := syscall/syscall syscall/system_api
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \

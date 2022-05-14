@@ -39,6 +39,7 @@ PRIVATE bool __receive_msg(void *msg, int source) {
                 pack->next_msg->last_msg = pack->last_msg;
             if (pack->last_msg != NULL)
                 pack->last_msg->next_msg = pack->next_msg;
+            __find_task(pack->from)->state = READY;
             free(pack);
             return true;
         }
@@ -63,6 +64,7 @@ PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
 
     int from = pack->from;
     memcpy(msg, pack->msg, pack->len);
+    __find_task(pack->from)->state = READY;
 
     free(pack); //释放
 
@@ -111,4 +113,16 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
         return __receive_any_msg(dst);
     }
     return -1;
+}
+
+bool send_msg(void *msg, int dest, int len) { //送消息
+    return dosyscall(0, 0, len, 0, msg, NULL, dest, 0, 0, 0, 0, 0, 0, 0);
+}
+
+bool receive_msg(void *msg, int source) { //收特定进程的消息
+    return dosyscall(1, 0, 0, 0, NULL, msg, source, 0, 0, 0, 0, 0, 0, 0);
+}
+
+int receive_any_msg(void *msg) { //收消息
+    return dosyscall(2, 0, 0, 0, NULL, msg, 0, 0, 0, 0, 0, 0, 0, 0);
 }

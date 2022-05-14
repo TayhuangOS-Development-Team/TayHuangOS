@@ -42,6 +42,7 @@
 #include "keyboard/keyboard.h"
 
 #include "syscall/syscall.h"
+#include "syscall/system_api.h"
 
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
@@ -95,13 +96,17 @@ PRIVATE void init_video_info(_IN struct boot_args *args) { //初始化视频
     init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode); //初始化视频
 }
 
-#define CLOCK_FREQUENCY (50.0f) //时钟周期
+PRIVATE volatile int ticks;
 
-PRIVATE volatile int ticks = 0;
+int get_ticks(void) {
+    qword pack[] = {0x00, (qword)&ticks};
+    send_msg(pack, 20, sizeof(pack));
+    return ticks;
+}
 
 void delay(int wait_ticks) { //延迟函数
-    int last_ticks = ticks;
-    while (ticks - last_ticks < wait_ticks);
+    int last_ticks = get_ticks();
+    while (get_ticks() - last_ticks < wait_ticks);
 }
 
 char *getline(char *buffer) { //获取一行的输入
@@ -169,7 +174,7 @@ void tick_display(void) {
         int color = get_print_color();
         set_print_color(0x0D);
 
-        printk ("Current Startup Time(s): %d\n", ticks / 50); //打印
+        printk ("Current Startup Time(s): %d\n", get_ticks() / 50); //打印
 
         set_print_color(color);
         change_pos(posx, posy);
@@ -178,38 +183,26 @@ void tick_display(void) {
     }
 }
 
-bool send_msg(void *msg, int dest, int len) { //送消息
-    return dosyscall(0, 0, len, 0, msg, NULL, dest, 0, 0, 0, 0, 0, 0, 0);
-}
-
-bool receive_msg(void *msg, int source) { //收特定进程的消息
-    return dosyscall(1, 0, 0, 0, NULL, msg, source, 0, 0, 0, 0, 0, 0, 0);
-}
-
-int receive_any_msg(void *msg) { //收消息
-    return dosyscall(2, 0, 0, 0, NULL, msg, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
 int pid1, pid2;
 
 void __test_proc1(void) {
     delay(50);
     send_msg("Hello, IPC!", pid2, 12);
-    asmv ("xchg %bx, %bx");
     while(true);
 }
 
 void __test_proc2(void) {
     delay(50);
     char msg[20] = {};
-    while (receive_any_msg(msg) == -1);
-    printk ("some proc says: \"%s\"\n", msg);
+//    receive_msg(msg, pid1); //第一种方法
+    while (receive_any_msg(msg) == -1); //第二种方法
+    printk ("some process says: \"%s\"\n", msg);
     while(true);
 }
 
 PRIVATE bool stop_switch = false;
 
-void after_syscall(struct intterup_args *regs) {
+PUBLIC void after_syscall(struct intterup_args *regs) {
     if (stop_switch)
         return;
     if (current_task != NULL) {
@@ -219,16 +212,7 @@ void after_syscall(struct intterup_args *regs) {
     }
 }
 
-short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { //时钟中断
-    ticks ++;
-
-    if (! entered_handler)
-        after_syscall(regs);
-
-    current_task->counter --;
-
-    return 0;
-}
+PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler);
 
 #define MMIO_START (0x30000000000)
 
@@ -247,13 +231,16 @@ void init(void) { //init进程
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    //create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
-    //create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
-    //create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
-    pid1 = create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4)->pid;
-    pid2 = create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4)->pid;
+    create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
+    create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
+    create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
+    create_task(1, clock_api_process, RFLAGS_KERNEL, 0x1100000, CS_KERNEL, kernel_pml4)->pid = 20;
+    // pid1 = create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4)->pid;
+    // pid2 = create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4)->pid;
     while (true);
 }
+
+#define CLOCK_FREQUENCY (50.0f) //时钟周期
 
 void initialize(_IN struct boot_args *args) {
     init_gdt(); //初始化GDT

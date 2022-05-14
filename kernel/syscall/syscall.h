@@ -29,3 +29,7 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
 
 PUBLIC qword dosyscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,
     qword arg1, qword arg2, qword arg3, qword arg4, qword arg5, qword arg6, qword arg7, qword arg8);
+
+PUBLIC bool send_msg(void *msg, int dest, int len);
+PUBLIC bool receive_msg(void *msg, int source);
+PUBLIC int receive_any_msg(void *msg);
