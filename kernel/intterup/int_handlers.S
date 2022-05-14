@@ -16,6 +16,7 @@
 
 .extern general_irq_handler
 .extern general_exception_handler
+.extern syscall_int_handler
 
 .macro int_x64_pushad
     pushq %rsp
@@ -283,6 +284,8 @@ reserved8_excepetion:
 .type   irq14_handler, @function
 .global irq15_handler
 .type   irq15_handler, @function
+.global syscall_handler
+.type syscall_handler, @function
 
 irq0_handler:
     irq_handler 0
@@ -316,3 +319,9 @@ irq14_handler:
     irq_handler 14
 irq15_handler:
     irq_handler 15
+syscall_handler:
+    int_x64_pushad
+    movq %rsp, %rdi
+    call syscall_int_handler
+    int_x64_popad
+    iretq

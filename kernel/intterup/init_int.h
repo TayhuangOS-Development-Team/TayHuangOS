@@ -41,7 +41,7 @@ struct intterup_args {
         ds,
         pgd,
         rbp,
-        ist_clock,
+        ist,
         rip,
         cs,
         rflags,

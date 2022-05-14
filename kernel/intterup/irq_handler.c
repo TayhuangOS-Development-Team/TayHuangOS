@@ -18,6 +18,7 @@
 
 #include "irq_handler.h"
 #include "init_int.h"
+#include "../syscall/syscall.h"
 
 PUBLIC short IRQ_FLAGS[16];
 
@@ -43,6 +44,18 @@ PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
         IRQ_FLAGS[irq] = IRQ_HANDLERS[irq](irq, args, flag);
 
     enable_irq(irq);
+
+    if (! flag)
+        entered_handler = false;
+}
+
+PUBLIC void syscall_int_handler(struct intterup_args *regs) {
+    bool flag = entered_handler;
+    if (! flag)
+        entered_handler = true;
+
+    regs->rax = syscall(regs->rax, regs->rbx, regs->rcx, regs->rdx, (void*)regs->rsi, (void*)regs->rdi,
+     regs->r8, regs->r9, regs->r10, regs->r11, regs->r12, regs->r13, regs->r14, regs->r15);
 
     if (! flag)
         entered_handler = false;

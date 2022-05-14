@@ -160,6 +160,8 @@ PRIVATE void __init_descs(void) {
     init_idt_desc_ist(CALC_IRQ(13), GATE_INTERRUPT, irq13_handler, 0, 1);
     init_idt_desc_ist(CALC_IRQ(14), GATE_INTERRUPT, irq14_handler, 0, 1);
     init_idt_desc_ist(CALC_IRQ(15), GATE_INTERRUPT, irq15_handler, 0, 1);
+
+    init_idt_desc_ist(0x40, GATE_INTERRUPT, syscall_handler, 3, 1);
 }
 
 PUBLIC void init_idt(void) {

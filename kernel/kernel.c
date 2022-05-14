@@ -41,6 +41,8 @@
 
 #include "keyboard/keyboard.h"
 
+#include "syscall/syscall.h"
+
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
@@ -167,6 +169,30 @@ void tick_display(void) {
     }
 }
 
+bool send_msg(void *msg, int dest, int len) {
+    return dosyscall(0, 0, len, 0, msg, NULL, dest, 0, 0, 0, 0, 0, 0, 0);
+}
+
+bool receive_msg(void *msg, int source) {
+    return dosyscall(1, 0, 0, 0, NULL, msg, source, 0, 0, 0, 0, 0, 0, 0);
+}
+
+int pid1, pid2;
+
+void __test_proc1(void) {
+    delay(50);
+    send_msg("Hello, IPC!", pid2, 12);
+    while(true);
+}
+
+void __test_proc2(void) {
+    delay(50);
+    char msg[20] = {};
+    receive_msg(msg, pid1);
+    printk ("proc1 says: \"%s\"\n", msg);
+    while(true);
+}
+
 void after_syscall(struct intterup_args *regs) {
     if (current_task != NULL) {
         if (current_task->counter <= 0) {
@@ -199,9 +225,11 @@ void init(void) {
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
-    create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
-    create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
+    //create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
+    //create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
+    //create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
+    pid1 = create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4)->pid;
+    pid2 = create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4)->pid;
     while (true);
 }
 
@@ -261,7 +289,7 @@ void entry(_IN struct boot_args *_args) {
 
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
-    current_task = create_task(1, init, (1 << 9), 0x1250000, rdcs(), get_pml4());
+    current_task = create_task(1, init, RFLAGS_KERNEL, 0x1250000, CS_KERNEL, get_pml4());
     current_task->counter = 1;
 
     register_irq_handler(0, clock_int_handler);

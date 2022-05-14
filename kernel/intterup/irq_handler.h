@@ -26,6 +26,7 @@ extern short IRQ_FLAGS[16];
 typedef short(*irq_handler)(int, struct intterup_args*, bool);
 PUBLIC void register_irq_handler(int irq, irq_handler handler);
 PUBLIC void general_irq_handler(int irq, struct intterup_args *args);
+PUBLIC void syscall_int_handler(struct intterup_args *regs);
 
 void irq0_handler(void);
 void irq1_handler(void);
@@ -43,3 +44,4 @@ void irq12_handler(void);
 void irq13_handler(void);
 void irq14_handler(void);
 void irq15_handler(void);
+void syscall_handler(void);
