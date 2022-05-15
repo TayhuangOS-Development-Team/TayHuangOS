@@ -58,9 +58,8 @@ PUBLIC void syscall_int_handler(struct intterup_args *regs) {
     regs->rax = syscall(regs->rax, regs->rbx, regs->rcx, regs->rdx, (void*)regs->rsi, (void*)regs->rdi,
      regs->r8, regs->r9, regs->r10, regs->r11, regs->r12, regs->r13, regs->r14, regs->r15);
 
-    if (! entered_handler)
+    if (! flag) {
         after_syscall(regs);
-
-    if (! flag)
         entered_handler = false;
+    }
 }

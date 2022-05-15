@@ -26,6 +26,7 @@ INIT_C_SRC := init/init_clock
 PROCESS_C_SRC := process/vmareas process/task_manager
 KEYBOARD_C_SRC := keyboard/keyboard keyboard/keymap
 SYSCALL_C_SRC := syscall/syscall syscall/system_api
+TEST_C_SRC := test/test_proccess
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \
@@ -35,7 +36,8 @@ C_SRC := kernel kheap \
 		$(INIT_C_SRC) \
 		$(PROCESS_C_SRC) \
 		$(KEYBOARD_C_SRC) \
-		$(SYSCALL_C_SRC)
+		$(SYSCALL_C_SRC) \
+		$(TEST_C_SRC)
 
 CPP_SRC :=
 
@@ -47,6 +49,14 @@ C_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/"
 
 CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/"
+
+LD_FLAGS :=
+
+ifeq ($(MODE), debug)
+	LD_FLAGS := -g
+else
+	LD_FLAGS := -s
+endif
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
@@ -66,7 +76,7 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	$(LD) -s -T kernel.ld -o $(KERNEL_OUTPUT) $^
+	$(LD) $(LD_FLAGS) -T kernel.ld -o $(KERNEL_OUTPUT) $^
 
 .PHONY: clean
 clean:

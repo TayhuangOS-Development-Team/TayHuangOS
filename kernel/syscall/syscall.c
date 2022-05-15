@@ -49,10 +49,10 @@ PRIVATE bool __receive_msg(void *msg, int source) {
     current_task->ipc_info.msg = msg;
     current_task->ipc_info.wait_for = source;
     current_task->state = WAITING_FOR_RECEIVING;
-    return false;
+    return true;
 }
 
-PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
+PUBLIC int __receive_any_msg(void *msg) { //收取第一个消息
     if (current_task->ipc_info.queue == NULL) //无消息
         return -1;
 

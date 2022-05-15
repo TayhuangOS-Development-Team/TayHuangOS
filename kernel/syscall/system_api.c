@@ -26,7 +26,20 @@ PUBLIC void after_syscall(struct intterup_args *regs);
 PRIVATE volatile int ticks = 0;
 
 PUBLIC void video_api_process(void) {
-
+    while (true) {
+        qword pack[20];
+        while (receive_any_msg(pack) == -1);
+        asmv ("xchg %bx, %bx");
+        if (pack[0] == 0) { //puts
+            puts(pack[1]);
+        }
+        else if (pack[0] == 1) { //putchar
+            putchar ((char)pack[1]);
+        }
+        else if (pack[0] == 2) { //printint
+            printk ("%d", pack[1]);
+        }
+    }
 }
 
 PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { //时钟中断
@@ -43,9 +56,11 @@ PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered
 PUBLIC void clock_api_process(void) {
     while (true) {
         qword pack[20];
-        while (receive_any_msg(pack) == -1);
-        if (pack[0] == 0) {
-            *((int*)pack[1]) = ticks;
+        int caller = 0;
+        while ((caller = receive_any_msg(pack)) == -1);
+        if (pack[0] == 0) { //get_ticks
+            int tks = ticks;
+            send_msg(&tks, caller, sizeof(int));
         }
     }
 }

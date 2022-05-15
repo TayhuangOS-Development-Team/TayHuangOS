@@ -8,20 +8,18 @@
  * 
  * 作者: Flysong
  * 
- * timer.c
+ * test_proccess.h
  * 
- * 时间相关
+ * 测试进程
  * 
  */
 
 
 
-#include "timer.h"
-#include "../ipc/ipc.h"
+#pragma once
 
-int get_ticks(void) {
-    long long pack[20] = {0x00};
-    send_msg(pack, 0x10000, sizeof(pack));
-    recv_msg(pack, 0x10000);
-    return pack[0];
-}
+void fake_shell(void);
+void keyboard_handler(void);
+void tick_display(void);
+void __test_proc1(void);
+void __test_proc2(void);

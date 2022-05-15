@@ -44,6 +44,8 @@
 #include "syscall/syscall.h"
 #include "syscall/system_api.h"
 
+#include "test/test_proccess.h"
+
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
@@ -96,117 +98,13 @@ PRIVATE void init_video_info(_IN struct boot_args *args) { //初始化视频
     init_video(args->framebuffer, args->screen_width, args->screen_height, args->is_graphic_mode); //初始化视频
 }
 
-PRIVATE volatile int ticks;
-
-int get_ticks(void) {
-    qword pack[] = {0x00, (qword)&ticks};
-    send_msg(pack, 0x10000, sizeof(pack));
-    return ticks;
-}
-
-void delay(int wait_ticks) { //延迟函数
-    int last_ticks = get_ticks();
-    while (get_ticks() - last_ticks < wait_ticks);
-}
-
-char *getline(char *buffer) { //获取一行的输入
-    char *result = buffer;
-    char ch = getchar();
-    while (ch != '\n') {
-        *buffer = ch;
-        ch = getchar();
-        buffer ++;
-    }
-    *buffer = '\0';
-    return result;
-}
-
-bool start_with(const char *str, const char *prefix) { //判断前缀
-    int len = strlen(prefix);
-    for (int i = 0 ; i < len ; i ++) {
-        if (str[i] != prefix[i])
-            return false;
-    }
-    return true;
-}
-
-void fake_shell(void) { //假shell
-    char buffer[64];
-    while (true) {
-        int color = get_print_color();
-        set_print_color(0x0A);
-
-        putchar ('>'); //提示符
-
-        set_print_color(color);
-
-        flush_to_screen();
-
-        getline (buffer); //获取命令
-        if (start_with(buffer, "echo ")) { //echo命令
-            int color = get_print_color();
-            set_print_color(0x0A);
-
-            int len = strlen(buffer);
-            for (int i = 5 ; i < len ; i ++) {
-                putchar (buffer[i]);
-            }
-
-            set_print_color(color);
-            putchar ('\n');
-        }
-        else { //错误输入
-            printk ("Wrong Input!\n");
-        }
-    }
-}
-
-void keyboard_handler(void) {
-    while (true) {
-        deal_key(); //处理按键
-    }
-}
-
-void tick_display(void) {
-    while (true) {
-        int posx = get_pos_x(), posy = get_pos_y();
-        change_pos(0, 0); //设置打印位置
-        int color = get_print_color();
-        set_print_color(0x0D);
-
-        printk ("Current Startup Time(s): %d\n", get_ticks() / 50); //打印
-
-        set_print_color(color);
-        change_pos(posx, posy);
-
-        delay(25 * 2); //延迟一会儿再打印
-    }
-}
-
-int pid1, pid2;
-
-void __test_proc1(void) {
-    delay(50);
-    send_msg("Hello, IPC!", pid2, 12);
-    while(true);
-}
-
-void __test_proc2(void) {
-    delay(50);
-    char msg[20] = {};
-//    receive_msg(msg, pid1); //第一种方法
-    while (receive_any_msg(msg) == -1); //第二种方法
-    printk ("some process says: \"%s\"\n", msg);
-    while(true);
-}
-
 PRIVATE bool stop_switch = false;
 
 PUBLIC void after_syscall(struct intterup_args *regs) {
     if (stop_switch)
         return;
     if (current_task != NULL) {
-        if (current_task->counter <= 0 || current_task->state != RUNNING || current_task->state != READY) { //不符合继续运行的条件
+        if ((current_task->counter <= 0) || (current_task->state != RUNNING) || (current_task->state != READY)) { //不符合继续运行的条件
             do_switch(regs); //切换
         }
     }
@@ -223,6 +121,8 @@ PRIVATE void *kernel_pml4 = NULL;
 #define CS_KERNEL (cs0_idx << 3)
 #define RFLAGS_KERNEL (1 << 9)
 
+#define API_PID(x) (0x10000 + (x))
+
 void init(void) { //init进程
     stop_switch = false;
     printk ("\n");
@@ -231,12 +131,16 @@ void init(void) { //init进程
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
-    create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
+    //API PROCCESS
+    create_task(1, clock_api_process, RFLAGS_KERNEL, 0x1100000, CS_KERNEL, kernel_pml4)->pid = API_PID(0);
+    create_task(1, video_api_process, RFLAGS_KERNEL, 0x1150000, CS_KERNEL, kernel_pml4)->pid = API_PID(1);
+
+    //TEST PROCCESS
+    //create_task(5, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
+    //create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
-    create_task(1, clock_api_process, RFLAGS_KERNEL, 0x1100000, CS_KERNEL, kernel_pml4)->pid = 0x10000;
-    // pid1 = create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4)->pid;
-    // pid2 = create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4)->pid;
+    //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
+    //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
     while (true);
 }
 
