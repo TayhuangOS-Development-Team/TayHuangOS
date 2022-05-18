@@ -22,6 +22,7 @@
 #include <tayhuang/descs.h>
 #include <tayhuang/io.h>
 #include <string.h>
+#include <assert.h>
 
 #include "kheap.h"
 

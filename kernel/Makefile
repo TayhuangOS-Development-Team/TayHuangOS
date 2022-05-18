@@ -20,7 +20,7 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 STD_C_SRC := std/ctype std/string std/math
 MEMORY_C_SRC := memory/paging memory/pmm
 DISPLAY_C_SRC := display/printk display/video
-TOOL_C_SRC := tool/tostring
+TOOL_C_SRC := tool/tostring tool/debug
 INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception
 INIT_C_SRC := init/init_clock
 PROCESS_C_SRC := process/vmareas process/task_manager
@@ -54,8 +54,10 @@ LD_FLAGS :=
 
 ifeq ($(MODE), debug)
 	LD_FLAGS := -g
+	C_DEFS += -D_DEBUG
 else
 	LD_FLAGS := -s
+	CPP_DEFS += -D_DEBUG
 endif
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \

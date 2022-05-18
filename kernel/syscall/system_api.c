@@ -21,6 +21,8 @@
 #include "../process/task_manager.h"
 #include "../display/printk.h"
 
+#include <string.h>
+
 PUBLIC void after_syscall(struct intterup_args *regs);
 
 PRIVATE volatile int ticks = 0;

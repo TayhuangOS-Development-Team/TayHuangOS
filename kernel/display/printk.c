@@ -425,3 +425,22 @@ PUBLIC int sprintk(char *buffer, const char *format, ...) {
     va_end(args);
     return ret;
 }
+
+void panic(const char *format, ...) {
+    dis_int(); //关中断(阻止进程切换)
+
+    va_list args;
+    va_start(args, format);
+
+    static char buffer[256];
+
+    _vsprintk(buffer, format, args);
+
+    puts(buffer);
+    flush_to_screen();
+
+    va_end(args);
+
+    while (true);
+    asmv ("ud2"); //不应该被执行
+}
