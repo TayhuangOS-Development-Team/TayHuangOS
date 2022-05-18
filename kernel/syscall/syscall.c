@@ -103,16 +103,72 @@ PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
     return true;
 }
 
+extern volatile int ticks;
+
+PRIVATE qword __get_ticks(void) {
+    return ticks;
+}
+
+PRIVATE qword __sleep(void) {
+    current_task->state = WAITING_WAKEUP;
+    return true;
+}
+
+PRIVATE qword __exit(void) {
+    current_task->state = TERMINATE;
+    return true;
+}
+
+PRIVATE qword __wakeup(int pid) { //sleep的逆操作
+    task_struct *task = __find_task(pid);
+    if (task != NULL) {
+        task->state = READY;
+        return true;
+    }
+    return false;
+}
+
+PRIVATE qword __fatal(void) {
+    current_task->state = EXCEPTION;
+    return true;
+}
+
+PRIVATE qword __eggs(void) { //彩蛋
+    return 114514;
+}
+
+PRIVATE qword __signal(int pid, int signal) {
+    task_struct *task = __find_task(pid);
+    if (task != NULL) {
+        task->signal |= (1 << signal);
+        return true;
+    }
+    return false;
+}
+
 PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,
     qword arg1, qword arg2, qword arg3, qword arg4, qword arg5, qword arg6, qword arg7, qword arg8) { //系统调用
-    if (sysno == 0) {
+    switch (sysno) {
+    case 0:
         return __send_msg(src, arg1, data, counter);
-    }
-    else if (sysno == 1) {
+    case 1:
         return __receive_msg(dst, arg1);
-    }
-    else if (sysno == 2) {
+    case 2:
         return __receive_any_msg(dst);
+    case 3:
+        return __get_ticks();
+    case 4:
+        return __sleep();
+    case 5:
+        return __exit();
+    case 6:
+        return __wakeup(arg1);
+    case 7:
+        return __fatal();
+    case 8:
+        return __eggs();
+    case 9:
+        return __signal(arg1, data);
     }
     return -1;
 }
@@ -127,6 +183,38 @@ PUBLIC bool receive_msg(void *msg, int source) { //收特定进程的消息
 
 PUBLIC int receive_any_msg(void *msg) { //收消息
     return dosyscall(2, 0, 0, 0, NULL, msg, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC int get_ticks(void) {
+    return dosyscall(3, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC bool sleep(void) {
+    return dosyscall(4, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC bool exit(void) {
+    bool ret = dosyscall(5, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+    asmv ("ud2"); //不应该执行到此处
+    return ret;
+}
+
+PUBLIC bool wakeup(int pid) { //sleep的逆操作
+    return dosyscall(6, 0, 0, 0, NULL, NULL, pid, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC bool fatal(void) {
+    bool ret = dosyscall(7, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+    asmv ("ud2"); //不应该执行到此处
+    return ret;
+}
+
+PUBLIC int eggs(void) { //彩蛋
+    return dosyscall(8, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC bool signal(int pid, int signal) {
+    return dosyscall(9, 0, 0, signal, NULL, NULL, pid, 0, 0, 0, 0, 0, 0, 0);
 }
 
 PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout) {

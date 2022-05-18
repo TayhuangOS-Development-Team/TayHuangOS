@@ -32,8 +32,11 @@ PRIVATE int current_pos = 0;
 PRIVATE int start_pos = 0;
 PRIVATE int print_color = 0;
 PRIVATE int scroll_line = 0;
+PRIVATE bool do_cursor_move = true;
 
 PRIVATE void set_cursor_pos(int pos) {
+    if (! do_cursor_move)
+        return;
     outb(0x3D4, 0x0F);
 	outb(0x3D5, (byte) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
@@ -50,7 +53,7 @@ PUBLIC void set_print_color(int color) {
 
 PUBLIC void change_pos(int x, int y) {
     current_pos = y * VIDEO_INFO.width + x;
-    set_cursor_pos(current_pos);
+    set_cursor_pos(current_pos - start_pos);
 }
 
 PUBLIC int get_pos_x(void) {
@@ -77,7 +80,6 @@ PUBLIC void clrscr(void) {
 }
 
 PUBLIC void flush_to_screen(void) {
-    memset(VIDEO_INFO.framebuffer, 0, VIDEO_INFO.width * VIDEO_INFO.height * 2);
     memcpy(VIDEO_INFO.framebuffer, &output_buffer[start_pos], VIDEO_INFO.width * VIDEO_INFO.height * 2);
     set_cursor_pos(current_pos - start_pos);
 }
@@ -91,18 +93,21 @@ PUBLIC void putchar(char ch) {
     if (ch == '\r' || ch == '\n') { //制表符
         int line = current_pos / VIDEO_INFO.width;
         current_pos = (line + 1) * VIDEO_INFO.width;
+        output_buffer[current_pos] = MKWORD(0x0F, ' ');
         flush_to_screen();
     }
     else if (ch == '\t') {
         current_pos += 4;
+        output_buffer[current_pos] = MKWORD(0x0F, ' ');
         flush_to_screen();
     }
     else if (ch == '\v') {
         current_pos += VIDEO_INFO.width;
+        output_buffer[current_pos] = MKWORD(0x0F, ' ');
         flush_to_screen();
     }
     else if (ch == '\b') {
-        output_buffer[current_pos - 1] = ' ';
+        output_buffer[current_pos - 1] = MKWORD(0x0F, ' ');
         current_pos --;
         flush_to_screen();
     }
@@ -110,10 +115,12 @@ PUBLIC void putchar(char ch) {
         clrscr();
         current_pos = 0;
         start_pos = 0;
+        output_buffer[current_pos] = MKWORD(0x0F, ' ');
         flush_to_screen();
     }
     else { //普通字符
         output_buffer[current_pos ++] = MKWORD(print_color, ch);
+        output_buffer[current_pos] = MKWORD(0x0F, ' ');
     }
     int y = (current_pos - start_pos) / VIDEO_INFO.width;
     if (y - scroll_line > 0) { //滚动屏幕
@@ -443,4 +450,12 @@ void panic(const char *format, ...) {
 
     while (true);
     asmv ("ud2"); //不应该被执行
+}
+
+PUBLIC void disable_cursor_move(void) {
+    do_cursor_move = false;
+}
+
+PUBLIC void enable_cursor_move(void) {
+    do_cursor_move = true;
 }

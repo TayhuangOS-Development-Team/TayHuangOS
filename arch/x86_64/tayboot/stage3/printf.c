@@ -34,7 +34,7 @@ PUBLIC void set_print_color(byte color) {
 }
 
 PRIVATE void set_cursor_pos(byte x, byte y) {
-    word position = x * DPINFO.screen_width + y;
+    word position = y * DPINFO.screen_width + x;
     outb(0x3D4, 0x0F);
 	outb(0x3D5, LOWBYTE(position));
 	outb(0x3D4, 0x0E);

@@ -25,7 +25,7 @@
 
 PUBLIC void after_syscall(struct intterup_args *regs);
 
-PRIVATE volatile int ticks = 0;
+PUBLIC volatile int ticks = 0;
 
 PUBLIC void video_api_process(void) {
     while (true) {
@@ -101,9 +101,5 @@ PUBLIC void clock_api_process(void) {
         qword pack[20];
         int caller = 0;
         while ((caller = receive_any_msg(pack)) == -1);
-        if (pack[0] == 0) { //get_ticks
-            int tks = ticks;
-            send_msg(&tks, caller, sizeof(int), 20);
-        }
     }
 }

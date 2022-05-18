@@ -32,5 +32,13 @@ PUBLIC qword dosyscall(int sysno, qword mode, qword counter, qword data, void *s
 
 PUBLIC bool send_msg(void *msg, int dest, int len, int tickout);
 PUBLIC bool receive_msg(void *msg, int source);
-PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout);
 PUBLIC int receive_any_msg(void *msg);
+PUBLIC int get_ticks(void);
+PUBLIC bool sleep(void);
+PUBLIC bool exit(void);
+PUBLIC bool wakeup(int pid);
+PUBLIC bool fatal(void);
+PUBLIC int eggs(void);
+PUBLIC bool signal(int pid, int signal);
+
+PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout);

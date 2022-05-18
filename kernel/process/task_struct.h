@@ -79,8 +79,7 @@ typedef struct _task_struct {
     volatile enum {
         SUBBMITED, //已提交
         READY, //就绪
-        WAITING_SIGNAL, //等待信号
-        WAITING_RESOURCE, //等待资源
+        WAITING_WAKEUP, //等待唤醒信号
         WAITING_FOR_SENDING, //等待对方接收(因为发送而阻塞)
         WAITING_FOR_RECEIVING, //等待对方发送(因为接收而阻塞)
         RUNNING, //正在运行
@@ -92,9 +91,7 @@ typedef struct _task_struct {
     int priority;
     int pid;
 
-    struct {
-        qword reserved : 64;
-    } signal;
+    qword signal;
 
     struct _task_struct *next;
     struct _task_struct *last;

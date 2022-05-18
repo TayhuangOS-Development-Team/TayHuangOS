@@ -35,3 +35,6 @@ PUBLIC void putchar(char ch);
 PUBLIC void puts(const char *str);
 PUBLIC int printk(const char *format, ...);
 PUBLIC int sprintk(char *buffer, const char *format, ...);
+
+PUBLIC void disable_cursor_move(void);
+PUBLIC void enable_cursor_move(void);
