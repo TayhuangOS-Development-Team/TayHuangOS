@@ -28,16 +28,57 @@ PRIVATE volatile int ticks = 0;
 PUBLIC void video_api_process(void) {
     while (true) {
         qword pack[20];
-        while (receive_any_msg(pack) == -1);
-        asmv ("xchg %bx, %bx");
+        int caller = 0;
+        while ((caller = receive_any_msg(pack)) == -1);
         if (pack[0] == 0) { //puts
+            dis_int();
+            int oldx = get_pos_x(), oldy = get_pos_y();
+            int oldcolor = get_print_color();
+
+            change_pos(pack[2], pack[3]);
+            set_print_color(pack[4]);
+
             puts(pack[1]);
+
+            set_print_color(oldcolor);
+            change_pos(oldx, oldy);
+            en_int();
+
+            int len = strlen(pack[1]);
+            send_msg(&len, caller, sizeof(int), 20);
         }
         else if (pack[0] == 1) { //putchar
+            dis_int();
+            int oldx = get_pos_x(), oldy = get_pos_y();
+            int oldcolor = get_print_color();
+
+            change_pos(pack[2], pack[3]);
+            set_print_color(pack[4]);
+
             putchar ((char)pack[1]);
+
+            set_print_color(oldcolor);
+            change_pos(oldx, oldy);
+            en_int();
+
+            int len = 1;
+            send_msg(&len, caller, sizeof(int), 20);
         }
         else if (pack[0] == 2) { //printint
-            printk ("%d", pack[1]);
+            dis_int();
+            int oldx = get_pos_x(), oldy = get_pos_y();
+            int oldcolor = get_print_color();
+
+            change_pos(pack[2], pack[3]);
+            set_print_color(pack[4]);
+
+            int len = printk ("%d", pack[1]);
+
+            set_print_color(oldcolor);
+            change_pos(oldx, oldy);
+            en_int();
+
+            send_msg(&len, caller, sizeof(int), 20);
         }
     }
 }
@@ -60,7 +101,7 @@ PUBLIC void clock_api_process(void) {
         while ((caller = receive_any_msg(pack)) == -1);
         if (pack[0] == 0) { //get_ticks
             int tks = ticks;
-            send_msg(&tks, caller, sizeof(int));
+            send_msg(&tks, caller, sizeof(int), 20);
         }
     }
 }

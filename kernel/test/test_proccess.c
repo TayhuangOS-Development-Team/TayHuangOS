@@ -48,24 +48,29 @@
 PRIVATE int get_ticks(void) {
     qword pack[20] = {0x00};
     int ticks = 0;
-    send_msg(pack, 0x10000, sizeof(pack));
-    receive_msg(&ticks, 0x10000);
+    sendrecv(pack, &ticks, 0x10000, sizeof(pack), 20);
     return ticks;
 }
 
-PRIVATE void ipc_puts(const char *str) {
-    qword pack[] = {0x00, (qword)str};
-    send_msg(pack, 0x10001, sizeof(pack));
+PRIVATE int ipc_puts(const char *str, int x, int y, int color) {
+    qword pack[] = {0x00, (qword)str, x, y, color};
+    int len = 0;
+    sendrecv(pack, &len, 0x10001, sizeof(pack), 20);
+    return len;
 }
 
-PRIVATE void ipc_putchar(char ch) {
-    qword pack[] = {0x01, ch};
-    send_msg(pack, 0x10001, sizeof(pack));
+PRIVATE int ipc_putchar(char ch, int x, int y, int color) {
+    qword pack[] = {0x01, ch, x, y, color};
+    int len = 0;
+    sendrecv(pack, &len, 0x10001, sizeof(pack), 20);
+    return len;
 }
 
-PRIVATE void ipc_printint(int num) {
-    qword pack[] = {0x02, num};
-    send_msg(pack, 0x10001, sizeof(pack));
+PRIVATE int ipc_printint(int num, int x, int y, int color) {
+    qword pack[] = {0x02, num, x, y, color};
+    int len = 0;
+    sendrecv(pack, &len, 0x10001, sizeof(pack), 20);
+    return len;
 }
 
 PRIVATE void delay(int wait_ticks) { //延迟函数
@@ -133,15 +138,11 @@ void keyboard_handler(void) {
 
 void tick_display(void) {
     while (true) {
-        int posx = get_pos_x(), posy = get_pos_y();
-        change_pos(0, 0); //设置打印位置
-        int color = get_print_color();
-        set_print_color(0x0D);
+        int posx = 0, posy = 0;
 
-        printk ("Current Startup Time(s): %d\n", get_ticks() / 50); //打印
-
-        set_print_color(color);
-        change_pos(posx, posy);
+        posx += ipc_puts("Current Startup Time(s): ", posx, posy, 0x0D);
+        posx += ipc_printint(get_ticks() / 50, posx, posy, 0x0D);
+        posx += ipc_putchar('\n', posx, posy, 0x0D);
 
         delay(25 * 2); //延迟一会儿再打印
     }
@@ -155,7 +156,7 @@ void __test_proc1(void) {
     while (pid2 == 0);
     printk ("hello1!\n");
     //delay(100);
-    send_msg("Hello, IPC!", pid2, 12);
+    send_msg("Hello, IPC!", pid2, 12, 20);
     while(true);
 }
 

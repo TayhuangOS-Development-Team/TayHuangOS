@@ -52,7 +52,7 @@ PRIVATE bool __receive_msg(void *msg, int source) {
     return true;
 }
 
-PUBLIC int __receive_any_msg(void *msg) { //收取第一个消息
+PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
     if (current_task->ipc_info.queue == NULL) //无消息
         return -1;
 
@@ -71,7 +71,7 @@ PUBLIC int __receive_any_msg(void *msg) { //收取第一个消息
     return from;
 }
 
-PRIVATE bool __send_msg(void *msg, int dest, int len) {
+PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
     task_struct *dest_task = __find_task(dest);
     if (dest_task == NULL) //目标不存在
         return false;
@@ -97,6 +97,8 @@ PRIVATE bool __send_msg(void *msg, int dest, int len) {
         queue_tail->next_msg = pack;
         pack->last_msg = queue_tail;
     }
+    current_task->ipc_info.wait_ticks = tickout;
+    current_task->ipc_info.wait_for = dest;
     current_task->state = WAITING_FOR_SENDING; //等待
     return true;
 }
@@ -104,7 +106,7 @@ PRIVATE bool __send_msg(void *msg, int dest, int len) {
 PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,
     qword arg1, qword arg2, qword arg3, qword arg4, qword arg5, qword arg6, qword arg7, qword arg8) { //系统调用
     if (sysno == 0) {
-        return __send_msg(src, arg1, counter);
+        return __send_msg(src, arg1, data, counter);
     }
     else if (sysno == 1) {
         return __receive_msg(dst, arg1);
@@ -115,14 +117,22 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
     return -1;
 }
 
-bool send_msg(void *msg, int dest, int len) { //送消息
-    return dosyscall(0, 0, len, 0, msg, NULL, dest, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC bool send_msg(void *msg, int dest, int len, int tickout) { //送消息
+    return dosyscall(0, 0, tickout, len, msg, NULL, dest, 0, 0, 0, 0, 0, 0, 0);
 }
 
-bool receive_msg(void *msg, int source) { //收特定进程的消息
+PUBLIC bool receive_msg(void *msg, int source) { //收特定进程的消息
     return dosyscall(1, 0, 0, 0, NULL, msg, source, 0, 0, 0, 0, 0, 0, 0);
 }
 
-int receive_any_msg(void *msg) { //收消息
+PUBLIC int receive_any_msg(void *msg) { //收消息
     return dosyscall(2, 0, 0, 0, NULL, msg, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout) {
+    if (! send_msg(msg, dest, len, tickout))
+        return false;
+    if (! receive_msg(ret, dest))
+        return false;
+    return true;
 }
