@@ -97,32 +97,49 @@ PRIVATE bool start_with(const char *str, const char *prefix) { //判断前缀
 
 void fake_shell(void) { //假shell
     char buffer[64];
+    int posx = 0;
+    int posy = 1; //初始位置
+    change_pos(posx, posy);
+    change_cursor_pos(posx, posy); //设置光标与打印位置
     while (true) {
-        int color = get_print_color();
-        set_print_color(0x0A);
+        posx = get_pos_x();
+        posy = get_pos_y(); //获取当前位置(有键盘驱动程序会一起对屏幕内容进行增加/减少)
 
-        putchar ('>'); //提示符
+        posx += ipc_putchar('>', posx, posy, 0x0A); //提示符
+        ipc_putchar(' ', posx, posy, 0x0F); //空白用于显示光标(白色)
 
-        set_print_color(color);
+        posy += (posx / 80); //将posx控制在0~79内
+        posx %= 80;
 
-        flush_to_screen();
+        change_pos(posx, posy);
+        change_cursor_pos(posx, posy); //设置位置
+        flush_to_screen(); //刷新到屏幕
 
         getline (buffer); //获取命令
+
+        posx = get_pos_x(); //获取位置
+        posy = get_pos_y();
+
         if (start_with(buffer, "echo ")) { //echo命令
-            int color = get_print_color();
-            set_print_color(0x0A);
+            posx += ipc_puts(&buffer[5], posx, posy, 0x0A); //输出
 
-            int len = strlen(buffer);
-            for (int i = 5 ; i < len ; i ++) {
-                putchar (buffer[i]);
-            }
+            posy += (posx / 80); //将posx控制在0~79内
+            posx %= 80;
 
-            set_print_color(color);
-            putchar ('\n');
+            ipc_putchar('\n', posx, posy, 0x0A);
+
+            posy ++;
+            posx = 0; //换行
         }
         else { //错误输入
-            printk ("Wrong Input!\n");
+            ipc_puts("Wrong Input!\n", posx, posy, 0x0A);
+
+            posy ++;
+            posx = 0; //换行
         }
+
+        change_pos(posx, posy);
+        change_cursor_pos(posx, posy);
     }
 }
 

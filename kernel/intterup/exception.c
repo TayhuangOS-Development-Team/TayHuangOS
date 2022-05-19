@@ -57,7 +57,7 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
         "[Reserved] Reserved exception!\n"
     };
 
-    set_print_color(0xFC);
+    set_print_color(0x7C);
     clrscr();
     printk ("Oops!There is a exception throwing!The followings are its information:\n"); //
     if (vector < 32) {

@@ -35,8 +35,6 @@ PRIVATE int scroll_line = 0;
 PRIVATE bool do_cursor_move = true;
 
 PRIVATE void set_cursor_pos(int pos) {
-    if (! do_cursor_move)
-        return;
     outb(0x3D4, 0x0F);
 	outb(0x3D5, (byte) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
@@ -53,7 +51,13 @@ PUBLIC void set_print_color(int color) {
 
 PUBLIC void change_pos(int x, int y) {
     current_pos = y * VIDEO_INFO.width + x;
-    set_cursor_pos(current_pos - start_pos);
+    if (do_cursor_move)
+        set_cursor_pos(current_pos - start_pos);
+}
+
+PUBLIC void change_cursor_pos(int x, int y) {
+    int pos = y * VIDEO_INFO.width + x;
+    set_cursor_pos(pos - start_pos);
 }
 
 PUBLIC int get_pos_x(void) {
@@ -81,7 +85,8 @@ PUBLIC void clrscr(void) {
 
 PUBLIC void flush_to_screen(void) {
     memcpy(VIDEO_INFO.framebuffer, &output_buffer[start_pos], VIDEO_INFO.width * VIDEO_INFO.height * 2);
-    set_cursor_pos(current_pos - start_pos);
+    if (do_cursor_move)
+        set_cursor_pos(current_pos - start_pos);
 }
 
 PUBLIC void scroll_screen(int lines) {
@@ -93,21 +98,25 @@ PUBLIC void putchar(char ch) {
     if (ch == '\r' || ch == '\n') { //制表符
         int line = current_pos / VIDEO_INFO.width;
         current_pos = (line + 1) * VIDEO_INFO.width;
-        output_buffer[current_pos] = MKWORD(0x0F, ' ');
+        if (do_cursor_move)
+            output_buffer[current_pos] = MKWORD(0x0F, LOWBYTE(output_buffer[current_pos]));
         flush_to_screen();
     }
     else if (ch == '\t') {
         current_pos += 4;
-        output_buffer[current_pos] = MKWORD(0x0F, ' ');
+        if (do_cursor_move)
+            output_buffer[current_pos] = MKWORD(0x0F, LOWBYTE(output_buffer[current_pos]));
         flush_to_screen();
     }
     else if (ch == '\v') {
         current_pos += VIDEO_INFO.width;
-        output_buffer[current_pos] = MKWORD(0x0F, ' ');
+        if (do_cursor_move)
+            output_buffer[current_pos] = MKWORD(0x0F, LOWBYTE(output_buffer[current_pos]));
         flush_to_screen();
     }
     else if (ch == '\b') {
-        output_buffer[current_pos - 1] = MKWORD(0x0F, ' ');
+        if (do_cursor_move)
+            output_buffer[current_pos - 1] = MKWORD(0x0F, ' ');
         current_pos --;
         flush_to_screen();
     }
@@ -115,12 +124,14 @@ PUBLIC void putchar(char ch) {
         clrscr();
         current_pos = 0;
         start_pos = 0;
-        output_buffer[current_pos] = MKWORD(0x0F, ' ');
+        if (do_cursor_move)
+            output_buffer[current_pos] = MKWORD(0x0F, LOWBYTE(output_buffer[current_pos]));
         flush_to_screen();
     }
     else { //普通字符
         output_buffer[current_pos ++] = MKWORD(print_color, ch);
-        output_buffer[current_pos] = MKWORD(0x0F, ' ');
+        if (do_cursor_move)
+            output_buffer[current_pos] = MKWORD(0x0F, LOWBYTE(output_buffer[current_pos]));
     }
     int y = (current_pos - start_pos) / VIDEO_INFO.width;
     if (y - scroll_line > 0) { //滚动屏幕
