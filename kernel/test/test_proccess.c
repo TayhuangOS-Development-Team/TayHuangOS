@@ -27,26 +27,25 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../kheap.h"
+#include <kheap.h>
 
-#include "../memory/paging.h"
-#include "../memory/pmm.h"
+#include <memory/paging.h>
+#include <memory/pmm.h>
 
-#include "../display/video.h"
-#include "../display/printk.h"
+#include <display/video.h>
+#include <display/printk.h>
 
-#include "../intterup/init_int.h"
-#include "../intterup/irq_handler.h"
+#include <intterup/init_int.h>
+#include <intterup/irq_handler.h>
 
-#include "../init/init_clock.h"
-#include "../init/init_misc.h"
+#include <init/init_clock.h>
+#include <init/init_misc.h>
 
-#include "../process/task_manager.h"
+#include <process/task_manager.h>
 
-#include "../keyboard/keyboard.h"
+#include <keyboard/keyboard.h>
 
-#include "../syscall/syscall.h"
-#include "../syscall/system_api.h"
+#include <syscall/syscall.h>
 
 PRIVATE int ipc_puts(const char *str, int x, int y, int color) {
     qword pack[] = {0x00, (qword)str, x, y, color};

@@ -18,7 +18,7 @@
 
 #include "irq_handler.h"
 #include "init_int.h"
-#include "../syscall/syscall.h"
+#include <syscall/syscall.h>
 
 PUBLIC short IRQ_FLAGS[16];
 

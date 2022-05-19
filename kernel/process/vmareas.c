@@ -17,7 +17,7 @@
 
 
 #include "vmareas.h"
-#include "../kheap.h"
+#include <kheap.h>
 
 PRIVATE void update_height(vm_area *node) {
 	int lheight = node->left ? node->left->height : 0;

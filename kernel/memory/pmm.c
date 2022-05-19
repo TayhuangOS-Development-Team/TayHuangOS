@@ -17,7 +17,7 @@
 
 
 #include "pmm.h"
-#include "../kheap.h"
+#include <kheap.h>
 
 PRIVATE byte *pmpage_bitmap;
 PRIVATE qword pmpage_bitmap_size = 0;

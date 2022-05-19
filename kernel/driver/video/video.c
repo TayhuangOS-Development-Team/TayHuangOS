@@ -8,24 +8,20 @@
  * 
  * 作者: Flysong
  * 
- * system_api.h
+ * video.c
  * 
- * 系统api
+ * 视频驱动
  * 
  */
 
 
 
-#include "system_api.h"
-#include "syscall.h"
-#include "../process/task_manager.h"
-#include "../display/printk.h"
+#include "video.h"
+
+#include <syscall/syscall.h>
+#include <display/printk.h>
 
 #include <string.h>
-
-PUBLIC void after_syscall(struct intterup_args *regs);
-
-PUBLIC volatile int ticks = 0;
 
 PUBLIC void video_api_process(void) {
     while (true) {
@@ -82,24 +78,5 @@ PUBLIC void video_api_process(void) {
 
             send_msg(&len, caller, sizeof(int), 20);
         }
-    }
-}
-
-PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { //时钟中断
-    ticks ++;
-
-    if (! entered_handler)
-        after_syscall(regs);
-
-    current_task->counter --;
-
-    return 0;
-}
-
-PUBLIC void clock_api_process(void) {
-    while (true) {
-        qword pack[20];
-        int caller = 0;
-        while ((caller = receive_any_msg(pack)) == -1);
     }
 }

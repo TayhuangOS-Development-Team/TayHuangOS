@@ -15,10 +15,11 @@
  */
 
 #include "keyboard.h"
-#include "../display/printk.h"
-#include <tayhuang/io.h>
-#include "../kheap.h"
 #include "keymap.h"
+
+#include <display/printk.h>
+#include <tayhuang/io.h>
+#include <kheap.h>
 
 #define BUFFER_LEN (256) //缓冲区大小
 

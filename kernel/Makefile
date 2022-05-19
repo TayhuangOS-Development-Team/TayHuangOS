@@ -24,8 +24,8 @@ TOOL_C_SRC := tool/tostring tool/debug
 INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception
 INIT_C_SRC := init/init_clock
 PROCESS_C_SRC := process/vmareas process/task_manager
-KEYBOARD_C_SRC := keyboard/keyboard keyboard/keymap
-SYSCALL_C_SRC := syscall/syscall syscall/system_api
+SYSCALL_C_SRC := syscall/syscall
+DRIVER_C_SRC := driver/video/video driver/clock/clock driver/keyboard/keyboard driver/keyboard/keymap
 TEST_C_SRC := test/test_proccess
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
@@ -37,7 +37,8 @@ C_SRC := kernel kheap \
 		$(PROCESS_C_SRC) \
 		$(KEYBOARD_C_SRC) \
 		$(SYSCALL_C_SRC) \
-		$(TEST_C_SRC)
+		$(TEST_C_SRC) \
+		$(DRIVER_C_SRC)
 
 CPP_SRC :=
 
@@ -45,10 +46,10 @@ ASMFLAGS :=
 ASM_SRC := entry intterup/int_handlers syscall/dosyscall
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/"
+C_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/kernel/driver/"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/"
+CPP_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/kernel/driver/"
 
 LD_FLAGS :=
 

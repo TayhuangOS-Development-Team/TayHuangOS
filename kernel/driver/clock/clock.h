@@ -8,9 +8,9 @@
  * 
  * 作者: Flysong
  * 
- * system_api.h
+ * clock.h
  * 
- * 系统api
+ * 时钟驱动器
  * 
  */
 
@@ -20,5 +20,4 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void video_api_process(void);
 PUBLIC void clock_api_process(void);

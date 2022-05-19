@@ -19,8 +19,9 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-#include "vmareas.h"
 #include <tayhuang/paging.h>
+
+#include "vmareas.h"
 
 typedef struct {
     PML4E *pgd;

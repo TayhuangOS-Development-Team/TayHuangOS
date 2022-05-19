@@ -17,9 +17,11 @@
 
 
 #include "task_manager.h"
-#include "../kheap.h"
-#include "../memory/paging.h"
+
 #include <tayhuang/io.h>
+
+#include <kheap.h>
+#include <memory/paging.h>
 
 PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_brk, qword end_brk,
     qword start_rodata, qword end_rodata, qword start_stack) {

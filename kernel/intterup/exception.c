@@ -18,7 +18,7 @@
 
 #include "exception.h"
 
-#include "../display/printk.h"
+#include <display/printk.h>
 
 PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs) {
     byte old_print_color = get_print_color();

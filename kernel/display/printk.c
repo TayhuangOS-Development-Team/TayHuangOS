@@ -18,10 +18,14 @@
 
 #include "printk.h"
 #include "video.h"
-#include "../kheap.h"
+
+#include <kheap.h>
+
 #include <tool/tostring.h>
-#include <stdarg.h>
+
 #include <tayhuang/io.h>
+
+#include <stdarg.h>
 #include <ctype.h>
 #include <string.h>
 

@@ -15,9 +15,9 @@
  */
 
 #include "syscall.h"
-#include "../display/printk.h"
-#include "../process/task_manager.h"
-#include "../kheap.h"
+#include <display/printk.h>
+#include <process/task_manager.h>
+#include <kheap.h>
 
 PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid

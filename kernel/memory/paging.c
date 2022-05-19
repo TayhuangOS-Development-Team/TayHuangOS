@@ -18,7 +18,9 @@
 
 #include "paging.h"
 #include "pmm.h"
-#include "../kheap.h"
+
+#include <kheap.h>
+
 #include <tayhuang/paging.h>
 #include <tayhuang/control_registers.h>
 

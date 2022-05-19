@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-#include "../display/printk.h"
+#include <display/printk.h>
 
 void assertion_failure(const char *expression, const char *file, const char *base_file, int line) {
     printk("assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);

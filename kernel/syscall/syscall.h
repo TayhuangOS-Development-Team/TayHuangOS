@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-#include "../intterup/init_int.h"
+#include <intterup/init_int.h>
 
 //                       rax        rbx           rcx          rdx         rsi       rdi
 PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,

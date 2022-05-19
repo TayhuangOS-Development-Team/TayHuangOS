@@ -19,7 +19,8 @@
 #pragma once
 
 #include "task_struct.h"
-#include "../intterup/init_int.h"
+
+#include <intterup/init_int.h>
 
 PUBLIC extern task_struct *task_table;
 PUBLIC extern task_struct *current_task;
