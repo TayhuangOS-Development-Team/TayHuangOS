@@ -10,7 +10,7 @@
  *
  * vmareas.c
  *
- * 虚空间平衡树
+ * 虚空间平衡树(AVL)
  *
  */
 
@@ -19,19 +19,19 @@
 #include "vmareas.h"
 #include <kheap.h>
 
-PRIVATE void update_height(vm_area *node) {
+PRIVATE void update_height(vm_area *node) { //更新高度
 	int lheight = node->left ? node->left->height : 0;
 	int rheight = node->right ? node->right->height : 0;
 	node->height = max(lheight, rheight) + 1;
 }
 
-PRIVATE int dis_height(vm_area *node) {
+PRIVATE int dis_height(vm_area *node) { //计算左右高度差
 	int lheight = node->left ? node->left->height : 0;
 	int rheight = node->right ? node->right->height : 0;
 	return lheight - rheight;
 }
 
-PUBLIC vm_area *create_vmarea(void) {
+PUBLIC vm_area *create_vmarea(void) { //构造函数
 	vm_area *node = (vm_area*)malloc(sizeof(vm_area));
 	node->height = 1;
 	node->left = NULL;
@@ -39,7 +39,7 @@ PUBLIC vm_area *create_vmarea(void) {
 	return node;
 }
 
-PRIVATE vm_area *fix_ll(vm_area *an) {
+PRIVATE vm_area *fix_ll(vm_area *an) { //LL不平衡修补
     vm_area* bn = an->left;
     vm_area* cn = bn->right;
     bn->right = an;
@@ -50,7 +50,7 @@ PRIVATE vm_area *fix_ll(vm_area *an) {
     return bn;
 }
 
-PRIVATE vm_area *fix_rr(vm_area *an) {
+PRIVATE vm_area *fix_rr(vm_area *an) { //RR不平衡修补
     vm_area *bn = an->right;
     vm_area *cn = bn->left;
     bn->left = an;
@@ -61,18 +61,18 @@ PRIVATE vm_area *fix_rr(vm_area *an) {
     return bn;
 }
 
-PRIVATE vm_area *fix_lr(vm_area *an) {
+PRIVATE vm_area *fix_lr(vm_area *an) { //LR不平衡修补
     an->left = fix_rr(an->left);
     return fix_ll(an);
 }
 
-PRIVATE vm_area *fix_rl(vm_area *an) {
+PRIVATE vm_area *fix_rl(vm_area *an) { //RL不平衡修补
     an->right = fix_ll(an->right);
     return fix_rr(an);
 }
 
 PUBLIC vm_area *vmarea_insert(vm_area *node, void *vm_start, void *vm_end,
-    byte container_type, word container_info, byte shared_protection, byte global_protection, byte attribute) {
+    byte container_type, word container_info, byte shared_protection, byte global_protection, byte attribute) { //添加节点
     if (node == NULL) {
         node = create_vmarea();
         node->vm_start = vm_start;
@@ -130,8 +130,8 @@ PUBLIC vm_area *vmarea_delete(vm_area *node, void *vm_start, void *vm_end) {
     else if (node->vm_start > vm_start) { //小于: left
         node->left = vmarea_delete(node->left, vm_start, vm_end);
     }
-    else {
-        if (node->left) {
+    else { //是需要寻找的
+        if (node->left) { //有左儿子
             vm_area *nd = node->left;
             while (nd->right != NULL)
                 nd = nd->right;
@@ -142,7 +142,7 @@ PUBLIC vm_area *vmarea_delete(vm_area *node, void *vm_start, void *vm_end) {
             node->protection = nd->protection;
             node->left = vmarea_delete(node->left, nd->vm_start, nd->vm_end);
         }
-        else if (node->right) {
+        else if (node->right) { //有右儿子
             vm_area *nd = node->right;
             while (nd->left != NULL)
                 nd = nd->left;
@@ -153,7 +153,7 @@ PUBLIC vm_area *vmarea_delete(vm_area *node, void *vm_start, void *vm_end) {
             node->protection = nd->protection;
             node->right = vmarea_delete(node->right, nd->vm_start, nd->vm_end);
         }
-        else {
+        else { //叶节点
             free(node);
             return NULL;
         }

@@ -123,12 +123,13 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     current_task->thread_info.r13 = regs->r13;
     current_task->thread_info.r14 = regs->r14;
     current_task->thread_info.r15 = regs->r15;
-    if (current_task->state == RUNNING)
+    if (current_task->state == RUNNING) //若是因时间片结束
         current_task->state = READY;
 
     //switch
+    task_struct *nxt_task = current_task->next ? current_task->next : task_table;
     do {
-        current_task = current_task->next ? current_task->next : task_table;
+        current_task = nxt_task;
         if (current_task->state == WAITING_FOR_SENDING) {
             if (current_task->ipc_info.wait_times > 0) {
                 current_task->ipc_info.wait_times --;
@@ -151,11 +152,28 @@ PUBLIC void do_switch(struct intterup_args *regs) {
                 }
                 current_task->thread_info.rax = 0;
                 current_task->ipc_info.wait_for = 0;
-                current_task->state = READY;
+                current_task->state = READY; //可以运行
             }
+        }
+        else if (current_task->state == TERMINATE || current_task->state == EXCEPTION) { //回收
+            if (current_task->next) //删除节点
+                current_task->next->last = current_task->last;
+            if (current_task->last)
+                current_task->last->next = current_task->next;
+
+            for (msgpack_struct *nxt, *pack = current_task->ipc_info.queue ; pack != NULL ; pack = nxt) { //清除IPC
+                nxt = pack->next_msg;
+                free(pack);
+            }
+            nxt_task = current_task->next ? current_task->next : task_table;
+            free(current_task); //释放
+
+            continue;
         }
         //set counter
         current_task->counter = ((current_task->counter >> 1) + current_task->priority);
+
+        nxt_task = current_task->next ? current_task->next : task_table;
     } while (current_task->state != READY && current_task->state != SUBBMITED);
 
     //up task
@@ -187,5 +205,5 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     regs->r13 = current_task->thread_info.r13;
     regs->r14 = current_task->thread_info.r14;
     regs->r15 = current_task->thread_info.r15;
-    current_task->state = RUNNING;
+    current_task->state = RUNNING; //设置状态
 }
