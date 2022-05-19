@@ -127,13 +127,11 @@ PUBLIC void do_switch(struct intterup_args *regs) {
     //switch
     do {
         current_task = current_task->next ? current_task->next : task_table;
-        //set counter
-        current_task->counter = ((current_task->counter >> 1) + current_task->priority);
         if (current_task->state == WAITING_FOR_SENDING) {
-            if (current_task->ipc_info.wait_ticks > 0) {
-                current_task->ipc_info.wait_ticks --;
+            if (current_task->ipc_info.wait_times > 0) {
+                current_task->ipc_info.wait_times --;
             }
-            else {
+            else if (current_task->ipc_info.wait_times != -1) {
                 for (task_struct *cur = task_table ; cur != NULL ; cur = cur->next) { //遍历task表
                     if (cur->pid == current_task->ipc_info.wait_for) {
                         for (msgpack_struct *pack = cur->ipc_info.queue ; pack != NULL ; pack = pack->next_msg) {
@@ -149,10 +147,13 @@ PUBLIC void do_switch(struct intterup_args *regs) {
                         break;
                     }
                 }
+                current_task->thread_info.rax = 0;
                 current_task->ipc_info.wait_for = 0;
-                current_task->state = RUNNING;
+                current_task->state = READY;
             }
         }
+        //set counter
+        current_task->counter = ((current_task->counter >> 1) + current_task->priority);
     } while (current_task->state != READY && current_task->state != SUBBMITED);
 
     //up task

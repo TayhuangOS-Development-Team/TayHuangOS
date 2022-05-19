@@ -97,7 +97,7 @@ PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
         queue_tail->next_msg = pack;
         pack->last_msg = queue_tail;
     }
-    current_task->ipc_info.wait_ticks = tickout;
+    current_task->ipc_info.wait_times = tickout;
     current_task->ipc_info.wait_for = dest;
     current_task->state = WAITING_FOR_SENDING; //等待
     return true;

@@ -66,7 +66,7 @@ typedef struct _msgpack_struct {
 
 typedef struct {
     int wait_for;
-    int wait_ticks;
+    int wait_times;
     void *msg;
     msgpack_struct *queue;
 } ipc_struct;

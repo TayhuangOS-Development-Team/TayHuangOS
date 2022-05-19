@@ -69,9 +69,9 @@ PRIVATE int ipc_printint(int num, int x, int y, int color) {
     return len;
 }
 
-PRIVATE void delay(int wait_ticks) { //延迟函数
+PRIVATE void delay(int wait_times) { //延迟函数
     int last_ticks = get_ticks();
-    while (get_ticks() - last_ticks < wait_ticks);
+    while (get_ticks() - last_ticks < wait_times);
 }
 
 PRIVATE char *getline(char *buffer) { //获取一行的输入
@@ -169,12 +169,13 @@ volatile int pid1 = 0, pid2 = 0;
 
 void __test_proc1(void) {
     pid1 = current_task->pid;
-    while (pid2 == 0);
+    //while (pid2 == 0);
 
     char msg[20] = {};
     while (true) {
-        send_msg("Hello, IPC!", pid2, 12, 50000);
-        receive_msg(msg, pid2);
+        assert(send_msg("Hello, IPC!", 0, 12, 200));
+        printk ("sended!\n");
+        receive_msg(msg, 0);
         printk ("Proc2 says: \"%s\"\n", msg);
 
         delay(50);
