@@ -20,6 +20,7 @@
 #include <display/printk.h>
 #include <tayhuang/io.h>
 #include <kheap.h>
+#include <syscall/syscall.h>
 
 #define BUFFER_LEN (256) //缓冲区大小
 
@@ -183,4 +184,20 @@ PUBLIC short keyboard_int_handler(int irq, struct intterup_args *regs, bool ente
     if (! entered_handler) //不是嵌套中断
         after_syscall(regs);
     return 0;
+}
+
+PUBLIC void keyboard_handler(void) {
+    while (true) {
+        deal_key(); //处理按键
+    }
+}
+
+PUBLIC void keyboard_api_process(void) {
+    while (true) {
+        qword pack[20];
+        int caller = 0;
+        while ((caller = receive_any_msg(pack)) == -1);
+        if (pack[0] == 0) {
+        }
+    }
 }

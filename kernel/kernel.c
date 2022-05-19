@@ -135,13 +135,14 @@ void init(void) { //init进程
     set_mapping(0, 0, 16384, true, true);
 
     //API PROCCESS
-    create_task(1, clock_api_process, RFLAGS_KERNEL, 0x1100000, CS_KERNEL, kernel_pml4)->pid = API_PID(0);
-    create_task(1, video_api_process, RFLAGS_KERNEL, 0x1150000, CS_KERNEL, kernel_pml4)->pid = API_PID(1);
+    create_task(1, keyboard_handler, RFLAGS_KERNEL,     0x1100000, CS_KERNEL, kernel_pml4);
+    create_task(1, clock_api_process, RFLAGS_KERNEL,    0x1050000, CS_KERNEL, kernel_pml4)->pid = API_PID(0);
+    create_task(1, video_api_process, RFLAGS_KERNEL,    0x1000000, CS_KERNEL, kernel_pml4)->pid = API_PID(1);
+    create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, CS_KERNEL, kernel_pml4)->pid = API_PID(6);
 
     //TEST PROCCESS
-    create_task(2, keyboard_handler, RFLAGS_KERNEL, 0x1350000, CS_KERNEL, kernel_pml4);
-    create_task(1, fake_shell, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
-    create_task(2, tick_display, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
+    create_task(1, fake_shell, RFLAGS_USER, 0x1350000, CS_USER, level3_pml4);
+    create_task(2, tick_display, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
     exit();

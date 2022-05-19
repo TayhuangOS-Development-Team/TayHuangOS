@@ -19,7 +19,6 @@
 #pragma once
 
 void fake_shell(void);
-void keyboard_handler(void);
 void tick_display(void);
 void __test_proc1(void);
 void __test_proc2(void);

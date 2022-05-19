@@ -24,3 +24,5 @@ PUBLIC void init_keyboard(void);
 PUBLIC void deal_key(void);
 PUBLIC char getchar(void);
 PUBLIC short keyboard_int_handler(int irq, struct intterup_args *regs, bool entered_handler);
+PUBLIC void keyboard_handler(void);
+PUBLIC void keyboard_api_process(void);

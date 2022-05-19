@@ -142,12 +142,6 @@ void fake_shell(void) { //假shell
     }
 }
 
-void keyboard_handler(void) {
-    while (true) {
-        deal_key(); //处理按键
-    }
-}
-
 void tick_display(void) {
     while (true) {
         int posx = 0, posy = 0;
