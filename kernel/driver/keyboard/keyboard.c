@@ -188,7 +188,7 @@ PUBLIC short keyboard_int_handler(int irq, struct intterup_args *regs, bool ente
 
 PUBLIC void keyboard_handler(void) {
     while (true) {
-        deal_key(); //处理按键
+        deal_key();
     }
 }
 

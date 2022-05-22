@@ -1,11 +1,13 @@
 OBJECTSDIR := $(OBJECTSDIR)/kernel/
 
 KERNEL_OUTPUT := $(BINDIR)/kernel.bin
+KERNEL_SYMBOL_OUTPUT := $(BINDIR)/kernel.sym
 ASM := as
 RM := rm
 GCC := gcc
 GPP := g++
 LD := ld
+OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -80,6 +82,10 @@ $(OBJECTSDIR)/%.o : %.S
 .PHONY: build
 build: $(OBJECTS)
 	$(LD) $(LD_FLAGS) -T kernel.ld -o $(KERNEL_OUTPUT) $^
+ifeq ($(MODE), debug)
+	$(OBJCOPY) --only-keep-debug $(KERNEL_OUTPUT) $(KERNEL_SYMBOL_OUTPUT)
+	$(OBJCOPY) --strip-debug $(KERNEL_OUTPUT)
+endif
 
 .PHONY: clean
 clean:

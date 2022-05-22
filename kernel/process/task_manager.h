@@ -24,6 +24,6 @@
 
 PUBLIC extern task_struct *task_table;
 PUBLIC extern task_struct *current_task;
-PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, word cs, void *pgd);
-PUBLIC void do_fork(int priority, void(*entry)(void), qword rflags, qword rsp, word cs, void *pgd);
+PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd, qword start_pos, qword end_pos);
+PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, qword rbp);
 PUBLIC void do_switch(struct intterup_args *regs);

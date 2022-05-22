@@ -19,12 +19,14 @@
 #include "task_manager.h"
 
 #include <tayhuang/io.h>
+#include <tayhuang/control_registers.h>
 
 #include <kheap.h>
 #include <memory/paging.h>
+#include <memory/pmm.h>
 
 PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_brk, qword end_brk,
-    qword start_rodata, qword end_rodata, qword start_stack) {
+    qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) {
     mm_struct *mm = malloc(sizeof(mm_struct));
 
     mm->areas = create_vmarea();
@@ -39,12 +41,13 @@ PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code,
     mm->start_rodata = start_rodata;
     mm->end_rodata   = end_rodata;
     mm->start_stack  = start_stack;
+    mm->end_stack  = end_stack;
 
     return mm;
 }
 
 PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qword rflags, word cs, void *pgd, qword start_code, qword end_code,
-    qword start_data, qword end_data, qword start_brk, qword end_brk, qword start_rodata, qword end_rodata, qword start_stack) {
+    qword start_data, qword end_data, qword start_brk, qword end_brk, qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) {
     task_struct *task = malloc(sizeof(task_struct));
     memset(&task->thread_info, 0, sizeof(task->thread_info));
     task->thread_info.rip = entry;
@@ -61,7 +64,7 @@ PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qwor
     task->pid = pid;
     memset (&task->signal, 0, sizeof (task->signal));
     task->mm_info = create_mm_struct(pgd, start_code, end_code, start_data, end_data,
-        start_brk, end_brk, start_rodata, end_rodata, start_stack);
+        start_brk, end_brk, start_rodata, end_rodata, start_stack, end_stack);
 
     task->ipc_info.msg = NULL;
     task->ipc_info.queue = NULL;
@@ -76,20 +79,68 @@ PRIVATE int alloc_pid(void) {
     return __cur_pid ++;
 }
 
-PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, word cs, void *pgd) {
+PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd, qword start_pos, qword end_pos) {
+    dis_int();
     task_struct *task = create_task_struct(alloc_pid(), priority, entry, rflags, cs, pgd,
-         0, 0, 0, 0, 0 ,0 ,0 ,0 ,0);
+         start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, rsp, rbp);
     task->next = task_table;
     if (task_table != NULL)
         task_table->last = task;
     task_table = task;
     task->thread_info.rsp = rsp;
+    en_int();
     return task;
 }
 
-PUBLIC void do_fork(int priority, void(*entry)(void), qword rflags, qword rsp, word cs, void *pgd) {
-    create_task(priority, entry, rflags, rsp, cs, pgd);
-    //TODO
+PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) {
+    set_pml4(pml4);
+    while (start_addr < end_addr) {
+        void *start_page = lookup_free_page(); //找页
+        mark_used(start_page); //标记
+        int page_num = 0;
+        void *tmp_addr = start_addr;
+        while (tmp_addr < end_addr) { //连续分配
+            void *next_page = lookup_free_page();
+            if ((next_page - start_page) != MEMUNIT_SZ) { //不是连续的下一个页
+                break;
+            }
+            mark_used(next_page); //标记
+            page_num ++; //页数++
+            tmp_addr += MEMUNIT_SZ; //下一个页
+        }
+        memcpy(start_addr, start_page, MEMUNIT_SZ * page_num);
+        set_mapping(start_addr, start_page, page_num, true, true);
+        start_addr = tmp_addr;
+    }
+}
+
+PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, qword rbp) {
+    dis_int();
+    task_struct *task = create_task_struct(alloc_pid(), priority, entry,
+         current_task->thread_info.rsp, current_task->thread_info.cs, current_task->mm_info->pgd,
+         current_task->mm_info->start_code, current_task->mm_info->end_code,
+         current_task->mm_info->start_data, current_task->mm_info->end_data,
+         current_task->mm_info->start_brk, current_task->mm_info->end_brk,
+         current_task->mm_info->start_rodata, current_task->mm_info->end_rodata,
+         rsp, rbp);
+    task->next = task_table;
+    if (task_table != NULL)
+        task_table->last = task;
+    task_table = task;
+    task->thread_info.rsp = rsp;
+
+    void *pml4 = create_pgd(); //页表
+    set_pml4(pml4);
+    set_mapping(0, 0, 16384, true, true);
+    do_mem_copy(current_task->mm_info->start_code,   current_task->mm_info->end_code,   pml4);
+    do_mem_copy(current_task->mm_info->start_data,   current_task->mm_info->end_data,   pml4);
+    do_mem_copy(current_task->mm_info->start_brk,    current_task->mm_info->end_brk,    pml4);
+    do_mem_copy(current_task->mm_info->start_rodata, current_task->mm_info->end_rodata, pml4);
+    do_mem_copy(rsp,                                 rbp,                               pml4);
+    task->mm_info->pgd = pml4;
+    en_int();
+
+    return task;
 }
 
 PUBLIC task_struct *current_task = NULL;

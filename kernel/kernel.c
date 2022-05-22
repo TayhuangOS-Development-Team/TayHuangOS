@@ -126,6 +126,8 @@ PRIVATE void *kernel_pml4 = NULL;
 
 #define API_PID(x) (0x10000 + (x))
 
+PRIVATE void *kernel_limit;
+
 void init(void) { //init进程
     stop_switch = false;
     printk ("\n");
@@ -135,14 +137,14 @@ void init(void) { //init进程
     set_mapping(0, 0, 16384, true, true);
 
     //API PROCCESS
-    create_task(1, keyboard_handler, RFLAGS_KERNEL,     0x1100000, CS_KERNEL, kernel_pml4);
-    create_task(1, clock_api_process, RFLAGS_KERNEL,    0x1050000, CS_KERNEL, kernel_pml4)->pid = API_PID(0);
-    create_task(1, video_api_process, RFLAGS_KERNEL,    0x1000000, CS_KERNEL, kernel_pml4)->pid = API_PID(1);
-    create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, CS_KERNEL, kernel_pml4)->pid = API_PID(6);
+    create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, kernel_limit);
+    create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, kernel_limit)->pid = API_PID(0);
+    create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, kernel_limit)->pid = API_PID(1);
+    create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, kernel_limit)->pid = API_PID(6);
 
     //TEST PROCCESS
-    create_task(1, fake_shell, RFLAGS_USER, 0x1350000, CS_USER, level3_pml4);
-    create_task(2, tick_display, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
+    create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, kernel_limit);
+    create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, kernel_limit);
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
     exit();
@@ -157,9 +159,8 @@ void initialize(_IN struct boot_args *args) {
 
     init_kheap(args->kernel_start - 0x40000);
     init_pmm(pmemsz);
-    mark_used(0); //第一个0-4KB不能使用
-    for (int i = 0xA0000 ; i < args->kernel_limit ; i += 4096) {
-        mark_used(i); //显存不能使用
+    for (int i = 0x00000 ; i < args->kernel_limit ; i += 4096) {
+        mark_used(i);
     }
 
     //vmem map
@@ -168,10 +169,10 @@ void initialize(_IN struct boot_args *args) {
     //----------------------------------------------------------------------------------------
     kernel_pml4 = create_pgd(); //内核页表
     set_pml4(kernel_pml4);
-    qword kernel_length = args->kernel_limit - 0x100000; //内核区大小
+    qword kernel_length = args->kernel_limit - 0x1300000; //内核区大小
 
     set_mapping(0, 0, pmemsz / 4096, true, false); //全部映射到自身
-    set_mapping(0x1000000, 0x1000000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, false); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
+    set_mapping(0x1300000, 0x1300000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, false); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
 
     cr3_t cr3 = get_cr3();
     cr3.page_entry = (qword)kernel_pml4; //设置CR3
@@ -205,8 +206,8 @@ void entry(_IN struct boot_args *_args) {
     initialize(&args); //初始化
 
     TSS.ist1 = 0x1400000;
-    TSS.rsp0 = 0x1250000;
-    current_task = create_task(1, init, RFLAGS_KERNEL, 0x1250000, CS_KERNEL, get_pml4()); //init进程
+    TSS.rsp0 = 0x1350000;
+    current_task = create_task(1, init, RFLAGS_KERNEL, 0x1350000, 0x1300000, CS_KERNEL, get_pml4(), 0x1300000, args.kernel_limit); //init进程
     current_task->counter = 1;
 
     stop_switch = true;
