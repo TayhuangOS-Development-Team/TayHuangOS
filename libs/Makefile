@@ -6,11 +6,9 @@ export OBJECTSDIR
 build:
 	cd libc ; make build
 	cd libkmod ; make build
-	cd libkmodbase ; make build
 
 #清理
 .PHONY: clean
 clean:
 	cd libc ; make clean
 	cd libkmod ; make build
-	cd libkmodbase ; make build

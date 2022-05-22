@@ -25,10 +25,10 @@ ASMFLAGS :=
 ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmodbase"
+C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmodbase"
+CPP_INCLUDE := -I"$(ROOTDIR)/libs/libkmod"
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
