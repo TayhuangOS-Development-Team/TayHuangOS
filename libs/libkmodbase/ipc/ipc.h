@@ -8,20 +8,16 @@
  * 
  * 作者: Flysong
  * 
- * timer.c
+ * ipc.h
  * 
- * 时间相关
+ * IPC
  * 
  */
 
 
 
-#include "timer.h"
-#include <ipc/ipc.h>
+#pragma once
 
-int get_ticks(void) {
-    long long pack[20] = {0x00};
-    send_msg(pack, 0x10000, sizeof(pack));
-    recv_msg(pack, 0x10000);
-    return pack[0];
-}
+int send_msg(void *msg, int dest, int len);
+int recv_msg(void *msg, int source);
+int recv_any_msg(void *msg);

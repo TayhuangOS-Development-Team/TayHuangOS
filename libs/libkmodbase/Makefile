@@ -1,6 +1,6 @@
-OBJECTSDIR := $(OBJECTSDIR)/libc/
+OBJECTSDIR := $(OBJECTSDIR)/libkmodbase/
 
-LIBC_OUTPUT := $(BINDIR)/libc.a
+LIBC_OUTPUT := $(BINDIR)/libkmodbase.a
 ASM := as
 RM := rm
 GCC := gcc
@@ -17,19 +17,18 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-MISC_C_SRC := misc/timer
-C_SRC := $(MISC_C_SRC)
+C_SRC :=
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := ipc/ipc_func
+ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/libs/libc"
+C_INCLUDE := -I"$(ROOTDIR)/libs/libkmodbase"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/libs/libc"
+CPP_INCLUDE := -I"$(ROOTDIR)/libs/libkmodbase"
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \

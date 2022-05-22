@@ -1,0 +1,5 @@
+Boot->Loader (Beyond the limit of 512 Byte)
+Loader->Stage2 (Coding with C)
+Stage2->Stage3 (Into Protect Mode)
+Stage3->Kernel (Into Long Mode)
+Stage3--Load-->DiskDriverKernelModule(disk.mod) (Prepare for Kernel)
