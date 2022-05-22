@@ -23,9 +23,8 @@
 .extern recv_any_msg
 .type recv_any_msg, @function
 
-send_msg: /*int send_msg(void *msg, int dest, int len)*/
+send_msg: /*int send_msg(void *msg, int dest, int len, int tickout)*/
     movq %rsi, %r8
-    movq %rdx, %rcx
     movq %rdi, %rsi
 
     movq $0, %rax /*sysno = 0(send_msg)*/

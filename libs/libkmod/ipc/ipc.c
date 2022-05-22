@@ -8,7 +8,7 @@
  * 
  * 作者: Flysong
  * 
- * ipc.h
+ * ipc.c
  * 
  * IPC
  * 
@@ -16,10 +16,12 @@
 
 
 
-#pragma once
+#include "ipc.h"
 
-int send_msg(void *msg, int dest, int len, int tickout);
-int recv_msg(void *msg, int source);
-int recv_any_msg(void *msg);
-
-int sendrecv(void *msg, void *ret, int dest, int len, int tickout);
+int sendrecv(void *msg, void *ret, int dest, int len, int tickout) {
+    if (! send_msg(msg, dest, len, tickout))
+        return 0;
+    if (! recv_msg(ret, dest))
+        return 0;
+    return 1;
+}

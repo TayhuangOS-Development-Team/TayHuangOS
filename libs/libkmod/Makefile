@@ -17,12 +17,13 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-C_SRC :=
+IPC_C_SRC := ipc/ipc
+C_SRC := $(IPC_C_SRC)
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC :=
+ASM_SRC := ipc/ipc_func syscall/syscall_func
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod"

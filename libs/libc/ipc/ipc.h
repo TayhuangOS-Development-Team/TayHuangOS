@@ -18,6 +18,6 @@
 
 #pragma once
 
-int send_msg(void *msg, int dest, int len);
+int send_msg(void *msg, int dest, int len, int tickout);
 int recv_msg(void *msg, int source);
 int recv_any_msg(void *msg);

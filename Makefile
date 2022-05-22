@@ -42,8 +42,9 @@ setup_workspace:
 	bximage < ./setup/new_boot_img_input.txt
 	bximage < ./setup/new_system_img_input.txt
 	mkfs.msdos -F 32 ./tayhuangOS.img
-	sudo mkdir -v -p $(OBJECTSDIR)
-	sudo mkdir -v -p $(BINDIR)
+	mkdir -v -p $(BUILDDIR)
+	mkdir -v -p $(OBJECTSDIR)
+	mkdir -v -p $(BINDIR)
 
 #编译
 .PHONY: build

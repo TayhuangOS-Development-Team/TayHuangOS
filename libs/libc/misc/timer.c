@@ -20,8 +20,5 @@
 #include <ipc/ipc.h>
 
 int get_ticks(void) {
-    long long pack[20] = {0x00};
-    send_msg(pack, 0x10000, sizeof(pack));
-    recv_msg(pack, 0x10000);
-    return pack[0];
+    return 0;
 }

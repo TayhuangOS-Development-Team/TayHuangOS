@@ -8,9 +8,9 @@
  * 
  * 作者: Flysong
  * 
- * ipc.h
+ * syscall.h
  * 
- * IPC
+ * INT型系统调用
  * 
  */
 
@@ -18,8 +18,10 @@
 
 #pragma once
 
-int send_msg(void *msg, int dest, int len, int tickout);
-int recv_msg(void *msg, int source);
-int recv_any_msg(void *msg);
-
-int sendrecv(void *msg, void *ret, int dest, int len, int tickout);
+int get_ticks(void);
+int sleep(void);
+int exit(void);
+int wakeup(int pid);
+int fatal(void);
+int eggs(void);
+int signal(int pid, int signal);
