@@ -41,4 +41,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(STAGE3_OUTPUT) $(IMG_MNT)
+	sudo cp $(STAGE3_OUTPUT) $(TAYHUANGBOOT_MOUNT_DIR)

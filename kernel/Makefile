@@ -93,4 +93,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(KERNEL_OUTPUT) /mnt/tayhuangOS
+	sudo cp $(KERNEL_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

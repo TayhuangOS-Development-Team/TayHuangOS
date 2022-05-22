@@ -60,3 +60,7 @@ endif
 .PHONY: clean
 clean:
 	$(RM) $(DISK_OUTPUT) $(OBJECTS)
+
+.PHONY: image
+image:
+	sudo cp $(DISK_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

@@ -215,8 +215,11 @@ void entry(_IN struct boot_args *_args) {
     register_irq_handler(0, clock_int_handler);
     register_irq_handler(1, keyboard_int_handler); //中断处理器
 
-    asmv ("movq $0x125000, %rsp"); //设置堆
-    enable_irq(0); //开启时钟中断
-    enable_irq(1);
-    asmv ("jmp init"); //跳转至INIT进程
+    // asmv ("movq $0x125000, %rsp"); //设置堆
+    // enable_irq(0); //开启时钟中断
+    // enable_irq(1);
+    // asmv ("jmp init"); //跳转至INIT进程
+    printk ("%#016X:%#2X%#2X%#2X%#2X\n", args.disk_mod_addr,
+     *((byte*)args.disk_mod_addr), *((byte*)args.disk_mod_addr + 1), *((byte*)args.disk_mod_addr + 2), *((byte*)args.disk_mod_addr + 3));
+    while(true);
 }

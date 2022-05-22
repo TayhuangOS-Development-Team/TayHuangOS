@@ -46,5 +46,5 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(STAGE2_OUTPUT) $(IMG_MNT)
-	sudo cp $(SPLASHES) $(IMG_MNT)
+	sudo cp $(STAGE2_OUTPUT) $(TAYHUANGBOOT_MOUNT_DIR)
+	sudo cp $(SPLASHES) $(TAYHUANGBOOT_MOUNT_DIR)

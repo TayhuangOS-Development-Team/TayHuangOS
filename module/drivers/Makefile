@@ -11,3 +11,7 @@ build:
 .PHONY: clean
 clean:
 	cd disk ; make build
+
+.PHONY: image
+image:
+	cd disk ; make image

@@ -20,4 +20,6 @@
 
 #include <tayboot/tay_defs.h>
 
+#define DISK_MOD_ADDRESS (0x200000)
+
 void *load_kernel(void** kernel_start, void** kernel_limit);

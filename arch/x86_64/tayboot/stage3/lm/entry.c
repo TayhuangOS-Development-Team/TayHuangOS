@@ -45,6 +45,8 @@ PRIVATE void init_boot_args(struct boot_args *output, struct stage3_args *args, 
     output->kernel_limit = kernel_limit;
     output->page_start = page_start;
     output->page_limit = page_limit; //内存段
+
+    output->disk_mod_addr = DISK_MOD_ADDRESS;
 }
 
 PUBLIC void goto_ia32e(void *entrypoint, void *args, word selector64);

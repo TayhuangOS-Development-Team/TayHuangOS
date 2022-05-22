@@ -24,7 +24,7 @@
 #include "../printf.h"
 #include <tayboot/elf.h>
 
-#define KERNEL_BIN_ADDRESS (0x320000)
+#define KERNEL_BIN_ADDRESS (0x600000)
 
 void load_program(Elf64_Phdr *program_header, void **limit) {
     if (program_header->p_type != PT_LOAD) //不是要被加载的段
@@ -47,10 +47,15 @@ void *load_kernel(void** kernel_start, void** kernel_limit) {
     void *context = get_context(DISK_SEL_IDE1_MASTER);
     printf ("Loading kernel...\n");
     bool success = loadfile(context, "kernel.bin", KERNEL_BIN_ADDRESS);
-    terminate_fs_context(context);
     if (! success) {
         return NULL;
     }
+    printf ("\nLoading disk...\n");
+    success = loadfile(context, "disk.mod", DISK_MOD_ADDRESS);
+    if (! success) {
+        return NULL;
+    }
+    terminate_fs_context(context);
     *kernel_limit = NULL;
     return *kernel_start = load_elf(kernel_limit);
 }

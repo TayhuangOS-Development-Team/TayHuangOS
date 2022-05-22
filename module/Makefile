@@ -11,3 +11,7 @@ build:
 .PHONY: clean
 clean:
 	cd drivers ; make build
+
+.PHONY: image
+image:
+	cd drivers ; make image

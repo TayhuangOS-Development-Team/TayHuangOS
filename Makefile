@@ -9,7 +9,9 @@ MODE ?= debug
 BUILDDIR := $(ROOTDIR)/build/$(MODE)/
 BINDIR := $(BUILDDIR)/bin/
 OBJECTSDIR := $(BUILDDIR)/objects/
-export ROOTDIR MODE BUILDDIR BINDIR OBJECTSDIR
+TAYHUANGOS_MOUNT_DIR := /mnt/tayhuangOS
+TAYHUANGBOOT_MOUNT_DIR := /mnt/tayhuangBoot
+export ROOTDIR MODE BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
 
 #编译并写入映像
 .PHONY: all
@@ -29,13 +31,13 @@ setup_and_build: setup_workspace all
 #设置环境
 .PHONY: setup_workspace
 setup_workspace:
-	if [ ! -d "/mnt/tayhuangOS" ];then \
-		sudo mkdir /mnt/tayhuangOS; \
+	if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
+		sudo mkdir ; \
 	else \
 		echo "mount directory already created"; \
 	fi;
-	if [ ! -d "/mnt/tayhuangBoot" ];then \
-		sudo mkdir /mnt/tayhuangBoot; \
+	if [ ! -d "$(TAYHUANGBOOT_MOUNT_DIR)" ];then \
+		sudo mkdir $(TAYHUANGBOOT_MOUNT_DIR); \
 	else \
 		echo "mount directory already created"; \
 	fi;
@@ -66,7 +68,8 @@ clean:
 .PHONY: image
 image:
 	cd arch/$(ARCHITECTURE)/ ; make image
-	sudo umount /mnt/tayhuangBoot
-	sudo mount -o loop tayhuangOS.img /mnt/tayhuangOS
+	sudo umount $(TAYHUANGBOOT_MOUNT_DIR)
+	sudo mount -o loop tayhuangOS.img $(TAYHUANGOS_MOUNT_DIR)
 	cd kernel ; make image
-	sudo umount /mnt/tayhuangOS
+	cd module ; make image
+	sudo umount $(TAYHUANGOS_MOUNT_DIR)
