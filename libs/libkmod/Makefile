@@ -1,6 +1,6 @@
 OBJECTSDIR := $(OBJECTSDIR)/libkmod/
 
-LIBC_OUTPUT := $(BINDIR)/libkmod.a
+LIBKMOD_OUTPUT := $(BINDIR)/libkmod.a
 ASM := as
 RM := rm
 GCC := gcc
@@ -49,8 +49,8 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	$(AR) rvs $(LIBC_OUTPUT) $^
+	$(AR) rvs $(LIBKMOD_OUTPUT) $^
 
 .PHONY: clean
 clean:
-	$(RM) $(LIBC_OUTPUT) $(OBJECTS)
+	$(RM) $(LIBKMOD_OUTPUT) $(OBJECTS)

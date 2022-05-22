@@ -8,22 +8,18 @@
  *
  * 作者: Flysong
  *
- * disk.ld
+ * entry.S
  *
- * 内核驱动LD脚本
+ * 硬盘驱动入口
  *
  */
 
 
 
-ENTRY(_start)
-OUTPUT_FORMAT("elf64-x86-64")
-OUTPUT_ARCH("i386:x86-64")
+    .code64
+    .text
+    .extern entry
 
-SECTIONS
-{
-    . = 0x1400000;
-    .text : { *(.text) }
-    .data : { *(.data) }
-    .bss : { *(.bss) }
-}
+    .global _start
+_start:
+    jmp .

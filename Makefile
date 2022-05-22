@@ -52,6 +52,7 @@ build:
 	cd arch/$(ARCHITECTURE)/ ; make build
 	cd kernel ; make build
 	cd libs ; make build
+	cd module ; make build
 
 #清理
 .PHONY: clean
@@ -59,6 +60,7 @@ clean:
 	cd arch/$(ARCHITECTURE)/ ; make clean
 	cd kernel ; make clean
 	cd libs ; make clean
+	cd module ; make clean
 
 #写入映像
 .PHONY: image
