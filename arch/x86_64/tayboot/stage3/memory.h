@@ -20,16 +20,16 @@
 
 #include <tayboot/tay_defs.h>
 
-PUBLIC void memcpy(void *dst, void *src, int sz);
-PUBLIC void memset(void *dst, byte val, int sz);
-PUBLIC void init_heap(int memsz);
-PUBLIC void terminate_heap(int memsz);
-PUBLIC void reset_heap(int memsz);
-PUBLIC void *malloc(int size);
-PUBLIC void *calloc(int num, int size);
-PUBLIC void free(void *ptr);
-PUBLIC bool query_using(void *ptr, int size); //true when using
-PUBLIC void set_heap_top(void *top); //default = 0xFFFF
-PUBLIC void set_heap_limit(void *limit); //default = 0xC000
-PUBLIC int get_used(void);
-PUBLIC int get_remain(void);
+PUBLIC void memcpy(void *dst, void *src, int sz); //复制内存
+PUBLIC void memset(void *dst, byte val, int sz); //设置内存
+PUBLIC void init_heap(int memsz); //初始化堆
+PUBLIC void terminate_heap(int memsz); //析构堆
+PUBLIC void reset_heap(int memsz); //重置堆
+PUBLIC void *malloc(int size); //分配内存
+PUBLIC void *calloc(int num, int size); //分配num个size的内存
+PUBLIC void free(void *ptr); //释放内存
+PUBLIC bool query_using(void *ptr, int size); //这一段是否有被使用 true when using
+PUBLIC void set_heap_top(void *top); //设置堆顶 default = 0xFFFF
+PUBLIC void set_heap_limit(void *limit); //设置堆底 default = 0xC000
+PUBLIC int get_used(void); //有多少被使用
+PUBLIC int get_remain(void); //有多少没被使用

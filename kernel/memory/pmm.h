@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void init_pmm(qword pmemsz);
-PUBLIC void *lookup_free_page(void);
-PUBLIC void mark_used(void *page);
-PUBLIC void mark_unused(void *page);
+PUBLIC void init_pmm(qword pmemsz); //初始化PMM
+PUBLIC void *lookup_free_page(void); //寻找空闲页
+PUBLIC void mark_used(void *page); //标志被使用过
+PUBLIC void mark_unused(void *page); //标志未被使用过

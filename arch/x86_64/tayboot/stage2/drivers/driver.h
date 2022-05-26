@@ -25,14 +25,14 @@ typedef enum {
     DT_DISK,
     DT_KEYBOARD,
     DT_MEMORY
-}device_ty;
+}device_ty; //设备类型
 
 typedef struct {
     device_ty type;
     id_t id;
     dword drive_no;
     void *driver;
-} device_t, *pdevice;
+} device_t, *pdevice; //设备
 
 typedef bool(*initialize_handle_t)(pdevice, void*, id_t);
 typedef void *argpack_t;
@@ -54,46 +54,16 @@ typedef enum {
     DS_IDLE,
     DS_BUSY,
     DS_TERMAINATED
-}driver_state;
-
-typedef addr_t drext_t;
-typedef bool(*drext_initialize_handle_t)(drext_t, void*, id_t);
-typedef bool(*drext_pc_handle_t)(drext_t, word, argpack_t);
-typedef bool(*drext_terminate_handle_t)(drext_t);
-// drext_t template
-/*
-typedef struct {
-    dword magic;
-    addr_t nxt;
-    pdriver driver;
-    id_t id;
-    drext_initialize_handle_t ext_init_handle;
-    drext_pc_handle_t ext_pc_handle;
-    drext_terminate_handle_t ext_terminate_handle;
-    ...
-} [SUF]_[TYPE]_[NAME];
-suffix: Test           TE
-        Offical        OF
-        Community      CM
-        Manufacturer   MF
-type: Error Type            ER
-      Info Extension        IE
-      Functions Extension   FE
-      Process Modifer       PM
-      Device Extension      DE
-      Adapter               AD
-      ...
-*/
+}driver_state; //驱动状态
 
 typedef struct {
     device_ty dev_ty;
     id_t id;
     driver_state state;
-    drext_t extensions;
     initialize_handle_t init_handle;
     pc_handle_t pc_handle;
     terminate_handle_t terminate_handle;
     pdevice device;
-} driver_t, *pdriver;
+} driver_t, *pdriver; //驱动信息
 
 PUBLIC id_t alloc_id(void);

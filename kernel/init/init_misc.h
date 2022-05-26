@@ -20,7 +20,7 @@
 
 #include <tayhuang/control_registers.h>
 
-static inline void init_sse(void) {
+static inline void init_sse(void) { //SSE
     cr0_t cr0 = get_cr0();
     cr0.em = 0;
     cr0.mp = 1;

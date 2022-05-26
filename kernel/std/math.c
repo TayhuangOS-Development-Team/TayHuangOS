@@ -46,6 +46,7 @@ double pow(double x, double y)
     return exp((ln(x) * y));
 }
 
+//快速开方
 double sqrt(double x)
 {
     union{
@@ -60,7 +61,7 @@ double sqrt(double x)
     convertor2.floatPart = x;
     convertor.intPart = 0x1FBCF800 + (convertor.intPart >> 1);
     convertor2.intPart = 0x5f3759df - (convertor2.intPart >> 1);
-    return 0.5f*(convertor.floatPart + (x * convertor2.floatPart)); //From Quake III
+    return 0.5f * (convertor.floatPart + (x * convertor2.floatPart)); //From Quake III
 }
 
 double fabs(double x)

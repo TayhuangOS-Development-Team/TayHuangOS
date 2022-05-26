@@ -29,4 +29,4 @@ char *itoa(char *buffer, int value, int radix); //数字转字符串
 char *uitoa(char *buffer, unsigned int value, int radix); //数字转字符串(无符号)
 char *itoa_upper(char *buffer, int value, int radix); //数字转字符串(大写)
 char *uitoa_upper(char *buffer, unsigned int value, int radix); //数字转字符串(无符号)(大写)
-char *ftoa(char *buffer, float value); //在实模式下不起效
+char *ftoa(char *buffer, float value); //未finit时无效

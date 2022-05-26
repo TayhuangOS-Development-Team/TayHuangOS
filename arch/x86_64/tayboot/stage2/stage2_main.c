@@ -39,7 +39,7 @@ PUBLIC bool register_terminater(terminater_t terminater) { //注册一个Termina
     return true;
 }
 
-PUBLIC bool do_terminate(void) { //进行Terminater
+PUBLIC bool do_terminate(void) { //进行Terminate
     bool flag = true;
     for(byte i = 0 ; i < temlst_sz ; i ++) {
         flag &= TERMINATE_LIST[i]();

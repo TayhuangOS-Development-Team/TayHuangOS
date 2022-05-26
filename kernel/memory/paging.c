@@ -39,14 +39,14 @@ PUBLIC void *get_pml4(void) {
     return current_pml4;
 }
 
-PUBLIC void *create_pgd(void) {
+PUBLIC void *create_pgd(void) { //获取页目录
     void *pml4pg = lookup_free_page();
     mark_used(pml4pg);
     memset(pml4pg, 0, 4096);
     return pml4pg;
 }
 
-PRIVATE void *__get_free_page(void) {
+PRIVATE void *__get_free_page(void) { //获取空闲页
     void *page = lookup_free_page();
     mark_used(page);
     memset(page, 0, 4096);
@@ -112,7 +112,7 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
     return true;
 }
 
-PUBLIC bool set_mapping(_IN void *from, _IN void *to, _IN int pages, _IN bool rw, _IN bool us) {
+PUBLIC bool set_mapping(_IN void *from, _IN void *to, _IN int pages, _IN bool rw, _IN bool us) { //设置映射
     for (int i = 0 ; i < pages ; i ++) {
         if (! __set_mapping(from + i * MEMUNIT_SZ, to + i * MEMUNIT_SZ, rw, us)) {
             return false;

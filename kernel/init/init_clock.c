@@ -22,18 +22,18 @@
 
 #define PIT_FREQUENCY (1193181.6666f)
 
-PUBLIC bool init_pit(_IN float frequency) {
-    if (frequency > PIT_FREQUENCY)
+PUBLIC bool init_pit(_IN float frequency) { //初始化PIT
+    if (frequency > PIT_FREQUENCY) //频率过高
         return false;
 
     int count = (int)(PIT_FREQUENCY / frequency);
     if ((PIT_FREQUENCY - count * frequency) > (frequency / 2))
         count ++;
 
-    if (count >= 65535) return false;
+    if (count >= 65535) return false; //频率过低
 
-    outb(PIT_CHANNEL0, (byte)count);
-    outb(PIT_CHANNEL0, (byte)(count >> 8));
+    outb(PIT_CHANNEL0, (byte)count); //设置频率
+    outb(PIT_CHANNEL0, (byte)(count >> 8)); //设置频率
 
     return true;
 }

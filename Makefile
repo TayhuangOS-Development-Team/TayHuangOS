@@ -32,7 +32,7 @@ setup_and_build: setup_workspace all
 .PHONY: setup_workspace
 setup_workspace:
 	if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
-		sudo mkdir ; \
+		sudo mkdir $(TAYHUANGOS_MOUNT_DIR); \
 	else \
 		echo "mount directory already created"; \
 	fi;

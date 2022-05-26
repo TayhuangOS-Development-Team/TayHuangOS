@@ -36,14 +36,14 @@ PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
     if (! flag)
         entered_handler = true;
 
-    disable_irq(irq);
+    disable_irq(irq); //禁止同类中断接收
 
-    send_eoi(irq);
+    send_eoi(irq); //发送EOI
 
     if (IRQ_HANDLERS[irq] != NULL)
         IRQ_FLAGS[irq] = IRQ_HANDLERS[irq](irq, args, flag);
 
-    enable_irq(irq);
+    enable_irq(irq); //同意同类中断接收
 
     if (! flag)
         entered_handler = false;

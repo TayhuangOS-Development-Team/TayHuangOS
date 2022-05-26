@@ -28,7 +28,7 @@ START:
 
     call ClrScreen ;清屏
 
-    mov di, MSG_BOOTING
+    mov di, MSG_BOOTING ;传参
     mov dl, 0
     mov dh, 0
     mov bl, 0xC
@@ -45,9 +45,9 @@ START:
     mov bl, 0x0C
     mov cx, 9
     call DispStr ;打印"NotFound!" DispStr("NotFound!", 0, 1, 0xC, 9)
-    jmp $ ;停止
+    jmp $ ;重启吧您
 .goon:
-    mov di, MSG_FOUND
+    mov di, MSG_FOUND ;搁着呢
     mov dl, 0
     mov dh, 1
     mov bl, 0xC
@@ -59,7 +59,7 @@ START:
     mov es, ax ;es -> Base of Loader
     mov si, OFFSET_OF_LOADER 
     call LoadFile ; loader.bin -> Base of Loader:Offset Of Loader LoadFile("loader.bin", Base of Loader, Offset Of Loader)
-    jmp BASE_OF_LOADER:OFFSET_OF_LOADER ;转至loader
+    jmp BASE_OF_LOADER:OFFSET_OF_LOADER ;拜拜了您嘞,跳到loade去了
 
 MSG_BOOTING: db `Booting...`
 MSG_NOT_FOUND: db `NotFound!`
@@ -86,23 +86,23 @@ LoadFile: ;(ds:di = FILE NAME, es:si = Dist)
     pop si
     push si
 .READ:
-    push ax
+    push ax ;保存
     push bx
     mov ah, 0x0E ;function number = 0x0E
     mov al, '.' ;每读取一个扇区打印一个"."
     mov bh, 0
     mov bl, 0x0C ;红色
-    int 0x10
+    int 0x10 ;BIOS功能
     pop bx
     pop ax
 
     mov cx, 1
     push eax
-    add eax, DATA_SECTION_START
+    add eax, DATA_SECTION_START ;加上数据区开始地址
     call ReadSector ;读取扇区
     pop eax
     call GetFatEntry ;获取下个项
-    add si, 512
+    add si, 512 ;地址+=512
     cmp ax, 0xFFFF ;是否结束
     je .ed ;结束
     jmp .READ ;未结束 继续读取
@@ -217,7 +217,7 @@ ReadSector: ;(es:si = Dist, ax = Sector No, cl = Sector Num)
     mov ah, 0x42 ; function number = 0x42
     mov dl, 0x80 ; dl -> c盘驱动器号
     mov si, disk_address_packet ;si -> &disk_address_packet
-    int 0x13
+    int 0x13 ;BIOS功能
 
     pop cx
     pop ebx
@@ -226,7 +226,7 @@ ReadSector: ;(es:si = Dist, ax = Sector No, cl = Sector Num)
     pop si ; 保护寄存器
     ret ;退出
 
-ClrScreen:
+ClrScreen: ;清屏
     mov ax, 0x0600
     mov bx, 0x0700
     mov cx, 0x0000

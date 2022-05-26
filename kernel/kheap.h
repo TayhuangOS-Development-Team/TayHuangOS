@@ -41,9 +41,9 @@ rep\n\t\
 movsb" : : "g"(sz), "g"(src), "g"(dst) : "%rcx", "%rdi", "%rsi");
 }
 
-PUBLIC void init_kheap(_IN void *kheap_limit);
-PUBLIC void *malloc(_IN int size);
-static inline void *calloc(_IN int num, _IN int size) {
+PUBLIC void init_kheap(_IN void *kheap_limit); //初始化堆
+PUBLIC void *malloc(_IN int size); //分配内存
+static inline void *calloc(_IN int num, _IN int size) { //分配num个size的内存
     return malloc(num * size);
 }
-PUBLIC void free(_IN void *ptr);
+PUBLIC void free(_IN void *ptr); //释放内存

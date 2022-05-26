@@ -157,9 +157,9 @@ void initialize(_IN struct boot_args *args) {
 
     qword pmemsz = (((qword)args->memory_size_high) << 32) + args->memory_size; //计算物理内存大小
 
-    init_kheap(args->kernel_start - 0x40000);
-    init_pmm(pmemsz);
-    for (int i = 0x00000 ; i < args->kernel_limit ; i += 4096) {
+    init_kheap(args->kernel_start - 0x40000); //初始化内核堆
+    init_pmm(pmemsz); //初始化PMM
+    for (int i = 0x00000 ; i < args->kernel_limit ; i += 4096) { //0~内核limit 不可用
         mark_used(i);
     }
 
@@ -178,7 +178,7 @@ void initialize(_IN struct boot_args *args) {
     cr3.page_entry = (qword)kernel_pml4; //设置CR3
     set_cr3(cr3);
 
-    init_video_info(args);
+    init_video_info(args); //初始化视频
 
     set_print_color(0x0F);
     set_scroll_line(15);

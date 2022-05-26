@@ -17,61 +17,61 @@
 #include <ctype.h>
 
 int isspace(int ch) {
-    return _macro_isspace(ch);
+    return __isspace(ch);
 }
 
 int isupper(int ch) {
-    return _macro_isupper(ch);
+    return __isupper(ch);
 }
 
 int islower(int ch) {
-    return _macro_islower(ch);
+    return __islower(ch);
 }
 
 int isalpha(int ch) {
-    return _macro_isalpha(ch);
+    return __isalpha(ch);
 }
 
 int isdigit(int ch) {
-    return _macro_isdigit(ch);
+    return __isdigit(ch);
 }
 
 int isalnum(int ch) {
-    return _macro_isalnum(ch);
+    return __isalnum(ch);
 }
 
 int isblank(int ch) {
-    return _macro_isblank(ch);
+    return __isblank(ch);
 }
 
 int iscntrl(int ch) {
-    return _macro_iscntrl(ch);
+    return __iscntrl(ch);
 }
 
 int isprint(int ch) {
-    return _macro_isprint(ch);
+    return __isprint(ch);
 }
 
 int isgraph(int ch) {
-    return _macro_isgraph(ch);
+    return __isgraph(ch);
 }
 
 int ispunct(int ch) {
-    return _macro_ispunct(ch);
+    return __ispunct(ch);
 }
 
 int isxdigit(int ch) {
-    return _macro_isxdigit(ch);
+    return __isxdigit(ch);
 }
 
 int isodigit(int ch) {
-    return _macro_isodigit(ch);
+    return __isodigit(ch);
 }
 
 int tolower(int ch) {
-    return _macro_tolower(ch);
+    return __tolower(ch);
 }
 
 int toupper(int ch) {
-    return _macro_toupper(ch);
+    return __toupper(ch);
 }

@@ -23,7 +23,6 @@ PRIVATE bool initialize_driver(pdevice device, pdriver driver, id_t id) {
         return false;
     driver->dev_ty = DT_VIDEO;
     driver->state = DS_IDLE;
-    driver->extensions = NULL;
     driver->id = id;
     driver->device = device;
     device->driver = driver;

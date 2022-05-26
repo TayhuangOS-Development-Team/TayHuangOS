@@ -45,7 +45,7 @@ LoadFile: ;(ds:di = FILE NAME, es:si = Dist)
     add eax, DATA_SECTION_START
     call ReadSector  ;读取扇区
     pop eax ;获取下个项
-    add si, 512 
+    add si, 512 ;地址+512
     call GetFatEntry ;是否结束
     cmp ax, 0xFFFF
     je .ed  ;结束
@@ -257,7 +257,7 @@ DispHex2B: ;(ax = data, bh = color, bl = disp_0x, dl = x, dh = y)
     push ax
     mov al, ah
     mov ah, bh
-    call DispHex1B
+    call DispHex1B ;打印高字节
     add dl, 2
     cmp bl, 0
     je .e
@@ -267,41 +267,41 @@ DispHex2B: ;(ax = data, bh = color, bl = disp_0x, dl = x, dh = y)
     push ax
     mov ah, bh
     mov bl, 0
-    call DispHex1B
+    call DispHex1B ;打印低字节
     pop ax
     pop dx
     ret
 
-DispHexSeq: ;(ds:di: seq, bx = number, ah = color, dh = y)
+DispHexSeq: ;(ds:di: seq, bx = len, ah = color, dh = y) ;打印16进制序列
     push cx
     push dx
 
     xor cx, cx
     xor dl, dl
 
-.s:
-    cmp cx, bx
-    je .e
+.print:
+    cmp cx, bx ;是否打印完了
+    je .end
 
-    mov al, byte [di]
+    mov al, byte [di] ;获取字节
     push bx
     mov bl, 0
-    call DispHex1B
+    call DispHex1B ;打印一个字节
     pop bx
 
     add dl, 2
     mov al, ' '
-    call DispChar
+    call DispChar ;打印空格
     inc dl
-    cmp dl, 0x30
-    jne .e2
+    cmp dl, 0x30 ;是否要换行
+    jne .increase
     mov dl, 0
-    inc dh
-.e2:
+    inc dh ;下一行
+.increase:
     inc di
-    inc cx
-    jmp .s
-.e:
+    inc cx ;增加打印位置与打印个数
+    jmp .print ;继续打印
+.end:
     pop dx
     pop cx
     ret
@@ -309,70 +309,71 @@ DispHexSeq: ;(ds:di: seq, bx = number, ah = color, dh = y)
 DispHex1B: ;(ah = color, al = data, dl = x, dh = y, bl = disp_0x)
     push dx
     cmp bl, 0
-    je .disp_hex
+    je .disp_hex1 ;不打印0x
     push ax
     mov al, '0'
-    call DispChar
+    call DispChar ;打印0
     inc dl
     mov al, 'x'
-    call DispChar
+    call DispChar ;打印x
     inc dl
     pop ax
-.disp_hex:
+.disp_hex1: ;打印第一个16进制位
     push ax
-    shr al, 4
+    shr al, 4 ;取高四位
     cmp al, 9
-    jg .disp_alpha1
-    add al, '0'
-    call DispChar
+    jg .disp_alpha1 ;>9 字母
+    add al, '0' ;+'0'
+    call DispChar ;数字
     jmp .disp_hex2
 .disp_alpha1:
-    add al, ('A'-10)
-    call DispChar
-.disp_hex2:
+    add al, ('A'-10) 
+    call DispChar ;字母
+.disp_hex2: ;打印第二个16进制位
     inc dl
     pop ax
-    and al, 0x0F
+    and al, 0x0F ;取低四位
     cmp al, 9
-    jg .disp_alpha2
-    add al, '0'
-    call DispChar
-    pop dx
-    ret
+    jg .disp_alpha2 ;字母
+    add al, '0' ;+'0'
+    call DispChar ;数字
+    jmp .end
 .disp_alpha2:
     add al, ('A'-10)
-    call DispChar
+    call DispChar ;字母
+.end:
     pop dx
     ret
 
-DispChar: ;(ah = color, al = data, dl = x, dh = y)
+DispChar: ;(ah = color, al = data, dl = x, dh = y) 打印字符
     push edi
     push eax
-    push ebx
+    push ebx ;保护寄存器
 
     mov ax, 0xb800
-    mov gs, ax
+    mov gs, ax ;更改gs
 
-    xor eax, eax
+    xor eax, eax ;归0
     xor ebx, ebx
-    mov al, dh
-    mov bl, dh
-    shl eax, 4
-    shl ebx, 6
-    add eax, ebx
-    xor ebx, ebx
-    mov bl, dl
-    add eax, ebx
-    shl eax, 1
-    mov edi, eax
+    mov al, dh ;al = y
+    mov bl, dh ;bl = y
+    shl eax, 4 ;eax *= 16
+    shl ebx, 6 ;ebx *= 64
+    add eax, ebx ;eax += ebx (eax = y * 16 + y * 64 = y * 80)
+    xor ebx, ebx ;归0
+    mov bl, dl ;bl = x
+    add eax, ebx ;eax += ebx (eax = y * 80 + x)
+    shl eax, 1 ; eax *= 2 (eax = (y * 80 + x) * 2)
+    mov edi, eax ;作为地址
 
-    pop ebx
+    pop ebx ;恢复寄存器
     pop eax
 
-    mov word [gs:edi], ax
+    mov word [gs:edi], ax ;将字符输出到显存
     pop edi
     ret
 
+;内存复制
 MemCpy: ;(ds:edi:source, es:esi:dest, ecx = len)
     push bx
     push edi
@@ -384,17 +385,17 @@ MemCpy: ;(ds:edi:source, es:esi:dest, ecx = len)
     jle .tail
 
     mov bl, byte[ds:edi]
-    mov byte[es:esi], bl
+    mov byte[es:esi], bl ;复制一个字节
     dec ecx
     inc edi
     inc esi
-    jmp .Cpy
+    jmp .Cpy ;继续复制
 .tail:
 
     pop ecx
     pop esi
     pop edi
     pop bx
-    ret
+    ret ;结束复制
 
 %include "fat16head.inc"

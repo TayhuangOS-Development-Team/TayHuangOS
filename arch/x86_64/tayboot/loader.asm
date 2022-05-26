@@ -52,7 +52,7 @@ start:
     mov ax, BASE_OF_STAGE2_DATA
     mov es, ax
     mov si, 0
-    call LoadFile
+    call LoadFile ;加载Stage2文件夹
 
     mov ax, cs
     mov ds, ax
@@ -69,11 +69,11 @@ start:
     mov dl, 0
     mov dh, 2
     mov bl, 0xC
-    call DispStr ;打印"Found!" DispStr("Invalid Stage2: ELF Magic Number not match!", 0, 1, 0xC)
-    jmp $ ;停止
+    call DispStr ;DispStr("Invalid Stage2: ELF Magic Number not match!", 0, 1, 0xC)
+    jmp $ ;重启吧您
 .valid:
     call InitStage2 ;初始化Stage2
-    jmp far [STAGE2_ADDR]
+    jmp far [STAGE2_ADDR] ;芜湖起飞 下一站: Stage2
 
 InitStage2:
     mov ax, BASE_OF_STAGE2_DATA
@@ -108,6 +108,7 @@ InitStage2:
     mov ds, ax ;ds -> Base of Stage2 Data
 
     call MemCpy ;memcpy(BASE_OF_STAGE2:p_paddr, BASE_OF_STAGE2_DATA:p_offset, p_filesz)
+                ;复制到需要的地方
 
     pop es
     pop ds

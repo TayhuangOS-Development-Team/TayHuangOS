@@ -20,25 +20,25 @@
 
 /*
  * ctype函数的宏实现
- * 因为是利用宏, 所以可能会引发问题 如_macro_isaplha(getchar())
+ * 因为是利用宏, 所以可能会引发问题 如__isaplha(getchar())
  * 不推荐直接使用
  * 仅用于辅助函数实现
 */
-#define _macro_isspace(ch) (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\v' || ch == '\f')
-#define _macro_isupper(ch) (ch >= 'A' && ch <= 'Z')
-#define _macro_islower(ch) (ch >= 'a' && ch <= 'z')
-#define _macro_isalpha(ch) (_macro_isupper(ch) || _macro_islower(ch))
-#define _macro_isdigit(ch) (ch >= '0' && ch <= '9')
-#define _macro_isalnum(ch) (_macro_isalpha(ch) || _macro_isdigit(ch))
-#define _macro_isblank(ch) (ch == ' ' || ch == '\t')
-#define _macro_iscntrl(ch) ((ch >= 0x00 && ch <= 0x1f) || ch == 0x7f)
-#define _macro_isprint(ch) (!_macro_iscntrl(ch))
-#define _macro_isgraph(ch) (_macro_isprint(ch))
-#define _macro_ispunct(ch) (_macro_isprint(ch) && (! _macro_isalnum(ch)))
-#define _macro_isxdigit(ch) (_macro_isalnum(ch) || ((ch >= 'a' && ch <= 'F') || (ch >= 'A' && ch <= 'F')))
-#define _macro_isodigit(ch) (ch >= '0' && ch <= '7')
-#define _macro_tolower(ch) (_macro_isupper(ch) ? (ch - 'A' + 'a') : (ch))
-#define _macro_toupper(ch) (_macro_islower(ch) ? (ch - 'a' + 'A') : (ch))
+#define __isspace(ch) (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\v' || ch == '\f')
+#define __isupper(ch) (ch >= 'A' && ch <= 'Z')
+#define __islower(ch) (ch >= 'a' && ch <= 'z')
+#define __isalpha(ch) (__isupper(ch) || __islower(ch))
+#define __isdigit(ch) (ch >= '0' && ch <= '9')
+#define __isalnum(ch) (__isalpha(ch) || __isdigit(ch))
+#define __isblank(ch) (ch == ' ' || ch == '\t')
+#define __iscntrl(ch) ((ch >= 0x00 && ch <= 0x1f) || ch == 0x7f)
+#define __isprint(ch) (!__iscntrl(ch))
+#define __isgraph(ch) (__isprint(ch))
+#define __ispunct(ch) (__isprint(ch) && (! __isalnum(ch)))
+#define __isxdigit(ch) (__isalnum(ch) || ((ch >= 'a' && ch <= 'F') || (ch >= 'A' && ch <= 'F')))
+#define __isodigit(ch) (ch >= '0' && ch <= '7')
+#define __tolower(ch) (__isupper(ch) ? (ch - 'A' + 'a') : (ch))
+#define __toupper(ch) (__islower(ch) ? (ch - 'a' + 'A') : (ch))
 
 /* ctype函数 */
 int isspace(int ch);

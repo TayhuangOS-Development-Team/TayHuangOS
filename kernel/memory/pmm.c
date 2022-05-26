@@ -23,16 +23,16 @@ PRIVATE byte *pmpage_bitmap;
 PRIVATE qword pmpage_bitmap_size = 0;
 PRIVATE qword pmpage_num = 0;
 
-PUBLIC void init_pmm(qword pmemsz) {
+PUBLIC void init_pmm(qword pmemsz) { //初始化PMM
     pmpage_num = pmemsz / 4096 + ((pmemsz % 4096) != 0);
     pmpage_bitmap_size = pmpage_num / 8 + ((pmpage_num % 8) != 0);
     pmpage_bitmap = malloc (pmpage_bitmap_size);
     memset(pmpage_bitmap, 0, pmpage_bitmap_size);
 }
 
-PUBLIC void *lookup_free_page(void){
+PUBLIC void *lookup_free_page(void){ //寻找空闲页
     for (int i = 0 ; i < pmpage_bitmap_size ; i ++) {
-        if (pmpage_bitmap[i] != 0xFF) {
+        if (pmpage_bitmap[i] != 0xFF) { //没有全被用
             for (int j = 0 ; j < 8 ; j ++) {
                 if ((i * 8 + j) > pmpage_num) {
                     return NULL;
@@ -46,12 +46,12 @@ PUBLIC void *lookup_free_page(void){
     return NULL;
 }
 
-PUBLIC void mark_used(void *page){
+PUBLIC void mark_used(void *page){ //标记为被使用过
     qword _page = (qword)page;
     pmpage_bitmap[(_page / 4096 / 8)] |= (1 << ((_page / 4096) % 8));
 }
 
-PUBLIC void mark_unused(void *page) {
+PUBLIC void mark_unused(void *page) { //标记为未被使用
     qword _page = (qword)page;
     pmpage_bitmap[(_page / 4096 / 8)] &= ~(1 << ((_page / 4096) % 8));
 }

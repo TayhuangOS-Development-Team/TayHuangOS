@@ -26,11 +26,11 @@
 #include <memory/pmm.h>
 
 PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_brk, qword end_brk,
-    qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) {
+    qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建MM Info
     mm_struct *mm = malloc(sizeof(mm_struct));
 
-    mm->areas = create_vmarea();
-    mm->pgd = pgd;
+    mm->areas = create_vmarea(); //虚空间树根
+    mm->pgd = pgd; //页表
 
     mm->start_code   = start_code;
     mm->end_code     = end_code;
@@ -47,39 +47,39 @@ PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code,
 }
 
 PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qword rflags, word cs, void *pgd, qword start_code, qword end_code,
-    qword start_data, qword end_data, qword start_brk, qword end_brk, qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) {
+    qword start_data, qword end_data, qword start_brk, qword end_brk, qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建PCB
     task_struct *task = malloc(sizeof(task_struct));
     memset(&task->thread_info, 0, sizeof(task->thread_info));
-    task->thread_info.rip = entry;
+    task->thread_info.rip = entry; //入口
     task->thread_info.rflags = rflags;
-    task->thread_info.cs = cs;
-    task->thread_info.ss = cs - 8;
+    task->thread_info.cs = cs; //代码段
+    task->thread_info.ss = cs - 8; //数据段在代码段上一个
     task->thread_info.ds = cs - 8;
 
     task->counter = 0;
     task->priority = priority;
 
-    task->state = SUBBMITED;
+    task->state = SUBBMITED; //提交态
     task->next = task->last = NULL;
-    task->pid = pid;
+    task->pid = pid; //PID
     memset (&task->signal, 0, sizeof (task->signal));
     task->mm_info = create_mm_struct(pgd, start_code, end_code, start_data, end_data,
-        start_brk, end_brk, start_rodata, end_rodata, start_stack, end_stack);
+        start_brk, end_brk, start_rodata, end_rodata, start_stack, end_stack); //创建MM
 
-    task->ipc_info.msg = NULL;
+    task->ipc_info.msg = NULL; //初始化IPC信息
     task->ipc_info.queue = NULL;
     task->ipc_info.wait_for = 0;
     return task;
 }
 
-PUBLIC task_struct *task_table;
+PUBLIC task_struct *task_table; //进程表
 PRIVATE int __cur_pid = 0;
 
-PRIVATE int alloc_pid(void) {
+PRIVATE int alloc_pid(void) { //自动分配PID
     return __cur_pid ++;
 }
 
-PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd, qword start_pos, qword end_pos) {
+PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd, qword start_pos, qword end_pos) { //创建进程
     dis_int();
     task_struct *task = create_task_struct(alloc_pid(), priority, entry, rflags, cs, pgd,
          start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, rsp, rbp);
@@ -92,7 +92,7 @@ PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword r
     return task;
 }
 
-PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) {
+PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) { //复制
     set_pml4(pml4);
     while (start_addr < end_addr) {
         void *start_page = lookup_free_page(); //找页
@@ -115,6 +115,8 @@ PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) {
 }
 
 PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, qword rbp) {
+    //TODO
+    //WIP
     dis_int();
     task_struct *task = create_task_struct(alloc_pid(), priority, entry,
          current_task->thread_info.rsp, current_task->thread_info.cs, current_task->mm_info->pgd,
@@ -145,8 +147,8 @@ PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, q
 
 PUBLIC task_struct *current_task = NULL;
 
-PUBLIC void do_switch(struct intterup_args *regs) {
-    //down task
+PUBLIC void do_switch(struct intterup_args *regs) { //进行进程切换
+    //下降进程
     current_task->thread_info.rsp = regs->rsp;
     current_task->thread_info.rip = regs->rip;
     current_task->thread_info.cs = regs->cs;
@@ -225,9 +227,9 @@ PUBLIC void do_switch(struct intterup_args *regs) {
         current_task->counter = ((current_task->counter >> 1) + current_task->priority);
 
         nxt_task = current_task->next ? current_task->next : task_table;
-    } while (current_task->state != READY && current_task->state != SUBBMITED);
+    } while (current_task->state != READY && current_task->state != SUBBMITED); //直到它为符合条件的进程
 
-    //up task
+    //上升进程
     regs->rsp = current_task->thread_info.rsp;
     regs->rip = current_task->thread_info.rip;
     regs->cs = current_task->thread_info.cs;

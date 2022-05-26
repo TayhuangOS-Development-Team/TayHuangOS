@@ -71,9 +71,9 @@ PUBLIC void enable_irq(_IN int irq) {
 
 PUBLIC void send_eoi(_IN int irq) {
     if (irq > 8) {
-        outb (S_PIC_CONTROL, PIC_EOI);
+        outb (S_PIC_CONTROL, PIC_EOI); //从片EOI
     }
-    outb (M_PIC_CONTROL, PIC_EOI);
+    outb (M_PIC_CONTROL, PIC_EOI); //主片EOI
 }
 
 #define IDT_SIZE (128)
@@ -144,6 +144,7 @@ PRIVATE void __init_descs(void) {
     init_idt_desc(30, GATE_INTERRUPT, security_exception, 0);
     init_idt_desc(31, GATE_INTERRUPT, reserved8_excepetion, 0);
 
+    //IRQ处理器
     init_idt_desc_ist(CALC_IRQ(0), GATE_INTERRUPT, irq0_handler, 0, 1);
     init_idt_desc_ist(CALC_IRQ(1), GATE_INTERRUPT, irq1_handler, 0, 1);
     init_idt_desc_ist(CALC_IRQ(2), GATE_INTERRUPT, irq2_handler, 0, 1);

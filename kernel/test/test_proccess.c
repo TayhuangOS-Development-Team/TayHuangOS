@@ -47,6 +47,7 @@
 
 #include <syscall/syscall.h>
 
+//IPC函数
 PRIVATE int ipc_puts(const char *str, int x, int y, int color) {
     qword pack[] = {0x00, (qword)str, x, y, color};
     int len = 0;

@@ -19,7 +19,7 @@
 #include "tools.h"
 #include "intcall.h"
 
-PUBLIC dword get_clock_time(void) {
+PUBLIC dword get_clock_time(void) { //tick数
     intargs_t args;
     reg_collect_t in_regs;
     reg_collect_t out_regs;
@@ -39,7 +39,7 @@ PUBLIC byte bcd2num8(byte bcd) {
     return bcd2num4(bcd & 0xF) + bcd2num4(bcd >> 4) * 10;
 }
 
-PUBLIC void get_time(struct time_t *tm) {
+PUBLIC void get_time(struct time_t *tm) { //获取时间
     intargs_t args;
     reg_collect_t in_regs;
     reg_collect_t out_regs;
@@ -54,7 +54,7 @@ PUBLIC void get_time(struct time_t *tm) {
     tm->isdst = bcd2num8(LOWWORD(LOWBYTE(out_regs.edx)));
 }
 
-PUBLIC void get_date(struct date_t *dt) {
+PUBLIC void get_date(struct date_t *dt) { //获取日期
     intargs_t args;
     reg_collect_t in_regs;
     reg_collect_t out_regs;
@@ -83,7 +83,7 @@ PUBLIC int random(dword seed, int min, int max) {
     return _random(seed) % step + min;
 }
 
-PUBLIC char escape(const char *sentence) {
+PUBLIC char escape(const char *sentence) { //转义字符
     char ch = *sentence;
     switch (ch) {
     case 'n': return '\n';

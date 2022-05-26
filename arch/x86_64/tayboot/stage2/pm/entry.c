@@ -79,7 +79,7 @@ PRIVATE void init_stage3_args(void) {
         stage3_args.framebuffer = framebuffer;
     }
     else { //不支持vesa
-        printf ("Your vedio don't support vesa!");
+        printf ("Your video don't support vesa!");
 #else
     stage3_args.is_graphic_mode = false;
     stage3_args.screen_height = 25;

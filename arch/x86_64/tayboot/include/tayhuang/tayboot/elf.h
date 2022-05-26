@@ -13,9 +13,9 @@
 
 #pragma once
 
-#include "stdint.h"
+#include <stdint.h>
 
-//Types
+//类型
 typedef uint16_t Elf32_Half;
 typedef uint32_t Elf32_Word;
 typedef uint64_t Elf32_Xword;
@@ -42,38 +42,38 @@ typedef Elf64_Half Elf64_Versym;
 
 typedef struct
 {
-  unsigned char	e_ident[EI_NIDENT];	/* Magic number and other info */
-  Elf32_Half	e_type;			/* Object file type */
-  Elf32_Half	e_machine;		/* Architecture */
-  Elf32_Word	e_version;		/* Object file version */
-  Elf32_Addr	e_entry;		/* Entry point virtual address */
-  Elf32_Off	e_phoff;		/* Program header table file offset */
-  Elf32_Off	e_shoff;		/* Section header table file offset */
-  Elf32_Word	e_flags;		/* Processor-specific flags */
-  Elf32_Half	e_ehsize;		/* ELF header size in bytes */
-  Elf32_Half	e_phentsize;		/* Program header table entry size */
-  Elf32_Half	e_phnum;		/* Program header table entry count */
-  Elf32_Half	e_shentsize;		/* Section header table entry size */
-  Elf32_Half	e_shnum;		/* Section header table entry count */
-  Elf32_Half	e_shstrndx;		/* Section header string table index */
-} Elf32_Ehdr;
+  unsigned char	e_ident[EI_NIDENT];	/* 魔数与其他信息 */
+  Elf32_Half	e_type;			/* 文件类型 */
+  Elf32_Half	e_machine;		/* 目标架构 */
+  Elf32_Word	e_version;		/* 文件版本 */
+  Elf32_Addr	e_entry;		/* 入口点(虚地址) */
+  Elf32_Off	e_phoff;		/* 程序头表偏移量 */
+  Elf32_Off	e_shoff;		/* 节头表偏移量 */
+  Elf32_Word	e_flags;		/* 处理器标志*/
+  Elf32_Half	e_ehsize;		/* ELF头大小 */
+  Elf32_Half	e_phentsize;		/* 程序头大小 */
+  Elf32_Half	e_phnum;		/* 程序头数 */
+  Elf32_Half	e_shentsize;		/* 节头大小 */
+  Elf32_Half	e_shnum;		/* 节头数 */
+  Elf32_Half	e_shstrndx;		/* 字符串节编号 */
+} Elf32_Ehdr; //32位ELF头
 
 typedef struct
 {
-  unsigned char	e_ident[EI_NIDENT];	/* Magic number and other info */
-  Elf64_Half	e_type;			/* Object file type */
-  Elf64_Half	e_machine;		/* Architecture */
-  Elf64_Word	e_version;		/* Object file version */
-  Elf64_Addr	e_entry;		/* Entry point virtual address */
-  Elf64_Off	e_phoff;		/* Program header table file offset */
-  Elf64_Off	e_shoff;		/* Section header table file offset */
-  Elf64_Word	e_flags;		/* Processor-specific flags */
-  Elf64_Half	e_ehsize;		/* ELF header size in bytes */
-  Elf64_Half	e_phentsize;		/* Program header table entry size */
-  Elf64_Half	e_phnum;		/* Program header table entry count */
-  Elf64_Half	e_shentsize;		/* Section header table entry size */
-  Elf64_Half	e_shnum;		/* Section header table entry count */
-  Elf64_Half	e_shstrndx;		/* Section header string table index */
+  unsigned char	e_ident[EI_NIDENT];	/* 魔数与其他信息 */
+  Elf64_Half	e_type;			/* 文件类型 */
+  Elf64_Half	e_machine;		/* 目标架构 */
+  Elf64_Word	e_version;		/* 文件版本 */
+  Elf64_Addr	e_entry;		/* 入口点(虚地址) */
+  Elf64_Off	e_phoff;		/* 程序头表偏移量 */
+  Elf64_Off	e_shoff;		/* 节头表偏移量 */
+  Elf64_Word	e_flags;		/* 处理器标志*/
+  Elf64_Half	e_ehsize;		/* ELF头大小 */
+  Elf64_Half	e_phentsize;		/* 程序头大小 */
+  Elf64_Half	e_phnum;		/* 程序头数 */
+  Elf64_Half	e_shentsize;		/* 节头大小 */
+  Elf64_Half	e_shnum;		/* 节头数 */
+  Elf64_Half	e_shstrndx;		/* 字符串节编号 */
 } Elf64_Ehdr;
 
 //SHDR
