@@ -99,6 +99,9 @@ PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) { //å¤åˆ
         int page_num = 0;
         void *free_page = find_freepages(min(page_need, 64), &page_num);
 
+        for (int i = 0 ; i < page_num ; i ++)
+            mark_used(free_page + i * 4096);
+
         memcpy(start_addr, free_page, MEMUNIT_SZ * page_num);
         
         set_mapping(start_addr, free_page, page_num, true, true);

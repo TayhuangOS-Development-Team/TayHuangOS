@@ -58,6 +58,7 @@ PUBLIC void mark_unused(void *page) { //标记为未被使用
 
 // 0 < max <= 64
 PUBLIC void *find_freepages(int max, int *found) {
+    //can be improved
     qword *qwd_bmp = (qword*)pmpage_bitmap;
     for (int i = 0 ; i < pmpage_bitmap_size / 8 ; i ++) {
         if (qwd_bmp[i] != 0xFFFFFFFFFFFFFFFF) { //没有全被用
