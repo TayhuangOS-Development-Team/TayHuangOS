@@ -31,7 +31,7 @@
 
 PRIVATE PML4E *current_pml4 = NULL;
 
-PUBLIC void set_pml4(_IN void *pml4) {
+PUBLIC void set_pml4(void *pml4) {
     current_pml4 = pml4;
 }
 
@@ -53,7 +53,7 @@ PRIVATE void *__get_free_page(void) { //获取空闲页
     return page;
 }
 
-PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool us) {
+PRIVATE bool __set_mapping(void *from, void *to, bool rw, bool us) {
     int pml4e_idx = (((qword)from) >> 39) & 0x1FF;
     int pdpte_idx = (((qword)from) >> 30) & 0x1FF;
     int pde_idx = (((qword)from) >> 21) & 0x1FF;
@@ -112,7 +112,7 @@ PRIVATE bool __set_mapping(_IN void *from, _IN void *to, _IN bool rw, _IN bool u
     return true;
 }
 
-PUBLIC bool set_mapping(_IN void *from, _IN void *to, _IN int pages, _IN bool rw, _IN bool us) { //设置映射
+PUBLIC bool set_mapping(void *from, void *to, int pages, bool rw, bool us) { //设置映射
     for (int i = 0 ; i < pages ; i ++) {
         if (! __set_mapping(from + i * MEMUNIT_SZ, to + i * MEMUNIT_SZ, rw, us)) {
             return false;

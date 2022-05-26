@@ -24,3 +24,4 @@ PUBLIC void init_pmm(qword pmemsz); //初始化PMM
 PUBLIC void *lookup_free_page(void); //寻找空闲页
 PUBLIC void mark_used(void *page); //标志被使用过
 PUBLIC void mark_unused(void *page); //标志未被使用过
+PUBLIC void *find_freepages(int max, int *found);

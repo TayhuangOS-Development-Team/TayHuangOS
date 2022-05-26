@@ -50,8 +50,8 @@ struct intterup_args {
 } __attribute__((packed));
 
 PUBLIC void init_pic(void);
-PUBLIC void disable_irq(_IN int irq);
-PUBLIC void enable_irq(_IN int irq);
-PUBLIC void send_eoi(_IN int irq);
+PUBLIC void disable_irq(int irq);
+PUBLIC void enable_irq(int irq);
+PUBLIC void send_eoi(int irq);
 PUBLIC void init_idt(void);
 typedef void(*int_handler)(void);

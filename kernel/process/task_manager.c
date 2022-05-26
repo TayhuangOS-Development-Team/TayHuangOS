@@ -95,22 +95,14 @@ PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword r
 PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) { //复制
     set_pml4(pml4);
     while (start_addr < end_addr) {
-        void *start_page = lookup_free_page(); //找页
-        mark_used(start_page); //标记
+        int page_need = (end_addr - start_addr) / 4096;
         int page_num = 0;
-        void *tmp_addr = start_addr;
-        while (tmp_addr < end_addr) { //连续分配
-            void *next_page = lookup_free_page();
-            if ((next_page - start_page) != MEMUNIT_SZ) { //不是连续的下一个页
-                break;
-            }
-            mark_used(next_page); //标记
-            page_num ++; //页数++
-            tmp_addr += MEMUNIT_SZ; //下一个页
-        }
-        memcpy(start_addr, start_page, MEMUNIT_SZ * page_num);
-        set_mapping(start_addr, start_page, page_num, true, true);
-        start_addr = tmp_addr;
+        void *free_page = find_freepages(min(page_need, 64), &page_num);
+
+        memcpy(start_addr, free_page, MEMUNIT_SZ * page_num);
+        
+        set_mapping(start_addr, free_page, page_num, true, true);
+        start_addr += page_num * 4096;
     }
 }
 

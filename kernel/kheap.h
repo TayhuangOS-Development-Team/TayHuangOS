@@ -22,7 +22,7 @@
 
 #define KHEAP_BASE (0x100000)
 
-static inline void memset(_OUT void *dst, _IN byte val, _IN qword sz) {
+static inline void memset(void *dst, byte val, qword sz) {
     qword _val = val;
     asmv ("movq %0, %%rcx\n\t\
 movq %1, %%rax\n\t\
@@ -32,7 +32,7 @@ rep\n\t\
 stosb" : : "g"(sz), "g"(_val), "g"(dst) : "%rcx", "%rdi", "%rax");
 }
 
-static inline void memcpy(_OUT void *dst, _IN void *src, _IN qword sz) {
+static inline void memcpy(void *dst, void *src, qword sz) {
     asmv ("movq %0, %%rcx\n\t\
 movq %1, %%rsi\n\t\
 movq %2, %%rdi\n\t\
@@ -41,9 +41,9 @@ rep\n\t\
 movsb" : : "g"(sz), "g"(src), "g"(dst) : "%rcx", "%rdi", "%rsi");
 }
 
-PUBLIC void init_kheap(_IN void *kheap_limit); //初始化堆
-PUBLIC void *malloc(_IN int size); //分配内存
-static inline void *calloc(_IN int num, _IN int size) { //分配num个size的内存
+PUBLIC void init_kheap(void *kheap_limit); //初始化堆
+PUBLIC void *malloc(int size); //分配内存
+static inline void *calloc(int num, int size) { //分配num个size的内存
     return malloc(num * size);
 }
-PUBLIC void free(_IN void *ptr); //释放内存
+PUBLIC void free(void *ptr); //释放内存

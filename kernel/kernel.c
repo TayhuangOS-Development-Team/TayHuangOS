@@ -94,7 +94,7 @@ PRIVATE void init_gdt(void) { //初始化GDT
     asmv ("ltr %0" : : "m"(_tr_idx));
 }
 
-PRIVATE void init_video_info(_IN struct boot_args *args) { //初始化视频
+PRIVATE void init_video_info(struct boot_args *args) { //初始化视频
     int buffersz = (args->is_graphic_mode ? 3 : 2) * args->screen_width * args->screen_height;
 
     set_mapping(args->framebuffer, args->framebuffer, buffersz / 4096 + 1, true, true); //初始化显存页表
@@ -152,7 +152,7 @@ void init(void) { //init进程
 
 #define CLOCK_FREQUENCY (50.0f) //时钟周期
 
-void initialize(_IN struct boot_args *args) {
+void initialize(struct boot_args *args) {
     init_gdt(); //初始化GDT
 
     qword pmemsz = (((qword)args->memory_size_high) << 32) + args->memory_size; //计算物理内存大小
@@ -195,7 +195,7 @@ void initialize(_IN struct boot_args *args) {
     init_keyboard(); //键盘
 }
 
-void entry(_IN struct boot_args *_args) {
+void entry(struct boot_args *_args) {
     //Boot Arg
     if (_args->magic != BOOT_ARGS_MAGIC) {
         while (true);

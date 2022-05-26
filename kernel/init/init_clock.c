@@ -22,7 +22,7 @@
 
 #define PIT_FREQUENCY (1193181.6666f)
 
-PUBLIC bool init_pit(_IN float frequency) { //初始化PIT
+PUBLIC bool init_pit(float frequency) { //初始化PIT
     if (frequency > PIT_FREQUENCY) //频率过高
         return false;
 

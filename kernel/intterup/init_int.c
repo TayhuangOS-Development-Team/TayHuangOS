@@ -41,7 +41,7 @@ PUBLIC void init_pic(void) {
     outb (S_PIC_DATA, 0xFF);
 }
 
-PUBLIC void disable_irq(_IN int irq) {
+PUBLIC void disable_irq(int irq) {
     if (irq < 8) {
         byte i = inb(M_PIC_DATA); //主片
         i |= (1 << irq);
@@ -54,7 +54,7 @@ PUBLIC void disable_irq(_IN int irq) {
     }
 }
 
-PUBLIC void enable_irq(_IN int irq) {
+PUBLIC void enable_irq(int irq) {
     if (irq < 8) {
         byte i = inb(M_PIC_DATA); //主片
         i &= ~(1 << irq);
@@ -69,7 +69,7 @@ PUBLIC void enable_irq(_IN int irq) {
 
 #define PIC_EOI (0x20)
 
-PUBLIC void send_eoi(_IN int irq) {
+PUBLIC void send_eoi(int irq) {
     if (irq > 8) {
         outb (S_PIC_CONTROL, PIC_EOI); //从片EOI
     }

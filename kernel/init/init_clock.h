@@ -20,4 +20,4 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC bool init_pit(_IN float frequency);
+PUBLIC bool init_pit(float frequency);

@@ -55,3 +55,36 @@ PUBLIC void mark_unused(void *page) { //标记为未被使用
     qword _page = (qword)page;
     pmpage_bitmap[(_page / 4096 / 8)] &= ~(1 << ((_page / 4096) % 8));
 }
+
+// 0 < max <= 64
+PUBLIC void *find_freepages(int max, int *found) {
+    qword *qwd_bmp = (qword*)pmpage_bitmap;
+    for (int i = 0 ; i < pmpage_bitmap_size / 8 ; i ++) {
+        if (qwd_bmp[i] != 0xFFFFFFFFFFFFFFFF) { //没有全被用
+            int start = 0;
+            qword state = qwd_bmp[i]; //64个位
+            while ((state & 1) != 0) { //最低位不为0
+                state >>= 1;
+                start ++;
+            }
+            //现在低位是0
+            if (i + 1 < (pmpage_bitmap_size / 8)) {
+                pmpage_bitmap[i] |= (qwd_bmp[i + 1] << start); //补充下一个64位
+            }
+            else {
+                pmpage_bitmap[i] |= (0xFFFFFFFFFFFFFFFF << start);
+            }
+            int num = 0;
+            while ((start & 1) != 1) { //直到低位是1
+                state >>= 1;
+                num ++; //可用内存数++
+            }
+            if (num >= max) {
+                num = max;
+            }
+            *found = num; //返回找到的可用内存数
+            return (i * 8 + start) * 4096; //返回可用内存地址
+        }
+    }
+    return NULL;
+}

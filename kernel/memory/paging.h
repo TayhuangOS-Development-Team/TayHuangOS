@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void set_pml4(_IN void *pml4);
+PUBLIC void set_pml4(void *pml4);
 PUBLIC void *get_pml4(void);
 PUBLIC void *create_pgd(void);
-PUBLIC bool set_mapping(_IN void *from, _IN void *to, _IN int pages, _IN bool rw, _IN bool us);
+PUBLIC bool set_mapping(void *from, void *to, int pages, bool rw, bool us);

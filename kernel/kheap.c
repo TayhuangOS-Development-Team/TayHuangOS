@@ -28,14 +28,14 @@ PRIVATE kh_seg *KHEAP_SEGMENTS = NULL; //内存项表
 PRIVATE void *KHEAP_TOP = NULL; //堆顶
 PRIVATE void *KHEAP_BOTTOM = NULL; //堆底
 
-PUBLIC void init_kheap(_IN void *kheap_limit) { //初始化堆
+PUBLIC void init_kheap(void *kheap_limit) { //初始化堆
     KHEAP_SEGMENTS = (kh_seg*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
     KHEAP_TOP = (void*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
     KHEAP_BOTTOM = (void*)KHEAP_BASE;
     memset(KHEAP_SEGMENTS, 0, sizeof(kh_seg) * KH_SEG_NUM);
 }
 
-PRIVATE void *__get_segment_size(_IN void *base, _IN int size) { //获得项大小
+PRIVATE void *__get_segment_size(void *base, int size) { //获得项大小
     for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
         if (max(KHEAP_SEGMENTS[i].start, base) < min(KHEAP_SEGMENTS[i].size, (base + size))) {
             return KHEAP_SEGMENTS[i].size;
@@ -44,7 +44,7 @@ PRIVATE void *__get_segment_size(_IN void *base, _IN int size) { //获得项大�
     return NULL;
 }
 
-PRIVATE void *__lookup_free_mem(_IN int size) { //寻找空闲内存
+PRIVATE void *__lookup_free_mem(int size) { //寻找空闲内存
     for (void *i = KHEAP_BOTTOM ; i < KHEAP_TOP ;) {
         void *sz = __get_segment_size(i, size); //获取这个项的大小
         if (sz == NULL) //没大小:空闲内存
@@ -63,7 +63,7 @@ PRIVATE int __lookup_free_kh_seg(void) { //查找未被使用的内存项
     return -1;
 }
 
-PRIVATE bool __insert_kh_seg(_IN void *start, _IN void *size) { //插入内存项
+PRIVATE bool __insert_kh_seg(void *start, void *size) { //插入内存项
     int idx = __lookup_free_kh_seg(); //寻找空闲内存项
     if (idx == -1) {
         return false;
@@ -73,7 +73,7 @@ PRIVATE bool __insert_kh_seg(_IN void *start, _IN void *size) { //插入内存�
     return true;
 }
 
-PRIVATE void __delete_kh_seg(_IN void *start) { //删除内存项
+PRIVATE void __delete_kh_seg(void *start) { //删除内存项
     for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
         if ((KHEAP_SEGMENTS[i].start == start)) {
             KHEAP_SEGMENTS[i].start = NULL;
@@ -83,7 +83,7 @@ PRIVATE void __delete_kh_seg(_IN void *start) { //删除内存项
     }
 }
 
-PUBLIC void *malloc(_IN int size) { //分配内存
+PUBLIC void *malloc(int size) { //分配内存
     void *mem = __lookup_free_mem(size);
     if (mem == NULL)
         return NULL;
@@ -92,6 +92,6 @@ PUBLIC void *malloc(_IN int size) { //分配内存
     return mem;
 }
 
-PUBLIC void free(_IN void *ptr) { //释放内存
+PUBLIC void free(void *ptr) { //释放内存
     __delete_kh_seg(ptr);
 }
