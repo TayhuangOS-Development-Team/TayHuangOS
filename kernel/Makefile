@@ -30,6 +30,7 @@ SYSCALL_C_SRC := syscall/syscall
 DRIVER_C_SRC := driver/video/video driver/clock/clock driver/keyboard/keyboard driver/keyboard/keymap
 TEST_C_SRC := test/test_proccess
 DEBUG_C_SRC := debug/logging
+KMOD_C_SRC := kmod/kmod_loader
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \
@@ -42,7 +43,8 @@ C_SRC := kernel kheap \
 		$(SYSCALL_C_SRC) \
 		$(TEST_C_SRC) \
 		$(DRIVER_C_SRC) \
-		$(DEBUG_C_SRC)
+		$(DEBUG_C_SRC) \
+		$(KMOD_C_SRC)
 
 CPP_SRC :=
 
