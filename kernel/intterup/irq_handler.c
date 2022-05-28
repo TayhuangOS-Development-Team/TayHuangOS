@@ -20,6 +20,9 @@
 #include "init_int.h"
 #include <syscall/syscall.h>
 
+#include <memory/paging.h>
+#include <tayhuang/control_registers.h>
+
 PUBLIC short IRQ_FLAGS[16];
 
 PRIVATE irq_handler IRQ_HANDLERS[16] = {};
@@ -32,6 +35,7 @@ PUBLIC void register_irq_handler(int irq, irq_handler handler) {
 PRIVATE bool entered_handler = false;
 
 PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
+    __set_cr3(kernel_pml4);
     bool flag = entered_handler;
     if (! flag)
         entered_handler = true;
@@ -51,6 +55,7 @@ PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
 
 void after_syscall(struct intterup_args *regs);
 PUBLIC void syscall_int_handler(struct intterup_args *regs) {
+    __set_cr3(kernel_pml4);
     bool flag = entered_handler;
     if (! flag)
         entered_handler = true;

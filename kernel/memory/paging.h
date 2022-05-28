@@ -20,6 +20,8 @@
 
 #include <tayhuang/defs.h>
 
+extern PUBLIC void *kernel_pml4;
+
 PUBLIC void set_pml4(void *pml4);
 PUBLIC void *get_pml4(void);
 PUBLIC void *create_pgd(void);

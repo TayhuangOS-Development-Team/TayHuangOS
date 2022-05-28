@@ -121,7 +121,7 @@ PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered
 
 #define MMIO_START (0x30000000000)
 
-PRIVATE void *kernel_pml4 = NULL;
+PUBLIC void *kernel_pml4 = NULL;
 
 #define CS_USER (cs3_idx << 3 | 3)
 #define RFLAGS_USER ((1 << 9) | (3 << 12))
@@ -222,10 +222,10 @@ void entry(struct boot_args *_args) {
 
     load_kmod_from_memory((void*)args.disk_mod_addr);
 
-    // asmv ("movq $0x125000, %rsp"); //设置堆
-    // enable_irq(0); //开启时钟中断
-    // enable_irq(1);
-    // asmv ("jmp init"); //跳转至INIT进程
+    //asmv ("movq $0x125000, %rsp"); //设置堆
+    //enable_irq(0); //开启时钟中断
+    //enable_irq(1);
+    //asmv ("jmp init"); //跳转至INIT进程
     
     while(true);
 }
