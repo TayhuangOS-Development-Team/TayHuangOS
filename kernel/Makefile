@@ -29,6 +29,7 @@ PROCESS_C_SRC := process/vmareas process/task_manager
 SYSCALL_C_SRC := syscall/syscall
 DRIVER_C_SRC := driver/video/video driver/clock/clock driver/keyboard/keyboard driver/keyboard/keymap
 TEST_C_SRC := test/test_proccess
+DEBUG_C_SRC := debug/logging
 C_SRC := kernel kheap \
 		$(STD_C_SRC) \
 		$(MEMORY_C_SRC) \
@@ -40,7 +41,8 @@ C_SRC := kernel kheap \
 		$(KEYBOARD_C_SRC) \
 		$(SYSCALL_C_SRC) \
 		$(TEST_C_SRC) \
-		$(DRIVER_C_SRC)
+		$(DRIVER_C_SRC) \
+		$(DEBUG_C_SRC)
 
 CPP_SRC :=
 

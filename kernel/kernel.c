@@ -49,6 +49,8 @@
 #include <clock/clock.h>
 #include <keyboard/keyboard.h>
 
+#include <debug/logging.h>
+
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
@@ -154,6 +156,7 @@ void init(void) { //init进程
 
 void initialize(struct boot_args *args) {
     init_gdt(); //初始化GDT
+    init_serial();
 
     qword pmemsz = (((qword)args->memory_size_high) << 32) + args->memory_size; //计算物理内存大小
 
@@ -221,5 +224,7 @@ void entry(struct boot_args *_args) {
     // asmv ("jmp init"); //跳转至INIT进程
     printk ("%#016X:%#2X%#2X%#2X%#2X\n", args.disk_mod_addr,
      *((byte*)args.disk_mod_addr), *((byte*)args.disk_mod_addr + 1), *((byte*)args.disk_mod_addr + 2), *((byte*)args.disk_mod_addr + 3));
+    
+    linfo("Hello, World!");
     while(true);
 }
