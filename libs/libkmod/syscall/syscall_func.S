@@ -14,19 +14,19 @@
  *
  */
 
-.extern get_ticks
+.global get_ticks
 .type get_ticks, @function
-.extern sleep
+.global sleep
 .type sleep, @function
-.extern exit
+.global exit
 .type exit, @function
-.extern wakeup
+.global wakeup
 .type wakeup, @function
-.extern fatal
+.global fatal
 .type fatal, @function
-.extern eggs
+.global eggs
 .type eggs, @function
-.extern signal
+.global signal
 .type signal, @function
 
 get_ticks: /*int get_ticks(void)*/

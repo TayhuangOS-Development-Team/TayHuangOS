@@ -19,6 +19,7 @@
 #include "pmm.h"
 #include <kheap.h>
 #include <tayhuang/paging.h>
+#include <debug/logging.h>
 
 PRIVATE byte *pmpage_bitmap;
 PRIVATE qword pmpage_bitmap_size = 0;
@@ -57,7 +58,6 @@ PUBLIC void mark_unused(void *page) { //标记为未被使用
     pmpage_bitmap[(_page / MEMUNIT_SZ / 8)] &= ~(1 << ((_page / MEMUNIT_SZ) % 8));
 }
 
-// 0 < max <= 64
 PUBLIC void *find_freepages(int max, int *found) {
     //can be improved
     int i, j;
@@ -67,6 +67,7 @@ PUBLIC void *find_freepages(int max, int *found) {
             continue;
         for (j = 0 ; j < 8 ; j ++) {    
             if ((i * 8 + j) > pmpage_num) {
+                lwarn ("No more free memories!");
                 *found = 0;
                 return NULL;
             }
@@ -79,6 +80,7 @@ PUBLIC void *find_freepages(int max, int *found) {
             break;
     }
     if (! flag) {
+        lwarn ("No more free memories!");
         *found = 0;
         return NULL;
     }
@@ -87,7 +89,7 @@ PUBLIC void *find_freepages(int max, int *found) {
     void *start = (i * 8 + j) * MEMUNIT_SZ; 
     for (; i < pmpage_bitmap_size ; i ++) {
         for (; j < pmpage_bitmap_size ; j ++) {
-            if (pmpage_bitmap[i] & (1 << j) == 0) {
+            if ((pmpage_bitmap[i] & (1 << j)) == 0) {
                 sum ++;
                 if (sum >= max) {
                     flag = true;

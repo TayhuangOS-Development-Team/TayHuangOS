@@ -16,11 +16,11 @@
 
 
 
-.extern send_msg
+.global send_msg
 .type send_msg, @function
-.extern recv_msg
+.global recv_msg
 .type recv_msg, @function
-.extern recv_any_msg
+.global recv_any_msg
 .type recv_any_msg, @function
 
 send_msg: /*int send_msg(void *msg, int dest, int len, int tickout)*/

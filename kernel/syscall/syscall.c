@@ -18,6 +18,7 @@
 #include <display/printk.h>
 #include <process/task_manager.h>
 #include <kheap.h>
+#include <debug/logging.h>
 
 PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid
@@ -134,6 +135,9 @@ PRIVATE qword __fatal(void) {
 }
 
 PRIVATE qword __eggs(void) { //彩蛋
+    const char buffer[64];
+    sprintk(buffer, "eggs from pid %d!", __get_pid());
+    linfo(buffer);
     return 114514;
 }
 

@@ -17,9 +17,9 @@ CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmod
 CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-C_SRC :=
+C_SRC := main
 
 CPP_SRC :=
 
@@ -27,10 +27,13 @@ ASMFLAGS :=
 ASM_SRC := entry
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/module/drivers/disk"
+C_INCLUDE := -I"$(ROOTDIR)/module/drivers/disk" -I"$(ROOTDIR)/libs/libkmod"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/module/drivers/disk"
+CPP_INCLUDE := -I"$(ROOTDIR)/module/drivers/disk" -I"$(ROOTDIR)/libs/libkmod"
+
+LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
+LIBRARIES := -lkmod 
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
@@ -51,7 +54,7 @@ $(OBJECTSDIR)/%.o : %.S
 .PHONY: build
 build: $(OBJECTS)
 	mkdir -p -v $(dir $(DISK_OUTPUT))
-	$(LD) $(LD_FLAGS) -T disk.ld -o $(DISK_OUTPUT) $^
+	$(LD) $(LD_FLAGS) -T disk.ld -o $(DISK_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
 	$(OBJCOPY) --only-keep-debug $(DISK_OUTPUT) $(DISK_SYMBOL_OUTPUT)
 	$(OBJCOPY) --strip-debug $(DISK_OUTPUT)

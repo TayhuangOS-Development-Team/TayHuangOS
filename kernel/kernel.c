@@ -156,6 +156,12 @@ void init(void) { //init进程
 
 #define CLOCK_FREQUENCY (50.0f) //时钟周期
 
+PRIVATE qword kernel_length;
+
+PUBLIC void mapping_kernel(void) {
+    set_mapping(0x1300000, 0x1300000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, false); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
+}
+
 void initialize(struct boot_args *args) {
     init_gdt(); //初始化GDT
     init_serial();
@@ -174,10 +180,10 @@ void initialize(struct boot_args *args) {
     //----------------------------------------------------------------------------------------
     kernel_pml4 = create_pgd(); //内核页表
     set_pml4(kernel_pml4);
-    qword kernel_length = args->kernel_limit - 0x1300000; //内核区大小
+    kernel_length = args->kernel_limit - 0x1300000; //内核区大小
 
     set_mapping(0, 0, pmemsz / 4096, true, false); //全部映射到自身
-    set_mapping(0x1300000, 0x1300000, (kernel_length / 4096) + ((kernel_length % 4096) != 0), true, false); //KHEAP-KSTACK-KERNEL RW = TRUE, US = SUPER
+    mapping_kernel();
 
     cr3_t cr3 = get_cr3();
     cr3.page_entry = (qword)kernel_pml4; //设置CR3

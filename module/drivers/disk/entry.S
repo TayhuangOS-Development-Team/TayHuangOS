@@ -22,4 +22,5 @@
 
     .global _start
 _start:
+    pushq %rax
     jmp .
