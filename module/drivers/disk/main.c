@@ -3,6 +3,6 @@
 #define NULL ((void*)0)
 
 void entry(void) {
-    eggs();
+    //eggs();
     while (1);
 }

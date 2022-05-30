@@ -36,7 +36,7 @@ PUBLIC void init_serial(void) {
 }
 
 PUBLIC void write_serial_char(char ch) {
-    while (inb(SERIAL_STATUS) & 0x20 == 0);
+    while ((inb(SERIAL_STATUS) & 0x20) == 0);
     outb(SERIAL_SEND, ch);
 }
 

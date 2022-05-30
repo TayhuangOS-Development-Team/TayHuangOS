@@ -27,7 +27,7 @@
 #include <kheap.h>
 #include <tayhuang/control_registers.h>
 
-PUBLIC void load_segment(Elf64_Phdr *program) {
+PUBLIC void load_segment(Elf64_Phdr *program, void *addr) {
     char buffer[256];
     if (program->p_type == PT_LOAD) {
         linfo ("Segment type: LOAD");
@@ -49,14 +49,14 @@ PUBLIC void load_segment(Elf64_Phdr *program) {
             for (int i = 0 ; i < num ; i ++)
                 mark_used(pages + i * MEMUNIT_SZ);
 
-            void *start_vaddr = program + sum * MEMUNIT_SZ;
+            void *start_vaddr = program->p_vaddr + sum * MEMUNIT_SZ;
             set_mapping(start_vaddr, pages, num, true, false);
 
             sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
             linfo (buffer);
 
             int copy_num = min(program->p_filesz - sum * MEMUNIT_SZ, num * MEMUNIT_SZ);
-            void *start_file = ((void*)program) + program->p_offset + sum * MEMUNIT_SZ;
+            void *start_file = addr + program->p_offset + sum * MEMUNIT_SZ;
             memcpy(pages, start_file, copy_num);
             
             sprintk (buffer, "Copied %P to %P, count = %dB", start_file, pages, copy_num);
@@ -88,13 +88,13 @@ PUBLIC void load_kmod_from_memory(void *addr) {
         sprintk (buffer, "Segment %d", i);
         linfo (buffer);
 
-        load_segment ((Elf64_Phdr*)(addr + elf_head->e_phoff + i * elf_head->e_phentsize));
+        load_segment ((Elf64_Phdr*)(addr + elf_head->e_phoff + i * elf_head->e_phentsize), addr);
     }
 
     mapping_kernel();
     __set_cr3(pgd);
 
-    
+    asmv ("movq $0x2000000, %rax\njmpq *%rax");
 
     while (true);
 }

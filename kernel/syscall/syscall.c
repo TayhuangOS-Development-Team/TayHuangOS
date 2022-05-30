@@ -135,7 +135,7 @@ PRIVATE qword __fatal(void) {
 }
 
 PRIVATE qword __eggs(void) { //彩蛋
-    const char buffer[64];
+    char buffer[64];
     sprintk(buffer, "eggs from pid %d!", __get_pid());
     linfo(buffer);
     return 114514;
