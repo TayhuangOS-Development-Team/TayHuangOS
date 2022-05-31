@@ -1,6 +1,7 @@
 OBJECTSDIR := $(OBJECTSDIR)/drivers/
 BINDIR := $(BINDIR)/drivers/
-export OBJECTSDIR
+DRIVERSDIR := $(ROOTDIR)/drivers
+export OBJECTSDIR DRIVERSDIR
 
 #编译
 .PHONY: build

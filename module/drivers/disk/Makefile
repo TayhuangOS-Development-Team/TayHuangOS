@@ -27,10 +27,10 @@ ASMFLAGS :=
 ASM_SRC := entry
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/module/drivers/disk" -I"$(ROOTDIR)/libs/libkmod"
+C_INCLUDE := -I "$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std" -I"$(DRIVERSDIR)/disk" -I"$(ROOTDIR)/libs/libkmod"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/module/drivers/disk" -I"$(ROOTDIR)/libs/libkmod"
+CPP_INCLUDE := -I "$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std" -I"$(DRIVERSDIR)/disk" -I"$(ROOTDIR)/libs/libkmod"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
 LIBRARIES := -lkmod 

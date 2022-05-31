@@ -1,8 +1,12 @@
 #include <syscall/syscall.h>
-
-#define NULL ((void*)0)
+#include <tayhuang/io.h>
+#include <tayhuang/ports.h>
 
 void entry(void) {
-    //eggs();
+    outb (SERIAL_SEND, 'D');
+    outb (SERIAL_SEND, 'I');
+    outb (SERIAL_SEND, 'S');
+    outb (SERIAL_SEND, 'K');
+    outb (SERIAL_SEND, '\n');
     while (1);
 }

@@ -22,9 +22,6 @@
 
     .global _start
 _start:
-    /*
-    pushq %rax1`
-    movq $0x3F8, %rax
-    outb %ax, $0x44
-    */
+    pushq %rax
+    call entry
     jmp .
