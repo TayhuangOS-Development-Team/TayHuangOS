@@ -1,6 +1,7 @@
 OBJECTSDIR := $(OBJECTSDIR)/module/
 BINDIR := $(BINDIR)/module/
-export OBJECTSDIR
+MODULEDIR := $(ROOTDIR)/module
+export OBJECTSDIR MODULEDIR
 
 #编译
 .PHONY: build
