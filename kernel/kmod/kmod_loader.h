@@ -20,4 +20,13 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void load_kmod_from_memory(void *addr);
+typedef struct {
+    void *start;
+    void *limit;
+    void *entry;
+    void *pgd;
+    void *stack_top;
+    void *stack_bottom;
+} program_info;
+
+PUBLIC program_info load_kmod_from_memory(void *addr);

@@ -130,9 +130,27 @@ PUBLIC void *kernel_pml4 = NULL;
 
 #define API_PID(x) (0x10000 + (x))
 
-PRIVATE void *kernel_limit;
+PRIVATE struct boot_args args;
 
 void init(void) { //init进程
+    program_info disk_driver_info = load_kmod_from_memory((void*)args.disk_mod_addr);
+
+    char buffer[256];
+    linfo ("");
+    linfo ("");
+    sprintk (buffer, "Start: %P", disk_driver_info.start);
+    linfo (buffer);
+    sprintk (buffer, "Limit: %P", disk_driver_info.limit);
+    linfo (buffer);
+    sprintk (buffer, "Entry: %P", disk_driver_info.entry);
+    linfo (buffer);
+    sprintk (buffer, "PGD: %P", disk_driver_info.pgd);
+    linfo (buffer);
+    sprintk (buffer, "Stack Top: %P", disk_driver_info.stack_top);
+    linfo (buffer);
+    sprintk (buffer, "Stack Bottom: %P", disk_driver_info.stack_bottom);
+    linfo (buffer);
+
     stop_switch = false;
     printk ("\n");
 
@@ -140,15 +158,16 @@ void init(void) { //init进程
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    //API PROCCESS
-    create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, kernel_limit);
-    create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, kernel_limit)->pid = API_PID(0);
-    create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, kernel_limit)->pid = API_PID(1);
-    create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, kernel_limit)->pid = API_PID(6);
+    // API PROCCESS
+    create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, args.kernel_limit);
+    create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, args.kernel_limit)->pid = API_PID(0);
+    create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, args.kernel_limit)->pid = API_PID(1);
+    create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, args.kernel_limit)->pid = API_PID(6);
 
-    //TEST PROCCESS
-    create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, kernel_limit);
-    create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, kernel_limit);
+    // TEST PROCCESS
+    create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, args.kernel_limit);
+    create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, args.kernel_limit);
+    create_task(1, disk_driver_info.entry, RFLAGS_KERNEL, disk_driver_info.stack_top, disk_driver_info.stack_bottom, CS_KERNEL, disk_driver_info.pgd, disk_driver_info.start, disk_driver_info.limit);
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
     exit();
@@ -211,13 +230,12 @@ void entry(struct boot_args *_args) {
     if (_args->magic != BOOT_ARGS_MAGIC) {
         while (true);
     }
-    struct boot_args args;
     memcpy(&args, _args, sizeof(struct boot_args));
 
     initialize(&args); //初始化
 
     TSS.ist1 = 0x1400000;
-    TSS.rsp0 = 0x1350000;
+    TSS.rsp0 = 0x1250000;
     current_task = create_task(1, init, RFLAGS_KERNEL, 0x1350000, 0x1300000, CS_KERNEL, get_pml4(), 0x1300000, args.kernel_limit); //init进程
     current_task->counter = 1;
 
@@ -225,13 +243,11 @@ void entry(struct boot_args *_args) {
 
     register_irq_handler(0, clock_int_handler);
     register_irq_handler(1, keyboard_int_handler); //中断处理器
-
-    load_kmod_from_memory((void*)args.disk_mod_addr);
-
-    //asmv ("movq $0x125000, %rsp"); //设置堆
-    //enable_irq(0); //开启时钟中断
-    //enable_irq(1);
-    //asmv ("jmp init"); //跳转至INIT进程
+    
+    asmv ("movq $0x125000, %rsp"); //设置堆
+    enable_irq(0); //开启时钟中断
+    enable_irq(1);
+    asmv ("jmp init"); //跳转至INIT进程
     
     while(true);
 }
