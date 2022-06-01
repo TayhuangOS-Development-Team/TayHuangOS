@@ -51,21 +51,21 @@
 PRIVATE int ipc_puts(const char *str, int x, int y, int color) {
     qword pack[] = {0x00, (qword)str, x, y, color};
     int len = 0;
-    sendrecv(pack, &len, 0x10001, sizeof(pack), 20);
+    sendrecv(pack, &len, 0x10002, sizeof(pack), 20);
     return len;
 }
 
 PRIVATE int ipc_putchar(char ch, int x, int y, int color) {
     qword pack[] = {0x01, ch, x, y, color};
     int len = 0;
-    sendrecv(pack, &len, 0x10001, sizeof(pack), 20);
+    sendrecv(pack, &len, 0x10002, sizeof(pack), 20);
     return len;
 }
 
 PRIVATE int ipc_printint(int num, int x, int y, int color) {
     qword pack[] = {0x02, num, x, y, color};
     int len = 0;
-    sendrecv(pack, &len, 0x10001, sizeof(pack), 20);
+    sendrecv(pack, &len, 0x10002, sizeof(pack), 20);
     return len;
 }
 

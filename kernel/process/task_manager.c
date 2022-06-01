@@ -73,7 +73,7 @@ PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qwor
 }
 
 PUBLIC task_struct *task_table; //进程表
-PRIVATE int __cur_pid = 0;
+PRIVATE int __cur_pid = 1;
 
 PRIVATE int alloc_pid(void) { //自动分配PID
     return __cur_pid ++;

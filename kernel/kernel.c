@@ -132,7 +132,7 @@ PUBLIC void *kernel_pml4 = NULL;
 
 PRIVATE struct boot_args args;
 
-void init(void) { //init进程
+void init(void) { //init进程 代表内核
     program_info disk_driver_info = load_kmod_from_memory((void*)args.disk_mod_addr);
 
     char buffer[256];
@@ -160,16 +160,27 @@ void init(void) { //init进程
 
     // API PROCCESS
     create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, args.kernel_limit);
-    create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, args.kernel_limit)->pid = API_PID(0);
-    create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, args.kernel_limit)->pid = API_PID(1);
+    create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, args.kernel_limit)->pid = API_PID(1);
+    create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, args.kernel_limit)->pid = API_PID(2);
     create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, args.kernel_limit)->pid = API_PID(6);
+    
+    create_task(
+        1, disk_driver_info.entry, RFLAGS_KERNEL,
+        disk_driver_info.stack_top, disk_driver_info.stack_bottom,
+        CS_KERNEL, disk_driver_info.pgd,
+        disk_driver_info.start, disk_driver_info.limit
+    )->pid = API_PID(0);
 
     // TEST PROCCESS
     create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, args.kernel_limit);
     create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, args.kernel_limit);
-    //create_task(1, disk_driver_info.entry, RFLAGS_KERNEL, disk_driver_info.stack_top, disk_driver_info.stack_bottom, CS_KERNEL, disk_driver_info.pgd, disk_driver_info.start, disk_driver_info.limit);
+    
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
+    while (true) {
+        send_msg("vfs.mod", API_PID(0), 8, 50);
+    }
+
     exit();
 }
 
