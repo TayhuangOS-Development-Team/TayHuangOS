@@ -19,8 +19,10 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 
 IPC_C_SRC := ipc/ipc
 DEBUG_C_SRC := debug/logging
+TOOL_C_SRC := tool/tostring
 C_SRC := $(IPC_C_SRC) \
-         $(DEBUG_C_SRC)
+         $(DEBUG_C_SRC) \
+		 $(TOOL_C_SRC)
 
 CPP_SRC :=
 

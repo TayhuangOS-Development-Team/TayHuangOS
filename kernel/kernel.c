@@ -177,9 +177,11 @@ void init(void) { //init进程 代表内核
     
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
-    while (true) {
-        send_msg("vfs.mod", API_PID(0), 8, 50);
-    }
+
+    send_msg("vfs.mod", API_PID(0), 8, 50);
+    void *vfs_addr = find_continue_freepages(16);
+    send_msg(&vfs_addr, API_PID(0), sizeof(vfs_addr), 50);
+    while (true);
 
     exit();
 }

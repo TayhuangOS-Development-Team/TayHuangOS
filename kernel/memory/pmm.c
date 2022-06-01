@@ -108,3 +108,37 @@ PUBLIC void *find_freepages(int max, int *found) {
     *found = sum;
     return start;
 }
+
+PUBLIC void *find_continue_freepages(int num) {
+    //can be improved
+    int sum = 0;
+    bool flag = false;
+    for (int i = 0 ; i < pmpage_bitmap_size ; i ++) {
+        if (pmpage_bitmap[i] == 0xFF)
+            continue;
+        for (int j = 0 ; j < 8 ; j ++) {
+            if ((i * 8 + j) > pmpage_num) {
+                lwarn ("No more free memories!");
+                return NULL;
+            }
+            else if (flag) {
+                if ((pmpage_bitmap[i] & (1 << j)) == 0) {
+                    sum ++;
+                }
+                else {
+                    flag = false;
+                }
+                if (sum >= num) {
+                    return (i * 8 + j - num) * MEMUNIT_SZ;
+                }
+            }
+            else {
+                if ((pmpage_bitmap[i] & (1 << j)) == 0) {
+                    sum = 0;
+                    flag = true;
+                }
+            }
+        }
+    }
+    return NULL;
+}
