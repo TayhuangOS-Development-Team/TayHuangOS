@@ -167,7 +167,7 @@ void init(void) { //init进程
     // TEST PROCCESS
     create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, args.kernel_limit);
     create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, args.kernel_limit);
-    create_task(1, disk_driver_info.entry, RFLAGS_KERNEL, disk_driver_info.stack_top, disk_driver_info.stack_bottom, CS_KERNEL, disk_driver_info.pgd, disk_driver_info.start, disk_driver_info.limit);
+    //create_task(1, disk_driver_info.entry, RFLAGS_KERNEL, disk_driver_info.stack_top, disk_driver_info.stack_bottom, CS_KERNEL, disk_driver_info.pgd, disk_driver_info.start, disk_driver_info.limit);
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
     exit();

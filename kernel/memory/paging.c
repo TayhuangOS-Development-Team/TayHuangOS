@@ -23,6 +23,8 @@
 
 #include <tayhuang/paging.h>
 #include <tayhuang/control_registers.h>
+#include <debug/logging.h>
+#include <display/printk.h>
 
 // PRIVATE const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
 // PRIVATE const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
@@ -119,4 +121,53 @@ PUBLIC bool set_mapping(void *from, void *to, int pages, bool rw, bool us) { //�
         }
     }
     return true;
+}
+
+//获取物理地址
+PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
+    char buffer[64];
+    int pml4e_idx = (((qword)vaddr) >> 39) & 0x1FF;
+    int pdpte_idx = (((qword)vaddr) >> 30) & 0x1FF;
+    int pde_idx = (((qword)vaddr) >> 21) & 0x1FF;
+    int pte_idx = (((qword)vaddr) >> 12) & 0x1FF;
+    int offset = ((qword)vaddr) & 0xFFF;
+
+    PML4E *pml4 = __pml4;
+    if (! pml4[pml4e_idx].p) {
+        sprintk (buffer, "Address %P doesn't exist!", vaddr);
+        lerror (buffer);
+        sprintk (buffer, "Error In PML4 %P, Index %#03X", pml4, pml4e_idx);
+        lerror (buffer);
+        return NULL;
+    }
+
+    PDPTE *pdpt = pml4[pml4e_idx].address << 12;
+    if (! pdpt[pdpte_idx].p) {
+        sprintk (buffer, "Address %P doesn't exist!", vaddr);
+        lerror (buffer);
+        sprintk (buffer, "Error In PDPT %P, Index %#03X", pdpt, pdpte_idx);
+        lerror (buffer);
+        return NULL;
+    }
+
+    PDE *pd = pdpt[pdpte_idx].address << 12;
+    if (! pd[pde_idx].p) {
+        sprintk (buffer, "Address %P doesn't exist!", vaddr);
+        lerror (buffer);
+        sprintk (buffer, "Error In PD %P, Index %#03X", pd, pde_idx);
+        lerror (buffer);
+        return NULL;
+    }
+    
+    PTE *pt = pd[pde_idx].address << 12;
+    if (! pt[pte_idx].p) {
+        sprintk (buffer, "Address %P doesn't exist!", vaddr);
+        lerror (buffer);
+        sprintk (buffer, "Error In PT %P, Index %#03X", pt, pte_idx);
+        lerror (buffer);
+        return NULL;
+    }
+
+    void *paddr = (void*)((pt[pte_idx].address << 12) + offset);
+    return paddr;
 }

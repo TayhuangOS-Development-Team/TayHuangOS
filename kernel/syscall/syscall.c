@@ -19,6 +19,7 @@
 #include <process/task_manager.h>
 #include <kheap.h>
 #include <debug/logging.h>
+#include <memory/paging.h>
 
 PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid
@@ -35,12 +36,17 @@ PRIVATE task_struct *__find_task(int pid) {
 PRIVATE bool __receive_msg(void *msg, int source) {
     for (msgpack_struct *pack = current_task->ipc_info.queue ; pack != NULL ; pack = pack->next_msg) {
         if (pack->from == source) { //是期望消息
-            memcpy(msg, pack->msg, pack->len); //拷贝
+            task_struct *task = __find_task(pack->from);
+            memcpy(
+                __pa(current_task->mm_info->pgd, msg),
+                __pa(task->mm_info->pgd, pack->msg),
+                pack->len
+            ); //拷贝
             if (pack->next_msg != NULL) //出队
                 pack->next_msg->last_msg = pack->last_msg;
             if (pack->last_msg != NULL)
                 pack->last_msg->next_msg = pack->next_msg;
-            __find_task(pack->from)->state = READY;
+            task->state = READY;
             free(pack);
             return true;
         }
@@ -63,9 +69,15 @@ PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
         pack->next_msg->last_msg = NULL; //出队
     }
 
+    task_struct *task = __find_task(pack->from);
+
     int from = pack->from;
-    memcpy(msg, pack->msg, pack->len);
-    __find_task(pack->from)->state = READY;
+    memcpy(
+        __pa(current_task->mm_info->pgd ,msg),
+        __pa(task->mm_info->pgd, pack->msg),
+        pack->len
+    );
+    task->state = READY;
 
     free(pack); //释放
 
@@ -78,7 +90,11 @@ PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
         return false;
     int pid = __get_pid(); //获取pid
     if (dest_task->ipc_info.wait_for == pid) { //是否在等待该进程来信
-        memcpy(dest_task->ipc_info.msg, msg, len);
+        memcpy(
+            __pa(dest_task->mm_info->pgd, dest_task->ipc_info.msg),
+            __pa(current_task->mm_info->pgd, msg),
+            len
+        );
         dest_task->ipc_info.wait_for = 0;
         dest_task->ipc_info.msg = NULL;
         dest_task->state = READY; //同步
