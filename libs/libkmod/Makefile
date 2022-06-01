@@ -18,7 +18,9 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 IPC_C_SRC := ipc/ipc
-C_SRC := $(IPC_C_SRC)
+DEBUG_C_SRC := debug/logging
+C_SRC := $(IPC_C_SRC) \
+         $(DEBUG_C_SRC)
 
 CPP_SRC :=
 

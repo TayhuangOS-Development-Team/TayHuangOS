@@ -1,12 +1,7 @@
 #include <syscall/syscall.h>
-#include <tayhuang/io.h>
-#include <tayhuang/ports.h>
+#include <debug/logging.h>
 
 void entry(void) {
-    outb (SERIAL_SEND, 'D');
-    outb (SERIAL_SEND, 'I');
-    outb (SERIAL_SEND, 'S');
-    outb (SERIAL_SEND, 'K');
-    outb (SERIAL_SEND, '\n');
+    linfo ("DISK DRIVER!");
     while (1);
 }
