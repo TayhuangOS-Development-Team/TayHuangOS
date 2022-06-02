@@ -40,5 +40,7 @@ PUBLIC bool wakeup(int pid);
 PUBLIC bool fatal(void);
 PUBLIC int eggs(void);
 PUBLIC bool signal(int pid, int signal);
+PUBLIC void wait_irq(int irq);
 
 PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout);
+PUBLIC short wakeup_irq_handler(int irq, struct intterup_args *regs, bool entered_handler);

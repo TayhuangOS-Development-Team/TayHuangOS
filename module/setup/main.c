@@ -27,16 +27,25 @@ void entry(void) {
 
     char buffer[256] = {};
 
-    char vfs_name[64] = {};
-    recv_any_msg(vfs_name);
+    char mod_name[64] = {};
+    recv_any_msg (mod_name);
     
-    linfo (vfs_name);
+    linfo (mod_name);
 
-    void *vfs_addr;
-    recv_any_msg(&vfs_addr);
+    void *mod_addr;
+    recv_any_msg (&mod_addr);
 
-    lltoa((qword)vfs_addr, buffer, 16);
+    lltoa ((qword)mod_addr, buffer, 16);
     linfo (buffer);
+
+
+
+    //load_module (mod_name, mod_addr);
+
+
+    identify_ide0_disk(false, mod_addr);
+
+    linfo ("Hi!");
 
     while (1);
 }

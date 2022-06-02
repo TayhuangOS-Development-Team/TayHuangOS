@@ -25,3 +25,4 @@ int wakeup(int pid);
 int fatal(void);
 int eggs(void);
 int signal(int pid, int signal);
+void wait_irq(int irq);

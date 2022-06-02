@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * disk.c
+ * disk.h
  *
  * 硬盘操作
  *
@@ -16,17 +16,9 @@
 
 
 
-#include "disk.h"
-#include <tool/io.h>
+#pragma once
 
-#define CMOS_RAM_BASE    (0x70)
-#define CMOS_RAM_ADDRESS (CMOS_RAM_BASE + 0)
-#define CMOS_RAM_DATA    (CMOS_RAM_BASE + 1)
+#include <types.h>
 
-static inline byte read_cmos(int addr) {
-    outb (CMOS_RAM_ADDRESS, 0x80 | addr);
-    return inb (CMOS_RAM_DATA);
-}
-
-void load_vfs(const char *name, void *addr) {
-}
+void load_module(const char *name, void *addr);
+void identify_ide0_disk(bool slave, void *dst);

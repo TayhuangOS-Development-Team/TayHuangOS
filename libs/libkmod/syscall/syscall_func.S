@@ -28,6 +28,8 @@
 .type eggs, @function
 .global signal
 .type signal, @function
+.global wait_irq
+.type wait_irq, @function
 
 get_ticks: /*int get_ticks(void)*/
     movq $3, %rax /*sysno = 3(get_ticks)*/
@@ -41,22 +43,29 @@ sleep: /*int sleep(void)*/
     int $0x40
     ret
 
+exit: /*int exit(void)*/
+    movq $5, %rax /*sysno = 5(exit)*/
+
+    int $0x40
+    ud2 /* shouldn't be executed */
+    ret
+
 wakeup: /*int wakeup(int pid)*/
     movq %rdi, %r8
 
-    movq $5, %rax /*sysno = 5(wakeup)*/
+    movq $6, %rax /*sysno = 6(wakeup)*/
 
     int $0x40
     ret
 
 fatal: /*int fatal(void)*/
-    movq $6, %rax /*sysno = 6(fatal)*/
+    movq $7, %rax /*sysno = 7(fatal)*/
 
     int $0x40
     ret
 
 eggs: /*int eggs(void)*/
-    movq $7, %rax /*sysno = 7(eggs)*/
+    movq $8, %rax /*sysno = 8(eggs)*/
 
     int $0x40
     ret
@@ -64,7 +73,15 @@ eggs: /*int eggs(void)*/
 signal: /*int signal(int pid, int signal)*/
     movq %rdi, %r8
     movq %rsi, %rdx
-    movq $8, %rax /*sysno = 8(signal)*/
+    movq $9, %rax /*sysno = 9(signal)*/
+
+    int $0x40
+    ret
+
+wait_irq: /*void wait_irq(int irq)*/
+    movq %rdi, %rdx
+
+    movq $10, %rax /*sysno = 10(wait_irq)*/
 
     int $0x40
     ret

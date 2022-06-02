@@ -20,6 +20,5 @@
 
 #include <tayboot/tay_defs.h>
 #include <tayboot/stage3_args.h>
-#include <tayhuang/memory_segment.h>
 
 PUBLIC void goto_longmode(struct stage3_args *args, word selector64);

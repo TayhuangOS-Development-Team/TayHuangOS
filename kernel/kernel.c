@@ -178,9 +178,14 @@ void init(void) { //init进程 代表内核
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
 
-    send_msg("vfs.mod", API_PID(0), 8, 50);
-    void *vfs_addr = find_continue_freepages(16);
-    send_msg(&vfs_addr, API_PID(0), sizeof(vfs_addr), 50);
+    send_msg("disk.mod", API_PID(0), 8, 50);
+    void *disk_addr = find_continue_freepages(16);
+    for (int i = 0 ; i < 16 ; i ++)
+        mark_used(disk_addr + i * MEMUNIT_SZ);
+    sprintk (buffer, "Buffer In %P", disk_addr);
+    linfo (buffer);
+
+    send_msg(&disk_addr, API_PID(0), sizeof(disk_addr), 50);
     while (true);
 
     exit();
@@ -255,11 +260,39 @@ void entry(struct boot_args *_args) {
     stop_switch = true;
 
     register_irq_handler(0, clock_int_handler);
-    register_irq_handler(1, keyboard_int_handler); //中断处理器
+    register_irq_handler(1, keyboard_int_handler);
+    register_irq_handler(2, wakeup_irq_handler);
+    register_irq_handler(3, wakeup_irq_handler);
+    register_irq_handler(4, wakeup_irq_handler);
+    register_irq_handler(5, wakeup_irq_handler);
+    register_irq_handler(6, wakeup_irq_handler);
+    register_irq_handler(7, wakeup_irq_handler);
+    register_irq_handler(8, wakeup_irq_handler);
+    register_irq_handler(9, wakeup_irq_handler);
+    register_irq_handler(10, wakeup_irq_handler);
+    register_irq_handler(11, wakeup_irq_handler);
+    register_irq_handler(12, wakeup_irq_handler);
+    register_irq_handler(13, wakeup_irq_handler);
+    register_irq_handler(14, wakeup_irq_handler);
+    register_irq_handler(15, wakeup_irq_handler); //中断处理器
     
     asmv ("movq $0x125000, %rsp"); //设置堆
     enable_irq(0); //开启时钟中断
     enable_irq(1);
+    enable_irq(2);
+    enable_irq(3);
+    enable_irq(4);
+    enable_irq(5);
+    enable_irq(6);
+    enable_irq(7);
+    enable_irq(8);
+    enable_irq(9);
+    enable_irq(10);
+    enable_irq(11);
+    enable_irq(12);
+    enable_irq(13);
+    enable_irq(14);
+    enable_irq(15);
     asmv ("jmp init"); //跳转至INIT进程
     
     while(true);

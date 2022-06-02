@@ -6,13 +6,13 @@ export OBJECTSDIR DRIVERSDIR
 #编译
 .PHONY: build
 build:
-	cd disk ; make build
+	echo "done!"
 
 #清理
 .PHONY: clean
 clean:
-	cd disk ; make build
+	echo "done!"
 
 .PHONY: image
 image:
-	cd disk ; make image
+	echo "done!"

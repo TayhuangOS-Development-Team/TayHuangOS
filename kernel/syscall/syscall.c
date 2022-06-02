@@ -166,6 +166,20 @@ PRIVATE qword __signal(int pid, int signal) {
     return false;
 }
 
+PRIVATE int wait_pid[16] = {};
+PRIVATE bool triggled[16] = {};
+
+PRIVATE qword __wait_irq(int irq) {
+    if (! triggled[irq]) {
+        __sleep();
+        wait_pid[irq] = __get_pid();
+    }
+    else {
+        triggled[irq] = false;
+    }
+    return true;
+}
+
 PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,
     qword arg1, qword arg2, qword arg3, qword arg4, qword arg5, qword arg6, qword arg7, qword arg8) { //系统调用
     switch (sysno) {
@@ -189,6 +203,8 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
         return __eggs();
     case 9:
         return __signal(arg1, data);
+    case 10:
+        return __wait_irq(data);
     }
     return -1;
 }
@@ -237,10 +253,30 @@ PUBLIC bool signal(int pid, int signal) {
     return dosyscall(9, 0, 0, signal, NULL, NULL, pid, 0, 0, 0, 0, 0, 0, 0);
 }
 
+PUBLIC void wait_irq(int irq) {
+    dosyscall(10, 0, 0, irq, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
 PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout) {
     if (! send_msg(msg, dest, len, tickout))
         return false;
     if (! receive_msg(ret, dest))
         return false;
     return true;
+}
+
+PUBLIC void after_syscall(struct intterup_args *regs);
+
+PUBLIC short wakeup_irq_handler(int irq, struct intterup_args *regs, bool entered_handler) {
+    if (wait_pid[irq] != 0) {
+        __wakeup(wait_pid[irq]);
+    }
+    else {
+        triggled[irq] = true;
+    }
+    
+    if (! entered_handler)
+        after_syscall(regs);
+
+    return 0;
 }
