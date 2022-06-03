@@ -29,6 +29,7 @@
 
 #include <memory/paging.h>
 #include <memory/pmm.h>
+#include <memory/shared_memory.h>
 
 #include <display/video.h>
 #include <display/printk.h>
@@ -184,6 +185,8 @@ void init(void) { //init进程 代表内核
         mark_used(disk_addr + i * MEMUNIT_SZ);
     sprintk (buffer, "Buffer In %P", disk_addr);
     linfo (buffer);
+
+    shm_share(disk_addr, 16, API_PID(0));
 
     send_msg(&disk_addr, API_PID(0), sizeof(disk_addr), 50);
     while (true);

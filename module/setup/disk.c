@@ -88,17 +88,16 @@ void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     outb (IDE0_LBA_MID, 0);
     outb (IDE0_LBA_HIGH, 0);
     outb (IDE0_COMMAND, 0xEC); //0xEC: IDENTIFY
-    
+
     wait_irq (14);
+
+    for (int i = 0 ; i < 256 ; i ++) {
+        *(((word*)dst) + i) = inw(IDE0_DATA); //256字数据
+    }
 
     linfo ("HI!");
 
     while (true);
-
-    // for (int i = 0 ; i < 256 ; i ++) {
-    //     *(((word*)dst) + i) = inw(IDE0_DATA); //256字数据
-    // }
-
 }
 
 void load_module(const char *name, void *addr) {

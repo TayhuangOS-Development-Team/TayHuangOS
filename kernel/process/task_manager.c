@@ -255,3 +255,11 @@ PUBLIC void do_switch(struct intterup_args *regs) { //进行进程切换
     regs->r15 = current_task->thread_info.r15;
     current_task->state = RUNNING; //设置状态
 }
+
+PUBLIC task_struct *find_task(int pid) {
+    for (task_struct *cur = task_table ; cur != NULL ; cur = cur->next) { //遍历task表
+        if (cur->pid == pid)
+            return cur;
+    }
+    return NULL;
+}
