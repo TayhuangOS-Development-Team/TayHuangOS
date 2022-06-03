@@ -25,7 +25,7 @@
 #include <memory/paging.h>
 #include <memory/pmm.h>
 
-PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_brk, qword end_brk,
+PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_heap, qword end_heap,
     qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建MM Info
     mm_struct *mm = kmalloc(sizeof(mm_struct));
 
@@ -36,8 +36,8 @@ PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code,
     mm->end_code     = end_code;
     mm->start_data   = start_data;
     mm->end_data     = end_data;
-    mm->start_brk    = start_brk;
-    mm->end_brk      = end_brk;
+    mm->start_heap    = start_heap;
+    mm->end_heap      = end_heap;
     mm->start_rodata = start_rodata;
     mm->end_rodata   = end_rodata;
     mm->start_stack  = start_stack;
@@ -47,7 +47,8 @@ PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code,
 }
 
 PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qword rflags, word cs, void *pgd, qword start_code, qword end_code,
-    qword start_data, qword end_data, qword start_brk, qword end_brk, qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建PCB
+    qword start_data, qword end_data, qword start_heap, qword end_heap, qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建PCB
+
     task_struct *task = kmalloc(sizeof(task_struct));
     memset(&task->thread_info, 0, sizeof(task->thread_info));
     task->thread_info.rip = entry; //入口
@@ -64,7 +65,7 @@ PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qwor
     task->pid = pid; //PID
     memset (&task->signal, 0, sizeof (task->signal));
     task->mm_info = create_mm_struct(pgd, start_code, end_code, start_data, end_data,
-        start_brk, end_brk, start_rodata, end_rodata, start_stack, end_stack); //创建MM
+        start_heap, end_heap, start_rodata, end_rodata, start_stack, end_stack); //创建MM
 
     task->ipc_info.msg = NULL; //初始化IPC信息
     task->ipc_info.queue = NULL;
@@ -79,10 +80,12 @@ PRIVATE int alloc_pid(void) { //自动分配PID
     return __cur_pid ++;
 }
 
-PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd, qword start_pos, qword end_pos) { //创建进程
+PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd,
+    qword start_pos, qword end_pos, qword start_heap, qword end_heap) {//创建进程
+
     dis_int();
     task_struct *task = create_task_struct(alloc_pid(), priority, entry, rflags, cs, pgd,
-         start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, rsp, rbp);
+         start_pos, end_pos, start_pos, end_pos, start_heap, end_heap, start_pos, end_pos, rsp, rbp);
     if (priority != -1) {
         task->next = task_table;
         if (task_table != NULL)
@@ -105,7 +108,7 @@ PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) { //复�
             mark_used(free_page + i * 4096);
 
         memcpy(start_addr, free_page, MEMUNIT_SZ * page_num);
-        
+
         set_mapping(start_addr, free_page, page_num, true, true);
         start_addr += page_num * 4096;
     }
@@ -119,7 +122,7 @@ PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, q
          current_task->thread_info.rsp, current_task->thread_info.cs, current_task->mm_info->pgd,
          current_task->mm_info->start_code, current_task->mm_info->end_code,
          current_task->mm_info->start_data, current_task->mm_info->end_data,
-         current_task->mm_info->start_brk, current_task->mm_info->end_brk,
+         current_task->mm_info->start_heap, current_task->mm_info->end_heap,
          current_task->mm_info->start_rodata, current_task->mm_info->end_rodata,
          rsp, rbp);
     task->next = task_table;
@@ -133,7 +136,7 @@ PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, q
     set_mapping(0, 0, 16384, true, true);
     do_mem_copy(current_task->mm_info->start_code,   current_task->mm_info->end_code,   pml4);
     do_mem_copy(current_task->mm_info->start_data,   current_task->mm_info->end_data,   pml4);
-    do_mem_copy(current_task->mm_info->start_brk,    current_task->mm_info->end_brk,    pml4);
+    do_mem_copy(current_task->mm_info->start_heap,    current_task->mm_info->end_heap,    pml4);
     do_mem_copy(current_task->mm_info->start_rodata, current_task->mm_info->end_rodata, pml4);
     do_mem_copy(rsp,                                 rbp,                               pml4);
     task->mm_info->pgd = pml4;

@@ -147,9 +147,13 @@ void print_mod_info(program_info *mod_info) {
     linfo (buffer);
     sprintk (buffer, "PGD: %P", mod_info->pgd);
     linfo (buffer);
+    sprintk (buffer, "Stack Bottom: %P", mod_info->stack_bottom);
+    linfo (buffer);
     sprintk (buffer, "Stack Top: %P", mod_info->stack_top);
     linfo (buffer);
-    sprintk (buffer, "Stack Bottom: %P", mod_info->stack_bottom);
+    sprintk (buffer, "Heap Bottom: %P", mod_info->heap_bottom);
+    linfo (buffer);
+    sprintk (buffer, "Heap Top: %P", mod_info->heap_top);
     linfo (buffer);
     linfo ("--------------------------------------------");
 }
@@ -169,32 +173,26 @@ void init(void) { //init进程 代表内核
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    empty_task = create_task(-1, empty, RFLAGS_KERNEL, 0x1400000, 0x1399900, CS_KERNEL, kernel_pml4, 0x1399900, args.kernel_limit);
-
-    //API PROCCESS
-    // create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, args.kernel_limit);
-    // create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, args.kernel_limit)->pid = API_PID(1);
-    // create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, args.kernel_limit)->pid = API_PID(2);
-    // create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, args.kernel_limit)->pid = API_PID(6);
+    empty_task = create_task(
+        -1, empty, RFLAGS_KERNEL,
+        0x1400000, 0x1399900,
+        CS_KERNEL, kernel_pml4,
+        0x1399900, args.kernel_limit,
+        args.kernel_limit, args.kernel_limit + 0x100
+    );
 
     create_task(
         1, setup_mod_info.entry, RFLAGS_KERNEL,
         setup_mod_info.stack_top, setup_mod_info.stack_bottom,
         CS_KERNEL, setup_mod_info.pgd,
-        setup_mod_info.start, setup_mod_info.limit
+        setup_mod_info.start, setup_mod_info.limit,
+        setup_mod_info.heap_bottom, setup_mod_info.heap_top
     )->pid = API_PID(0); //SETUP MODULE 内核模块进程
 
     stop_switch = false;
     printk ("\n");
 
     send_msg(&current_task->pid, API_PID(0), sizeof(current_task->pid), 20);
-
-    //TEST PROCCESS
-    //create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, args.kernel_limit);
-    //create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, args.kernel_limit);
-
-    //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
-    //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
 
     #define MM_SIZE (16 * MEMUNIT_SZ)
     byte *mm_addr = cpmalloc(MM_SIZE); //获取存放mm的地址
@@ -221,7 +219,8 @@ void init(void) { //init进程 代表内核
         1, mm_mod_info.entry, RFLAGS_KERNEL,
         mm_mod_info.stack_top, mm_mod_info.stack_bottom,
         CS_KERNEL, mm_mod_info.pgd,
-        mm_mod_info.start, mm_mod_info.limit
+        mm_mod_info.start, mm_mod_info.limit,
+        mm_mod_info.heap_bottom, mm_mod_info.heap_top
     )->pid = API_PID(3); //MM MODULE 内核模块进程
 
     cpfree(mm_addr, MM_SIZE); //释放
@@ -294,7 +293,7 @@ void entry(struct boot_args *_args) {
 
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
-    current_task = create_task(1, init, RFLAGS_KERNEL, 0x1350000, 0x1300000, CS_KERNEL, get_pml4(), 0x1300000, args.kernel_limit); //init进程
+    current_task = create_task(1, init, RFLAGS_KERNEL, 0x1350000, 0x1300000, CS_KERNEL, get_pml4(), 0x1300000, args.kernel_limit, args.kernel_limit + 0x800, args.kernel_limit + 0x1800); //init进程
     current_task->counter = 1;
 
     stop_switch = true;

@@ -69,9 +69,9 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **l
     }
 }
 
-#define STACK_PAGES (64)
+#define STACK_PAGES (32)
 
-PUBLIC void* alloc_stack(void *entry) {
+PUBLIC void* alloc_stack(void *stack_top) {
     linfo ("------------");
     linfo ("Allocing Stack");
 
@@ -91,7 +91,7 @@ PUBLIC void* alloc_stack(void *entry) {
         for (int i = 0 ; i < num ; i ++)
             mark_used(pages + i * MEMUNIT_SZ);
 
-        void *start_vaddr = entry - sum * MEMUNIT_SZ - num * MEMUNIT_SZ;
+        void *start_vaddr = stack_top - sum * MEMUNIT_SZ - num * MEMUNIT_SZ;
         set_mapping(start_vaddr, pages, num, true, false);
 
         sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
@@ -100,7 +100,41 @@ PUBLIC void* alloc_stack(void *entry) {
         sum += num;
     }
 
-    return entry - STACK_PAGES * MEMUNIT_SZ; 
+    return stack_top - STACK_PAGES * MEMUNIT_SZ;
+}
+
+#define HEAP_PAGES (16)
+
+PUBLIC void* alloc_heap(void *heap_bottom) {
+    linfo ("------------");
+    linfo ("Allocing Heap");
+
+    char buffer[256];
+
+    int pages_need = HEAP_PAGES;
+    int sum = 0;
+
+    while (sum < pages_need) {
+        linfo ("*******");
+
+        int num = 0;
+        void *pages = find_freepages(pages_need - sum, &num);
+        sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
+        linfo (buffer);
+
+        for (int i = 0 ; i < num ; i ++)
+            mark_used(pages + i * MEMUNIT_SZ);
+
+        void *start_vaddr = heap_bottom + sum * MEMUNIT_SZ;
+        set_mapping(start_vaddr, pages, num, true, false);
+
+        sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
+        linfo (buffer);
+
+        sum += num;
+    }
+
+    return heap_bottom + HEAP_PAGES * MEMUNIT_SZ;
 }
 
 PUBLIC void mapping_kernel(void);
@@ -131,7 +165,10 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
         load_segment (program, addr, &start, &limit);
     }
 
-    void *bottom = alloc_stack(elf_head->e_entry);
+    void *stack_bottom = alloc_stack(elf_head->e_entry);
+    qword limit_page = ((qword)limit) / MEMUNIT_SZ + 1;
+    void *heap_bottom = (limit_page + 1) * MEMUNIT_SZ;
+    void *heap_top = alloc_heap(heap_bottom);
     mapping_kernel();
 
     program_info info = {
@@ -140,7 +177,9 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
         .limit = limit,
         .pgd = pgd,
         .stack_top = elf_head->e_entry,
-        .stack_bottom = bottom
+        .stack_bottom = stack_bottom,
+        .heap_bottom = heap_bottom,
+        .heap_top = heap_top
     };
     return info;
 }

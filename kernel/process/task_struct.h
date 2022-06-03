@@ -25,8 +25,8 @@
 
 typedef struct {
     PML4E *pgd;
-    qword start_code, start_data, start_stack, end_stack, start_rodata, start_brk;
-    qword end_code, end_data, end_rodata, end_brk;
+    qword start_code, start_data, start_stack, end_stack, start_rodata, start_heap;
+    qword end_code, end_data, end_rodata, end_heap;
     vm_area *areas;
 } mm_struct;
 

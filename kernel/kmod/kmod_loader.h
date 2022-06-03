@@ -27,6 +27,8 @@ typedef struct {
     void *pgd;
     void *stack_top;
     void *stack_bottom;
+    void *heap_bottom;
+    void *heap_top;
 } program_info;
 
 PUBLIC program_info load_kmod_from_memory(void *addr);
