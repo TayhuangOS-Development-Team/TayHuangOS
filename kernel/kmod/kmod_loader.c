@@ -27,7 +27,7 @@
 #include <kheap.h>
 #include <tayhuang/control_registers.h>
 
-PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **limit) {
+PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **limit) { //加载一个段
     char buffer[256];
     if (program->p_type == PT_LOAD) {
         *start = (void*)min ((qword)*start, program->p_vaddr);
@@ -43,27 +43,27 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **l
             linfo ("*******");
 
             int num = 0;
-            void *pages = find_freepages(pages_need - sum, &num);
+            void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
 
             sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
             linfo (buffer);
 
             for (int i = 0 ; i < num ; i ++)
-                mark_used(pages + i * MEMUNIT_SZ);
+                mark_used(pages + i * MEMUNIT_SZ); //设置被使用
 
             void *start_vaddr = program->p_vaddr + sum * MEMUNIT_SZ;
-            set_mapping(start_vaddr, pages, num, true, false);
+            set_mapping(start_vaddr, pages, num, true, false); //进行映射
 
             sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
             linfo (buffer);
 
             int copy_num = min(program->p_filesz - sum * MEMUNIT_SZ, num * MEMUNIT_SZ);
             void *start_file = addr + program->p_offset + sum * MEMUNIT_SZ;
-            memcpy(pages, start_file, copy_num);
-            
+            memcpy(pages, start_file, copy_num); //进行复制
+
             sprintk (buffer, "Copied %P to %P, count = %dB", start_file, pages, copy_num);
             linfo (buffer);
-            
+
             sum += num;
         }
     }
@@ -71,7 +71,7 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **l
 
 #define STACK_PAGES (32)
 
-PUBLIC void* alloc_stack(void *stack_top) {
+PUBLIC void* alloc_stack(void *stack_top) { //分配栈
     linfo ("------------");
     linfo ("Allocing Stack");
 
@@ -84,15 +84,15 @@ PUBLIC void* alloc_stack(void *stack_top) {
         linfo ("*******");
 
         int num = 0;
-        void *pages = find_freepages(pages_need - sum, &num);
+        void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
         sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
         linfo (buffer);
 
         for (int i = 0 ; i < num ; i ++)
-            mark_used(pages + i * MEMUNIT_SZ);
+            mark_used(pages + i * MEMUNIT_SZ); //设置被使用
 
         void *start_vaddr = stack_top - sum * MEMUNIT_SZ - num * MEMUNIT_SZ;
-        set_mapping(start_vaddr, pages, num, true, false);
+        set_mapping(start_vaddr, pages, num, true, false); //映射
 
         sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
         linfo (buffer);
@@ -118,7 +118,7 @@ PUBLIC void* alloc_heap(void *heap_bottom) {
         linfo ("*******");
 
         int num = 0;
-        void *pages = find_freepages(pages_need - sum, &num);
+        void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
         sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
         linfo (buffer);
 
@@ -126,7 +126,7 @@ PUBLIC void* alloc_heap(void *heap_bottom) {
             mark_used(pages + i * MEMUNIT_SZ);
 
         void *start_vaddr = heap_bottom + sum * MEMUNIT_SZ;
-        set_mapping(start_vaddr, pages, num, true, false);
+        set_mapping(start_vaddr, pages, num, true, false); //映射
 
         sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
         linfo (buffer);
@@ -150,12 +150,12 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
     sprintk(buffer, "Entrypoint: %P", elf_head->e_entry);
     linfo (buffer);
 
-    void *pgd = create_pgd();
+    void *pgd = create_pgd(); //创建页目录
     set_pml4(pgd);
 
     void *start = (void*)0xFFFFFFFFFFFFFFFF, *limit = NULL;
 
-    for (int i = 0 ; i < elf_head->e_phnum ; i ++) {
+    for (int i = 0 ; i < elf_head->e_phnum ; i ++) { //加载段
         linfo ("------------------------------------");
         sprintk (buffer, "Segment %d", i);
         linfo (buffer);
@@ -165,11 +165,13 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
         load_segment (program, addr, &start, &limit);
     }
 
-    void *stack_bottom = alloc_stack(elf_head->e_entry);
+    void *stack_bottom = alloc_stack(elf_head->e_entry); //分配栈
+
     qword limit_page = ((qword)limit) / MEMUNIT_SZ + 1;
     void *heap_bottom = (limit_page + 1) * MEMUNIT_SZ;
-    void *heap_top = alloc_heap(heap_bottom);
-    mapping_kernel();
+    void *heap_top = alloc_heap(heap_bottom); //分配堆
+
+    mapping_kernel(); //将内核映射到内存中
 
     program_info info = {
         .entry = elf_head->e_entry,
