@@ -25,6 +25,9 @@
 #include <memory/paging.h>
 #include <memory/pmm.h>
 
+#include <debug/logging.h>
+#include <syscall/syscall.h>
+
 PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_heap, qword end_heap,
     qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建MM Info
     mm_struct *mm = kmalloc(sizeof(mm_struct));
@@ -94,54 +97,6 @@ PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword r
         task->thread_info.rsp = rsp;
     }
     en_int();
-    return task;
-}
-
-PRIVATE void do_mem_copy(void *start_addr, void *end_addr, void *pml4) { //复制
-    set_pml4(pml4);
-    while (start_addr < end_addr) {
-        int page_need = (end_addr - start_addr) / 4096;
-        int page_num = 0;
-        void *free_page = find_freepages(min(page_need, 64), &page_num);
-
-        for (int i = 0 ; i < page_num ; i ++)
-            mark_used(free_page + i * 4096);
-
-        memcpy(start_addr, free_page, MEMUNIT_SZ * page_num);
-
-        set_mapping(start_addr, free_page, page_num, true, true);
-        start_addr += page_num * 4096;
-    }
-}
-
-PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, qword rbp) {
-    //TODO
-    //WIP
-    dis_int();
-    task_struct *task = create_task_struct(alloc_pid(), priority, entry,
-         current_task->thread_info.rsp, current_task->thread_info.cs, current_task->mm_info->pgd,
-         current_task->mm_info->start_code, current_task->mm_info->end_code,
-         current_task->mm_info->start_data, current_task->mm_info->end_data,
-         current_task->mm_info->start_heap, current_task->mm_info->end_heap,
-         current_task->mm_info->start_rodata, current_task->mm_info->end_rodata,
-         rsp, rbp);
-    task->next = task_table;
-    if (task_table != NULL)
-        task_table->last = task;
-    task_table = task;
-    task->thread_info.rsp = rsp;
-
-    void *pml4 = create_pgd(); //页表
-    set_pml4(pml4);
-    set_mapping(0, 0, 16384, true, true);
-    do_mem_copy(current_task->mm_info->start_code,   current_task->mm_info->end_code,   pml4);
-    do_mem_copy(current_task->mm_info->start_data,   current_task->mm_info->end_data,   pml4);
-    do_mem_copy(current_task->mm_info->start_heap,    current_task->mm_info->end_heap,    pml4);
-    do_mem_copy(current_task->mm_info->start_rodata, current_task->mm_info->end_rodata, pml4);
-    do_mem_copy(rsp,                                 rbp,                               pml4);
-    task->mm_info->pgd = pml4;
-    en_int();
-
     return task;
 }
 
@@ -273,4 +228,46 @@ PUBLIC task_struct *find_task(int pid) {
             return cur;
     }
     return NULL;
+}
+
+#define GET_CURRENT_PID (0)
+#define GET_START_HEAP (1)
+#define GET_END_HEAP (2)
+
+//task manager进程
+PUBLIC void taskman(void) {
+    char buffer[128];
+    while (true) {
+        int pack[20];
+        int caller = 0;
+        while ((caller = receive_any_msg(pack)) == -1);
+        int cmdid = pack[0];
+        switch (cmdid)
+        {
+        case GET_CURRENT_PID: {
+            int current_pid = current_task->pid;
+            send_msg(&current_task, caller, sizeof(current_task), 20);
+            break;
+        }
+        case GET_START_HEAP: {
+            void *start_heap = find_task(pack[1])->mm_info->start_heap;
+            sprintk (buffer, "%P", start_heap);
+            linfo (buffer);
+            send_msg(&start_heap, caller, sizeof(start_heap), 20);
+            break;
+        }
+        case GET_END_HEAP: {
+            void *end_heap = find_task(pack[1])->mm_info->end_heap;
+            sprintk (buffer, "%P", end_heap);
+            linfo (buffer);
+            send_msg(&end_heap, caller, sizeof(end_heap), 20);
+            break;
+        }
+        default: {
+            sprintk (buffer, "TASKMAN received an unknown command %d from %d", cmdid, caller);
+            lerror (buffer);
+            break;
+        }
+        }
+    }
 }

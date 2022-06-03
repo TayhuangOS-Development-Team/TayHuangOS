@@ -30,3 +30,4 @@ PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword r
 PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, qword rbp);
 PUBLIC void do_switch(struct intterup_args *regs);
 PUBLIC task_struct *find_task(int pid);
+PUBLIC void taskman(void);

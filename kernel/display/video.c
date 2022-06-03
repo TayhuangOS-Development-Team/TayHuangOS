@@ -34,7 +34,7 @@ PUBLIC void init_video(void *framebuffer, int width, int height, bool graphic) {
 PRIVATE void load_font(int width, int height) {
     VIDEO_INFO.character_width = width;
     VIDEO_INFO.character_height = height;
-    //TODO
+    //TODO: Load the font
 }
 
 PUBLIC void init_graphic_shell(int columns, int lines, int start_x, int start_y, int character_width, int character_height) {
@@ -50,7 +50,7 @@ PRIVATE void draw_character_vga(int column, int line, char ch, byte color) {
 }
 
 PRIVATE void draw_character_graphic(int column, int line, char ch, color_rgb color) {
-    //TODO
+    //TODO: draw the character
 }
 
 PUBLIC void draw_character(int column, int line, char ch, int color) {

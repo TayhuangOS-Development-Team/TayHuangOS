@@ -182,6 +182,14 @@ void init(void) { //init进程 代表内核
     );
 
     create_task(
+        1, taskman, RFLAGS_KERNEL,
+        0x1300000, 0x1250000,
+        CS_KERNEL, kernel_pml4,
+        0x1250000, args.kernel_limit,
+        args.kernel_limit + 0x2000, args.kernel_limit + 0x3000
+    )->pid = API_PID(2);
+
+    create_task(
         1, setup_mod_info.entry, RFLAGS_KERNEL,
         setup_mod_info.stack_top, setup_mod_info.stack_bottom,
         CS_KERNEL, setup_mod_info.pgd,
@@ -221,7 +229,7 @@ void init(void) { //init进程 代表内核
         CS_KERNEL, mm_mod_info.pgd,
         mm_mod_info.start, mm_mod_info.limit,
         mm_mod_info.heap_bottom, mm_mod_info.heap_top
-    )->pid = API_PID(3); //MM MODULE 内核模块进程
+    )->pid = API_PID(1); //MM MODULE 内核模块进程
 
     cpfree(mm_addr, MM_SIZE); //释放
 
@@ -246,7 +254,7 @@ void initialize(struct boot_args *args) {
 
     init_kheap(args->kernel_start - 0x40000); //初始化内核堆
     init_pmm(pmemsz); //初始化PMM
-    for (int i = 0x00000 ; i < args->kernel_limit ; i += 4096) { //0~内核limit 不可用
+    for (int i = 0x00000 ; (i < args->kernel_limit + 0x3000) ; i += 4096) { //0~内核limit 不可用
         mark_used(i);
     }
 

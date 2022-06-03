@@ -37,7 +37,7 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **l
         int pages_need = program->p_filesz / MEMUNIT_SZ + ((program->p_memsz % MEMUNIT_SZ) != 0);
         sprintk (buffer, "Require Pages: %d", pages_need);
         linfo (buffer);
-        
+
         int sum = 0;
         while (sum < pages_need) {
             linfo ("*******");

@@ -26,6 +26,14 @@ PRIVATE int __get_pid(void) {
 }
 
 PRIVATE bool __receive_msg(void *msg, int source) {
+    task_struct *src_task = find_task(source);
+    if (src_task == NULL) {//目标不存在
+        char buffer[128];
+        sprintk ("%d try to receive from %d, but %d doesn't exists!", __get_pid(), source, source);
+        lwarn (buffer);
+        return false;
+    }
+
     for (msgpack_struct *pack = current_task->ipc_info.queue ; pack != NULL ; pack = pack->next_msg) {
         if (pack->from == source) { //是期望消息
             task_struct *task = find_task(pack->from);
@@ -78,8 +86,12 @@ PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
 
 PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
     task_struct *dest_task = find_task(dest);
-    if (dest_task == NULL) //目标不存在
+    if (dest_task == NULL) {//目标不存在
+        char buffer[128];
+        sprintk ("%d try to sent msg to %d, but %d doesn't exists!", __get_pid(), dest, dest);
+        lwarn (buffer);
         return false;
+    }
     int pid = __get_pid(); //获取pid
     if (dest_task->ipc_info.wait_for == pid) { //是否在等待该进程来信
         memcpy(

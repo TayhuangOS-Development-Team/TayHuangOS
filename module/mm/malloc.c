@@ -1,3 +1,4 @@
+
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
@@ -8,33 +9,36 @@
  * 
  * 作者: Flysong
  * 
- * mm_malloc.c
+ * malloc.c
  * 
- * malloc系函数
+ * malloc函数
  * 
  */
 
 
 
-#include "mm_malloc.h"
-#include "paging.h"
-#include "pmm.h"
+#include "malloc.h"
 
-#include <tayhuang/paging.h>
-
-#include <process/task_manager.h>
-
+#include <types.h>
+#include <ipc/ipc.h>
 #include <debug/logging.h>
 
-PUBLIC void *cpmalloc(int size) {
-    int pages = size / MEMUNIT_SZ + ((size % MEMUNIT_SZ) != 0);
+#define TASKMAN_PID (0x10002)
+#define GET_START_HEAP (1)
+#define GET_END_HEAP (2)
 
-    void *addr = find_continuous_freepages(pages);
+void *get_start_heap(int pid) {
+    void *start_heap;
+    int command[] = {GET_START_HEAP, pid};
+    sendrecv(command, &start_heap, TASKMAN_PID, sizeof(command), 20);
+    return start_heap;
+}
 
-    for (int i = 0 ; i < pages ; i ++)
-        mark_used(addr + i * MEMUNIT_SZ);
-
-    return addr;
+void *get_end_heap(int pid) {
+    void *end_heap;
+    int command[] = {GET_END_HEAP, pid};
+    sendrecv(command, &end_heap, TASKMAN_PID, sizeof(command), 20);
+    return end_heap;
 }
 
 //一次分配16的倍数个内存
@@ -50,12 +54,11 @@ typedef struct _chunk {
 } chunk; //16B
 //堆开头16个Byte为空闲chunk头
 
-PUBLIC void theap_init(int pid) {
-    task_struct *task = find_task(pid);
-    void *heap = task->mm_info->start_heap;
+void theap_init(int pid) {
+    void *heap = get_start_heap(pid);
 
     chunk *whole_heap_chunk = (chunk*)(heap + 2);
-    whole_heap_chunk->size = task->mm_info->end_heap - task->mm_info->start_heap - 2;
+    whole_heap_chunk->size = get_end_heap(pid) - get_start_heap(pid) - 2;
     whole_heap_chunk->used = false;
     whole_heap_chunk->next = NULL;
 
@@ -65,13 +68,8 @@ PUBLIC void theap_init(int pid) {
     free_chunk_head->next = whole_heap_chunk;
 }
 
-PUBLIC void vheap_init(void) {
-    theap_init(current_task->pid);
-}
-
-PUBLIC void *tmalloc(int size, int pid) {
-    task_struct *task = find_task(pid);
-    void *heap = task->mm_info->start_heap;
+void *tmalloc(int size, int pid) {
+    void *heap = get_start_heap(pid);
     chunk *free_chunk = (chunk*)(heap + 2);
     chunk *last = (chunk*)heap;
 
@@ -111,20 +109,8 @@ PUBLIC void *tmalloc(int size, int pid) {
     return ((void*)free_chunk) + 2;
 }
 
-PUBLIC void *vmalloc(int size) {
-    return tmalloc(size, current_task->pid);
-}
-
-PUBLIC void cpfree(void *addr, int size) {
-    int pages = size / MEMUNIT_SZ + ((size % MEMUNIT_SZ) != 0);
-
-    for (int i = 0 ; i < pages ; i ++)
-        mark_unused(addr + i * MEMUNIT_SZ);
-}
-
-PUBLIC void tfree(void *addr, int pid) {
-    task_struct *task = find_task(pid);
-    void *heap = task->mm_info->start_heap;
+void tfree(void *addr, int pid) {
+    void *heap = get_start_heap(pid);
 
     //空闲chunk链表头
     chunk *free_chunk = (chunk*)(heap + 2);
@@ -146,8 +132,4 @@ PUBLIC void tfree(void *addr, int pid) {
     }
 
     free_chunk->next = cur_chunk; //插入
-}
-
-PUBLIC void vfree(void *addr) {
-    return tfree(addr, current_task->pid);
 }

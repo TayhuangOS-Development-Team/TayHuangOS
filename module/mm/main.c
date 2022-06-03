@@ -20,8 +20,39 @@
 #include <debug/logging.h>
 #include <ipc/ipc.h>
 #include <tool/tostring.h>
+#include <malloc.h>
+
+#define MM_INIT_HEAP (0)
+#define MM_MALLOC (1)
+#define MM_FREE (2)
 
 void entry(void) {
     linfo ("MM!");
-    while (true);
+
+    while (true) {
+        qword pack[20];
+        int caller = 0;
+        while ((caller = recv_any_msg(pack)) == -1);
+        int cmdid = pack[0];
+        switch (cmdid)
+        {
+        case MM_INIT_HEAP: {
+            theap_init(caller);
+            break;
+        }
+        case MM_MALLOC: {
+            void *addr = tmalloc(pack[1], caller);
+            send_msg(&addr, caller, sizeof(addr), 20);
+            break;
+        }
+        case MM_FREE: {
+            tfree ((void*)pack[1], caller);
+            break;
+        }
+        default: {
+            lerror("MM received an unknown command");
+            break;
+        }
+        }
+    }
 }
