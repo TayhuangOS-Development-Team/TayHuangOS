@@ -22,22 +22,22 @@
 #include <types.h>
 #include <ipc/ipc.h>
 #include <debug/logging.h>
+#include <services.h>
 
-#define TASKMAN_PID (0x10002)
 #define GET_START_HEAP (1)
 #define GET_END_HEAP (2)
 
 void *get_start_heap(int pid) {
     void *start_heap;
     int command[] = {GET_START_HEAP, pid};
-    sendrecv(command, &start_heap, TASKMAN_PID, sizeof(command), 20);
+    sendrecv(command, &start_heap, TASKMAN_SERVICE, sizeof(command), 20);
     return start_heap;
 }
 
 void *get_end_heap(int pid) {
     void *end_heap;
     int command[] = {GET_END_HEAP, pid};
-    sendrecv(command, &end_heap, TASKMAN_PID, sizeof(command), 20);
+    sendrecv(command, &end_heap, TASKMAN_SERVICE, sizeof(command), 20);
     return end_heap;
 }
 
@@ -85,8 +85,6 @@ void *tmalloc(int size, int pid) {
     if (free_chunk->size < (fix_size + 2)) {
         //TODO: extend the heap
     }
-
-    //TODO: div the chunk
 
     //进行分割
     if (free_chunk->size > HEAPDIV_MIN_SZ) {

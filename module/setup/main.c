@@ -23,7 +23,7 @@
 #include <disk.h>
 #include <fs/fat32.h>
 
-void entry(void) {
+void kmod_main(void) {
     linfo ("SETUP!");
 
     char buffer[256] = {};

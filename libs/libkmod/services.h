@@ -1,27 +1,23 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- *
+ * 
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
+ * 
  * --------------------------------------------------------------------------------
- *
+ * 
  * 作者: Flysong
- *
- * entry.S
- *
- * setup 入口
- *
+ * 
+ * services.h
+ * 
+ * 内核模块服务号
+ * 
  */
 
 
 
-    .code64
-    .text
-    .extern entry
+#pragma once
 
-    .global _start
-_start:
-    pushq %rax
-    call entry
-    jmp .
+#define SETUP_SERVICE (0x10000)
+#define MM_SERVICE (0x10001)
+#define TASKMAN_SERVICE (0x10002)

@@ -173,7 +173,7 @@ void init(void) { //init进程 代表内核
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    empty_task = create_task(
+    empty_task = create_task(2,
         -1, empty, RFLAGS_KERNEL,
         0x1400000, 0x1399900,
         CS_KERNEL, kernel_pml4,
@@ -181,21 +181,21 @@ void init(void) { //init进程 代表内核
         args.kernel_limit, args.kernel_limit + 0x100
     );
 
-    create_task(
+    create_task(API_PID(2),
         1, taskman, RFLAGS_KERNEL,
         0x1300000, 0x1250000,
         CS_KERNEL, kernel_pml4,
         0x1250000, args.kernel_limit,
         args.kernel_limit + 0x2000, args.kernel_limit + 0x3000
-    )->pid = API_PID(2);
+    );
 
-    create_task(
+    create_task(API_PID(0),
         1, setup_mod_info.entry, RFLAGS_KERNEL,
         setup_mod_info.stack_top, setup_mod_info.stack_bottom,
         CS_KERNEL, setup_mod_info.pgd,
         setup_mod_info.start, setup_mod_info.limit,
         setup_mod_info.heap_bottom, setup_mod_info.heap_top
-    )->pid = API_PID(0); //SETUP MODULE 内核模块进程
+    ); //SETUP MODULE 内核模块进程
 
     stop_switch = false;
     printk ("\n");
@@ -223,13 +223,13 @@ void init(void) { //init进程 代表内核
     program_info mm_mod_info = load_kmod_from_memory(mm_addr);
     print_mod_info(&mm_mod_info);
 
-    create_task(
+    create_task(API_PID(1),
         1, mm_mod_info.entry, RFLAGS_KERNEL,
         mm_mod_info.stack_top, mm_mod_info.stack_bottom,
         CS_KERNEL, mm_mod_info.pgd,
         mm_mod_info.start, mm_mod_info.limit,
         mm_mod_info.heap_bottom, mm_mod_info.heap_top
-    )->pid = API_PID(1); //MM MODULE 内核模块进程
+    ); //MM MODULE 内核模块进程
 
     cpfree(mm_addr, MM_SIZE); //释放
 
@@ -301,7 +301,7 @@ void entry(struct boot_args *_args) {
 
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
-    current_task = create_task(1, init, RFLAGS_KERNEL, 0x1350000, 0x1300000, CS_KERNEL, get_pml4(), 0x1300000, args.kernel_limit, args.kernel_limit + 0x800, args.kernel_limit + 0x1800); //init进程
+    current_task = create_task(1, 1, init, RFLAGS_KERNEL, 0x1350000, 0x1300000, CS_KERNEL, get_pml4(), 0x1300000, args.kernel_limit, args.kernel_limit + 0x800, args.kernel_limit + 0x1800); //init进程
     current_task->counter = 1;
 
     stop_switch = true;

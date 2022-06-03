@@ -21,15 +21,17 @@ STD_C_SRC := std/ctype std/string
 IPC_C_SRC := ipc/ipc
 DEBUG_C_SRC := debug/logging
 TOOL_C_SRC := tool/tostring
+MEMORY_C_SRC := memory/malloc
 C_SRC := $(IPC_C_SRC) \
          $(DEBUG_C_SRC) \
 		 $(TOOL_C_SRC) \
-		 $(STD_C_SRC)
+		 $(STD_C_SRC) \
+		 $(MEMORY_C_SRC)
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := ipc/ipc_func syscall/syscall_func
+ASM_SRC := ipc/ipc_func syscall/syscall_func entry
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"

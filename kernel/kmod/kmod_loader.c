@@ -165,7 +165,7 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
         load_segment (program, addr, &start, &limit);
     }
 
-    void *stack_bottom = alloc_stack(elf_head->e_entry); //分配栈
+    void *stack_bottom = alloc_stack(start); //分配栈
 
     qword limit_page = ((qword)limit) / MEMUNIT_SZ + 1;
     void *heap_bottom = (limit_page + 1) * MEMUNIT_SZ;
@@ -178,7 +178,7 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
         .start = start,
         .limit = limit,
         .pgd = pgd,
-        .stack_top = elf_head->e_entry,
+        .stack_top = start,
         .stack_bottom = stack_bottom,
         .heap_bottom = heap_bottom,
         .heap_top = heap_top

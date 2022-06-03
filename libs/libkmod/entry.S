@@ -10,7 +10,7 @@
  *
  * entry.S
  *
- * MM入口
+ * 内核模块入口
  *
  */
 
@@ -18,10 +18,9 @@
 
     .code64
     .text
-    .extern entry
+    .extern kmod_main
 
     .global _start
 _start:
-    pushq %rax
-    call entry
+    call kmod_main
     jmp .

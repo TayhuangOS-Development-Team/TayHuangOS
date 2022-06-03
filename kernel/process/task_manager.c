@@ -28,6 +28,8 @@
 #include <debug/logging.h>
 #include <syscall/syscall.h>
 
+#include <display/printk.h>
+
 PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_heap, qword end_heap,
     qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建MM Info
     mm_struct *mm = kmalloc(sizeof(mm_struct));
@@ -77,17 +79,12 @@ PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qwor
 }
 
 PUBLIC task_struct *task_table; //进程表
-PRIVATE int __cur_pid = 1;
 
-PRIVATE int alloc_pid(void) { //自动分配PID
-    return __cur_pid ++;
-}
-
-PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd,
+PUBLIC task_struct *create_task(int pid, int priority, void *entry, qword rflags, qword rsp, qword rbp, word cs, void *pgd,
     qword start_pos, qword end_pos, qword start_heap, qword end_heap) {//创建进程
 
     dis_int();
-    task_struct *task = create_task_struct(alloc_pid(), priority, entry, rflags, cs, pgd,
+    task_struct *task = create_task_struct(pid, priority, entry, rflags, cs, pgd,
          start_pos, end_pos, start_pos, end_pos, start_heap, end_heap, start_pos, end_pos, rsp, rbp);
     if (priority != -1) {
         task->next = task_table;
@@ -246,20 +243,16 @@ PUBLIC void taskman(void) {
         {
         case GET_CURRENT_PID: {
             int current_pid = current_task->pid;
-            send_msg(&current_task, caller, sizeof(current_task), 20);
+            send_msg(&current_pid, caller, sizeof(current_pid), 20);
             break;
         }
         case GET_START_HEAP: {
             void *start_heap = find_task(pack[1])->mm_info->start_heap;
-            sprintk (buffer, "%P", start_heap);
-            linfo (buffer);
             send_msg(&start_heap, caller, sizeof(start_heap), 20);
             break;
         }
         case GET_END_HEAP: {
             void *end_heap = find_task(pack[1])->mm_info->end_heap;
-            sprintk (buffer, "%P", end_heap);
-            linfo (buffer);
             send_msg(&end_heap, caller, sizeof(end_heap), 20);
             break;
         }

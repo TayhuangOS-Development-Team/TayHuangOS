@@ -26,7 +26,7 @@ C_SRC := main disk \
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry
+ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"

@@ -26,7 +26,7 @@
 #define MM_MALLOC (1)
 #define MM_FREE (2)
 
-void entry(void) {
+void kmod_main(void) {
     linfo ("MM!");
 
     while (true) {

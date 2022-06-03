@@ -22,6 +22,8 @@
 #include <debug/logging.h>
 #include <assert.h>
 
+#include <process/task_manager.h>
+
 PUBLIC int fault_num[32] = {};
 
 PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs) {
@@ -91,7 +93,7 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
     lerror (buffer);
     sprintk (buffer, "r12: %#016X;r13: %#016X;r14: %#016X;", regs->r12, regs->r13, regs->r14);
     lerror (buffer);
-    sprintk (buffer, "r15: %#016X;", regs->r15);
+    sprintk (buffer, "r15: %#016X;pgd: %#016X;pid: %d;", regs->r15, regs->pgd, current_task->pid);
     lerror (buffer);
 
     fault_num[vector] ++;
@@ -100,4 +102,6 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
         lfatal ("TOO MUCH FAULT!");
         panic ("TOO MUCH FAULT!VECTOR = %d", vector);
     }
+
+    while (true);
 }

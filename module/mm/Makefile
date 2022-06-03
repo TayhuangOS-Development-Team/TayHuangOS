@@ -24,7 +24,7 @@ C_SRC := main malloc
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry
+ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(MODULEDIR)/mm" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"
