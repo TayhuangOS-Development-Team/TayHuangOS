@@ -83,11 +83,13 @@ PUBLIC task_struct *create_task(int priority, void *entry, qword rflags, qword r
     dis_int();
     task_struct *task = create_task_struct(alloc_pid(), priority, entry, rflags, cs, pgd,
          start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, start_pos, end_pos, rsp, rbp);
-    task->next = task_table;
-    if (task_table != NULL)
-        task_table->last = task;
-    task_table = task;
-    task->thread_info.rsp = rsp;
+    if (priority != -1) {
+        task->next = task_table;
+        if (task_table != NULL)
+            task_table->last = task;
+        task_table = task;
+        task->thread_info.rsp = rsp;
+    }
     en_int();
     return task;
 }
@@ -141,6 +143,7 @@ PUBLIC task_struct *do_fork_execv(int priority, void(*entry)(void), qword rsp, q
 }
 
 PUBLIC task_struct *current_task = NULL;
+PUBLIC task_struct *empty_task = NULL;
 
 PUBLIC void do_switch(struct intterup_args *regs) { //进行进程切换
     //下降进程
@@ -175,6 +178,7 @@ PUBLIC void do_switch(struct intterup_args *regs) { //进行进程切换
         current_task->state = READY;
 
     //switch
+    task_struct *cur_task = current_task->next;
     task_struct *nxt_task = current_task->next ? current_task->next : task_table;
     do {
         current_task = nxt_task;
@@ -222,6 +226,10 @@ PUBLIC void do_switch(struct intterup_args *regs) { //进行进程切换
         current_task->counter = ((current_task->counter >> 1) + current_task->priority);
 
         nxt_task = current_task->next ? current_task->next : task_table;
+        if (nxt_task == cur_task) { //实在没进程运行了
+            empty_task->next = current_task;
+            current_task = empty_task;
+        }
     } while (current_task->state != READY && current_task->state != SUBBMITED); //直到它为符合条件的进程
 
     //上升进程

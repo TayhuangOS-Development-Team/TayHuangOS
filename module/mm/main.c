@@ -23,5 +23,5 @@
 
 void entry(void) {
     linfo ("MM!");
-    while (1);
+    while (true);
 }

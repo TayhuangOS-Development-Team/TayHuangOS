@@ -154,6 +154,10 @@ void print_mod_info(program_info *mod_info) {
     linfo ("--------------------------------------------");
 }
 
+void empty(void) {
+    while (true); //什么都不做
+}
+
 void init(void) { //init进程 代表内核
     program_info setup_mod_info = load_kmod_from_memory((void*)args.setup_mod_addr);
 
@@ -165,9 +169,11 @@ void init(void) { //init进程 代表内核
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
+    empty_task = create_task(-1, empty, RFLAGS_KERNEL, 0x1400000, 0x1399900, CS_KERNEL, kernel_pml4, 0x1399900, args.kernel_limit);
+
     //API PROCCESS
     // create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, args.kernel_limit);
-    create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, args.kernel_limit)->pid = API_PID(1);
+    // create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, args.kernel_limit)->pid = API_PID(1);
     // create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, args.kernel_limit)->pid = API_PID(2);
     // create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, args.kernel_limit)->pid = API_PID(6);
 
@@ -180,6 +186,8 @@ void init(void) { //init进程 代表内核
 
     stop_switch = false;
     printk ("\n");
+
+    send_msg(&current_task->pid, API_PID(0), sizeof(current_task->pid), 20);
 
     //TEST PROCCESS
     //create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, args.kernel_limit);

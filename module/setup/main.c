@@ -30,11 +30,17 @@ void entry(void) {
 
     char mod_name[64] = {};
 
+    int kernel = 0;
+    while (recv_any_msg(&kernel) == -1); //获取内核进程pid
+
+    itoa(kernel, buffer, 10);
+    linfo (buffer);
+
     char context[8192];
     get_context(DISK_SEL_IDE1_MASTER, (void**)context); //获取文件系统上下文
 
     while (true) {
-        int kernel = recv_any_msg (mod_name); //获取模块名
+        recv_msg (mod_name, kernel); //获取模块名
 
         linfo (mod_name);
 
