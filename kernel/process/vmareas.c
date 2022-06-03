@@ -32,7 +32,7 @@ PRIVATE int dis_height(vm_area *node) { //计算左右高度差
 }
 
 PUBLIC vm_area *create_vmarea(void) { //构造函数
-	vm_area *node = (vm_area*)malloc(sizeof(vm_area));
+	vm_area *node = (vm_area*)kmalloc(sizeof(vm_area));
 	node->height = 1;
 	node->left = NULL;
 	node->right = NULL;
@@ -154,7 +154,7 @@ PUBLIC vm_area *vmarea_delete(vm_area *node, void *vm_start, void *vm_end) {
             node->right = vmarea_delete(node->right, nd->vm_start, nd->vm_end);
         }
         else { //叶节点
-            free(node);
+            kfree(node);
             return NULL;
         }
     }

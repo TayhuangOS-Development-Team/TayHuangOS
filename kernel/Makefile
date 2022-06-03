@@ -20,7 +20,7 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 STD_C_SRC := std/ctype std/string std/math
-MEMORY_C_SRC := memory/paging memory/pmm memory/shared_memory
+MEMORY_C_SRC := memory/paging memory/pmm memory/shared_memory memory/mm_malloc
 DISPLAY_C_SRC := display/printk display/video
 TOOL_C_SRC := tool/tostring tool/debug
 INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception

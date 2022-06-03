@@ -28,7 +28,7 @@ PRIVATE qword pmpage_num = 0;
 PUBLIC void init_pmm(qword pmemsz) { //初始化PMM
     pmpage_num = pmemsz / MEMUNIT_SZ + ((pmemsz % MEMUNIT_SZ) != 0);
     pmpage_bitmap_size = pmpage_num / 8 + ((pmpage_num % 8) != 0);
-    pmpage_bitmap = malloc (pmpage_bitmap_size);
+    pmpage_bitmap = kmalloc (pmpage_bitmap_size);
     memset(pmpage_bitmap, 0, pmpage_bitmap_size);
 }
 
@@ -65,7 +65,7 @@ PUBLIC void *find_freepages(int max, int *found) {
     for (i = 0 ; i < pmpage_bitmap_size ; i ++) {
         if (pmpage_bitmap[i] == 0xFF)
             continue;
-        for (j = 0 ; j < 8 ; j ++) {    
+        for (j = 0 ; j < 8 ; j ++) {
             if ((i * 8 + j) > pmpage_num) {
                 lwarn ("No more free memories!");
                 *found = 0;
@@ -86,7 +86,7 @@ PUBLIC void *find_freepages(int max, int *found) {
     }
     flag = false;
     int sum = 0;
-    void *start = (i * 8 + j) * MEMUNIT_SZ; 
+    void *start = (i * 8 + j) * MEMUNIT_SZ;
     for (; i < pmpage_bitmap_size ; i ++) {
         for (; j < pmpage_bitmap_size ; j ++) {
             if ((pmpage_bitmap[i] & (1 << j)) == 0) {
@@ -109,7 +109,7 @@ PUBLIC void *find_freepages(int max, int *found) {
     return start;
 }
 
-PUBLIC void *find_continue_freepages(int num) {
+PUBLIC void *find_continuous_freepages(int num) {
     //can be improved
     int sum = 0;
     bool flag = false;

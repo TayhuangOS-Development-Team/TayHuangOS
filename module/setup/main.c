@@ -28,24 +28,27 @@ void entry(void) {
     char buffer[256] = {};
 
     char mod_name[64] = {};
-    recv_any_msg (mod_name);
-    
+    int kernel = recv_any_msg (mod_name);
+
     linfo (mod_name);
 
     void *mod_addr;
-    recv_any_msg (&mod_addr);
+    recv_msg (&mod_addr, kernel);
 
     lltoa ((qword)mod_addr, buffer, 16);
     linfo (buffer);
 
 
-
     //load_module (mod_name, mod_addr);
 
 
-    identify_ide0_disk(false, mod_addr);
+    //identify_ide0_disk(false, mod_addr);
 
-    linfo ("Hi!");
+    read_sector(0, 1, DISK_SEL_IDE1_MASTER, mod_addr);
+
+    bool status = true;
+
+    send_msg (&status, kernel, 1, 20);
 
     while (1);
 }

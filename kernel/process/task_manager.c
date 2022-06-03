@@ -27,7 +27,7 @@
 
 PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_brk, qword end_brk,
     qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建MM Info
-    mm_struct *mm = malloc(sizeof(mm_struct));
+    mm_struct *mm = kmalloc(sizeof(mm_struct));
 
     mm->areas = create_vmarea(); //虚空间树根
     mm->pgd = pgd; //页表
@@ -48,7 +48,7 @@ PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code,
 
 PRIVATE task_struct *create_task_struct(int pid, int priority, void *entry, qword rflags, word cs, void *pgd, qword start_code, qword end_code,
     qword start_data, qword end_data, qword start_brk, qword end_brk, qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建PCB
-    task_struct *task = malloc(sizeof(task_struct));
+    task_struct *task = kmalloc(sizeof(task_struct));
     memset(&task->thread_info, 0, sizeof(task->thread_info));
     task->thread_info.rip = entry; //入口
     task->thread_info.rflags = rflags;
@@ -191,7 +191,7 @@ PUBLIC void do_switch(struct intterup_args *regs) { //进行进程切换
                                     pack->next_msg->last_msg = pack->last_msg;
                                 if (pack->last_msg != NULL)
                                     pack->last_msg->next_msg = pack->next_msg;
-                                free(pack);
+                                kfree(pack);
                                 break;
                             }
                         }
@@ -211,10 +211,10 @@ PUBLIC void do_switch(struct intterup_args *regs) { //进行进程切换
 
             for (msgpack_struct *nxt, *pack = current_task->ipc_info.queue ; pack != NULL ; pack = nxt) { //清除IPC
                 nxt = pack->next_msg;
-                free(pack);
+                kfree(pack);
             }
             nxt_task = current_task->next ? current_task->next : task_table;
-            free(current_task); //释放
+            kfree(current_task); //释放
 
             continue;
         }

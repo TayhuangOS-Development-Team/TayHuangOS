@@ -30,6 +30,7 @@
 #include <memory/paging.h>
 #include <memory/pmm.h>
 #include <memory/shared_memory.h>
+#include <memory/mm_malloc.h>
 
 #include <display/video.h>
 #include <display/printk.h>
@@ -53,6 +54,7 @@
 #include <debug/logging.h>
 
 #include <kmod/kmod_loader.h>
+
 
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
@@ -180,15 +182,18 @@ void init(void) { //init进程 代表内核
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
 
     send_msg("disk.mod", API_PID(0), 8, 50);
-    void *disk_addr = find_continue_freepages(16);
-    for (int i = 0 ; i < 16 ; i ++)
-        mark_used(disk_addr + i * MEMUNIT_SZ);
+    byte *disk_addr = cpmalloc(16 * MEMUNIT_SZ);
     sprintk (buffer, "Buffer In %P", disk_addr);
     linfo (buffer);
 
     shm_share(disk_addr, 16, API_PID(0));
 
     send_msg(&disk_addr, API_PID(0), sizeof(disk_addr), 50);
+
+    bool status = false;
+
+    receive_msg(&status, API_PID(0));
+
     while (true);
 
     exit();

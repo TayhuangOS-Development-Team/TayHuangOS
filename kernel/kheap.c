@@ -83,7 +83,7 @@ PRIVATE void __delete_kh_seg(void *start) { //删除内存项
     }
 }
 
-PUBLIC void *malloc(int size) { //分配内存
+PUBLIC void *kmalloc(int size) { //分配内存
     void *mem = __lookup_free_mem(size);
     if (mem == NULL)
         return NULL;
@@ -92,6 +92,6 @@ PUBLIC void *malloc(int size) { //分配内存
     return mem;
 }
 
-PUBLIC void free(void *ptr) { //释放内存
+PUBLIC void kfree(void *ptr) { //释放内存
     __delete_kh_seg(ptr);
 }

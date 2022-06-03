@@ -39,7 +39,7 @@ PRIVATE bool __receive_msg(void *msg, int source) {
             if (pack->last_msg != NULL)
                 pack->last_msg->next_msg = pack->next_msg;
             task->state = READY;
-            free(pack);
+            kfree(pack);
             return true;
         }
     }
@@ -71,7 +71,7 @@ PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
     );
     task->state = READY;
 
-    free(pack); //释放
+    kfree(pack); //释放
 
     return from;
 }
@@ -92,7 +92,7 @@ PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
         dest_task->state = READY; //同步
         return true;
     }
-    msgpack_struct *pack = (msgpack_struct*)malloc(sizeof(msgpack_struct)); //打包
+    msgpack_struct *pack = (msgpack_struct*)kmalloc(sizeof(msgpack_struct)); //打包
     pack->next_msg = pack->last_msg = NULL;
     pack->from = pid;
     pack->len = len;

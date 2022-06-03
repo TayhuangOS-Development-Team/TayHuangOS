@@ -23,6 +23,7 @@
 
 PUBLIC void *shm_create(int pages) {
     //WIP
+    return NULL;
 }
 
 PUBLIC void *shm_share(void *mem, int pages, int pid) {
