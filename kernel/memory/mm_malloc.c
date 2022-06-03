@@ -41,7 +41,8 @@ PUBLIC void *tmalloc(int size, int pid) {
 }
 
 PUBLIC void *vmalloc(int size) {
-    return tmalloc(size, current_task->pid);
+    //WIP
+    return NULL;
 }
 
 PUBLIC void cpfree(void *addr, int size) {
@@ -56,5 +57,5 @@ PUBLIC void tfree(void *addr, int size, int pid) {
 }
 
 PUBLIC void vfree(void *addr, int size) {
-    tfree(addr, size, current_task->pid);
+    //WIP
 }

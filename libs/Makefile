@@ -1,4 +1,4 @@
-OBJECTSDIR := $(OBJECTSDIR)/libc/
+OBJECTSDIR := $(OBJECTSDIR)/libs/
 export OBJECTSDIR
 
 #编译

@@ -1,7 +1,7 @@
-OBJECTSDIR := $(OBJECTSDIR)/setup/
+OBJECTSDIR := $(OBJECTSDIR)/mm/
 
-SETUP_OUTPUT := $(BINDIR)/setup.mod
-SETUP_SYMBOL_OUTPUT := $(BINDIR)/setup.sym
+MM_OUTPUT := $(BINDIR)/mm.mod
+MM_SYMBOL_OUTPUT := $(BINDIR)/mm.sym
 ASM := as
 RM := rm
 GCC := gcc
@@ -19,9 +19,7 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-FS_C_SRC := fs/fat32
-C_SRC := main disk \
-	$(FS_C_SRC)
+C_SRC := main
 
 CPP_SRC :=
 
@@ -29,10 +27,10 @@ ASMFLAGS :=
 ASM_SRC := entry
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"
+C_INCLUDE := -I"$(MODULEDIR)/mm" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"
+CPP_INCLUDE := -I"$(MODULEDIR)/mm" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
 LIBRARIES := -lkmod 
@@ -55,17 +53,17 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	mkdir -p -v $(dir $(SETUP_OUTPUT))
-	$(LD) $(LD_FLAGS) -T setup.ld -o $(SETUP_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
+	mkdir -p -v $(dir $(MM_OUTPUT))
+	$(LD) $(LD_FLAGS) -T mm.ld -o $(MM_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
-	$(OBJCOPY) --only-keep-debug $(SETUP_OUTPUT) $(SETUP_SYMBOL_OUTPUT)
-	$(OBJCOPY) --strip-debug $(SETUP_OUTPUT)
+	$(OBJCOPY) --only-keep-debug $(MM_OUTPUT) $(MM_SYMBOL_OUTPUT)
+	$(OBJCOPY) --strip-debug $(MM_OUTPUT)
 endif
 
 .PHONY: clean
 clean:
-	$(RM) $(SETUP_OUTPUT) $(OBJECTS)
+	$(RM) $(MM_OUTPUT) $(OBJECTS)
 
 .PHONY: image
 image:
-	sudo cp $(SETUP_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	sudo cp $(MM_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

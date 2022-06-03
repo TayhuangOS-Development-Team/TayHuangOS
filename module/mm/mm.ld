@@ -8,20 +8,22 @@
  *
  * 作者: Flysong
  *
- * entry.S
+ * kernel.ld
  *
- * setup 入口
+ * 内核LD脚本
  *
  */
 
 
 
-    .code64
-    .text
-    .extern entry
+ENTRY(_start)
+OUTPUT_FORMAT("elf64-x86-64")
+OUTPUT_ARCH("i386:x86-64")
 
-    .global _start
-_start:
-    pushq %rax
-    call entry
-    jmp .
+SECTIONS
+{
+    . = 0x2200000;
+    .text : { *(.text) }
+    .data : { *(.data) }
+    .bss : { *(.bss) }
+}

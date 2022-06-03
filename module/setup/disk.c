@@ -191,7 +191,3 @@ void read_sector(dword lba, int num, int selector, void *dst) {
         read_ide1_sector(lba, num, (selector & SLAVE_MASK) != 0, dst);
     }
 }
-
-void load_module(const char *name, void *addr) {
-    
-}

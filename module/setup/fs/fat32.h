@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * load_kernel.h
+ * fat32.h
  *
- * 加载内核
+ * FAT32文件系统
  *
  */
 
@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <tayboot/tay_defs.h>
+#include <types.h>
 
-#define SETUP_MOD_ADDRESS (0x200000)
-
-void *load_kernel(void** kernel_start, void** kernel_limit);
+void get_context(int selector, void **__context);
+void print_fs_info(void *context);
+bool loadfile(void *context, const char *name, void *dst);

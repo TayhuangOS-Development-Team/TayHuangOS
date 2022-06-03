@@ -52,6 +52,7 @@
 #include <keyboard/keyboard.h>
 
 #include <debug/logging.h>
+#include <assert.h>
 
 #include <kmod/kmod_loader.h>
 
@@ -135,64 +136,87 @@ PUBLIC void *kernel_pml4 = NULL;
 
 PRIVATE struct boot_args args;
 
+void print_mod_info(program_info *mod_info) {
+    char buffer[256];
+    linfo ("--------------------------------------------");
+    sprintk (buffer, "Start: %P", mod_info->start);
+    linfo (buffer);
+    sprintk (buffer, "Limit: %P", mod_info->limit);
+    linfo (buffer);
+    sprintk (buffer, "Entry: %P", mod_info->entry);
+    linfo (buffer);
+    sprintk (buffer, "PGD: %P", mod_info->pgd);
+    linfo (buffer);
+    sprintk (buffer, "Stack Top: %P", mod_info->stack_top);
+    linfo (buffer);
+    sprintk (buffer, "Stack Bottom: %P", mod_info->stack_bottom);
+    linfo (buffer);
+    linfo ("--------------------------------------------");
+}
+
 void init(void) { //init进程 代表内核
-    program_info disk_driver_info = load_kmod_from_memory((void*)args.disk_mod_addr);
+    program_info setup_mod_info = load_kmod_from_memory((void*)args.setup_mod_addr);
 
     char buffer[256];
-    linfo ("");
-    linfo ("");
-    sprintk (buffer, "Start: %P", disk_driver_info.start);
-    linfo (buffer);
-    sprintk (buffer, "Limit: %P", disk_driver_info.limit);
-    linfo (buffer);
-    sprintk (buffer, "Entry: %P", disk_driver_info.entry);
-    linfo (buffer);
-    sprintk (buffer, "PGD: %P", disk_driver_info.pgd);
-    linfo (buffer);
-    sprintk (buffer, "Stack Top: %P", disk_driver_info.stack_top);
-    linfo (buffer);
-    sprintk (buffer, "Stack Bottom: %P", disk_driver_info.stack_bottom);
-    linfo (buffer);
 
-    stop_switch = false;
-    printk ("\n");
+    print_mod_info(&setup_mod_info);
 
     void *level3_pml4 = create_pgd(); //用户级页表
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    // API PROCCESS
-    create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, args.kernel_limit);
+    //API PROCCESS
+    // create_task(1, keyboard_handler,     RFLAGS_KERNEL, 0x1100000, 0x1050000, CS_KERNEL, kernel_pml4, 0x1050000, args.kernel_limit);
     create_task(1, clock_api_process,    RFLAGS_KERNEL, 0x1050000, 0x1000000, CS_KERNEL, kernel_pml4, 0x1000000, args.kernel_limit)->pid = API_PID(1);
-    create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, args.kernel_limit)->pid = API_PID(2);
-    create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, args.kernel_limit)->pid = API_PID(6);
-    
-    create_task(
-        1, disk_driver_info.entry, RFLAGS_KERNEL,
-        disk_driver_info.stack_top, disk_driver_info.stack_bottom,
-        CS_KERNEL, disk_driver_info.pgd,
-        disk_driver_info.start, disk_driver_info.limit
-    )->pid = API_PID(0);
+    // create_task(1, video_api_process,    RFLAGS_KERNEL, 0x1000000, 0x0950000, CS_KERNEL, kernel_pml4, 0x0950000, args.kernel_limit)->pid = API_PID(2);
+    // create_task(1, keyboard_api_process, RFLAGS_KERNEL, 0x0950000, 0x0900000, CS_KERNEL, kernel_pml4, 0x0900000, args.kernel_limit)->pid = API_PID(6);
 
-    // TEST PROCCESS
-    create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, args.kernel_limit);
-    create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, args.kernel_limit);
-    
+    create_task(
+        1, setup_mod_info.entry, RFLAGS_KERNEL,
+        setup_mod_info.stack_top, setup_mod_info.stack_bottom,
+        CS_KERNEL, setup_mod_info.pgd,
+        setup_mod_info.start, setup_mod_info.limit
+    )->pid = API_PID(0); //SETUP MODULE 内核模块进程
+
+    stop_switch = false;
+    printk ("\n");
+
+    //TEST PROCCESS
+    //create_task(1, fake_shell,           RFLAGS_USER,   0x1350000, 0x1300000, CS_USER,   level3_pml4, 0x1300000, args.kernel_limit);
+    //create_task(2, tick_display,         RFLAGS_USER,   0x1300000, 0x1250000, CS_USER,   level3_pml4, 0x1250000, args.kernel_limit);
+
     //create_task(1, __test_proc1, RFLAGS_USER, 0x1300000, CS_USER, level3_pml4);
     //create_task(1, __test_proc2, RFLAGS_USER, 0x1200000, CS_USER, level3_pml4);
 
-    send_msg("disk.mod", API_PID(0), 8, 50);
-    byte *disk_addr = cpmalloc(16 * MEMUNIT_SZ);
-    sprintk (buffer, "Buffer In %P", disk_addr);
+    #define MM_SIZE (16 * MEMUNIT_SZ)
+    byte *mm_addr = cpmalloc(MM_SIZE); //获取存放mm的地址
+    sprintk (buffer, "Buffer In %P", mm_addr);
     linfo (buffer);
 
-    shm_share(disk_addr, 16, API_PID(0));
+    shm_share(mm_addr, 16, API_PID(0)); //与setup共享
 
-    send_msg(&disk_addr, API_PID(0), sizeof(disk_addr), 50);
+    send_msg("mm.mod", API_PID(0), 8, 50);
+    send_msg(&mm_addr, API_PID(0), sizeof(mm_addr), 50);
 
     bool status = false;
-
     receive_msg(&status, API_PID(0));
+
+    if (! status) { //无法加载
+        lerror ("Can't load MM!");
+        panic ("Can't load MM!");
+    }
+
+    program_info mm_mod_info = load_kmod_from_memory(mm_addr);
+    print_mod_info(&mm_mod_info);
+
+    create_task(
+        1, mm_mod_info.entry, RFLAGS_KERNEL,
+        mm_mod_info.stack_top, mm_mod_info.stack_bottom,
+        CS_KERNEL, mm_mod_info.pgd,
+        mm_mod_info.start, mm_mod_info.limit
+    )->pid = API_PID(3); //MM MODULE 内核模块进程
+
+    cpfree(mm_addr, MM_SIZE); //释放
 
     while (true);
 

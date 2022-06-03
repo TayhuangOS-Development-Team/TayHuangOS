@@ -10,7 +10,7 @@
  *
  * main.c
  *
- * 硬盘驱动主函数
+ * setup主函数
  *
  */
 
@@ -20,35 +20,39 @@
 #include <debug/logging.h>
 #include <ipc/ipc.h>
 #include <tool/tostring.h>
-#include "disk.h"
+#include <disk.h>
+#include <fs/fat32.h>
 
 void entry(void) {
-    linfo ("DISK DRIVER!");
+    linfo ("SETUP!");
 
     char buffer[256] = {};
 
     char mod_name[64] = {};
-    int kernel = recv_any_msg (mod_name);
 
-    linfo (mod_name);
+    char context[8192];
+    get_context(DISK_SEL_IDE1_MASTER, (void**)context); //获取文件系统上下文
 
-    void *mod_addr;
-    recv_msg (&mod_addr, kernel);
+    while (true) {
+        int kernel = recv_any_msg (mod_name); //获取模块名
 
-    lltoa ((qword)mod_addr, buffer, 16);
-    linfo (buffer);
+        linfo (mod_name);
 
+        void *mod_addr;
+        recv_msg (&mod_addr, kernel); //获取加载地址
 
-    //load_module (mod_name, mod_addr);
+        lltoa ((qword)mod_addr, buffer, 16);
+        linfo (buffer);
 
+        bool status = false;
+        int times = 5;
+        while (times --) {
+            status = loadfile(context, mod_name, mod_addr); //加载文件
+            if (status) break;
+        }
 
-    //identify_ide0_disk(false, mod_addr);
-
-    read_sector(0, 1, DISK_SEL_IDE1_MASTER, mod_addr);
-
-    bool status = true;
-
-    send_msg (&status, kernel, 1, 20);
+        send_msg (&status, kernel, 1, 20); //通知内核
+    }
 
     while (1);
 }

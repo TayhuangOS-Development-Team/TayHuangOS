@@ -8,20 +8,20 @@
  *
  * 作者: Flysong
  *
- * entry.S
+ * main.c
  *
- * setup 入口
+ * MM主函数
  *
  */
 
 
 
-    .code64
-    .text
-    .extern entry
+#include <syscall/syscall.h>
+#include <debug/logging.h>
+#include <ipc/ipc.h>
+#include <tool/tostring.h>
 
-    .global _start
-_start:
-    pushq %rax
-    call entry
-    jmp .
+void entry(void) {
+    linfo ("MM!");
+    while (1);
+}

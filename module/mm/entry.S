@@ -10,7 +10,7 @@
  *
  * entry.S
  *
- * setup 入口
+ * MM入口
  *
  */
 

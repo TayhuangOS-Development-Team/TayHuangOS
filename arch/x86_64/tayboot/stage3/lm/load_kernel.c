@@ -51,7 +51,7 @@ void *load_kernel(void** kernel_start, void** kernel_limit) {
         return NULL;
     }
     printf ("\nLoading setup...\n");
-    success = loadfile(context, "setup.mod", DISK_MOD_ADDRESS);
+    success = loadfile(context, "setup.mod", SETUP_MOD_ADDRESS);
     if (! success) {
         return NULL;
     }

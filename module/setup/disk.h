@@ -29,6 +29,5 @@
 #define DISK_SEL_IDE1_MASTER (DISK_SEL_IDE1 | DISK_SEL_MASTER)
 #define DISK_SEL_IDE1_SLAVE (DISK_SEL_IDE1 | DISK_SEL_SLAVE)
 
-void load_module(const char *name, void *addr);
 void identify_disk(int selector, void *dst);
 void read_sector(dword lba, int num, int selector, void *dst);
