@@ -162,6 +162,31 @@ void empty(void) {
     while (true); //什么都不做
 }
 
+bool load_kmod_bysetup(const char *name, int size, program_info *info) {
+    byte *addr = cpmalloc(size); //获取存放mm的地址
+    char buffer[256];
+
+    sprintk (buffer, "Buffer In %P", addr);
+    linfo (buffer);
+
+    shm_mapping(addr, 16, current_task->pid, API_PID(0)); //与setup共享
+
+    send_msg(name, API_PID(0), strlen(name), 50);
+    send_msg(&addr, API_PID(0), sizeof(addr), 50);
+
+    bool status = false;
+    receive_msg(&status, API_PID(0));
+
+    if (! status) { //无法加载
+        return false;
+    }
+
+    *info = load_kmod_from_memory(addr);
+
+    cpfree(addr, size); //释放
+    return true;
+}
+
 void init(void) { //init进程 代表内核
     program_info setup_mod_info = load_kmod_from_memory((void*)args.setup_mod_addr);
 
@@ -203,26 +228,16 @@ void init(void) { //init进程 代表内核
     send_msg(&current_task->pid, API_PID(0), sizeof(current_task->pid), 20);
 
     #define MM_SIZE (16 * MEMUNIT_SZ)
-    byte *mm_addr = cpmalloc(MM_SIZE); //获取存放mm的地址
-    sprintk (buffer, "Buffer In %P", mm_addr);
-    linfo (buffer);
+    program_info mm_mod_info;
+    bool status = load_kmod_bysetup("mm.mod", MM_SIZE, &mm_mod_info);
 
-    shm_mapping(mm_addr, 16, current_task->pid, API_PID(0)); //与setup共享
-
-    send_msg("mm.mod", API_PID(0), 7, 50);
-    send_msg(&mm_addr, API_PID(0), sizeof(mm_addr), 50);
-
-    bool status = false;
-    receive_msg(&status, API_PID(0));
-
-    if (! status) { //无法加载
+    if (!status) {
         lerror ("Can't load MM!");
         panic ("Can't load MM!");
     }
 
-    program_info mm_mod_info = load_kmod_from_memory(mm_addr);
     print_mod_info(&mm_mod_info);
-
+    
     create_task(API_PID(1),
         1, mm_mod_info.entry, RFLAGS_KERNEL,
         mm_mod_info.stack_top, mm_mod_info.stack_bottom,
@@ -230,8 +245,25 @@ void init(void) { //init进程 代表内核
         mm_mod_info.start, mm_mod_info.limit,
         mm_mod_info.heap_bottom, mm_mod_info.heap_top
     ); //MM MODULE 内核模块进程
+    
+    #define VIDEO_SIZE (16 * MEMUNIT_SZ)
+    program_info video_mod_info;
+    status = load_kmod_bysetup("video.mod", MM_SIZE, &video_mod_info);
+    
+    if (!status) {
+        lerror ("Can't load video driver!");
+        panic ("Can't load video driver!");
+    }
 
-    cpfree(mm_addr, MM_SIZE); //释放
+    print_mod_info(&video_mod_info);
+    
+    create_task(API_PID(1),
+        1, video_mod_info.entry, RFLAGS_KERNEL,
+        video_mod_info.stack_top, video_mod_info.stack_bottom,
+        CS_KERNEL, video_mod_info.pgd,
+        video_mod_info.start, video_mod_info.limit,
+        video_mod_info.heap_bottom, video_mod_info.heap_top
+    ); //VIDEO DRIVER 内核模块进程
 
     while (true);
 

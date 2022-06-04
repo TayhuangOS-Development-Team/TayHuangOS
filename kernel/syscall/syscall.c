@@ -216,16 +216,16 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
     return -1;
 }
 
-PUBLIC bool send_msg(void *msg, int dest, int len, int tickout) { //送消息
-    return dosyscall(0, 0, tickout, len, msg, NULL, dest, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC bool send_msg(const void *msg, int dest, int len, int tickout) { //送消息
+    return dosyscall(0, 0, tickout, len, (void*)msg, NULL, dest, 0, 0, 0, 0, 0, 0, 0);
 }
 
-PUBLIC bool receive_msg(void *msg, int source) { //收特定进程的消息
-    return dosyscall(1, 0, 0, 0, NULL, msg, source, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC bool receive_msg(const void *msg, int source) { //收特定进程的消息
+    return dosyscall(1, 0, 0, 0, NULL, (void*)msg, source, 0, 0, 0, 0, 0, 0, 0);
 }
 
-PUBLIC int receive_any_msg(void *msg) { //收消息
-    return dosyscall(2, 0, 0, 0, NULL, msg, 0, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC int receive_any_msg(const void *msg) { //收消息
+    return dosyscall(2, 0, 0, 0, NULL, (void*)msg, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 PUBLIC int get_ticks(void) {
