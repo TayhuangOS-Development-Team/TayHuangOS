@@ -20,6 +20,7 @@
 #include <kheap.h>
 #include <debug/logging.h>
 #include <memory/paging.h>
+#include <string.h>
 
 PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid

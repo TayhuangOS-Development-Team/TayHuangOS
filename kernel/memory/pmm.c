@@ -20,6 +20,7 @@
 #include <kheap.h>
 #include <tayhuang/paging.h>
 #include <debug/logging.h>
+#include <string.h>
 
 PRIVATE byte *pmpage_bitmap;
 PRIVATE qword pmpage_bitmap_size = 0;

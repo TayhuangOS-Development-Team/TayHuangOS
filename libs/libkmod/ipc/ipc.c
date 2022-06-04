@@ -18,8 +18,8 @@
 
 #include "ipc.h"
 
-#include <services.h>
-#include <types.h>
+#include <tayhuang/services.h>
+#include <tayhuang/types.h>
 
 int sendrecv(void *msg, void *ret, int dest, int len, int tickout) {
     if (! send_msg(msg, dest, len, tickout))

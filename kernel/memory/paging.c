@@ -25,6 +25,7 @@
 #include <tayhuang/control_registers.h>
 #include <debug/logging.h>
 #include <display/printk.h>
+#include <string.h>
 
 // PRIVATE const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
 // PRIVATE const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT

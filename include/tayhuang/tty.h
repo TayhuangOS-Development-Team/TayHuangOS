@@ -1,17 +1,17 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
- * malloc.h
- * 
- * malloc函数
- * 
+ *
+ * tty.h
+ *
+ * tty
+ *
  */
 
 
@@ -20,6 +20,8 @@
 
 #include <tayhuang/types.h>
 
-bool theap_init(int pid);
-void *tmalloc(int size, int pid);
-void tfree(void *addr, int pid);
+typedef struct {
+    void *teminal_buffer;
+    device_t video;
+    device_t keyboard;
+} tty_struct, *tty;

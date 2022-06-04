@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <types.h>
+#include <tayhuang/types.h>
 
 bool init_serial(void);
 void write_serial_char(char ch);

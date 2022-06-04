@@ -34,10 +34,10 @@ ASMFLAGS :=
 ASM_SRC := ipc/ipc_func syscall/syscall_func entry
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"
+C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libkmod/std"
+CPP_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \

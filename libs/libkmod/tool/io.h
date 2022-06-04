@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <types.h>
+#include <tayhuang/types.h>
 
 static inline byte inb(word port) { //in字节
     byte data;

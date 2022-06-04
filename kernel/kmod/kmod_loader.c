@@ -19,6 +19,7 @@
 #include "kmod_loader.h"
 #include <elf.h>
 
+#include <string.h>
 #include <debug/logging.h>
 #include <display/printk.h>
 #include <memory/pmm.h>

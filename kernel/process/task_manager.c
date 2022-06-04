@@ -31,6 +31,8 @@
 
 #include <display/printk.h>
 
+#include <string.h>
+
 PRIVATE mm_struct *create_mm_struct(void *pgd, qword start_code, qword end_code, qword start_data, qword end_data, qword start_heap, qword end_heap,
     qword start_rodata, qword end_rodata, qword start_stack, qword end_stack) { //创建MM Info
     mm_struct *mm = kmalloc(sizeof(mm_struct));

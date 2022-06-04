@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * main
+ * main.c
  *
  * 视频驱动主程序
  *

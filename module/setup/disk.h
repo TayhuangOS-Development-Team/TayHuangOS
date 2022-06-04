@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <types.h>
+#include <tayhuang/types.h>
 
 #define DISK_SEL_IDE0 (0)
 #define DISK_SEL_IDE1 (1)

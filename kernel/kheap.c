@@ -17,6 +17,7 @@
 
 
 #include "kheap.h"
+#include <string.h>
 
 typedef struct {
     void *start;

@@ -21,6 +21,7 @@
 #include <tayhuang/io.h>
 #include <kheap.h>
 #include <syscall/syscall.h>
+#include <string.h>
 
 #define BUFFER_LEN (256) //缓冲区大小
 
