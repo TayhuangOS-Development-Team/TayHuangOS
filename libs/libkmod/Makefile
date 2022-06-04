@@ -21,7 +21,7 @@ STD_C_SRC := std/ctype std/string
 IPC_C_SRC := ipc/ipc
 DEBUG_C_SRC := debug/logging
 TOOL_C_SRC := tool/tostring
-MEMORY_C_SRC := memory/malloc
+MEMORY_C_SRC := memory/malloc memory/shared_memory
 C_SRC := $(IPC_C_SRC) \
          $(DEBUG_C_SRC) \
 		 $(TOOL_C_SRC) \

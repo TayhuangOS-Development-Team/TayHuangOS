@@ -18,6 +18,8 @@
 
 #pragma once
 
-void theap_init(int pid);
+#include <types.h>
+
+bool theap_init(int pid);
 void *tmalloc(int size, int pid);
 void tfree(void *addr, int pid);

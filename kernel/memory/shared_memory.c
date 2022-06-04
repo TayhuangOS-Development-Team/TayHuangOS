@@ -21,23 +21,23 @@
 #include "paging.h"
 #include <process/task_manager.h>
 
-PUBLIC void *shm_create(int pages) {
+PUBLIC void *shm_create(int pages, int src_pid) {
     //WIP
     return NULL;
 }
 
-PUBLIC void *shm_share(void *mem, int pages, int pid) {
-    void *target_pgd = find_task(pid)->mm_info->pgd;
-    void *source_pgd = current_task->mm_info->pgd;
+PUBLIC bool shm_mapping(void *mem, int pages, int src_pid, int target_pid) {
+    void *target_pgd = find_task(target_pid)->mm_info->pgd;
+    void *source_pgd = find_task(src_pid)->mm_info->pgd;
 
     set_pml4(target_pgd);
 
     for (int i = 0 ; i < pages ; i ++)
         set_mapping(mem + i * MEMUNIT_SZ, __pa(source_pgd, mem + i * MEMUNIT_SZ), 1, true, false);
 
-    return mem;
+    return true;
 }
 
-PUBLIC void shm_delete(void *addr, int pages) {
+PUBLIC void shm_delete(void *addr, int pages, int src_pid) {
     //WIP
 }

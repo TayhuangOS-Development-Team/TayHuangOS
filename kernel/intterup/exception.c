@@ -22,11 +22,16 @@
 #include <debug/logging.h>
 #include <assert.h>
 
+#include <memory/paging.h>
+
 #include <process/task_manager.h>
+#include <tayhuang/control_registers.h>
 
 PUBLIC int fault_num[32] = {};
 
 PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs) {
+    __set_cr3(kernel_pml4);
+    
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!",
         "[#DB] Single step",

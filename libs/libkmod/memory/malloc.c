@@ -18,20 +18,21 @@
 
 #include "malloc.h"
 #include <services.h>
-#include <types.h>
 #include <ipc/ipc.h>
 
 #define MM_INIT_HEAP (0)
 #define MM_MALLOC (1)
 #define MM_FREE (2)
 
-void init_heap(void) {
+bool init_heap(void) {
     qword command[] = {MM_INIT_HEAP};
-    send_msg(command, MM_SERVICE, sizeof(command), 20);
+    bool status = false;
+    sendrecv(command, &status, MM_SERVICE, sizeof(command), 20);
+    return status;
 }
 
 void *malloc(int size) {
-    void *addr;
+    void *addr = NULL;
     int command[] = {MM_MALLOC, size};
     sendrecv(command, &addr, MM_SERVICE, sizeof(command), 20);
     return addr;

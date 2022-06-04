@@ -18,6 +18,8 @@
 
 #pragma once
 
-void init_heap(void);
+#include <types.h>
+
+bool init_heap(void);
 void *malloc(int size);
 void free(void *addr);

@@ -37,7 +37,8 @@ void kmod_main(void) {
         switch (cmdid)
         {
         case MM_INIT_HEAP: {
-            theap_init(caller);
+            bool status = theap_init(caller);
+            send_msg (&status, caller, sizeof(status), 20);
             break;
         }
         case MM_MALLOC: {

@@ -207,9 +207,9 @@ void init(void) { //init进程 代表内核
     sprintk (buffer, "Buffer In %P", mm_addr);
     linfo (buffer);
 
-    shm_share(mm_addr, 16, API_PID(0)); //与setup共享
+    shm_mapping(mm_addr, 16, current_task->pid, API_PID(0)); //与setup共享
 
-    send_msg("mm.mod", API_PID(0), 8, 50);
+    send_msg("mm.mod", API_PID(0), 7, 50);
     send_msg(&mm_addr, API_PID(0), sizeof(mm_addr), 50);
 
     bool status = false;

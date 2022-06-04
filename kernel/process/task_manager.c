@@ -24,6 +24,7 @@
 #include <kheap.h>
 #include <memory/paging.h>
 #include <memory/pmm.h>
+#include <memory/shared_memory.h>
 
 #include <debug/logging.h>
 #include <syscall/syscall.h>
@@ -85,7 +86,7 @@ PUBLIC task_struct *create_task(int pid, int priority, void *entry, qword rflags
 
     dis_int();
     task_struct *task = create_task_struct(pid, priority, entry, rflags, cs, pgd,
-         start_pos, end_pos, start_pos, end_pos, start_heap, end_heap, start_pos, end_pos, rsp, rbp);
+         start_pos, end_pos, start_pos, end_pos, start_heap, end_heap, start_pos, end_pos, rbp, rsp);
     if (priority != -1) {
         task->next = task_table;
         if (task_table != NULL)
@@ -230,6 +231,11 @@ PUBLIC task_struct *find_task(int pid) {
 #define GET_CURRENT_PID (0)
 #define GET_START_HEAP (1)
 #define GET_END_HEAP (2)
+#define GET_TASK_START (3)
+#define GET_TASK_LIMIT (4)
+#define SHM_MAPPING (5)
+#define GET_TASK_PGD (6)
+#define SET_TASK_PGD (7)
 
 //task manager进程
 PUBLIC void taskman(void) {
@@ -242,7 +248,7 @@ PUBLIC void taskman(void) {
         switch (cmdid)
         {
         case GET_CURRENT_PID: {
-            int current_pid = current_task->pid;
+            int current_pid = caller;
             send_msg(&current_pid, caller, sizeof(current_pid), 20);
             break;
         }
@@ -255,6 +261,35 @@ PUBLIC void taskman(void) {
             void *end_heap = find_task(pack[1])->mm_info->end_heap;
             send_msg(&end_heap, caller, sizeof(end_heap), 20);
             break;
+        }
+        case GET_TASK_START: {
+            void *start = find_task(pack[1])->mm_info->start_stack;
+            send_msg(&start, caller, sizeof(start), 20);
+            break;
+        }
+        case GET_TASK_LIMIT: {
+            void *limit = find_task(pack[1])->mm_info->end_heap;
+            send_msg(&limit, caller, sizeof(limit), 20);
+            break;
+        }
+        case SHM_MAPPING: {
+            void *addr = pack[1];
+            int pages = pack[2];
+            int src_pid = caller;
+            int target_pid = pack[3];
+            bool status = shm_mapping(addr, pages, src_pid, target_pid);
+            send_msg (&status, caller, sizeof(status), 20);
+            break;
+        }
+        case GET_TASK_PGD: {
+            void *pgd = find_task(pack[1])->mm_info->pgd;
+            send_msg(&pgd, caller, sizeof(pgd), 20);
+            break;
+        }
+        case SET_TASK_PGD: {
+            find_task(pack[1])->mm_info->pgd = pack[2];
+            bool status = true;
+            send_msg (&status, caller, sizeof(status), 20);
         }
         default: {
             sprintk (buffer, "TASKMAN received an unknown command %d from %d", cmdid, caller);

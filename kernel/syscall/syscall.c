@@ -46,6 +46,9 @@ PRIVATE bool __receive_msg(void *msg, int source) {
                 pack->next_msg->last_msg = pack->last_msg;
             if (pack->last_msg != NULL)
                 pack->last_msg->next_msg = pack->next_msg;
+            if (pack == current_task->ipc_info.queue) { //为队头
+                current_task->ipc_info.queue = pack->next_msg;
+            }
             task->state = READY;
             kfree(pack);
             return true;

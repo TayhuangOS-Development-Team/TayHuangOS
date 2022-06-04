@@ -18,8 +18,10 @@
 
 #pragma once
 
-#include <tayhuang/defs.h>
+#include <types.h>
 
-PUBLIC void *shm_create(int pages, int src_pid);
-PUBLIC bool shm_mapping(void *mem, int pages, int src_pid, int target_pid);
-PUBLIC void shm_delete(void *addr, int pages, int src_pid);
+#define MEMUNIT_SZ (4096)
+
+void *shm_create(int pages);
+bool shm_mapping(void *mem, int pages, int pid);
+void shm_delete(void *addr, int pages);
