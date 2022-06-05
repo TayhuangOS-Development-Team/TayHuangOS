@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * cmd.h
+ * general_cmd.h
  *
- * 命令处理器
+ * 信息
  *
  */
 
@@ -18,13 +18,7 @@
 
 #pragma once
 
-#include <tayhuang/types.h>
-#include <modes.h>
-
-void deal_text_cmd(int caller, int cmd, qword *param);
-
-#define __TEXT_WRITE_CHAR (0)
-#define TEXT_WRITE_CHAR MKCMD(MODE_TEXT, __TEXT_WRITE_CHAR)
-
-#define __TEXT_WRITE_STRING (1)
-#define TEXT_WRITE_STRING MKCMD(MODE_TEXT, __TEXT_WRITE_STRING)
+extern int display_mode;
+extern int screen_width;
+extern int screen_height;
+extern void *VIDEO_MEMORY;

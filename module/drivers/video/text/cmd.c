@@ -20,16 +20,41 @@
 
 #include <debug/logging.h>
 
+#include <infomations.h>
+
+#include <ipc/ipc.h>
+
+void write_char(int ch, int color, int x, int y) {
+    *(char*)(VIDEO_MEMORY + (y * screen_width + x) * 2) = ch;
+    *(char*)(VIDEO_MEMORY + 1 + (y * screen_width + x) * 2) = color;
+}
+
 void deal_text_cmd(int caller, int cmd, qword *param) {
     switch (cmd)
     {
     case __TEXT_WRITE_CHAR: {
-        char ch = param[0];
+        int ch = param[0];
+        int color = param[1];
+        int x = param[2];
+        int y = param[3];
+        write_char(ch, color, x, y);
+        break;
+    }
+    case __TEXT_WRITE_STRING: {
+        int color = param[0];
         int x = param[1];
         int y = param[2];
-        *(char*)(0xB8000 + (y * 80 + x) * 2) = ch;
-        *(char*)(0xB8001 + (y * 80 + x) * 2) = 0x0F;
-        break;
+        char _buffer[256];
+        char *buffer = _buffer;
+        recv_msg(buffer, caller);
+
+        while (*buffer != '\0') {
+            write_char(*buffer, color, x, y);
+            buffer ++;
+            x ++;
+            y += (x / 80);
+            x %= 80;
+        }
     }
     default:
         break;

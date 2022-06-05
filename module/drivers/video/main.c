@@ -24,7 +24,10 @@
 #include <ipc/ipc.h>
 #include <tool/tostring.h>
 
-int display_mode = DISP_MODE_NONE;
+int display_mode;
+int screen_width;
+int screen_height;
+void *VIDEO_MEMORY;
 
 void deal_cmd(int caller, int cmd, qword *param) {
     if (display_mode == DISP_MODE_NONE) {
@@ -51,7 +54,14 @@ void deal_cmd(int caller, int cmd, qword *param) {
 void kmod_main(void) {
     linfo ("I'm video!");
 
-    while (recv_any_msg(&display_mode) == -1);
+    qword infomations[16] = {DISP_MODE_NONE, 0, 0, NULL};
+
+    while (recv_any_msg(infomations) == -1);
+
+    display_mode = infomations[0];
+    screen_width = infomations[1];
+    screen_height = infomations[2];
+    VIDEO_MEMORY = infomations[3];
 
     char buffer[256];
 

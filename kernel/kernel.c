@@ -275,11 +275,15 @@ void init(void) { //init进程 代表内核
 
     int mode = VIDEO_INFO.graphic ? DISP_MODE_GRAPHIC : DISP_MODE_TEXT;
 
-    send_msg(&mode, API_PID(3), sizeof(mode), 20);
+    qword infomations[16] = {mode, VIDEO_INFO.width, VIDEO_INFO.height, VIDEO_INFO.framebuffer};
 
-    qword cmd[] = {(1 << 28) | 0, 'a', 0, 0};
+    send_msg(infomations, API_PID(3), sizeof(infomations), 20);
+
+    qword cmd[] = {(1 << 28) | 1, 0x0F, 0, 0};
+    char msg[] = "HELLO,VIDEO!";
 
     send_msg(&cmd, API_PID(3), sizeof(cmd), 20);
+    send_msg(msg, API_PID(3), sizeof(msg), 20);
 
     while (true);
 
