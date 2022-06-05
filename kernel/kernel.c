@@ -257,13 +257,29 @@ void init(void) { //init进程 代表内核
 
     print_mod_info(&video_mod_info);
     
-    create_task(API_PID(1),
+    create_task(API_PID(3),
         1, video_mod_info.entry, RFLAGS_KERNEL,
         video_mod_info.stack_top, video_mod_info.stack_bottom,
         CS_KERNEL, video_mod_info.pgd,
         video_mod_info.start, video_mod_info.limit,
         video_mod_info.heap_bottom, video_mod_info.heap_top
     ); //VIDEO DRIVER 内核模块进程
+
+    shm_mapping(0xB8000, 16, current_task->pid, API_PID(3)); //将显存共享给VIDEO DRIVER
+
+    enum {
+        DISP_MODE_NONE = 0,
+        DISP_MODE_TEXT,
+        DISP_MODE_GRAPHIC
+    };
+
+    int mode = VIDEO_INFO.graphic ? DISP_MODE_GRAPHIC : DISP_MODE_TEXT;
+
+    send_msg(&mode, API_PID(3), sizeof(mode), 20);
+
+    qword cmd[] = {(1 << 28) | 0, 'a', 0, 0};
+
+    send_msg(&cmd, API_PID(3), sizeof(cmd), 20);
 
     while (true);
 

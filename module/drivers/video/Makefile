@@ -19,7 +19,11 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-C_SRC := main
+TEXT_C_SRC := text/cmd
+GRAPHIC_C_SRC := graphic/cmd
+C_SRC := main \
+		 $(TEXT_C_SRC) \
+		 $(GRAPHIC_C_SRC)
 
 CPP_SRC :=
 

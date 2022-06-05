@@ -1,6 +1,6 @@
 OBJECTSDIR := $(OBJECTSDIR)/drivers/
 BINDIR := $(BINDIR)/drivers/
-DRIVERSDIR := $(ROOTDIR)/drivers
+DRIVERSDIR := $(MODULEDIR)/drivers
 export OBJECTSDIR DRIVERSDIR
 
 #编译
