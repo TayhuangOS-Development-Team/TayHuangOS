@@ -43,10 +43,10 @@ PRIVATE void set_cursor_pos(byte x, byte y) {
 
 PUBLIC void scroll_screen(int num) {
     if (num > 0) { //上滚
-        //TODO
+        //TODO: Scroll up
     } 
     else { //下滚
-        //TODO
+        //TODO: Scroll down
     }
 }
 

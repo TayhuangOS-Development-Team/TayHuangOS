@@ -40,22 +40,6 @@ void deal_text_cmd(int caller, int cmd, qword *param) {
         write_char(ch, color, x, y);
         break;
     }
-    case __TEXT_WRITE_STRING: {
-        int color = param[0];
-        int x = param[1];
-        int y = param[2];
-        char _buffer[256];
-        char *buffer = _buffer;
-        recv_msg(buffer, caller);
-
-        while (*buffer != '\0') {
-            write_char(*buffer, color, x, y);
-            buffer ++;
-            x ++;
-            y += (x / 80);
-            x %= 80;
-        }
-    }
     default:
         break;
     }

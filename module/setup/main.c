@@ -22,6 +22,7 @@
 #include <tool/tostring.h>
 #include <disk.h>
 #include <fs/fat32.h>
+#include <printf.h>
 
 void kmod_main(void) {
     linfo ("SETUP!");
@@ -33,7 +34,8 @@ void kmod_main(void) {
     int kernel = 0;
     while (recv_any_msg(&kernel) == -1); //获取内核进程pid
 
-    itoa(kernel, buffer, 10);
+
+    sprintf (buffer, "Kernel PID: %d", kernel);
     linfo (buffer);
 
     char context[8192];
@@ -42,12 +44,13 @@ void kmod_main(void) {
     while (true) {
         recv_msg (mod_name, kernel); //获取模块名
 
-        linfo (mod_name);
+        sprintf (buffer, "Module Name: %s", mod_name);
+        linfo (buffer);
 
         void *mod_addr;
         recv_msg (&mod_addr, kernel); //获取加载地址
 
-        lltoa ((qword)mod_addr, buffer, 16);
+        sprintf (buffer, "Module Load Address: %P", mod_addr);
         linfo (buffer);
 
         bool status = false;

@@ -279,12 +279,6 @@ void init(void) { //init进程 代表内核
 
     send_msg(infomations, API_PID(3), sizeof(infomations), 20);
 
-    qword cmd[] = {(1 << 28) | 1, 0x0F, 0, 0};
-    char msg[] = "HELLO,VIDEO!";
-
-    send_msg(&cmd, API_PID(3), sizeof(cmd), 20);
-    send_msg(msg, API_PID(3), sizeof(msg), 20);
-
     while (true);
 
     exit();
