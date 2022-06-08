@@ -241,6 +241,7 @@ PUBLIC task_struct *find_task(int pid) {
 #define LOGGING_ALL_TASK (8)
 #define GET_TASK_START_WITHOUT_STACK (9)
 #define GET_TASK_END_WITHOUT_HEAP (10)
+#define SET_MAPPING_FROM (11)
 
 PRIVATE const char *state_to_string(int state) {
     switch (state)
@@ -351,6 +352,18 @@ PUBLIC void taskman(void) {
             end = max(end, find_task(pack[1])->mm_info->end_data);
             end = max(end, find_task(pack[1])->mm_info->end_rodata);
             send_msg(&end, caller, sizeof(end), 20);
+            break;
+        }
+        case SET_MAPPING_FROM: {
+            void *src_addr = pack[1];
+            void *dst_addr = pack[2];
+            int pages = pack[3];
+            int src_pid = pack[4];
+            set_pml4(find_task(caller)->mm_info->pgd);
+            for (int i = 0 ; i < pages ; i ++)
+                set_mapping(dst_addr + i * MEMUNIT_SZ, __pa(find_task(src_pid)->mm_info->pgd, src_addr + i * MEMUNIT_SZ), 1, true, true);
+            bool status = true;
+            send_msg (&status, caller, sizeof(status), 20);
             break;
         }
         default: {

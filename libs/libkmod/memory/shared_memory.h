@@ -22,6 +22,6 @@
 
 #define MEMUNIT_SZ (4096)
 
-void *shm_create(int pages);
 bool shm_mapping(void *mem, int pages, int pid);
-void shm_delete(void *addr, int pages);
+void *shm_share(void *src_addr, int pages, int src_pid);
+void shm_unshare(void *target_addr);

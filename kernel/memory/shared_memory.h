@@ -20,6 +20,4 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void *shm_create(int pages, int src_pid);
 PUBLIC bool shm_mapping(void *mem, int pages, int src_pid, int target_pid);
-PUBLIC void shm_delete(void *addr, int pages, int src_pid);

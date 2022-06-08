@@ -24,6 +24,8 @@
 #include <tayhuang/services.h>
 #include <memory/shared_memory.h>
 
+#include <tayhuang/paging.h>
+
 #include <printf.h>
 
 #define GET_CURRENT_PID (0)

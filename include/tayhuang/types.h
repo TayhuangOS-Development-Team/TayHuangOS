@@ -32,7 +32,6 @@ typedef b8 reg8_t; //8位寄存器
 typedef b16 reg16_t; //16位寄存器
 typedef b32 reg32_t; //32位寄存器
 typedef b64 reg64_t; //64位寄存器
-typedef int size_t; //size_t 大小
 typedef void *handle_t; //处理器
 #define true (1) //真
 #define false (0) //假
