@@ -116,10 +116,13 @@ bool theap_init(int pid) {
 
     set_task_pgd(cur_pid, pgd);
 
-    chunk_struct *whole_heap_chunk = (chunk_struct*)(heap + 2);
-    whole_heap_chunk->size = get_end_heap(pid) - get_start_heap(pid) - 2;
+    chunk_struct *whole_heap_chunk = (chunk_struct*)(heap + 16);
+    whole_heap_chunk->size = get_end_heap(pid) - get_start_heap(pid) - 16;
     whole_heap_chunk->used = false;
     whole_heap_chunk->next = NULL;
+    
+    sprintf (buffer, "Heap Size Sum = %d", whole_heap_chunk->size);
+    linfo (buffer);
 
     chunk_struct *free_chunk_head = (chunk_struct*)heap;
     free_chunk_head->size = -1;
@@ -132,6 +135,8 @@ bool theap_init(int pid) {
 }
 
 void *tmalloc(int size, int pid) {
+    char buffer[256];
+
     void *heap = get_start_heap(pid);
 
     int cur_pid = get_current_pid();
@@ -140,31 +145,44 @@ void *tmalloc(int size, int pid) {
 
     set_task_pgd(cur_pid, pgd);
 
-    chunk_struct *free_chunk = (chunk_struct*)(heap + 2);
+    chunk_struct *free_chunk = ((chunk_struct*)heap)->next;
     chunk_struct *last = (chunk_struct*)heap;
+
+    sprintf (buffer, "search start: %P, list start: %P", free_chunk, last);
+    linfo (buffer);
 
     //修正大小
     int fix_size = ((size / HEAPUNIT_SZ) + (size % HEAPUNIT_SZ != 0)) * HEAPUNIT_SZ;
 
+    sprintf (buffer, "size = %d ; fixed size=%d", size, fix_size);
+    linfo (buffer);
+
     //寻找符合条件的chunk
-    while (free_chunk->size < (fix_size + 2) && (free_chunk->next != NULL)) {
+    while (free_chunk->size < (fix_size + 16) && (free_chunk->next != NULL)) {
         last = free_chunk;
         free_chunk = free_chunk->next;
     }
 
-    if (free_chunk->size < (fix_size + 2)) {
+    sprintf (buffer, "free chunk: %P, size=%d, last: %P", free_chunk, free_chunk->size, last);
+    linfo (buffer);
+
+    if (free_chunk->size < (fix_size + 16)) {
+        linfo ("Heap is running out!");
         //TODO: extend the heap
+        return NULL;
     }
 
     //进行分割
     if (free_chunk->size > HEAPDIV_MIN_SZ) {
-        chunk_struct *new_chunk = ((void*)free_chunk) + 2 + fix_size;
+        chunk_struct *new_chunk = ((void*)free_chunk) + 16 + fix_size;
         new_chunk->next = free_chunk->next;
-        new_chunk->size = free_chunk->size - 2 - fix_size;
+        new_chunk->size = free_chunk->size - 16 - fix_size;
         new_chunk->used = false;
+        sprintf (buffer, "New chunk = %P ; size = %d ; next = %P", new_chunk, new_chunk->size, new_chunk->next);
+        linfo (buffer);
         last->next = new_chunk;
 
-        free_chunk->size = fix_size + 2;
+        free_chunk->size = fix_size + 16;
     }
     else {
         last->next = NULL;
@@ -176,7 +194,7 @@ void *tmalloc(int size, int pid) {
 
     set_task_pgd(cur_pid, origin_pgd);
 
-    return ((void*)free_chunk) + 2;
+    return ((void*)free_chunk) + 16;
 }
 
 void tfree(void *addr, int pid) {
@@ -189,14 +207,14 @@ void tfree(void *addr, int pid) {
     set_task_pgd(cur_pid, pgd);
 
     //当前chunk
-    chunk_struct *chunk = (chunk_struct*)(addr - 2);
+    chunk_struct *chunk = (chunk_struct*)(addr - 16);
     if (! chunk->used) {
         lwarn ("try to free a unused chunk!");
         return;
     }
 
     //空闲chunk链表头
-    chunk_struct *free_chunk = (chunk_struct*)(heap + 2);
+    chunk_struct *free_chunk = (chunk_struct*)(heap + 16);
     chunk_struct *parent = (chunk_struct*)heap;
 
     //设为未使用

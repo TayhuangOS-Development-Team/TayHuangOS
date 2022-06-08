@@ -33,7 +33,7 @@ bool init_heap(void) {
 
 void *malloc(int size) {
     void *addr = NULL;
-    int command[] = {MM_MALLOC, size};
+    qword command[] = {MM_MALLOC, size};
     sendrecv(command, &addr, MM_SERVICE, sizeof(command), 20);
     return addr;
 }
