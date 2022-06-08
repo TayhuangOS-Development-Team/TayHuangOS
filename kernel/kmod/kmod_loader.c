@@ -28,11 +28,11 @@
 #include <kheap.h>
 #include <tayhuang/control_registers.h>
 
-PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **limit) { //加载一个段
+PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **end) { //加载一个段
     char buffer[256];
     if (program->p_type == PT_LOAD) {
         *start = (void*)min ((qword)*start, program->p_vaddr);
-        *limit = (void*)max ((qword)*limit, program->p_vaddr + program->p_memsz);
+        *end = (void*)max ((qword)*end, program->p_vaddr + program->p_memsz);
         linfo ("Segment type: LOAD");
 
         int pages_need = program->p_filesz / MEMUNIT_SZ + ((program->p_memsz % MEMUNIT_SZ) != 0);
@@ -154,7 +154,7 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
     void *pgd = create_pgd(); //创建页目录
     set_pml4(pgd);
 
-    void *start = (void*)0xFFFFFFFFFFFFFFFF, *limit = NULL;
+    void *start = (void*)0xFFFFFFFFFFFFFFFF, *end = NULL;
 
     for (int i = 0 ; i < elf_head->e_phnum ; i ++) { //加载段
         linfo ("------------------------------------");
@@ -163,13 +163,13 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
 
         Elf64_Phdr *program = (Elf64_Phdr*)(addr + elf_head->e_phoff + i * elf_head->e_phentsize);
 
-        load_segment (program, addr, &start, &limit);
+        load_segment (program, addr, &start, &end);
     }
 
     void *stack_bottom = alloc_stack(start); //分配栈
 
-    qword limit_page = ((qword)limit) / MEMUNIT_SZ + 1;
-    void *heap_bottom = (limit_page + 1) * MEMUNIT_SZ;
+    qword end_page = ((qword)end) / MEMUNIT_SZ + 1;
+    void *heap_bottom = (end_page + 1) * MEMUNIT_SZ;
     void *heap_top = alloc_heap(heap_bottom); //分配堆
 
     mapping_kernel(); //将内核映射到内存中
@@ -177,7 +177,7 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
     program_info info = {
         .entry = elf_head->e_entry,
         .start = start,
-        .limit = limit,
+        .end = end,
         .pgd = pgd,
         .stack_top = start,
         .stack_bottom = stack_bottom,

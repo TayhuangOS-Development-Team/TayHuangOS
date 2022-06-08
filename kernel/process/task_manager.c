@@ -234,16 +234,55 @@ PUBLIC task_struct *find_task(int pid) {
 #define GET_START_HEAP (1)
 #define GET_END_HEAP (2)
 #define GET_TASK_START (3)
-#define GET_TASK_LIMIT (4)
+#define GET_TASK_END (4)
 #define SHM_MAPPING (5)
 #define GET_TASK_PGD (6)
 #define SET_TASK_PGD (7)
+#define LOGGING_ALL_TASK (8)
+#define GET_TASK_START_WITHOUT_STACK (9)
+#define GET_TASK_END_WITHOUT_HEAP (10)
+
+PRIVATE const char *state_to_string(int state) {
+    switch (state)
+    {
+    case SUBBMITED: return "submmited";
+    case READY: return "ready";
+    case WAITING_WAKEUP: return "waiting wakeup";
+    case WAITING_FOR_SENDING: return "waiting for sending";
+    case WAITING_FOR_RECEIVING: return "waiting for receiving";
+    case RUNNING: return "running";
+    case EXCEPTION: return "exception";
+    case TERMINATE: return "terminate";
+    default: return "unknown";
+    }
+}
+
+PRIVATE void log_task(task_struct *task) {
+    char buffer[512];
+    sprintk (
+        buffer,
+        "\n\
+------------------------------------------------------\n\
+Task(PID=%d) counter=%d priority=%d state=%s\n\
+PGD=%P\nCode=%P~%P\nData=%P~%P\nStack=%P~%P\nRodata=%P~%P\nHeap=%P~%P\n\
+------------------------------------------------------\
+",
+        task->pid, task->counter, task->priority, state_to_string(task->state),
+        task->mm_info->pgd,
+        task->mm_info->start_code, task->mm_info->end_code,
+        task->mm_info->start_data, task->mm_info->end_data,
+        task->mm_info->start_stack, task->mm_info->end_stack,
+        task->mm_info->start_rodata, task->mm_info->end_rodata,
+        task->mm_info->start_heap, task->mm_info->end_heap
+    );
+    linfo (buffer);
+}
 
 //task manager进程
 PUBLIC void taskman(void) {
     char buffer[128];
     while (true) {
-        int pack[20];
+        qword pack[20];
         int caller = 0;
         while ((caller = receive_any_msg(pack)) == -1);
         int cmdid = pack[0];
@@ -269,9 +308,9 @@ PUBLIC void taskman(void) {
             send_msg(&start, caller, sizeof(start), 20);
             break;
         }
-        case GET_TASK_LIMIT: {
-            void *limit = find_task(pack[1])->mm_info->end_heap;
-            send_msg(&limit, caller, sizeof(limit), 20);
+        case GET_TASK_END: {
+            void *end = find_task(pack[1])->mm_info->end_heap;
+            send_msg(&end, caller, sizeof(end), 20);
             break;
         }
         case SHM_MAPPING: {
@@ -292,6 +331,27 @@ PUBLIC void taskman(void) {
             find_task(pack[1])->mm_info->pgd = pack[2];
             bool status = true;
             send_msg (&status, caller, sizeof(status), 20);
+            break;
+        }
+        case LOGGING_ALL_TASK: {
+            for (task_struct *task = task_table ; task != NULL ; task = task->next) {
+                log_task(task);
+            }
+            break;
+        }
+        case GET_TASK_START_WITHOUT_STACK: {
+            qword start = find_task(pack[1])->mm_info->start_code;
+            start = min(start, find_task(pack[1])->mm_info->start_data);
+            start = min(start, find_task(pack[1])->mm_info->start_rodata);
+            send_msg(&start, caller, sizeof(start), 20);
+            break;
+        }
+        case GET_TASK_END_WITHOUT_HEAP: {
+            qword end = find_task(pack[1])->mm_info->end_code;
+            end = max(end, find_task(pack[1])->mm_info->end_data);
+            end = max(end, find_task(pack[1])->mm_info->end_rodata);
+            send_msg(&end, caller, sizeof(end), 20);
+            break;
         }
         default: {
             sprintk (buffer, "TASKMAN received an unknown command %d from %d", cmdid, caller);

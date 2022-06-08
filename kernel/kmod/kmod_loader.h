@@ -22,7 +22,7 @@
 
 typedef struct {
     void *start;
-    void *limit;
+    void *end;
     void *entry;
     void *pgd;
     void *stack_top;

@@ -141,7 +141,7 @@ void print_mod_info(program_info *mod_info) {
     linfo ("--------------------------------------------");
     sprintk (buffer, "Start: %P", mod_info->start);
     linfo (buffer);
-    sprintk (buffer, "Limit: %P", mod_info->limit);
+    sprintk (buffer, "End: %P", mod_info->end);
     linfo (buffer);
     sprintk (buffer, "Entry: %P", mod_info->entry);
     linfo (buffer);
@@ -187,6 +187,12 @@ bool load_kmod_bysetup(const char *name, int size, program_info *info) {
     return true;
 }
 
+PRIVATE int pid = 2;
+
+PRIVATE int alloc_pid(void) {
+    return pid ++;
+}
+
 void init(void) { //init进程 代表内核
     program_info setup_mod_info = load_kmod_from_memory((void*)args.setup_mod_addr);
 
@@ -198,13 +204,17 @@ void init(void) { //init进程 代表内核
     set_pml4(level3_pml4);
     set_mapping(0, 0, 16384, true, true);
 
-    empty_task = create_task(2,
+    //----------EMPTY---------------
+
+    empty_task = create_task(0,
         -1, empty, RFLAGS_KERNEL,
         0x1400000, 0x1399900,
         CS_KERNEL, kernel_pml4,
         0x1399900, args.kernel_limit,
         args.kernel_limit, args.kernel_limit + 0x100
     );
+
+    //----------TASK MANAGER---------------
 
     create_task(API_PID(2),
         1, taskman, RFLAGS_KERNEL,
@@ -214,11 +224,13 @@ void init(void) { //init进程 代表内核
         args.kernel_limit + 0x2000, args.kernel_limit + 0x3000
     );
 
+    //----------SETUP---------------
+
     create_task(API_PID(0),
         1, setup_mod_info.entry, RFLAGS_KERNEL,
         setup_mod_info.stack_top, setup_mod_info.stack_bottom,
         CS_KERNEL, setup_mod_info.pgd,
-        setup_mod_info.start, setup_mod_info.limit,
+        setup_mod_info.start, setup_mod_info.end,
         setup_mod_info.heap_bottom, setup_mod_info.heap_top
     ); //SETUP MODULE 内核模块进程
 
@@ -226,6 +238,8 @@ void init(void) { //init进程 代表内核
     printk ("\n");
 
     send_msg(&current_task->pid, API_PID(0), sizeof(current_task->pid), 20);
+
+    //----------MM---------------
 
     #define MM_SIZE (16 * MEMUNIT_SZ)
     program_info mm_mod_info;
@@ -242,9 +256,11 @@ void init(void) { //init进程 代表内核
         1, mm_mod_info.entry, RFLAGS_KERNEL,
         mm_mod_info.stack_top, mm_mod_info.stack_bottom,
         CS_KERNEL, mm_mod_info.pgd,
-        mm_mod_info.start, mm_mod_info.limit,
+        mm_mod_info.start, mm_mod_info.end,
         mm_mod_info.heap_bottom, mm_mod_info.heap_top
     ); //MM MODULE 内核模块进程
+
+    //----------VIDEO---------------
     
     #define VIDEO_SIZE (16 * MEMUNIT_SZ)
     program_info video_mod_info;
@@ -261,7 +277,7 @@ void init(void) { //init进程 代表内核
         1, video_mod_info.entry, RFLAGS_KERNEL,
         video_mod_info.stack_top, video_mod_info.stack_bottom,
         CS_KERNEL, video_mod_info.pgd,
-        video_mod_info.start, video_mod_info.limit,
+        video_mod_info.start, video_mod_info.end,
         video_mod_info.heap_bottom, video_mod_info.heap_top
     ); //VIDEO DRIVER 内核模块进程
 
@@ -279,6 +295,26 @@ void init(void) { //init进程 代表内核
 
     send_msg(infomations, API_PID(3), sizeof(infomations), 20);
 
+    //----------TESTBENCH---------------
+
+    #define TB_SIZE (16 * MEMUNIT_SZ)
+    program_info tb_mod_info;
+    status = load_kmod_bysetup("tb1.mod", TB_SIZE, &tb_mod_info);
+
+    if (!status) {
+        lerror ("Can't load Test bench!");
+        panic ("Can't load Test bench!");
+    }
+
+    print_mod_info(&tb_mod_info);
+    
+    create_task(alloc_pid(),
+        1, tb_mod_info.entry, RFLAGS_KERNEL,
+        tb_mod_info.stack_top, tb_mod_info.stack_bottom,
+        CS_KERNEL, tb_mod_info.pgd,
+        tb_mod_info.start, tb_mod_info.end,
+        tb_mod_info.heap_bottom, tb_mod_info.heap_top
+    ); //Test bench 内核模块进程
     while (true);
 
     exit();

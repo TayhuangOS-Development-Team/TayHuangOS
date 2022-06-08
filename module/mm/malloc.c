@@ -24,12 +24,18 @@
 #include <tayhuang/services.h>
 #include <memory/shared_memory.h>
 
+#include <printf.h>
+
+#define GET_CURRENT_PID (0)
 #define GET_START_HEAP (1)
 #define GET_END_HEAP (2)
 #define GET_TASK_START (3)
-#define GET_TASK_LIMIT (4)
+#define GET_TASK_END (4)
+#define SHM_MAPPING (5)
 #define GET_TASK_PGD (6)
 #define SET_TASK_PGD (7)
+#define GET_TASK_START_WITHOUT_STACK (9)
+#define GET_TASK_END_WITHOUT_HEAP (10)
 
 void *get_start_heap(int pid) {
     void *start_heap = NULL;
@@ -49,14 +55,15 @@ void *get_task_start(int pid) {
     void *task_start = NULL;
     qword command[] = {GET_TASK_START, pid};
     sendrecv(command, &task_start, TASKMAN_SERVICE, sizeof(command), 20);
+
     return task_start;
 }
 
-void *get_task_limit(int pid) {
-    void *task_limit = NULL;
-    qword command[] = {GET_TASK_LIMIT, pid};
-    sendrecv(command, &task_limit, TASKMAN_SERVICE, sizeof(command), 20);
-    return task_limit;
+void *get_task_end_without_heap(int pid) {
+    void *task_end = NULL;
+    qword command[] = {GET_TASK_END_WITHOUT_HEAP, pid};
+    sendrecv(command, &task_end, TASKMAN_SERVICE, sizeof(command), 20);
+    return task_end;
 }
 
 void *get_task_pgd(int pid) {
@@ -87,11 +94,18 @@ typedef struct _chunk {
 //堆开头16个Byte为空闲chunk头
 
 bool theap_init(int pid) {
+    char buffer[256];
+    sprintf (buffer, "Initialize Heap for PID %d", pid);
+    linfo (buffer);
+
     int cur_pid = get_current_pid();
 
     void *mm_start = get_task_start(cur_pid);
-    void *mm_limit = get_task_limit(cur_pid);
-    int len = mm_limit - mm_start;
+    void *mm_end = get_task_end_without_heap(cur_pid);
+    sprintf (buffer, "MM Start %P End %P", mm_start, mm_end);
+    linfo (buffer);
+    
+    int len = mm_end - mm_start;
     int pages = (len / MEMUNIT_SZ) + ((len % MEMUNIT_SZ) != 0);
     shm_mapping(mm_start, pages, pid);
 

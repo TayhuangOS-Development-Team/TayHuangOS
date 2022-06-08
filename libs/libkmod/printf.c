@@ -30,56 +30,56 @@
 #include <ipc/ipc.h>
 
 #define OUTPUT_BUFFER_SIZE (2000 + 80 * 250)
-PRIVATE int pos_x;
-PRIVATE int pos_y;
-PRIVATE int print_color = 0;
-PRIVATE int scroll_line = 0;
-PRIVATE bool do_cursor_move = true;
+static int pos_x;
+static int pos_y;
+static int print_color = 0;
+static int scroll_line = 0;
+static bool do_cursor_move = true;
 
-PRIVATE void set_cursor_pos(int pos_x, int pos_y) {
+static void set_cursor_pos(int pos_x, int pos_y) {
     //TODO: Set Cursor Position
 }
 
-PUBLIC int get_print_color(void) {
+int get_print_color(void) {
     return print_color;
 }
 
-PUBLIC void set_print_color(int color) {
+void set_print_color(int color) {
     print_color = color;
 }
 
-PUBLIC void change_pos(int x, int y) {
+void change_pos(int x, int y) {
     pos_x = pos_x;
     pos_y = pos_y;
     if (do_cursor_move)
         set_cursor_pos(pos_x, pos_y);
 }
 
-PUBLIC int get_pos_x(void) {
+int get_pos_x(void) {
     return pos_x;
 }
 
-PUBLIC int get_pos_y(void) {
+int get_pos_y(void) {
     return pos_y;
 }
 
-PUBLIC int get_scroll_line(void) {
+int get_scroll_line(void) {
     return scroll_line;
 }
 
-PUBLIC void set_scroll_line(int line) {
+void set_scroll_line(int line) {
     scroll_line = line;
 }
 
-PUBLIC void clrscr(void) {
+void clrscr(void) {
     //TODO: Clear Screen
 }
 
-PUBLIC void scroll_screen(int lines) {
+void scroll_screen(int lines) {
     //TODO: Scroll the screen
 }
 
-PRIVATE void __update_pos(void) {
+static void __update_pos(void) {
     if (pos_x >= 80) {
         pos_y += pos_x / 80;
         pos_x %= 80;
@@ -97,12 +97,12 @@ enum {
 #define __TEXT_WRITE_CHAR (0)
 #define TEXT_WRITE_CHAR MKCMD(MODE_TEXT, __TEXT_WRITE_CHAR)
 
-PRIVATE void __draw_char(int pox, int posy, char ch, int color) {
+static void __draw_char(int pox, int posy, char ch, int color) {
     qword command[] = {TEXT_WRITE_CHAR, ch, color, pos_x, pos_y};
     send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
 }
 
-PUBLIC void putchar(char ch) {
+void putchar(char ch) {
     if (ch == '\r' || ch == '\n') { //制表符
         pos_y ++;
         pos_x = 0;
@@ -137,12 +137,12 @@ PUBLIC void putchar(char ch) {
     }
 }
 
-PUBLIC void puts(const char *str) {
+void puts(const char *str) {
     while (*str)
         putchar (*(str ++));
 }
 
-PRIVATE int _vsprintf(char *buffer, const char *format, va_list args) {
+static int _vsprintf(char *buffer, const char *format, va_list args) {
     #define FLAG_SIGN 1
     #define FLAG_LEFT_ALIGN 2
     #define FLAG_FILL_ZERO 4
@@ -418,7 +418,7 @@ PRIVATE int _vsprintf(char *buffer, const char *format, va_list args) {
     #undef FLAG_UPPER
 }
 
-PUBLIC int printf(const char *format, ...) {
+int printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -432,7 +432,7 @@ PUBLIC int printf(const char *format, ...) {
     return ret;
 }
 
-PUBLIC int sprintf(char *buffer, const char *format, ...) {
+int sprintf(char *buffer, const char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -442,10 +442,10 @@ PUBLIC int sprintf(char *buffer, const char *format, ...) {
     return ret;
 }
 
-PUBLIC void disable_cursor_move(void) {
+void disable_cursor_move(void) {
     do_cursor_move = false;
 }
 
-PUBLIC void enable_cursor_move(void) {
+void enable_cursor_move(void) {
     do_cursor_move = true;
 }

@@ -34,6 +34,6 @@ int sendrecv(void *msg, void *ret, int dest, int len, int tickout) {
 int get_current_pid(void) {
     qword command[] = {GET_CURRENT_PID};
     int pid = 0;
-    sendrecv (command, &pid, GET_CURRENT_PID, sizeof(command), 20);
+    sendrecv (command, &pid, TASKMAN_SERVICE, sizeof(command), 20);
     return pid;
 }

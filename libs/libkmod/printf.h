@@ -20,22 +20,22 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC int get_print_color(void);
-PUBLIC void set_print_color(int color);
-PUBLIC void change_pos(int x, int y);
-PUBLIC void change_cursor_pos(int x, int y);
-PUBLIC int get_pos_x(void);
-PUBLIC int get_pos_y(void);
-PUBLIC int get_scroll_line(void);
-PUBLIC void set_scroll_line(int line);
-PUBLIC void scroll_screen(int lines);
-PUBLIC void flush_to_screen(void);
+int get_print_color(void);
+void set_print_color(int color);
+void change_pos(int x, int y);
+void change_cursor_pos(int x, int y);
+int get_pos_x(void);
+int get_pos_y(void);
+int get_scroll_line(void);
+void set_scroll_line(int line);
+void scroll_screen(int lines);
+void flush_to_screen(void);
 
-PUBLIC void clrscr(void);
-PUBLIC void putchar(char ch);
-PUBLIC void puts(const char *str);
-PUBLIC int printf(const char *format, ...);
-PUBLIC int sprintf(char *buffer, const char *format, ...);
+void clrscr(void);
+void putchar(char ch);
+void puts(const char *str);
+int printf(const char *format, ...);
+int sprintf(char *buffer, const char *format, ...);
 
-PUBLIC void disable_cursor_move(void);
-PUBLIC void enable_cursor_move(void);
+void disable_cursor_move(void);
+void enable_cursor_move(void);
