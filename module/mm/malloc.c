@@ -117,7 +117,7 @@ bool theap_init(int pid) {
     set_task_pgd(cur_pid, pgd);
 
     chunk_struct *whole_heap_chunk = (chunk_struct*)(heap + 16);
-    whole_heap_chunk->size = get_end_heap(pid) - get_start_heap(pid) - 16;
+    whole_heap_chunk->size = get_end_heap(pid) - get_start_heap(pid);
     whole_heap_chunk->used = false;
     whole_heap_chunk->next = NULL;
     
@@ -173,7 +173,7 @@ void *tmalloc(int size, int pid) {
     }
 
     //进行分割
-    if (free_chunk->size > HEAPDIV_MIN_SZ) {
+    if (free_chunk->size > HEAPDIV_MIN_SZ && ((free_chunk->size - 32) > (fix_size + 16))) {
         chunk_struct *new_chunk = ((void*)free_chunk) + 16 + fix_size;
         new_chunk->next = free_chunk->next;
         new_chunk->size = free_chunk->size - 16 - fix_size;
@@ -198,6 +198,8 @@ void *tmalloc(int size, int pid) {
 }
 
 void tfree(void *addr, int pid) {
+    char buffer[256];
+    
     void *heap = get_start_heap(pid);
 
     int cur_pid = get_current_pid();
@@ -213,8 +215,11 @@ void tfree(void *addr, int pid) {
         return;
     }
 
+    sprintf (buffer, "free chunk %P", chunk);
+    linfo (buffer);
+
     //空闲chunk链表头
-    chunk_struct *free_chunk = (chunk_struct*)(heap + 16);
+    chunk_struct *free_chunk = ((chunk_struct*)heap)->next;
     chunk_struct *parent = (chunk_struct*)heap;
 
     //设为未使用
@@ -228,6 +233,9 @@ void tfree(void *addr, int pid) {
         parent = free_chunk;
         free_chunk = free_chunk->next;
     }
+
+    sprintf (buffer, "last %P next %P", parent, free_chunk);
+    linfo (buffer);
 
     parent->next = chunk; //插入
     chunk->next = free_chunk;
