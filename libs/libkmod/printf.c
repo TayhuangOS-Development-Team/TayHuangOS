@@ -98,7 +98,6 @@ enum {
 #define TEXT_WRITE_CHAR MKCMD(MODE_TEXT, __TEXT_WRITE_CHAR)
 
 PRIVATE void __draw_char(int pox, int posy, char ch, int color) {
-    //TODO: Draw character
     qword command[] = {TEXT_WRITE_CHAR, ch, color, pos_x, pos_y};
     send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
 }
