@@ -1,0 +1,56 @@
+{
+    "configurations": [
+        {
+            "name": "All",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64"
+            ],
+            "compilerPath": "{YOUR COMPILER}",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "{YOUR MODE}"
+        },
+        {
+            "name": "Module",
+            "includePath": [
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/libs/libkmod/**",
+                "${workspaceFolder}/module/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64"
+            ],
+            "compilerPath": "{YOUR COMPILER}",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "{YOUR MODE}"
+        },
+        {
+            "name": "Kernel",
+            "includePath": [
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/kernel/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64"
+            ],
+            "compilerPath": "{YOUR COMPILER}",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "{YOUR MODE}"
+        }
+    ],
+    "version": 4
+}
