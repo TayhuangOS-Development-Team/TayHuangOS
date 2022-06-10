@@ -8,7 +8,6 @@ export OBJECTSDIR MODULEDIR
 build:
 	cd drivers ; make build
 	cd setup ; make build
-	cd mm ; make build
 	cd test ; make build
 	cd gds ; make build
 
@@ -17,7 +16,6 @@ build:
 clean:
 	cd drivers ; make build
 	cd setup ; make clean
-	cd mm ; make clean
 	cd test ; make clean
 	cd gds ; make clean
 
@@ -25,6 +23,5 @@ clean:
 image:
 	cd drivers ; make image
 	cd setup ; make image
-	cd mm ; make image
 	cd test ; make image
 	cd gds ; make image

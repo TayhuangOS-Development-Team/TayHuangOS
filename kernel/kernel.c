@@ -32,6 +32,7 @@
 #include <memory/pmm.h>
 #include <memory/shared_memory.h>
 #include <memory/mm_malloc.h>
+#include <memory/mm.h>
 
 #include <display/video.h>
 #include <display/printk.h>
@@ -223,6 +224,16 @@ void init(void) { //init进程 代表内核
         0x1250000, args.kernel_limit,
         args.kernel_limit + 0x2000, args.kernel_limit + 0x3000
     );
+    
+    //----------MM ---------------
+
+    create_task(MM_SERVICE,
+        1, mm, RFLAGS_KERNEL,
+        0x1350000, 0x1200000,
+        CS_KERNEL, kernel_pml4,
+        0x1250000, args.kernel_limit,
+        args.kernel_limit + 0x2000, args.kernel_limit + 0x3000
+    );
 
     //----------SETUP---------------
 
@@ -239,32 +250,11 @@ void init(void) { //init进程 代表内核
 
     send_msg(&current_task->pid, SETUP_SERVICE, sizeof(current_task->pid), 20);
 
-    //----------MM---------------
-
-    #define MM_SIZE (16 * MEMUNIT_SZ)
-    program_info mm_mod_info;
-    bool status = load_kmod_bysetup("mm.mod", MM_SIZE, &mm_mod_info);
-
-    if (!status) {
-        lerror ("Init", "Can't load MM!");
-        panic ("Can't load MM!");
-    }
-
-    print_mod_info(&mm_mod_info);
-    
-    create_task(MM_SERVICE,
-        1, mm_mod_info.entry, RFLAGS_KERNEL,
-        mm_mod_info.stack_top, mm_mod_info.stack_bottom,
-        CS_KERNEL, mm_mod_info.pgd,
-        mm_mod_info.start, mm_mod_info.end,
-        mm_mod_info.heap_bottom, mm_mod_info.heap_top
-    ); //MM MODULE 内核模块进程
-
     //----------VIDEO---------------
     
     #define VIDEO_SIZE (16 * MEMUNIT_SZ)
     program_info video_mod_info;
-    status = load_kmod_bysetup("video.mod", MM_SIZE, &video_mod_info);
+    bool status = load_kmod_bysetup("video.mod", VIDEO_SIZE, &video_mod_info);
     
     if (!status) {
         lerror ("Init", "Can't load video driver!");
@@ -322,7 +312,7 @@ void init(void) { //init进程 代表内核
 
     //------GTTY---------
     program_info gtty_mod_info;
-    status = load_kmod_bysetup("gtty.mod", TB_SIZE, &gtty_mod_info);
+    status = load_kmod_bysetup("gtty.mod", GDS_SIZE, &gtty_mod_info);
 
     if (!status) {
         lerror ("Init", "Can't load GTTY!");

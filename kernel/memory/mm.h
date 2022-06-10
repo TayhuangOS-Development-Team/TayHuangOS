@@ -8,22 +8,16 @@
  *
  * 作者: Flysong
  *
- * mm.ld
+ * mm.h
  *
- * MM LD脚本
+ * 内存管理器
  *
  */
 
 
 
-ENTRY(_start)
-OUTPUT_FORMAT("elf64-x86-64")
-OUTPUT_ARCH("i386:x86-64")
+#pragma once
 
-SECTIONS
-{
-    . = 0x2000000;
-    .text : { *(.text) }
-    .data : { *(.data) }
-    .bss : { *(.bss) }
-}
+#include <tayhuang/defs.h>
+
+PUBLIC void mm(void);

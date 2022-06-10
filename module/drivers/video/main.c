@@ -67,7 +67,10 @@ void kmod_main(void) {
     screen_height = infomations[2];
     VIDEO_MEMORY = infomations[3];
 
-    //qword *commands = malloc(2048 * sizeof(qword));
+    //FIXME: Can't run normally
+    //init_heap();
+
+    //qword *commands = malloc(512 * sizeof(qword));
 
     while (true) {
         int caller = 0;
