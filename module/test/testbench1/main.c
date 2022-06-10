@@ -21,6 +21,8 @@
 #include <memory/malloc.h>
 
 void kmod_main(void) {
+    set_logging_name("TESTBENCH1");
+    
     set_print_color (0x0F);
     set_scroll_line (20);
 

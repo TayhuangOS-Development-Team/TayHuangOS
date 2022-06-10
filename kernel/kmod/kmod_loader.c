@@ -33,21 +33,21 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **e
     if (program->p_type == PT_LOAD) {
         *start = (void*)min ((qword)*start, program->p_vaddr);
         *end = (void*)max ((qword)*end, program->p_vaddr + program->p_memsz);
-        linfo ("Segment type: LOAD");
+        linfo ("KMod Loader", "Segment type: LOAD");
 
-        int pages_need = program->p_filesz / MEMUNIT_SZ + ((program->p_memsz % MEMUNIT_SZ) != 0);
+        int pages_need = program->p_memsz / MEMUNIT_SZ + ((program->p_memsz % MEMUNIT_SZ) != 0);
         sprintk (buffer, "Require Pages: %d", pages_need);
-        linfo (buffer);
+        linfo ("KMod Loader", buffer);
 
         int sum = 0;
         while (sum < pages_need) {
-            linfo ("*******");
+            linfo ("KMod Loader", "*******");
 
             int num = 0;
             void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
 
             sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
-            linfo (buffer);
+            linfo ("KMod Loader", buffer);
 
             for (int i = 0 ; i < num ; i ++)
                 mark_used(pages + i * MEMUNIT_SZ); //设置被使用
@@ -56,14 +56,14 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **e
             set_mapping(start_vaddr, pages, num, true, false); //进行映射
 
             sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
-            linfo (buffer);
+            linfo ("KMod Loader", buffer);
 
             int copy_num = min(program->p_filesz - sum * MEMUNIT_SZ, num * MEMUNIT_SZ);
             void *start_file = addr + program->p_offset + sum * MEMUNIT_SZ;
             memcpy(pages, start_file, copy_num); //进行复制
 
             sprintk (buffer, "Copied %P to %P, count = %dB", start_file, pages, copy_num);
-            linfo (buffer);
+            linfo ("KMod Loader", buffer);
 
             sum += num;
         }
@@ -73,8 +73,8 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **e
 #define STACK_PAGES (32)
 
 PUBLIC void* alloc_stack(void *stack_top) { //分配栈
-    linfo ("------------");
-    linfo ("Allocing Stack");
+    linfo ("KMod Loader", "------------");
+    linfo ("KMod Loader", "Allocing Stack");
 
     char buffer[256];
 
@@ -82,12 +82,12 @@ PUBLIC void* alloc_stack(void *stack_top) { //分配栈
     int sum = 0;
 
     while (sum < pages_need) {
-        linfo ("*******");
+        linfo ("KMod Loader", "*******");
 
         int num = 0;
         void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
         sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
-        linfo (buffer);
+        linfo ("KMod Loader", buffer);
 
         for (int i = 0 ; i < num ; i ++)
             mark_used(pages + i * MEMUNIT_SZ); //设置被使用
@@ -96,7 +96,7 @@ PUBLIC void* alloc_stack(void *stack_top) { //分配栈
         set_mapping(start_vaddr, pages, num, true, false); //映射
 
         sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
-        linfo (buffer);
+        linfo ("KMod Loader", buffer);
 
         sum += num;
     }
@@ -107,8 +107,8 @@ PUBLIC void* alloc_stack(void *stack_top) { //分配栈
 #define HEAP_PAGES (16)
 
 PUBLIC void* alloc_heap(void *heap_bottom) {
-    linfo ("------------");
-    linfo ("Allocing Heap");
+    linfo ("KMod Loader", "------------");
+    linfo ("KMod Loader", "Allocing Heap");
 
     char buffer[256];
 
@@ -116,12 +116,12 @@ PUBLIC void* alloc_heap(void *heap_bottom) {
     int sum = 0;
 
     while (sum < pages_need) {
-        linfo ("*******");
+        linfo ("KMod Loader", "*******");
 
         int num = 0;
         void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
         sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
-        linfo (buffer);
+        linfo ("KMod Loader", buffer);
 
         for (int i = 0 ; i < num ; i ++)
             mark_used(pages + i * MEMUNIT_SZ);
@@ -130,7 +130,7 @@ PUBLIC void* alloc_heap(void *heap_bottom) {
         set_mapping(start_vaddr, pages, num, true, false); //映射
 
         sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
-        linfo (buffer);
+        linfo ("KMod Loader", buffer);
 
         sum += num;
     }
@@ -146,10 +146,10 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
 
     sprintk(buffer, "ELF Magic: %#02X %#02X %#02X %#02X",
      elf_head->e_ident[0], elf_head->e_ident[1], elf_head->e_ident[2], elf_head->e_ident[3]);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
 
     sprintk(buffer, "Entrypoint: %P", elf_head->e_entry);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
 
     void *pgd = create_pgd(); //创建页目录
     set_pml4(pgd);
@@ -157,9 +157,9 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
     void *start = (void*)0xFFFFFFFFFFFFFFFF, *end = NULL;
 
     for (int i = 0 ; i < elf_head->e_phnum ; i ++) { //加载段
-        linfo ("------------------------------------");
+        linfo ("KMod Loader", "------------------------------------");
         sprintk (buffer, "Segment %d", i);
-        linfo (buffer);
+        linfo ("KMod Loader", buffer);
 
         Elf64_Phdr *program = (Elf64_Phdr*)(addr + elf_head->e_phoff + i * elf_head->e_phentsize);
 

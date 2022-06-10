@@ -23,6 +23,7 @@
 bool init_serial(void);
 void write_serial_char(char ch);
 void write_serial_str(const char *str);
+void set_logging_name(const char *name);
 
 enum {
     INFO = 0,
@@ -33,7 +34,6 @@ enum {
     ATTENTION
 };
 
-void _log(const char *type, const char *msg);
 void log(const int type, const char *msg);
 void linfo(const char *msg);
 void lwarn(const char *msg);

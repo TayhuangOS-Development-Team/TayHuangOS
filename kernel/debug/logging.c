@@ -47,8 +47,11 @@ PUBLIC void write_serial_str(const char *str) {
     }
 }
 
-PUBLIC void _log(const char *type, const char *msg) {
+PUBLIC void _log(const char *name, const char *type, const char *msg) {
     asmv ("cli");
+    write_serial_char('(');
+    write_serial_str(name);
+    write_serial_char(')');
     write_serial_char('[');
     write_serial_str(type);
     write_serial_char(']');
@@ -57,7 +60,7 @@ PUBLIC void _log(const char *type, const char *msg) {
     asmv ("sti");
 }
 
-PUBLIC void log(const int type, const char *msg) {
+PUBLIC void log(const char *name, const int type, const char *msg) {
     const char *typename;
     switch (type) {
     case INFO: typename = "INFO"; break;
@@ -68,31 +71,31 @@ PUBLIC void log(const int type, const char *msg) {
     case ATTENTION: typename = "ATTENTION"; break;
     default: typename = "UNKNOWN"; break;
     }
-    _log(typename, msg);
+    _log(name, typename, msg);
 }
 
-PUBLIC void linfo(const char *msg) {
-    log(INFO, msg);
+PUBLIC void linfo(const char *name, const char *msg) {
+    log(name, INFO, msg);
 }
 
-PUBLIC void lwarn(const char *msg) {
-    log(WARN, msg);
+PUBLIC void lwarn(const char *name, const char *msg) {
+    log(name, WARN, msg);
 }
 
-PUBLIC void lerror(const char *msg) {
-    log(ERROR, msg);
+PUBLIC void lerror(const char *name, const char *msg) {
+    log(name, ERROR, msg);
 }
 
-PUBLIC void lfatal(const char *msg) {
-    log(FATAL, msg);
+PUBLIC void lfatal(const char *name, const char *msg) {
+    log(name, FATAL, msg);
 }
 
-PUBLIC void ltips(const char *msg) {
-    log(TIPS, msg);
+PUBLIC void ltips(const char *name, const char *msg) {
+    log(name, TIPS, msg);
 }
 
-PUBLIC void lattention(const char *msg) {
-    log(ATTENTION, msg);
+PUBLIC void lattention(const char *name, const char *msg) {
+    log(name, ATTENTION, msg);
 }
 
 PUBLIC short serial_irq_handler(int irq, struct intterup_args *regs, bool entered_handler) {

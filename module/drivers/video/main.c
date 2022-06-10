@@ -53,10 +53,10 @@ void deal_cmd(int caller, int cmd, qword *param) {
     }
 }
 
-qword commands[2048];
+qword commands[514];
 
 void kmod_main(void) {
-    linfo ("I'm video!");
+    set_logging_name("VIDEO");
 
     qword infomations[16] = {DISP_MODE_NONE, 0, 0, NULL};
 
@@ -66,12 +66,6 @@ void kmod_main(void) {
     screen_width = infomations[1];
     screen_height = infomations[2];
     VIDEO_MEMORY = infomations[3];
-
-    char buffer[256];
-
-    itoa(display_mode, buffer, 10);
-
-    linfo (buffer);
 
     //qword *commands = malloc(2048 * sizeof(qword));
 

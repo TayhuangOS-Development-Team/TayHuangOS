@@ -21,6 +21,7 @@
 #include <tayhuang/paging.h>
 #include <tayhuang/descs.h>
 #include <tayhuang/io.h>
+#include <tayhuang/services.h>
 
 #include <string.h>
 #include <assert.h>
@@ -55,6 +56,7 @@
 #include <assert.h>
 
 #include <kmod/kmod_loader.h>
+
 
 
 PRIVATE struct desc_struct GDT[8];
@@ -132,30 +134,28 @@ PUBLIC void *kernel_pml4 = NULL;
 #define CS_KERNEL (cs0_idx << 3)
 #define RFLAGS_KERNEL (1 << 9)
 
-#define API_PID(x) (0x10000 + (x))
-
 PRIVATE struct boot_args args;
 
 void print_mod_info(program_info *mod_info) {
     char buffer[256];
-    linfo ("--------------------------------------------");
+    linfo ("KMod Loader", "--------------------------------------------");
     sprintk (buffer, "Start: %P", mod_info->start);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
     sprintk (buffer, "End: %P", mod_info->end);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
     sprintk (buffer, "Entry: %P", mod_info->entry);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
     sprintk (buffer, "PGD: %P", mod_info->pgd);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
     sprintk (buffer, "Stack Bottom: %P", mod_info->stack_bottom);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
     sprintk (buffer, "Stack Top: %P", mod_info->stack_top);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
     sprintk (buffer, "Heap Bottom: %P", mod_info->heap_bottom);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
     sprintk (buffer, "Heap Top: %P", mod_info->heap_top);
-    linfo (buffer);
-    linfo ("--------------------------------------------");
+    linfo ("KMod Loader", buffer);
+    linfo ("KMod Loader", "--------------------------------------------");
 }
 
 void empty(void) {
@@ -167,15 +167,15 @@ bool load_kmod_bysetup(const char *name, int size, program_info *info) {
     char buffer[256];
 
     sprintk (buffer, "Buffer In %P", addr);
-    linfo (buffer);
+    linfo ("KMod Loader", buffer);
 
-    shm_mapping(addr, 16, current_task->pid, API_PID(0)); //与setup共享
+    shm_mapping(addr, 16, current_task->pid, SETUP_SERVICE); //与setup共享
 
-    send_msg(name, API_PID(0), strlen(name), 50);
-    send_msg(&addr, API_PID(0), sizeof(addr), 50);
+    send_msg(name, SETUP_SERVICE, strlen(name) + 1, 50);
+    send_msg(&addr, SETUP_SERVICE, sizeof(addr), 50);
 
     bool status = false;
-    receive_msg(&status, API_PID(0));
+    receive_msg(&status, SETUP_SERVICE);
 
     if (! status) { //无法加载
         return false;
@@ -216,7 +216,7 @@ void init(void) { //init进程 代表内核
 
     //----------TASK MANAGER---------------
 
-    create_task(API_PID(2),
+    create_task(TASKMAN_SERVICE,
         1, taskman, RFLAGS_KERNEL,
         0x1300000, 0x1250000,
         CS_KERNEL, kernel_pml4,
@@ -226,7 +226,7 @@ void init(void) { //init进程 代表内核
 
     //----------SETUP---------------
 
-    create_task(API_PID(0),
+    create_task(SETUP_SERVICE,
         1, setup_mod_info.entry, RFLAGS_KERNEL,
         setup_mod_info.stack_top, setup_mod_info.stack_bottom,
         CS_KERNEL, setup_mod_info.pgd,
@@ -237,7 +237,7 @@ void init(void) { //init进程 代表内核
     stop_switch = false;
     printk ("\n");
 
-    send_msg(&current_task->pid, API_PID(0), sizeof(current_task->pid), 20);
+    send_msg(&current_task->pid, SETUP_SERVICE, sizeof(current_task->pid), 20);
 
     //----------MM---------------
 
@@ -246,13 +246,13 @@ void init(void) { //init进程 代表内核
     bool status = load_kmod_bysetup("mm.mod", MM_SIZE, &mm_mod_info);
 
     if (!status) {
-        lerror ("Can't load MM!");
+        lerror ("Init", "Can't load MM!");
         panic ("Can't load MM!");
     }
 
     print_mod_info(&mm_mod_info);
     
-    create_task(API_PID(1),
+    create_task(MM_SERVICE,
         1, mm_mod_info.entry, RFLAGS_KERNEL,
         mm_mod_info.stack_top, mm_mod_info.stack_bottom,
         CS_KERNEL, mm_mod_info.pgd,
@@ -267,13 +267,13 @@ void init(void) { //init进程 代表内核
     status = load_kmod_bysetup("video.mod", MM_SIZE, &video_mod_info);
     
     if (!status) {
-        lerror ("Can't load video driver!");
+        lerror ("Init", "Can't load video driver!");
         panic ("Can't load video driver!");
     }
 
     print_mod_info(&video_mod_info);
     
-    create_task(API_PID(3),
+    create_task(VIDEO_DRIVER_SERVICE,
         1, video_mod_info.entry, RFLAGS_KERNEL,
         video_mod_info.stack_top, video_mod_info.stack_bottom,
         CS_KERNEL, video_mod_info.pgd,
@@ -281,7 +281,7 @@ void init(void) { //init进程 代表内核
         video_mod_info.heap_bottom, video_mod_info.heap_top
     ); //VIDEO DRIVER 内核模块进程
 
-    shm_mapping(0xB8000, 16, current_task->pid, API_PID(3)); //将显存共享给VIDEO DRIVER
+    shm_mapping(0xB8000, 16, current_task->pid, VIDEO_DRIVER_SERVICE); //将显存共享给VIDEO DRIVER
 
     enum {
         DISP_MODE_NONE = 0,
@@ -293,7 +293,7 @@ void init(void) { //init进程 代表内核
 
     qword infomations[16] = {mode, VIDEO_INFO.width, VIDEO_INFO.height, VIDEO_INFO.framebuffer};
 
-    send_msg(infomations, API_PID(3), sizeof(infomations), 20);
+    send_msg(infomations, VIDEO_DRIVER_SERVICE, sizeof(infomations), 20);
 
     //----------TESTBENCH---------------
 
@@ -302,7 +302,7 @@ void init(void) { //init进程 代表内核
     status = load_kmod_bysetup("tb1.mod", TB_SIZE, &tb_mod_info);
 
     if (!status) {
-        lerror ("Can't load Test bench!");
+        lerror ("Init", "Can't load Test bench!");
         panic ("Can't load Test bench!");
     }
 
@@ -315,6 +315,29 @@ void init(void) { //init进程 代表内核
         tb_mod_info.start, tb_mod_info.end,
         tb_mod_info.heap_bottom, tb_mod_info.heap_top
     ); //Test bench 内核模块进程
+    
+    //----------GDS---------------
+
+    #define GDS_SIZE (16 * MEMUNIT_SZ)
+
+    //------GTTY---------
+    program_info gtty_mod_info;
+    status = load_kmod_bysetup("gtty.mod", TB_SIZE, &gtty_mod_info);
+
+    if (!status) {
+        lerror ("Init", "Can't load GTTY!");
+        panic ("Can't load GTTY!");
+    }
+
+    print_mod_info(&gtty_mod_info);
+    
+    create_task(GDS_GTTY,
+        1, gtty_mod_info.entry, RFLAGS_KERNEL,
+        gtty_mod_info.stack_top, gtty_mod_info.stack_bottom,
+        CS_KERNEL, gtty_mod_info.pgd,
+        gtty_mod_info.start, gtty_mod_info.end,
+        gtty_mod_info.heap_bottom, gtty_mod_info.heap_top
+    ); //gtty 内核模块进程
     while (true);
 
     exit();
@@ -390,38 +413,14 @@ void entry(struct boot_args *_args) {
 
     register_irq_handler(0, clock_int_handler);
     register_irq_handler(1, keyboard_int_handler);
-    register_irq_handler(2, wakeup_irq_handler);
-    register_irq_handler(3, wakeup_irq_handler);
-    register_irq_handler(4, wakeup_irq_handler);
-    register_irq_handler(5, wakeup_irq_handler);
-    register_irq_handler(6, wakeup_irq_handler);
-    register_irq_handler(7, wakeup_irq_handler);
-    register_irq_handler(8, wakeup_irq_handler);
-    register_irq_handler(9, wakeup_irq_handler);
-    register_irq_handler(10, wakeup_irq_handler);
-    register_irq_handler(11, wakeup_irq_handler);
-    register_irq_handler(12, wakeup_irq_handler);
-    register_irq_handler(13, wakeup_irq_handler);
-    register_irq_handler(14, wakeup_irq_handler);
-    register_irq_handler(15, wakeup_irq_handler); //中断处理器
+    
+    for (int i = 2 ; i < 16 ; i ++)
+        register_irq_handler(i, wakeup_irq_handler); //中断处理器
     
     asmv ("movq $0x125000, %rsp"); //设置堆
-    enable_irq(0); //开启时钟中断
-    enable_irq(1);
-    enable_irq(2);
-    enable_irq(3);
-    enable_irq(4);
-    enable_irq(5);
-    enable_irq(6);
-    enable_irq(7);
-    enable_irq(8);
-    enable_irq(9);
-    enable_irq(10);
-    enable_irq(11);
-    enable_irq(12);
-    enable_irq(13);
-    enable_irq(14);
-    enable_irq(15);
+    for (int i = 0 ; i < 16 ; i ++)
+        enable_irq(i); //开启时钟中断
+    
     asmv ("jmp init"); //跳转至INIT进程
     
     while(true);

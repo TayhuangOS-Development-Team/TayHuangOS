@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * kernel.ld
+ * mm.ld
  *
- * 内核LD脚本
+ * MM LD脚本
  *
  */
 

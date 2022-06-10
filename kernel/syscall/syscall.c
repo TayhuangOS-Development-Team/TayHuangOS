@@ -26,16 +26,12 @@ PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid
 }
 
-PRIVATE void __set_next(int pid) {
-    
-}
-
 PRIVATE bool __receive_msg(void *msg, int source) {
     task_struct *src_task = find_task(source);
     if (src_task == NULL) {//目标不存在
         char buffer[128];
         sprintk ("%d try to receive from %d, but %d doesn't exists!", __get_pid(), source, source);
-        lwarn (buffer);
+        lwarn ("Syscall", buffer);
         return false;
     }
 
@@ -97,7 +93,7 @@ PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
     if (dest_task == NULL) {//目标不存在
         char buffer[128];
         sprintk ("%d try to sent msg to %d, but %d doesn't exists!", __get_pid(), dest, dest);
-        lwarn (buffer);
+        lwarn ("Syscall", buffer);
         return false;
     }
     int pid = __get_pid(); //获取pid
@@ -165,7 +161,7 @@ PRIVATE qword __fatal(void) {
 PRIVATE qword __eggs(void) { //彩蛋
     char buffer[64];
     sprintk(buffer, "eggs from pid %d!", __get_pid());
-    linfo(buffer);
+    linfo("Syscall", buffer);
     return 114514;
 }
 

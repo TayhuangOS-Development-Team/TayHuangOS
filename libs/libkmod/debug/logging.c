@@ -58,8 +58,19 @@ void write_serial_str(const char *str) {
     }
 }
 
-void _log(const char *type, const char *msg) {
+static const char *logging_name = NULL;
+
+void set_logging_name(const char *name) {
+    logging_name = name;
+}
+
+static void _log(const char *type, const char *msg) {
     asmv ("cli");
+    if (logging_name != NULL) {
+        write_serial_char('(');
+        write_serial_str(logging_name);
+        write_serial_char(')');
+    }
     write_serial_char('[');
     write_serial_str(type);
     write_serial_char(']');

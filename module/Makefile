@@ -1,6 +1,6 @@
 OBJECTSDIR := $(OBJECTSDIR)/module/
 BINDIR := $(BINDIR)/module/
-MODULEDIR := $(ROOTDIR)/module
+MODULEDIR := $(ROOTDIR)/module/
 export OBJECTSDIR MODULEDIR
 
 #编译
@@ -10,6 +10,7 @@ build:
 	cd setup ; make build
 	cd mm ; make build
 	cd test ; make build
+	cd gds ; make build
 
 #清理
 .PHONY: clean
@@ -18,6 +19,7 @@ clean:
 	cd setup ; make clean
 	cd mm ; make clean
 	cd test ; make clean
+	cd gds ; make clean
 
 .PHONY: image
 image:
@@ -25,3 +27,4 @@ image:
 	cd setup ; make image
 	cd mm ; make image
 	cd test ; make image
+	cd gds ; make image

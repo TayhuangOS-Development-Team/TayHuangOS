@@ -68,7 +68,7 @@ PUBLIC void *find_freepages(int max, int *found) {
             continue;
         for (j = 0 ; j < 8 ; j ++) {
             if ((i * 8 + j) > pmpage_num) {
-                lwarn ("No more free memories!");
+                lwarn ("PMM", "No more free memories!");
                 *found = 0;
                 return NULL;
             }
@@ -81,7 +81,7 @@ PUBLIC void *find_freepages(int max, int *found) {
             break;
     }
     if (! flag) {
-        lwarn ("No more free memories!");
+        lwarn ("PMM", "No more free memories!");
         *found = 0;
         return NULL;
     }
@@ -119,7 +119,7 @@ PUBLIC void *find_continuous_freepages(int num) {
             continue;
         for (int j = 0 ; j < 8 ; j ++) {
             if ((i * 8 + j) > pmpage_num) {
-                lwarn ("No more free memories!");
+                lwarn ("PMM", "No more free memories!");
                 return NULL;
             }
             else if (flag) {

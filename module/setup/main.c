@@ -25,7 +25,7 @@
 #include <printf.h>
 
 void kmod_main(void) {
-    linfo ("SETUP!");
+    set_logging_name("SETUP");
 
     char buffer[256] = {};
 

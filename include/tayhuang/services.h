@@ -18,7 +18,12 @@
 
 #pragma once
 
-#define SETUP_SERVICE (0x10000)
-#define MM_SERVICE (0x10001)
-#define TASKMAN_SERVICE (0x10002)
-#define VIDEO_DRIVER_SERVICE (0x10003)
+#define API_PID(x) (0x10000 + (x))
+#define GDS_PID(x) (0x20000 + (x))
+
+#define SETUP_SERVICE API_PID(0)
+#define MM_SERVICE API_PID(1)
+#define TASKMAN_SERVICE API_PID(2)
+#define VIDEO_DRIVER_SERVICE API_PID(3)
+
+#define GDS_GTTY GDS_PID(0)

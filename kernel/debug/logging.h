@@ -35,13 +35,13 @@ enum {
     ATTENTION
 };
 
-PUBLIC void _log(const char *type, const char *msg);
-PUBLIC void log(const int type, const char *msg);
-PUBLIC void linfo(const char *msg);
-PUBLIC void lwarn(const char *msg);
-PUBLIC void lerror(const char *msg);
-PUBLIC void lfatal(const char *msg);
-PUBLIC void ltips(const char *msg);
-PUBLIC void lattention(const char *msg);
+PUBLIC void _log(const char *name, const char *type, const char *msg);
+PUBLIC void log(const char *name, const int type, const char *msg);
+PUBLIC void linfo(const char *name, const char *msg);
+PUBLIC void lwarn(const char *name, const char *msg);
+PUBLIC void lerror(const char *name, const char *msg);
+PUBLIC void lfatal(const char *name, const char *msg);
+PUBLIC void ltips(const char *name, const char *msg);
+PUBLIC void lattention(const char *name, const char *msg);
 
 PUBLIC short serial_irq_handler(int irq, struct intterup_args *regs, bool entered_handler);

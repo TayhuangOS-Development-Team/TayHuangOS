@@ -27,7 +27,7 @@
 #define MM_FREE (2)
 
 void kmod_main(void) {
-    linfo ("MM!");
+    set_logging_name("MM");
 
     while (true) {
         qword pack[20];

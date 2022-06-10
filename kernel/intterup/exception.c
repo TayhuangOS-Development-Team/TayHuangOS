@@ -69,42 +69,42 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
 
     char buffer[128];
 
-    lerror ("-------------------------------------");
-    lerror ("Oops!There is a exception throwing!The followings are its information:"); //
+    lerror ("Exception", "-------------------------------------");
+    lerror ("Exception", "Oops!There is a exception throwing!The followings are its information:"); //
     if (vector < 32) {
         sprintk (buffer, "Message: %s", exception_msg[vector]); //打印信息
-        lerror (buffer);
+        lerror ("Exception", buffer);
     }
     sprintk (buffer, "Vector = %d", vector); //打印Vector号
-    lerror (buffer);
+    lerror ("Exception", buffer);
     if (errcode < 0xFFFFFFFF) {
         sprintk (buffer, "Error code = %d", errcode); //打印错误码
-        lerror (buffer);
+        lerror ("Exception", buffer);
     }
 
-    lerror ("");
-    lerror ("");
-    lerror ("Registers:");
+    lerror ("Exception", "");
+    lerror ("Exception", "");
+    lerror ("Exception", "Registers:");
     sprintk (buffer, "cs: %#04X;rip: %#016X;eflags:%#04X", cs, rip, eflags); //打印寄存器
-    lerror (buffer);
+    lerror ("Exception", buffer);
 
     sprintk (buffer, "rax: %#016X;rbx: %#016X;rcx: %#016X;", regs->rax, regs->rbx, regs->rcx);
-    lerror (buffer);
+    lerror ("Exception", buffer);
     sprintk (buffer, "rdx: %#016X;rsi: %#016X;rdi: %#016X;", regs->rdx, regs->rsi, regs->rdi);
-    lerror (buffer);
+    lerror ("Exception", buffer);
     sprintk (buffer, "rsp: %#016X;rbp: %#016X;r8 : %#016X;", regs->rsp, regs->rbp, regs->r8);
-    lerror (buffer);
+    lerror ("Exception", buffer);
     sprintk (buffer, "r9 : %#016X;r10: %#016X;r11: %#016X;", regs->r9, regs->r10, regs->r11);
-    lerror (buffer);
+    lerror ("Exception", buffer);
     sprintk (buffer, "r12: %#016X;r13: %#016X;r14: %#016X;", regs->r12, regs->r13, regs->r14);
-    lerror (buffer);
+    lerror ("Exception", buffer);
     sprintk (buffer, "r15: %#016X;pgd: %#016X;pid: %d;", regs->r15, regs->pgd, current_task->pid);
-    lerror (buffer);
+    lerror ("Exception", buffer);
 
     fault_num[vector] ++;
 
     if (fault_num[vector] >= 32) {
-        lfatal ("TOO MUCH FAULT!");
+        lfatal ("Exception", "TOO MUCH FAULT!");
         panic ("TOO MUCH FAULT!VECTOR = %d", vector);
     }
 

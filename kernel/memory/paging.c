@@ -136,36 +136,36 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
     PML4E *pml4 = __pml4;
     if (! pml4[pml4e_idx].p) {
         sprintk (buffer, "Address %P doesn't exist!", vaddr);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         sprintk (buffer, "Error In PML4 %P, Index %#03X", pml4, pml4e_idx);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         return NULL;
     }
 
     PDPTE *pdpt = pml4[pml4e_idx].address << 12;
     if (! pdpt[pdpte_idx].p) {
         sprintk (buffer, "Address %P doesn't exist!", vaddr);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         sprintk (buffer, "Error In PDPT %P, Index %#03X", pdpt, pdpte_idx);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         return NULL;
     }
 
     PDE *pd = pdpt[pdpte_idx].address << 12;
     if (! pd[pde_idx].p) {
         sprintk (buffer, "Address %P doesn't exist!", vaddr);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         sprintk (buffer, "Error In PD %P, Index %#03X", pd, pde_idx);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         return NULL;
     }
     
     PTE *pt = pd[pde_idx].address << 12;
     if (! pt[pte_idx].p) {
         sprintk (buffer, "Address %P doesn't exist!", vaddr);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         sprintk (buffer, "Error In PT %P, Index %#03X", pt, pte_idx);
-        lerror (buffer);
+        lerror ("Paging", buffer);
         return NULL;
     }
 

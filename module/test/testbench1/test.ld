@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * kernel.ld
+ * test.ld
  *
- * 内核LD脚本
+ * testbench LD脚本
  *
  */
 

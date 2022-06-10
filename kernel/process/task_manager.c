@@ -276,7 +276,7 @@ PGD=%P\nCode=%P~%P\nData=%P~%P\nStack=%P~%P\nRodata=%P~%P\nHeap=%P~%P\n\
         task->mm_info->start_rodata, task->mm_info->end_rodata,
         task->mm_info->start_heap, task->mm_info->end_heap
     );
-    linfo (buffer);
+    linfo ("Taskman", buffer);
 }
 
 //task manager进程
@@ -368,7 +368,7 @@ PUBLIC void taskman(void) {
         }
         default: {
             sprintk (buffer, "TASKMAN received an unknown command %d from %d", cmdid, caller);
-            lerror (buffer);
+            lerror ("Taskman", buffer);
             break;
         }
         }

@@ -8,22 +8,19 @@
  *
  * 作者: Flysong
  *
- * video.ld
+ * main.c
  *
- * 视频驱动LD脚本
+ * gtty 主函数
  *
  */
 
 
 
-ENTRY(_start)
-OUTPUT_FORMAT("elf64-x86-64")
-OUTPUT_ARCH("i386:x86-64")
+#include <debug/logging.h>
 
-SECTIONS
-{
-    . = 0x3000000;
-    .text : { *(.text) }
-    .data : { *(.data) }
-    .bss : { *(.bss) }
+void kmod_main(void) {
+    set_logging_name("GTTY");
+
+    linfo ("GTTY Here!");
+    while(1);
 }
