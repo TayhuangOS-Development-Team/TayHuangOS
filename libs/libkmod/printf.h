@@ -29,7 +29,7 @@ int get_pos_y(void);
 int get_scroll_line(void);
 void set_scroll_line(int line);
 void scroll_screen(int lines);
-void flush_to_screen(void);
+bool flush_to_screen(void);
 
 void clrscr(void);
 void putchar(char ch);

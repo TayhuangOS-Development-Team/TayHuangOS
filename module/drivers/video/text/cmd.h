@@ -25,3 +25,6 @@ void deal_text_cmd(int caller, int cmd, qword *param);
 
 #define __TEXT_WRITE_CHAR (0)
 #define TEXT_WRITE_CHAR MKCMD(MODE_TEXT, __TEXT_WRITE_CHAR)
+
+#define __TEXT_WRITE_CHARS (1)
+#define TEXT_WRITE_CHARS MKCMD(MODE_TEXT, __TEXT_WRITE_CHARS)

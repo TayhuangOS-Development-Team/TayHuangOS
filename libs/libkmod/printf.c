@@ -29,7 +29,6 @@
 
 #include <ipc/ipc.h>
 
-#define OUTPUT_BUFFER_SIZE (2000 + 80 * 250)
 static int pos_x;
 static int pos_y;
 static int print_color = 0;
@@ -94,15 +93,35 @@ enum {
 
 #define MKCMD(mode, code) ((((qword)(code & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
 
-#define __TEXT_WRITE_CHAR (0)
-#define TEXT_WRITE_CHAR MKCMD(MODE_TEXT, __TEXT_WRITE_CHAR)
+#define __TEXT_WRITE_CHARS (1)
+#define TEXT_WRITE_CHARS MKCMD(MODE_TEXT, __TEXT_WRITE_CHARS)
 
-static void __draw_char(int pox, int posy, char ch, int color) {
-    qword command[] = {TEXT_WRITE_CHAR, ch, color, pos_x, pos_y};
-    send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
+#define NUM_MAX_CHARACTERS (64)
+
+static qword *command[NUM_MAX_CHARACTERS * 4 + 2];
+static int write_pos = 0;
+
+bool flush_to_screen(void) {
+    command[0] = TEXT_WRITE_CHARS;
+    command[1] = write_pos;
+    bool status = false;
+    sendrecv(command, &status, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
+    write_pos = 0;
+    return status;
 }
 
-void putchar(char ch) {
+static void draw_char(int pos_x, int pos_y, int ch, int color) {
+    if (write_pos >= NUM_MAX_CHARACTERS) {
+        flush_to_screen();
+    }
+    command[write_pos * 4 + 2] = ch;
+    command[write_pos * 4 + 3] = color;
+    command[write_pos * 4 + 4] = pos_x;
+    command[write_pos * 4 + 5] = pos_y;
+    write_pos ++;
+}
+
+static void __putchar(char ch) {
     if (ch == '\r' || ch == '\n') { //制表符
         pos_y ++;
         pos_x = 0;
@@ -119,7 +138,7 @@ void putchar(char ch) {
     else if (ch == '\b') {
         pos_x --;
         __update_pos();
-        __draw_char(pos_x, pos_y, ' ', print_color);
+        draw_char(pos_x, pos_y, ' ', print_color);
     }
     else if(ch == '\f') {
         clrscr();
@@ -128,7 +147,7 @@ void putchar(char ch) {
         __update_pos();
     }
     else { //普通字符
-        __draw_char(pos_x, pos_y, ch, print_color);
+        draw_char(pos_x, pos_y, ch, print_color);
         pos_x ++;
         __update_pos();
     }
@@ -137,9 +156,15 @@ void putchar(char ch) {
     }
 }
 
+void putchar(char ch) {
+    __putchar(ch);
+    flush_to_screen();
+}
+
 void puts(const char *str) {
     while (*str)
-        putchar (*(str ++));
+        __putchar (*(str ++));
+    flush_to_screen();
 }
 
 static int _vsprintf(char *buffer, const char *format, va_list args) {

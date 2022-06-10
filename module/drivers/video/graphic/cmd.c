@@ -20,9 +20,9 @@
 #include <text/cmd.h>
 
 void deal_graphic_cmd(int caller, int cmd, qword *param) {
-
+    lwarn ("VIDEO DRIVER Recieved a unknown command in graphic mode!");
 }
 
 void dispatch_txt_cmd(int caller, int cmd, qword *param) {
-
+    lwarn ("VIDEO DRIVER Recieved a unknown command in graphic text mode!");
 }

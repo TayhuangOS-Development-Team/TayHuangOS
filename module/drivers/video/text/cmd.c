@@ -38,9 +38,25 @@ void deal_text_cmd(int caller, int cmd, qword *param) {
         int x = param[2];
         int y = param[3];
         write_char(ch, color, x, y);
+        bool status = false;
+        send_msg(&status, caller, sizeof(bool), 20);
         break;
     }
-    default:
+    case __TEXT_WRITE_CHARS: {
+        for (int i = 0 ; i < param[0] ; i ++) {
+            int ch = param[i * 4 + 1];
+            int color = param[i * 4 + 2];
+            int x = param[i * 4 + 3];
+            int y = param[i * 4 + 4];
+            write_char(ch, color, x, y);
+        }
+        bool status = false;
+        send_msg(&status, caller, sizeof(bool), 20);
         break;
+    }
+    default: {
+        lwarn ("VIDEO DRIVER Recieved a unknown command in text mode!");
+        break;
+    }
     }
 }

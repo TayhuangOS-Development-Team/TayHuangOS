@@ -26,6 +26,10 @@ PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid
 }
 
+PRIVATE void __set_next(int pid) {
+    
+}
+
 PRIVATE bool __receive_msg(void *msg, int source) {
     task_struct *src_task = find_task(source);
     if (src_task == NULL) {//目标不存在

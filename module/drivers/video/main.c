@@ -24,6 +24,8 @@
 #include <ipc/ipc.h>
 #include <tool/tostring.h>
 
+#include <memory/malloc.h>
+
 int display_mode;
 int screen_width;
 int screen_height;
@@ -51,6 +53,8 @@ void deal_cmd(int caller, int cmd, qword *param) {
     }
 }
 
+qword commands[2048];
+
 void kmod_main(void) {
     linfo ("I'm video!");
 
@@ -69,13 +73,16 @@ void kmod_main(void) {
 
     linfo (buffer);
 
+    //qword *commands = malloc(2048 * sizeof(qword));
+
     while (true) {
-        qword commands[64];
         int caller = 0;
 
         while ((caller = recv_any_msg(commands)) == -1);
 
         deal_cmd(caller, commands[0], &commands[1]);
     }
+
+    free(commands);
     while (true);
 }
