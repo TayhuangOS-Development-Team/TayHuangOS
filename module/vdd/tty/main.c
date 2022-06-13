@@ -40,6 +40,9 @@ enum {
 #define __TEXT_WRITE_CHARS (1)
 #define TEXT_WRITE_CHARS MKCMD(MODE_TEXT, __TEXT_WRITE_CHARS)
 
+#define __CLEAR_SCREEN (2)
+#define CLEAR_SCREEN MKCMD(MODE_ANY, __CLEAR_SCREEN)
+
 #define SCREEN_SIZE (80 * 40 * 2)
 
 void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
@@ -87,6 +90,10 @@ void deal_cmd(int caller, qword cmd, qword *param) {
         break;
     }
     case TTY_CLEAR_SCREEN: {
+        int ttyid = param[0];
+
+        qword command[6] = {CLEAR_SCREEN, ttyid * SCREEN_SIZE, SCREEN_SIZE};
+        send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
         break;
     }
     case TTY_GETCHAR: {
@@ -138,6 +145,7 @@ void deal_cmd(int caller, qword cmd, qword *param) {
         int scroll_line = tty->scroll_line;
 
         send_msg(&scroll_line, caller, sizeof(scroll_line), 20);
+        break;
     }
     default: {
         lwarn ("TTY Driver Received an unknown command!");

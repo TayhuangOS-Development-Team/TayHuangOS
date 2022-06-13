@@ -321,7 +321,7 @@ void init(void) { //init进程 代表内核
 
     print_mod_info(&tty_mod_info);
     
-    create_task(TTY_DRIVER,
+    create_task(TTY_DRIVER_SERVICE,
         1, tty_mod_info.entry, RFLAGS_KERNEL,
         tty_mod_info.stack_top, tty_mod_info.stack_bottom,
         CS_KERNEL, tty_mod_info.pgd,

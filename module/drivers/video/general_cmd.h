@@ -20,5 +20,5 @@
 
 #include <modes.h>
 
-#define __CLEAR_SCREEN (0)
+#define __CLEAR_SCREEN (2)
 #define CLEAR_SCREEN MKCMD(MODE_ANY, __CLEAR_SCREEN)

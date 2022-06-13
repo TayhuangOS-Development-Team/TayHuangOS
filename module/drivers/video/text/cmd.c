@@ -17,12 +17,14 @@
 
 
 #include "cmd.h"
-
-#include <debug/logging.h>
-
+#include <general_cmd.h>
 #include <infomations.h>
 
+#include <debug/logging.h>
 #include <ipc/ipc.h>
+
+#include <string.h>
+#include <printf.h>
 
 void write_char(offset_t offset, int ch, int color, int x, int y) {
     *(char*)(VIDEO_MEMORY + offset + (y * screen_width + x) * 2) = ch;
@@ -54,6 +56,16 @@ void deal_text_cmd(int caller, int cmd, qword *param) {
         }
         bool status = false;
         send_msg(&status, caller, sizeof(bool), 20);
+        break;
+    }
+    case __CLEAR_SCREEN: {
+        offset_t offset = param[0];
+        int size = param[1];
+
+        memset (VIDEO_MEMORY + offset, 0, size);
+        break;
+    }
+    case __TEXT_SET_START_ADDR: {
         break;
     }
     default: {

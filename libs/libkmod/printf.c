@@ -29,8 +29,8 @@
 
 #include <ipc/ipc.h>
 
-static int pos_x;
-static int pos_y;
+static int pos_x = 0;
+static int pos_y = 0;
 static int print_color = 0;
 static bool do_cursor_move = true;
 
@@ -68,8 +68,21 @@ int get_scroll_line(void) {
 void set_scroll_line(int line) {
 }
 
+#define TTY_PUTCHAR (0)
+#define TTY_WRITE_STR (1)
+#define TTY_CLEAR_SCREEN (2)
+#define TTY_GETCHAR (3)
+#define TTY_GETCHARS (4)
+#define TTY_GETPOSX (5)
+#define TTY_GETPOSY (6)
+#define TTY_SETPOS (7)
+#define TTY_SETACTIVE (8)
+#define TTY_SETSCROLLLINE (9)
+#define TTY_GETSCROLLLINE (10)
+
 void clrscr(void) {
-    //TODO: Clear Screen
+    qword command[2] = {TTY_CLEAR_SCREEN, 0};
+    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
 }
 
 enum {
