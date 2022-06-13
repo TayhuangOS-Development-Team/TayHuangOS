@@ -32,7 +32,6 @@
 static int pos_x;
 static int pos_y;
 static int print_color = 0;
-static int scroll_line = 0;
 static bool do_cursor_move = true;
 
 static void set_cursor_pos(int pos_x, int pos_y) {
@@ -55,34 +54,22 @@ void change_pos(int x, int y) {
 }
 
 int get_pos_x(void) {
-    return pos_x;
+    return 0;
 }
 
 int get_pos_y(void) {
-    return pos_y;
+    return 0;
 }
 
 int get_scroll_line(void) {
-    return scroll_line;
+    return 0;
 }
 
 void set_scroll_line(int line) {
-    scroll_line = line;
 }
 
 void clrscr(void) {
     //TODO: Clear Screen
-}
-
-void scroll_screen(int lines) {
-    //TODO: Scroll the screen
-}
-
-static void __update_pos(void) {
-    if (pos_x >= 80) {
-        pos_y += pos_x / 80;
-        pos_x %= 80;
-    }
 }
 
 enum {
@@ -98,12 +85,13 @@ enum {
 
 #define NUM_MAX_CHARACTERS (64)
 
-static qword *command[NUM_MAX_CHARACTERS * 4 + 2];
+static qword *command[NUM_MAX_CHARACTERS * 4 + 3];
 static int write_pos = 0;
 
 bool flush_to_screen(void) {
     command[0] = TEXT_WRITE_CHARS;
     command[1] = write_pos;
+    command[2] = 0;
     bool status = false;
     sendrecv(command, &status, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
     write_pos = 0;
@@ -114,10 +102,10 @@ static void draw_char(int pos_x, int pos_y, int ch, int color) {
     if (write_pos >= NUM_MAX_CHARACTERS) {
         flush_to_screen();
     }
-    command[write_pos * 4 + 2] = ch;
-    command[write_pos * 4 + 3] = color;
-    command[write_pos * 4 + 4] = pos_x;
-    command[write_pos * 4 + 5] = pos_y;
+    command[write_pos * 4 + 3] = ch;
+    command[write_pos * 4 + 4] = color;
+    command[write_pos * 4 + 5] = pos_x;
+    command[write_pos * 4 + 6] = pos_y;
     write_pos ++;
 }
 
@@ -125,34 +113,25 @@ static void __putchar(char ch) {
     if (ch == '\r' || ch == '\n') { //制表符
         pos_y ++;
         pos_x = 0;
-        __update_pos();
     }
     else if (ch == '\t') {
         pos_x += 4;
-        __update_pos();
     }
     else if (ch == '\v') {
         pos_y ++;
-        __update_pos();
     }
     else if (ch == '\b') {
         pos_x --;
-        __update_pos();
         draw_char(pos_x, pos_y, ' ', print_color);
     }
     else if(ch == '\f') {
         clrscr();
         pos_x = 0;
         pos_y = 0;
-        __update_pos();
     }
     else { //普通字符
         draw_char(pos_x, pos_y, ch, print_color);
         pos_x ++;
-        __update_pos();
-    }
-    if (pos_y - scroll_line > 0) { //滚动屏幕
-        scroll_screen(pos_y - scroll_line);
     }
 }
 

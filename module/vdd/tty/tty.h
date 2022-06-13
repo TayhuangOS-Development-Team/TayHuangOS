@@ -1,8 +1,8 @@
-/* 
+/*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  *
- *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+ *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
  *
  * --------------------------------------------------------------------------------
  *
@@ -18,5 +18,12 @@
 
 #pragma once
 
-//伪装
-typedef void tty;
+#include <tayhuang/types.h>
+
+typedef struct {
+    int pos_x;
+    int pos_y;
+
+    int scroll_line;
+    offset_t offset;
+} tty_struct, *tty;

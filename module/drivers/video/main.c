@@ -54,8 +54,6 @@ void deal_cmd(int caller, int cmd, qword *param) {
     }
 }
 
-qword commands[514];
-
 void kmod_main(void) {
     set_logging_name("VIDEO");
 
@@ -70,11 +68,7 @@ void kmod_main(void) {
 
     init_heap();
 
-    qword *commands = malloc(512 * sizeof(qword));
-    
-    char buffer[128];
-    sprintf (buffer, "command %P", commands);
-    linfo (buffer);
+    qword *commands = malloc(515 * sizeof(qword));
 
     while (true) {
         int caller = 0;

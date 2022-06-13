@@ -156,7 +156,7 @@ void free(void *addr) {
     chunk_struct *last = (chunk_struct*)heap;
     chunk_struct *current = (chunk_struct*)(addr - sizeof(chunk_struct));
 
-    while ((last != NULL) && (! ((addr > last) && (addr < last->next)))) {
+    while ((last != NULL) && (! ((current > last) && (current < last->next)))) {
         last = last->next;
     }
 
