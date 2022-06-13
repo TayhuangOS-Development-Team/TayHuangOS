@@ -10,7 +10,7 @@
  *
  * main.c
  *
- * gtty 主函数
+ * tty 主函数
  *
  */
 
@@ -19,8 +19,8 @@
 #include <debug/logging.h>
 
 void kmod_main(void) {
-    set_logging_name("GTTY");
+    set_logging_name("TTY");
 
-    linfo ("GTTY Here!");
+    linfo ("TTY Here!");
     while(1);
 }

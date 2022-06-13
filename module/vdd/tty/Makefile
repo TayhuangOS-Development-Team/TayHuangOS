@@ -1,7 +1,7 @@
-OBJECTSDIR := $(OBJECTSDIR)/gtty/
+OBJECTSDIR := $(OBJECTSDIR)/tty/
 
-GTTY_OUTPUT := $(BINDIR)/gtty.mod
-GTTY_SYMBOL_OUTPUT := $(BINDIR)/gtty.sym
+TTY_OUTPUT := $(BINDIR)/tty.mod
+TTY_SYMBOL_OUTPUT := $(BINDIR)/tty.sym
 ASM := as
 RM := rm
 GCC := gcc
@@ -27,10 +27,10 @@ ASMFLAGS :=
 ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(GDSDIR)/gtty" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+C_INCLUDE := -I"$(VDDDIR)/tty" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(GDSDIR)/gtty" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+CPP_INCLUDE := -I"$(VDDDIR)/tty" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
 LIBRARIES := -lkmod 
@@ -53,17 +53,17 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	mkdir -p -v $(dir $(GTTY_OUTPUT))
-	$(LD) $(LD_FLAGS) -T gtty.ld -o $(GTTY_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
+	mkdir -p -v $(dir $(TTY_OUTPUT))
+	$(LD) $(LD_FLAGS) -T tty.ld -o $(TTY_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
-	$(OBJCOPY) --only-keep-debug $(GTTY_OUTPUT) $(GTTY_SYMBOL_OUTPUT)
-	$(OBJCOPY) --strip-debug $(GTTY_OUTPUT)
+	$(OBJCOPY) --only-keep-debug $(TTY_OUTPUT) $(TTY_SYMBOL_OUTPUT)
+	$(OBJCOPY) --strip-debug $(TTY_OUTPUT)
 endif
 
 .PHONY: clean
 clean:
-	$(RM) $(GTTY_OUTPUT) $(OBJECTS)
+	$(RM) $(TTY_OUTPUT) $(OBJECTS)
 
 .PHONY: image
 image:
-	sudo cp $(GTTY_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	sudo cp $(TTY_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

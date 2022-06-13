@@ -22,4 +22,3 @@
 #include <modes.h>
 
 void deal_graphic_cmd(int caller, int cmd, qword *param);
-void dispatch_txt_cmd(int caller, int cmd, qword *param);

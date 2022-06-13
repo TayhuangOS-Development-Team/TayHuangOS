@@ -1,3 +1,0 @@
-# GDS
-
-global data saver

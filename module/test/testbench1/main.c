@@ -36,5 +36,8 @@ void kmod_main(void) {
 
     int *z = malloc(sizeof(int));
     printf ("z: %P", z);
+
+    free(z);
+    free(y);
     while (true);
 }

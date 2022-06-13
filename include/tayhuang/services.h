@@ -19,11 +19,9 @@
 #pragma once
 
 #define API_PID(x) (0x10000 + (x))
-#define GDS_PID(x) (0x20000 + (x))
 
 #define SETUP_SERVICE API_PID(0)
 #define MM_SERVICE API_PID(1)
 #define TASKMAN_SERVICE API_PID(2)
 #define VIDEO_DRIVER_SERVICE API_PID(3)
-
-#define GDS_GTTY GDS_PID(0)
+#define TTY_DRIVER API_PID(4)

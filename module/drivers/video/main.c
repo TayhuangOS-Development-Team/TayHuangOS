@@ -25,6 +25,7 @@
 #include <tool/tostring.h>
 
 #include <memory/malloc.h>
+#include <printf.h>
 
 int display_mode;
 int screen_width;
@@ -48,7 +49,7 @@ void deal_cmd(int caller, int cmd, qword *param) {
             deal_graphic_cmd(caller, CODE(cmd), param);
         }
         else if (MODE(cmd) == MODE_TEXT) {
-            dispatch_txt_cmd(caller, CODE(cmd), param);
+            lerror ("Couldn't deal text command in graphic mode!");
         }
     }
 }
@@ -67,10 +68,13 @@ void kmod_main(void) {
     screen_height = infomations[2];
     VIDEO_MEMORY = infomations[3];
 
-    //FIXME: Can't run normally
-    //init_heap();
+    init_heap();
 
-    //qword *commands = malloc(512 * sizeof(qword));
+    qword *commands = malloc(512 * sizeof(qword));
+    
+    char buffer[128];
+    sprintf (buffer, "command %P", commands);
+    linfo (buffer);
 
     while (true) {
         int caller = 0;

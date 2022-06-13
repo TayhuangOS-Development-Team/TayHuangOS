@@ -310,24 +310,24 @@ void init(void) { //init进程 代表内核
 
     #define GDS_SIZE (16 * MEMUNIT_SZ)
 
-    //------GTTY---------
-    program_info gtty_mod_info;
-    status = load_kmod_bysetup("gtty.mod", GDS_SIZE, &gtty_mod_info);
+    //------TTY---------
+    program_info tty_mod_info;
+    status = load_kmod_bysetup("tty.mod", GDS_SIZE, &tty_mod_info);
 
     if (!status) {
-        lerror ("Init", "Can't load GTTY!");
-        panic ("Can't load GTTY!");
+        lerror ("Init", "Can't load TTY!");
+        panic ("Can't load TTY!");
     }
 
-    print_mod_info(&gtty_mod_info);
+    print_mod_info(&tty_mod_info);
     
-    create_task(GDS_GTTY,
-        1, gtty_mod_info.entry, RFLAGS_KERNEL,
-        gtty_mod_info.stack_top, gtty_mod_info.stack_bottom,
-        CS_KERNEL, gtty_mod_info.pgd,
-        gtty_mod_info.start, gtty_mod_info.end,
-        gtty_mod_info.heap_bottom, gtty_mod_info.heap_top
-    ); //gtty 内核模块进程
+    create_task(TTY_DRIVER,
+        1, tty_mod_info.entry, RFLAGS_KERNEL,
+        tty_mod_info.stack_top, tty_mod_info.stack_bottom,
+        CS_KERNEL, tty_mod_info.pgd,
+        tty_mod_info.start, tty_mod_info.end,
+        tty_mod_info.heap_bottom, tty_mod_info.heap_top
+    ); //tty 内核模块进程
     while (true);
 
     exit();

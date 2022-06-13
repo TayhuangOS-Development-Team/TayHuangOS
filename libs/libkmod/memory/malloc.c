@@ -47,35 +47,6 @@ void *get_end_heap(int pid) {
     return end_heap;
 }
 
-void *get_task_start(int pid) {
-    void *task_start = NULL;
-    qword command[] = {GET_TASK_START, pid};
-    sendrecv(command, &task_start, TASKMAN_SERVICE, sizeof(command), 20);
-
-    return task_start;
-}
-
-void *get_task_end_without_heap(int pid) {
-    void *task_end = NULL;
-    qword command[] = {GET_TASK_END_WITHOUT_HEAP, pid};
-    sendrecv(command, &task_end, TASKMAN_SERVICE, sizeof(command), 20);
-    return task_end;
-}
-
-void *get_task_pgd(int pid) {
-    void *pgd = NULL;
-    qword command[] = {GET_TASK_PGD, pid};
-    sendrecv(command, &pgd, TASKMAN_SERVICE, sizeof(command), 20);
-    return pgd;
-}
-
-bool set_task_pgd(int pid, void *pgd) {
-    bool status = false;
-    qword command[] = {SET_TASK_PGD, pid, pgd};
-    sendrecv (command, &status, TASKMAN_SERVICE, sizeof(command), 20);
-    return status;
-}
-
 //一次分配16的倍数个内存
 #define HEAPUNIT_SZ (16)
 //小于等于该值时不再对区块进行分割
@@ -89,147 +60,126 @@ typedef struct _chunk {
 } chunk_struct; //16B
 //堆开头16个Byte为空闲chunk头
 
+static void *heap;
+
 bool init_heap(void) {
+    char buffer[128];
+
     int pid = get_current_pid();
-    char buffer[256];
-
-    sprintf (buffer, "Initialize Heap", pid);
-    linfo (buffer);
-
-    void *heap = get_start_heap(pid);
-
-    sprintf (buffer, "Heap = %P", heap);
-    linfo (buffer);
-
-    int heapsize = get_end_heap(pid) - get_start_heap(pid);
-    sprintf (buffer, "Heap Size = %d", heapsize);
-
-    chunk_struct *whole_heap_chunk = (chunk_struct*)(heap + 16);
-    whole_heap_chunk->size = heapsize - 16;
-    whole_heap_chunk->used = false;
-    whole_heap_chunk->next = NULL;
     
-    sprintf (buffer, "Whole Heap Size = %d", whole_heap_chunk->size);
+    sprintf (buffer, "Initialize buffer for %d", pid);
     linfo (buffer);
 
-    chunk_struct *free_chunk_head = (chunk_struct*)heap;
-    free_chunk_head->size = -1;
-    free_chunk_head->used = false;
-    free_chunk_head->next = whole_heap_chunk;
+    heap = get_start_heap(pid);
 
-    linfo ("Heap initialized!");
+    sprintf (buffer, "Heap start address = %P", heap);
+    linfo (buffer);
+
+    int size = get_end_heap(pid) - heap;
+
+    sprintf (buffer, "Heap size = %d", size);
+    linfo (buffer);
+
+    chunk_struct *list_start = (chunk_struct*)heap;
+    chunk_struct *whole_heap = (chunk_struct*)(heap + + sizeof(chunk_struct));
+
+    list_start->size = -1;
+    list_start->used = false;
+    list_start->next = whole_heap;
+
+    whole_heap->size = size - + sizeof(chunk_struct);
+    whole_heap->used = false;
+    whole_heap->next = NULL;
+
+    linfo ("Initialize finished!");
 
     return true;
 }
 
 void *malloc(int size) {
-    char buffer[256];
+    char buffer[160];
 
-    int pid = get_current_pid();
+    int fixed_size = ((size / HEAPUNIT_SZ) + ((size % HEAPUNIT_SZ) != 0)) * HEAPUNIT_SZ;
 
-    void *heap = get_start_heap(pid);
+    sprintf (buffer, "require size = %d ; fixed size = %d", size, fixed_size);
+    linfo (buffer);
 
-    chunk_struct *free_chunk = ((chunk_struct*)heap)->next;
     chunk_struct *last = (chunk_struct*)heap;
+    chunk_struct *current = last->next;
 
-    sprintf (buffer, "search start: %P, list start: %P", free_chunk, last);
+    sprintf (buffer, "searching start with last = %P and current = %P", last, current);
     linfo (buffer);
 
-    //修正大小
-    int fix_size = ((size / HEAPUNIT_SZ) + (size % HEAPUNIT_SZ != 0)) * HEAPUNIT_SZ;
-
-    sprintf (buffer, "size = %d ; fixed size=%d", size, fix_size);
-    linfo (buffer);
-
-    //寻找符合条件的chunk
-    while (free_chunk->size < (fix_size + 16) && (free_chunk->next != NULL)) {
-        last = free_chunk;
-        free_chunk = free_chunk->next;
+    while ((current != NULL) && (current->size < (fixed_size + sizeof(chunk_struct)))) {
+        last = current;
+        current = current->next;
     }
 
-    sprintf (buffer, "free chunk: %P, size=%d, last: %P", free_chunk, free_chunk->size, last);
+    sprintf (buffer, "searching end with last = %P and current = %P", last, current);
     linfo (buffer);
 
-    if (free_chunk->size < (fix_size + 16)) {
-        linfo ("Heap is running out!");
-        //TODO: extend the heap
+    if (current == NULL) {
+        //TODO: extended the heap!
+        lwarn ("Need more memories");
         return NULL;
     }
 
-    //进行分割
-    if (free_chunk->size > HEAPDIV_MIN_SZ && ((free_chunk->size - 32) > (fix_size + 16))) {
-        chunk_struct *new_chunk = ((void*)free_chunk) + 16 + fix_size;
-        new_chunk->next = free_chunk->next;
-        new_chunk->size = free_chunk->size - 16 - fix_size;
-        new_chunk->used = false;
-        sprintf (buffer, "New chunk = %P ; size = %d ; next = %P", new_chunk, new_chunk->size, new_chunk->next);
+    if ((current->size > HEAPDIV_MIN_SZ) && 
+        ((current->size - 2 * sizeof(chunk_struct) - fixed_size) >= HEAPUNIT_SZ)) {
+        chunk_struct *new_free_chunk = (chunk_struct*)(((void*)current) + sizeof(chunk_struct) + fixed_size);
+        new_free_chunk->size = current->size - sizeof(chunk_struct) - fixed_size;
+        new_free_chunk->next = current->next;
+        new_free_chunk->used = false;
+        last->next = new_free_chunk;
+        current->size = sizeof(chunk_struct) + fixed_size;
+        
+        sprintf (buffer, "Split the chunk into (start = %P len = %d) and (start = %P len = %d)",
+                        current, current->size, new_free_chunk, new_free_chunk->size);
         linfo (buffer);
-        last->next = new_chunk;
-
-        free_chunk->size = fix_size + 16;
     }
     else {
-        last->next = NULL;
+        last->next = current->next;
     }
+        
+    current->used = true;
+    current->next = NULL;
 
-    //更改信息
-    free_chunk->used = true;
-    free_chunk->next = NULL;
+    sprintf (buffer, "Alloc chunk(start = %P, len = %d)", current, current->size);
+    linfo (buffer);
 
-    return ((void*)free_chunk) + 16;
+    return ((void*)current) + 16;
 }
 
 void free(void *addr) {
-    char buffer[256];
+    char buffer[160];
 
-    int pid = get_current_pid();
-    
-    void *heap = get_start_heap(pid);
+    chunk_struct *last = (chunk_struct*)heap;
+    chunk_struct *current = (chunk_struct*)(addr - sizeof(chunk_struct));
 
-    //当前chunk
-    chunk_struct *chunk = (chunk_struct*)(addr - 16);
-    if (! chunk->used) {
-        lwarn ("try to free a unused chunk!");
-        return;
+    while ((last != NULL) && (! ((addr > last) && (addr < last->next)))) {
+        last = last->next;
     }
 
-    sprintf (buffer, "free chunk %P", chunk);
+    sprintf (buffer, "Insert chunk(%P) between chunk(%P) and chunk(%P)", current, last, last->next);
     linfo (buffer);
 
-    //空闲chunk链表头
-    chunk_struct *free_chunk = ((chunk_struct*)heap)->next;
-    chunk_struct *parent = (chunk_struct*)heap;
+    current->next = last->next;
+    last->next = current;
 
-    //设为未使用
-    chunk->used = false;
-    chunk->next = NULL;
+    if ((((void*)last) + last->size) == current) {
+        sprintf (buffer, "Combine chunk(%P) and chunk(%P)", last, current);
+        linfo (buffer);
 
-    while (free_chunk != NULL) {
-        if (chunk > parent && chunk < free_chunk) {
-            break;
-        }
-        parent = free_chunk;
-        free_chunk = free_chunk->next;
+        last->size += current->size;
+        last->next = current->next;
+        current = last;
     }
 
-    sprintf (buffer, "last %P next %P", parent, free_chunk);
-    linfo (buffer);
+    if ((((void*)last) + last->size) == last->next) {
+        sprintf (buffer, "Combine chunk(%P) and chunk(%P)", last, last->next);
+        linfo (buffer);
 
-    parent->next = chunk; //插入
-    chunk->next = free_chunk;
-
-    if (parent != heap) {
-        if ((((void*)parent) + parent->size) == chunk) {
-            parent->size += chunk->size;
-            parent->next = chunk->next;
-            chunk = parent;
-        }
-    }
-
-    if (free_chunk != NULL) {
-        if ((((void*)chunk) + chunk->size) == free_chunk) {
-            chunk->next = free_chunk->next;
-            chunk->size += free_chunk->size;
-        }
+        last->size += last->next->size;
+        last->next = last->next->next;
     }
 }
