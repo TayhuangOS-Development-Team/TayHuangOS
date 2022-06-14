@@ -31,39 +31,56 @@
 PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **end) { //加载一个段
     char buffer[256];
     if (program->p_type == PT_LOAD) {
-        *start = (void*)min ((qword)*start, program->p_vaddr);
-        *end = (void*)max ((qword)*end, program->p_vaddr + program->p_memsz);
+        *start = min((qword)*start, program->p_vaddr);
+        *end = max((qword)*end, program->p_vaddr + program->p_memsz);
+
         linfo ("KMod Loader", "Segment type: LOAD");
 
-        int pages_need = program->p_memsz / MEMUNIT_SZ + ((program->p_memsz % MEMUNIT_SZ) != 0);
-        sprintk (buffer, "Require Pages: %d", pages_need);
-        linfo ("KMod Loader", buffer);
+
+        sprintk (buffer, "Segment %P~%P", program->p_vaddr, program->p_vaddr + program->p_memsz);
+        linfo ("KModLoader", buffer);
+
+        int require_pages = (program->p_memsz / MEMUNIT_SZ) + (program->p_memsz % MEMUNIT_SZ != 0);
+
+        sprintk (buffer, "Require pages = %d ; Require to copy %d bytes", require_pages, program->p_filesz);
+        linfo ("KModLoader", buffer);
+
+        int remain_copy = program->p_filesz;
 
         int sum = 0;
-        while (sum < pages_need) {
-            linfo ("KMod Loader", "*******");
-
+        while (sum < require_pages) {
             int num = 0;
-            void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
 
+            void *pages = find_freepages(require_pages - sum, &num); //寻找空闲页
             sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
             linfo ("KMod Loader", buffer);
 
             for (int i = 0 ; i < num ; i ++)
                 mark_used(pages + i * MEMUNIT_SZ); //设置被使用
 
-            void *start_vaddr = program->p_vaddr + sum * MEMUNIT_SZ;
-            set_mapping(start_vaddr, pages, num, true, false); //进行映射
+            void *start_vaddr = (void*)(program->p_vaddr + sum * MEMUNIT_SZ);
+            set_mapping(start_vaddr, pages, num, true, false); //映射
 
             sprintk (buffer, "Mapped %P~%P to %P~%P", start_vaddr, start_vaddr + num * MEMUNIT_SZ, pages, pages + num * MEMUNIT_SZ);
             linfo ("KMod Loader", buffer);
 
-            int copy_num = min(program->p_filesz - sum * MEMUNIT_SZ, num * MEMUNIT_SZ);
-            void *start_file = addr + program->p_offset + sum * MEMUNIT_SZ;
-            memcpy(pages, start_file, copy_num); //进行复制
+            if (remain_copy > 0) {
+                int num_copy = (remain_copy < num * MEMUNIT_SZ) ? remain_copy : num * MEMUNIT_SZ;
 
-            sprintk (buffer, "Copied %P to %P, count = %dB", start_file, pages, copy_num);
-            linfo ("KMod Loader", buffer);
+                void *src = addr + program->p_offset + (program->p_filesz - remain_copy);
+
+                memcpy(pages, src, num_copy);
+
+                sprintk (buffer, "Copied %P to %P, count = %dB", src, pages, num_copy);
+                linfo ("KMod Loader", buffer);
+
+                if (num_copy < num * MEMUNIT_SZ) {
+                    memset (pages + num_copy, 0, num * MEMUNIT_SZ - num_copy);
+                }
+            }
+            else {
+                memset (pages, 0, num * MEMUNIT_SZ);
+            }
 
             sum += num;
         }
@@ -78,14 +95,14 @@ PUBLIC void* alloc_stack(void *stack_top) { //分配栈
 
     char buffer[256];
 
-    int pages_need = STACK_PAGES;
+    int require_pages = STACK_PAGES;
     int sum = 0;
 
-    while (sum < pages_need) {
+    while (sum < require_pages) {
         linfo ("KMod Loader", "*******");
 
         int num = 0;
-        void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
+        void *pages = find_freepages(require_pages - sum, &num); //寻找空闲页
         sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
         linfo ("KMod Loader", buffer);
 
@@ -112,14 +129,14 @@ PUBLIC void* alloc_heap(void *heap_bottom) {
 
     char buffer[256];
 
-    int pages_need = HEAP_PAGES;
+    int require_pages = HEAP_PAGES;
     int sum = 0;
 
-    while (sum < pages_need) {
+    while (sum < require_pages) {
         linfo ("KMod Loader", "*******");
 
         int num = 0;
-        void *pages = find_freepages(pages_need - sum, &num); //寻找空闲页
+        void *pages = find_freepages(require_pages - sum, &num); //寻找空闲页
         sprintk (buffer, "Pages found: addr = %P ; num = %d", pages, num);
         linfo ("KMod Loader", buffer);
 

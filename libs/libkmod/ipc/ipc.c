@@ -31,7 +31,7 @@ int sendrecv(void *msg, void *ret, int dest, int len, int tickout) {
 
 #define GET_CURRENT_PID (0)
 
-static int current_pid = 0;
+int current_pid = 0;
 
 int get_current_pid(void) {
     if (current_pid != 0)

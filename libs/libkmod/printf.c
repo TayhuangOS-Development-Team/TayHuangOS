@@ -29,8 +29,8 @@
 
 #include <ipc/ipc.h>
 
-static int pos_x = 0;
-static int pos_y = 0;
+int pos_x = 0;
+int pos_y = 0;
 static int print_color = 0;
 static bool do_cursor_move = true;
 
@@ -83,6 +83,7 @@ void set_scroll_line(int line) {
 void clrscr(void) {
     qword command[2] = {TTY_CLEAR_SCREEN, 0};
     send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    pos_x = pos_y = 0;
 }
 
 enum {
@@ -91,14 +92,14 @@ enum {
     MODE_GRAPHIC = 2
 };
 
-#define MKCMD(mode, code) ((((qword)(code & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
+#define MKCMD(mode, code) ((((qword)(mode & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
 
 #define __TEXT_WRITE_CHARS (1)
 #define TEXT_WRITE_CHARS MKCMD(MODE_TEXT, __TEXT_WRITE_CHARS)
 
 #define NUM_MAX_CHARACTERS (64)
 
-static qword *command[NUM_MAX_CHARACTERS * 4 + 3];
+static qword command[NUM_MAX_CHARACTERS * 4 + 3];
 static int write_pos = 0;
 
 bool flush_to_screen(void) {

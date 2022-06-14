@@ -30,7 +30,7 @@ PRIVATE bool __receive_msg(void *msg, int source) {
     task_struct *src_task = find_task(source);
     if (src_task == NULL) {//目标不存在
         char buffer[128];
-        sprintk ("%d try to receive from %d, but %d doesn't exists!", __get_pid(), source, source);
+        sprintk (buffer, "%d try to receive from %d, but %d doesn't exists!", __get_pid(), source, source);
         lwarn ("Syscall", buffer);
         return false;
     }
@@ -92,7 +92,7 @@ PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
     task_struct *dest_task = find_task(dest);
     if (dest_task == NULL) {//目标不存在
         char buffer[128];
-        sprintk ("%d try to sent msg to %d, but %d doesn't exists!", __get_pid(), dest, dest);
+        sprintk (buffer, "%d try to sent msg to %d, but %d doesn't exists!", __get_pid(), dest, dest);
         lwarn ("Syscall", buffer);
         return false;
     }

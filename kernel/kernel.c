@@ -197,8 +197,6 @@ PRIVATE int alloc_pid(void) {
 void init(void) { //init进程 代表内核
     program_info setup_mod_info = load_kmod_from_memory((void*)args.setup_mod_addr);
 
-    char buffer[256];
-
     print_mod_info(&setup_mod_info);
 
     void *level3_pml4 = create_pgd(); //用户级页表
@@ -285,6 +283,27 @@ void init(void) { //init进程 代表内核
 
     send_msg(infomations, VIDEO_DRIVER_SERVICE, sizeof(infomations), 20);
 
+    //------TTY---------
+    #define TTY_SIZE (16 * MEMUNIT_SZ)
+
+    program_info tty_mod_info;
+    status = load_kmod_bysetup("tty.mod", TTY_SIZE, &tty_mod_info);
+
+    if (!status) {
+        lerror ("Init", "Can't load TTY!");
+        panic ("Can't load TTY!");
+    }
+
+    print_mod_info(&tty_mod_info);
+    
+    create_task(TTY_DRIVER_SERVICE,
+        1, tty_mod_info.entry, RFLAGS_KERNEL,
+        tty_mod_info.stack_top, tty_mod_info.stack_bottom,
+        CS_KERNEL, tty_mod_info.pgd,
+        tty_mod_info.start, tty_mod_info.end,
+        tty_mod_info.heap_bottom, tty_mod_info.heap_top
+    ); //tty 内核模块进程
+
     //----------TESTBENCH---------------
 
     #define TB_SIZE (16 * MEMUNIT_SZ)
@@ -305,29 +324,7 @@ void init(void) { //init进程 代表内核
         tb_mod_info.start, tb_mod_info.end,
         tb_mod_info.heap_bottom, tb_mod_info.heap_top
     ); //Test bench 内核模块进程
-    
-    //----------GDS---------------
 
-    #define GDS_SIZE (16 * MEMUNIT_SZ)
-
-    //------TTY---------
-    program_info tty_mod_info;
-    status = load_kmod_bysetup("tty.mod", GDS_SIZE, &tty_mod_info);
-
-    if (!status) {
-        lerror ("Init", "Can't load TTY!");
-        panic ("Can't load TTY!");
-    }
-
-    print_mod_info(&tty_mod_info);
-    
-    create_task(TTY_DRIVER_SERVICE,
-        1, tty_mod_info.entry, RFLAGS_KERNEL,
-        tty_mod_info.stack_top, tty_mod_info.stack_bottom,
-        CS_KERNEL, tty_mod_info.pgd,
-        tty_mod_info.start, tty_mod_info.end,
-        tty_mod_info.heap_bottom, tty_mod_info.heap_top
-    ); //tty 内核模块进程
     while (true);
 
     exit();

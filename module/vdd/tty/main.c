@@ -32,7 +32,7 @@ enum {
     MODE_GRAPHIC = 2
 };
 
-#define MKCMD(mode, code) ((((qword)(code & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
+#define MKCMD(mode, code) ((((qword)(mode & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
 
 #define __TEXT_WRITE_CHAR (0)
 #define TEXT_WRITE_CHAR MKCMD(MODE_TEXT, __TEXT_WRITE_CHAR)

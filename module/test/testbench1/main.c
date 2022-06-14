@@ -20,6 +20,10 @@
 #include <printf.h>
 #include <memory/malloc.h>
 
+extern int pos_x;
+extern int pos_y;
+extern int current_pid;
+
 void kmod_main(void) {
     set_logging_name("TESTBENCH1");
     
@@ -39,5 +43,9 @@ void kmod_main(void) {
 
     free(z);
     free(y);
+
+    clrscr();
+
+    printf ("Hello, World!");
     while (true);
 }

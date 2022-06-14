@@ -68,7 +68,7 @@ void kmod_main(void) {
 
     init_heap();
 
-    qword *commands = malloc(515 * sizeof(qword));
+    qword *commands = malloc(600 * sizeof(qword));
 
     while (true) {
         int caller = 0;
@@ -78,6 +78,5 @@ void kmod_main(void) {
         deal_cmd(caller, commands[0], &commands[1]);
     }
 
-    free(commands);
     while (true);
 }

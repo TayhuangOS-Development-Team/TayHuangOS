@@ -33,4 +33,4 @@ enum {
 #define MODE(cmd) (((cmd) >> 28) & 0xF)
 #define CODE(cmd) ((cmd) & 0x0FFFFFFF)
 
-#define MKCMD(mode, code) ((((qword)(code & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
+#define MKCMD(mode, code) ((((qword)(mode & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
