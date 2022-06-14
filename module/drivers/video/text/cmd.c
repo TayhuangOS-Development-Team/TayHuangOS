@@ -26,6 +26,9 @@
 #include <string.h>
 #include <printf.h>
 
+#include <tayhuang/io.h>
+#include <tayhuang/ports.h>
+
 void write_char(offset_t offset, int ch, int color, int x, int y) {
     *(char*)(VIDEO_MEMORY + offset + (y * screen_width + x) * 2) = ch;
     *(char*)(VIDEO_MEMORY + offset + 1 + (y * screen_width + x) * 2) = color;
@@ -62,6 +65,14 @@ void deal_text_cmd(int caller, int cmd, qword *param) {
         break;
     }
     case __TEXT_SET_START_ADDR: {
+        short addr = param[0];
+
+        dis_int();
+        outb (CRTC_ADDR, CRTC_START_ADDR_H);
+        outb (CRTC_DATA, HIGHBYTE(addr));
+        outb (CRTC_ADDR, CRTC_START_ADDR_L);
+        outb (CRTC_DATA, LOWBYTE(addr));
+        en_int();
         break;
     }
     default: {

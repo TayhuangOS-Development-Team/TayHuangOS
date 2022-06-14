@@ -60,6 +60,11 @@ void set_tty(int _tty) {
 #define TTY_SETSCROLLLINE (9)
 #define TTY_GETSCROLLLINE (10)
 
+void set_active_tty(int _tty) {
+    qword command[] = {TTY_SETACTIVE, _tty};
+    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+}
+
 void change_pos(int x, int y) {
     qword command[] = {TTY_SETPOS, tty, x, y};
     send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);

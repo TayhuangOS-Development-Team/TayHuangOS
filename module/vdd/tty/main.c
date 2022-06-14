@@ -23,7 +23,7 @@
 #include "tty.h"
 #include "cmd.h"
 
-#define TTY_NUM (8)
+#define TTY_NUM (3)
 tty_struct ttys[TTY_NUM];
 
 enum {
@@ -43,7 +43,10 @@ enum {
 #define __CLEAR_SCREEN (2)
 #define CLEAR_SCREEN MKCMD(MODE_ANY, __CLEAR_SCREEN)
 
-#define SCREEN_SIZE (80 * 40 * 2)
+#define __TEXT_SET_START_ADDR (3)
+#define TEXT_SET_START_ADDR MKCMD(MODE_TEXT, __TEXT_SET_START_ADDR)
+
+#define SCREEN_SIZE (80 * 68 * 2)
 
 void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
     static qword command[600];
@@ -132,6 +135,10 @@ void deal_cmd(int caller, qword cmd, qword *param) {
         break;
     }
     case TTY_SETACTIVE: {
+        int ttyid = param[0];
+
+        qword command[] = {TEXT_SET_START_ADDR, ttyid * SCREEN_SIZE / 2};
+        send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
         break;
     }
     case TTY_SETSCROLLLINE: {
@@ -164,11 +171,11 @@ void kmod_main(void) {
 
     init_heap();
 
-    for (int i = 0 ; i < 8 ; i ++) {
+    for (int i = 0 ; i < TTY_NUM ; i ++) {
         ttys[i].pos_x = ttys[i].pos_y = ttys[i].offset = ttys[i].scroll_line = 0;
     }
 
-    qword *command = malloc(257 * sizeof(qword));
+    qword *command = malloc(300 * sizeof(qword));
 
     while (true) {
         int caller = 0;

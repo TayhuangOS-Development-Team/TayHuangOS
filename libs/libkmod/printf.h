@@ -24,6 +24,7 @@ int get_print_color(void);
 void set_print_color(int color);
 int get_tty(void);
 void set_tty(int tty);
+void set_active_tty(int tty);
 void change_pos(int x, int y);
 int get_pos_x(void);
 int get_pos_y(void);

@@ -112,3 +112,14 @@
 #define SERIAL_MODEM_CONTROL (SERIAL_BASE + 4)
 #define SERIAL_STATUS        (SERIAL_BASE + 5)
 #define SERIAL_MODEM_STATUS  (SERIAL_BASE + 6)
+
+//CRT Controller
+#define CRTC_BASE (0x3D4)
+#define CRTC_ADDR (CRTC_BASE + 0)
+#define CRTC_DATA (CRTC_BASE + 1)
+
+//CRT Registers
+#define CRTC_START_ADDR_H (0x0C)
+#define CRTC_START_ADDR_L (0x0D)
+#define CRTC_CURSOR_LOCATION_H (0x0E)
+#define CRTC_CURSOR_LOCATION_L (0x0F)

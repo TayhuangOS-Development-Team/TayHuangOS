@@ -49,5 +49,12 @@ void kmod_main(void) {
     clrscr();
 
     printf ("Hello, World!");
+
+    set_tty(1);
+
+    printf ("Hi!");
+
+    set_active_tty(1);
+
     while (true);
 }
