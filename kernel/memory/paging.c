@@ -27,6 +27,8 @@
 #include <display/printk.h>
 #include <string.h>
 
+#include <process/task_manager.h>
+
 // PRIVATE const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
 // PRIVATE const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
 // PRIVATE const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
@@ -139,6 +141,8 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
         lerror ("Paging", buffer);
         sprintk (buffer, "Error In PML4 %P, Index %#03X", pml4, pml4e_idx);
         lerror ("Paging", buffer);
+        sprintk (buffer, "Current Task(PID = %d)", current_task->pid);
+        lerror ("Paging", buffer);
         return NULL;
     }
 
@@ -147,6 +151,8 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
         sprintk (buffer, "Address %P doesn't exist!", vaddr);
         lerror ("Paging", buffer);
         sprintk (buffer, "Error In PDPT %P, Index %#03X", pdpt, pdpte_idx);
+        lerror ("Paging", buffer);
+        sprintk (buffer, "Current Task(PID = %d)", current_task->pid);
         lerror ("Paging", buffer);
         return NULL;
     }
@@ -157,6 +163,8 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
         lerror ("Paging", buffer);
         sprintk (buffer, "Error In PD %P, Index %#03X", pd, pde_idx);
         lerror ("Paging", buffer);
+        sprintk (buffer, "Current Task(PID = %d)", current_task->pid);
+        lerror ("Paging", buffer);
         return NULL;
     }
     
@@ -165,6 +173,8 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
         sprintk (buffer, "Address %P doesn't exist!", vaddr);
         lerror ("Paging", buffer);
         sprintk (buffer, "Error In PT %P, Index %#03X", pt, pte_idx);
+        lerror ("Paging", buffer);
+        sprintk (buffer, "Current Task(PID = %d)", current_task->pid);
         lerror ("Paging", buffer);
         return NULL;
     }

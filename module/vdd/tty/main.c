@@ -46,8 +46,8 @@ enum {
 #define SCREEN_SIZE (80 * 40 * 2)
 
 void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
-    qword *command = malloc(515 * sizeof(qword));
-
+    static qword command[600];
+    
     command[0] = TEXT_WRITE_CHARS;
     command[1] = num_characters;
     command[2] = ttyid * SCREEN_SIZE + tty->offset;
@@ -63,7 +63,7 @@ void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
         tty->pos_x %= 80;
     }
 
-    send_msg(command, VIDEO_DRIVER_SERVICE, 515 * sizeof(qword), 20);
+    send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
 }
 
 void deal_cmd(int caller, qword cmd, qword *param) {
@@ -91,9 +91,12 @@ void deal_cmd(int caller, qword cmd, qword *param) {
     }
     case TTY_CLEAR_SCREEN: {
         int ttyid = param[0];
+        tty_struct *tty = &ttys[ttyid];
 
         qword command[6] = {CLEAR_SCREEN, ttyid * SCREEN_SIZE, SCREEN_SIZE};
         send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
+
+        tty->pos_x = tty->pos_y = 0;
         break;
     }
     case TTY_GETCHAR: {

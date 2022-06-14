@@ -41,8 +41,6 @@ void deal_text_cmd(int caller, int cmd, qword *param) {
         int x = param[3];
         int y = param[4];
         write_char(offset, ch, color, x, y);
-        bool status = false;
-        send_msg(&status, caller, sizeof(bool), 20);
         break;
     }
     case __TEXT_WRITE_CHARS: {
@@ -54,8 +52,6 @@ void deal_text_cmd(int caller, int cmd, qword *param) {
             int y = param[i * 4 + 5];
             write_char(offset, ch, color, x, y);
         }
-        bool status = false;
-        send_msg(&status, caller, sizeof(bool), 20);
         break;
     }
     case __CLEAR_SCREEN: {

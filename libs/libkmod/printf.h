@@ -22,20 +22,18 @@
 
 int get_print_color(void);
 void set_print_color(int color);
+int get_tty(void);
+void set_tty(int tty);
 void change_pos(int x, int y);
-void change_cursor_pos(int x, int y);
 int get_pos_x(void);
 int get_pos_y(void);
 int get_scroll_line(void);
 void set_scroll_line(int line);
 void scroll_screen(int lines);
-bool flush_to_screen(void);
+void flush_to_screen(void);
 
 void clrscr(void);
 void putchar(char ch);
 void puts(const char *str);
 int printf(const char *format, ...);
 int sprintf(char *buffer, const char *format, ...);
-
-void disable_cursor_move(void);
-void enable_cursor_move(void);

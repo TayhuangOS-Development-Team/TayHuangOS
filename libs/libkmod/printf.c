@@ -29,14 +29,8 @@
 
 #include <ipc/ipc.h>
 
-int pos_x = 0;
-int pos_y = 0;
 static int print_color = 0;
-static bool do_cursor_move = true;
-
-static void set_cursor_pos(int pos_x, int pos_y) {
-    //TODO: Set Cursor Position
-}
+static int tty = -1;
 
 int get_print_color(void) {
     return print_color;
@@ -46,26 +40,12 @@ void set_print_color(int color) {
     print_color = color;
 }
 
-void change_pos(int x, int y) {
-    pos_x = pos_x;
-    pos_y = pos_y;
-    if (do_cursor_move)
-        set_cursor_pos(pos_x, pos_y);
+int get_tty(void) {
+    return tty;
 }
 
-int get_pos_x(void) {
-    return 0;
-}
-
-int get_pos_y(void) {
-    return 0;
-}
-
-int get_scroll_line(void) {
-    return 0;
-}
-
-void set_scroll_line(int line) {
+void set_tty(int _tty) {
+    tty = _tty;
 }
 
 #define TTY_PUTCHAR (0)
@@ -80,73 +60,64 @@ void set_scroll_line(int line) {
 #define TTY_SETSCROLLLINE (9)
 #define TTY_GETSCROLLLINE (10)
 
-void clrscr(void) {
-    qword command[2] = {TTY_CLEAR_SCREEN, 0};
+void change_pos(int x, int y) {
+    qword command[] = {TTY_SETPOS, tty, x, y};
     send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
-    pos_x = pos_y = 0;
 }
 
-enum {
-    MODE_ANY = 0,
-    MODE_TEXT = 1,
-    MODE_GRAPHIC = 2
-};
+int get_pos_x(void) {
+    int x = 0;
+    qword command[] = {TTY_GETPOSX, tty};
+    sendrecv(command, &x, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    return x;
+}
 
-#define MKCMD(mode, code) ((((qword)(mode & 0xF)) << 28) | (((qword)(code)) & 0x0FFFFFFF))
+int get_pos_y(void) {
+    int y = 0;
+    qword command[] = {TTY_GETPOSY, tty};
+    sendrecv(command, &y, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    return y;
+}
 
-#define __TEXT_WRITE_CHARS (1)
-#define TEXT_WRITE_CHARS MKCMD(MODE_TEXT, __TEXT_WRITE_CHARS)
+int get_scroll_line(void) {
+    int scroll_line = 0;
+    qword command[] = {TTY_GETSCROLLLINE, tty};
+    sendrecv(command, &scroll_line, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    return scroll_line;
+}
+
+void set_scroll_line(int line) {
+    qword command[] = {TTY_SETSCROLLLINE, tty, line};
+    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+}
+
+void clrscr(void) {
+    qword command[] = {TTY_CLEAR_SCREEN, tty};
+    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+}
 
 #define NUM_MAX_CHARACTERS (64)
 
-static qword command[NUM_MAX_CHARACTERS * 4 + 3];
+static qword command[NUM_MAX_CHARACTERS * 2 + 2];
 static int write_pos = 0;
 
-bool flush_to_screen(void) {
-    command[0] = TEXT_WRITE_CHARS;
-    command[1] = write_pos;
-    command[2] = 0;
-    bool status = false;
-    sendrecv(command, &status, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
-    write_pos = 0;
-    return status;
-}
+void flush_to_screen(void) {
+    command[0] = TTY_WRITE_STR;
+    command[1] = tty;
+    command[2] = write_pos;
 
-static void draw_char(int pos_x, int pos_y, int ch, int color) {
-    if (write_pos >= NUM_MAX_CHARACTERS) {
-        flush_to_screen();
-    }
-    command[write_pos * 4 + 3] = ch;
-    command[write_pos * 4 + 4] = color;
-    command[write_pos * 4 + 5] = pos_x;
-    command[write_pos * 4 + 6] = pos_y;
-    write_pos ++;
+    send_msg (command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+
+    write_pos = 0;
 }
 
 static void __putchar(char ch) {
-    if (ch == '\r' || ch == '\n') { //制表符
-        pos_y ++;
-        pos_x = 0;
+    if (write_pos >= NUM_MAX_CHARACTERS) {
+        flush_to_screen();
     }
-    else if (ch == '\t') {
-        pos_x += 4;
-    }
-    else if (ch == '\v') {
-        pos_y ++;
-    }
-    else if (ch == '\b') {
-        pos_x --;
-        draw_char(pos_x, pos_y, ' ', print_color);
-    }
-    else if(ch == '\f') {
-        clrscr();
-        pos_x = 0;
-        pos_y = 0;
-    }
-    else { //普通字符
-        draw_char(pos_x, pos_y, ch, print_color);
-        pos_x ++;
-    }
+    command[write_pos * 2 + 3] = ch;
+    command[write_pos * 2 + 4] = print_color;
+    write_pos ++;
 }
 
 void putchar(char ch) {
@@ -458,12 +429,4 @@ int sprintf(char *buffer, const char *format, ...) {
 
     va_end(args);
     return ret;
-}
-
-void disable_cursor_move(void) {
-    do_cursor_move = false;
-}
-
-void enable_cursor_move(void) {
-    do_cursor_move = true;
 }
