@@ -34,25 +34,16 @@ void kmod_main(void) {
 
     init_heap();
 
-    int *x = malloc(sizeof(int));
-    int *y = malloc(sizeof(int));
-
-    printf ("x: %P ; y: %P ; ", x, y);
-    free (x);
-
-    int *z = malloc(sizeof(int));
-    printf ("z: %P", z);
-
-    free(z);
-    free(y);
-
     clrscr();
 
-    printf ("Hello, World!");
+    for (int i = 0 ; i < 3 ; i ++) {
+        set_tty(i);
+        printf ("[TTY %d]\n", i);
+    }
 
     set_tty(1);
 
-    printf ("Hi!");
+    printf ("Hi!\nI'm TTY1!!!!!!!");
 
     set_active_tty(1);
 

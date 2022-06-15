@@ -20,6 +20,7 @@
 #include <ipc/ipc.h>
 #include <tayhuang/services.h>
 #include <memory/malloc.h>
+#include <ctype.h>
 #include "tty.h"
 #include "cmd.h"
 
@@ -48,23 +49,57 @@ enum {
 
 #define SCREEN_SIZE (80 * 68 * 2)
 
+void clear_screen(int ttyid, tty_struct *tty) {
+    qword command[6] = {CLEAR_SCREEN, ttyid * SCREEN_SIZE, SCREEN_SIZE};
+    send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
+
+    tty->pos_x = tty->pos_y = 0;
+}
+
+static inline void take_action(int ttyid, tty_struct *tty, int ch) {
+    if (ch == '\r' || ch == '\n') { //制表符
+        tty->pos_y ++;
+        tty->pos_x = 0;
+    }
+    else if (ch == '\t') {
+        tty->pos_x += 4;
+    }
+    else if (ch == '\v') {
+        tty->pos_y ++;
+    }
+    else if (ch == '\b') {
+        tty->pos_x --;
+    }
+    else if(ch == '\f') {
+        clear_screen(ttyid, tty);
+    }
+}
+
 void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
     static qword command[600];
     
     command[0] = TEXT_WRITE_CHARS;
-    command[1] = num_characters;
     command[2] = ttyid * SCREEN_SIZE + tty->offset;
 
+    int num = 0;
+
     for (int i = 0 ; i < num_characters ; i ++) {
-        command[i * 4 + 3] = str[i * 2];
-        command[i * 4 + 4] = str[i * 2 + 1];
-        command[i * 4 + 5] = tty->pos_x;
-        command[i * 4 + 6] = tty->pos_y;
+        if (iscntrl(str[i * 2])) {
+            take_action(ttyid, tty, str[i * 2]);
+            continue;
+        }
+        command[num * 4 + 3] = str[i * 2];
+        command[num * 4 + 4] = str[i * 2 + 1];
+        command[num * 4 + 5] = tty->pos_x;
+        command[num * 4 + 6] = tty->pos_y;
 
         tty->pos_x ++;
         tty->pos_y += tty->pos_x / 80;
         tty->pos_x %= 80;
+        num ++;
     }
+
+    command[1] = num;
 
     send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
 }
@@ -75,6 +110,11 @@ void deal_cmd(int caller, qword cmd, qword *param) {
     case TTY_PUTCHAR: {
         int ttyid = param[0];
         tty_struct *tty = &ttys[ttyid];
+
+        if (iscntrl(param[1])) {
+            take_action(ttyid, tty, param[1]);
+            break;
+        }
 
         qword command[6] = {TEXT_WRITE_CHAR, ttyid * SCREEN_SIZE + tty->offset, param[1], param[2], tty->pos_x, tty->pos_y};
         send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
@@ -96,10 +136,7 @@ void deal_cmd(int caller, qword cmd, qword *param) {
         int ttyid = param[0];
         tty_struct *tty = &ttys[ttyid];
 
-        qword command[6] = {CLEAR_SCREEN, ttyid * SCREEN_SIZE, SCREEN_SIZE};
-        send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
-
-        tty->pos_x = tty->pos_y = 0;
+        clear_screen(ttyid, tty);
         break;
     }
     case TTY_GETCHAR: {
