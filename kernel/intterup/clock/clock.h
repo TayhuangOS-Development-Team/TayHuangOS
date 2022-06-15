@@ -8,9 +8,9 @@
  * 
  * 作者: Flysong
  * 
- * test_proccess.h
+ * clock.h
  * 
- * 测试进程
+ * 时钟驱动器
  * 
  */
 
@@ -18,7 +18,7 @@
 
 #pragma once
 
-void fake_shell(void);
-void tick_display(void);
-void __test_proc1(void);
-void __test_proc2(void);
+#include <tayhuang/defs.h>
+
+extern volatile int ticks;
+PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler);

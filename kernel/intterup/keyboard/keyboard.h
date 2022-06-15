@@ -8,9 +8,9 @@
  * 
  * 作者: Flysong
  * 
- * clock.h
+ * keyboard.h
  * 
- * 时钟驱动器
+ * 键盘
  * 
  */
 
@@ -18,6 +18,11 @@
 
 #pragma once
 
-#include <tayhuang/defs.h>
+#include <intterup/init_int.h>
 
-PUBLIC void clock_api_process(void);
+PUBLIC void init_keyboard(void);
+PUBLIC void deal_key(void);
+PUBLIC char getchar(void);
+PUBLIC short keyboard_int_handler(int irq, struct intterup_args *regs, bool entered_handler);
+PUBLIC void keyboard_handler(void);
+PUBLIC void keyboard_api_process(void);

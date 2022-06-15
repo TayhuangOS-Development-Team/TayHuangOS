@@ -37,16 +37,3 @@ PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered
 
     return 0;
 }
-
-PUBLIC void clock_api_process(void) {
-    while (true) {
-        qword pack[20];
-        int caller = 0;
-        while ((caller = receive_any_msg(pack)) == -1);
-        if (pack[0] == 0) {
-            //int pid = caller;
-            //int times = pack[1];
-            //caller delay pack[1] ticks
-        }
-    }
-}

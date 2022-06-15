@@ -47,18 +47,13 @@
 
 #include <syscall/syscall.h>
 
-#include <test/test_proccess.h>
-
-#include <video/video.h>
-#include <clock/clock.h>
-#include <keyboard/keyboard.h>
-
 #include <debug/logging.h>
 #include <assert.h>
 
 #include <kmod/kmod_loader.h>
 
-
+#include <intterup/clock/clock.h>
+#include <intterup/keyboard/keyboard.h>
 
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
@@ -123,10 +118,6 @@ PUBLIC void after_syscall(struct intterup_args *regs) {
         }
     }
 }
-
-PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler);
-
-#define MMIO_START (0x30000000000)
 
 PUBLIC void *kernel_pml4 = NULL;
 
@@ -399,8 +390,6 @@ void initialize(struct boot_args *args) {
     init_idt(); //IDT
 
     en_int();
-
-    init_keyboard(); //键盘
 }
 
 void entry(struct boot_args *_args) {

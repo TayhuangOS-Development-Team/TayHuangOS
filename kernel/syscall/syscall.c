@@ -21,6 +21,7 @@
 #include <debug/logging.h>
 #include <memory/paging.h>
 #include <string.h>
+#include <intterup/clock/clock.h>
 
 PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid

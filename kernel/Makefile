@@ -23,12 +23,11 @@ STD_C_SRC := std/ctype std/string std/math
 MEMORY_C_SRC := memory/paging memory/pmm memory/shared_memory memory/mm_malloc memory/mm
 DISPLAY_C_SRC := display/printk display/video
 TOOL_C_SRC := tool/tostring tool/debug
-INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception
+INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception \
+        intterup/clock/clock intterup/keyboard/keyboard intterup/keyboard/keymap
 INIT_C_SRC := init/init_clock
 PROCESS_C_SRC := process/vmareas process/task_manager
 SYSCALL_C_SRC := syscall/syscall
-DRIVER_C_SRC := driver/video/video driver/clock/clock driver/keyboard/keyboard driver/keyboard/keymap
-TEST_C_SRC := test/test_proccess
 DEBUG_C_SRC := debug/logging
 KMOD_C_SRC := kmod/kmod_loader
 C_SRC := kernel kheap \
@@ -41,8 +40,6 @@ C_SRC := kernel kheap \
 		$(PROCESS_C_SRC) \
 		$(KEYBOARD_C_SRC) \
 		$(SYSCALL_C_SRC) \
-		$(TEST_C_SRC) \
-		$(DRIVER_C_SRC) \
 		$(DEBUG_C_SRC) \
 		$(KMOD_C_SRC)
 
@@ -52,10 +49,10 @@ ASMFLAGS :=
 ASM_SRC := entry intterup/int_handlers syscall/dosyscall
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/kernel/driver/"
+C_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/kernel/driver/"
+CPP_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
 LD_FLAGS :=
 
