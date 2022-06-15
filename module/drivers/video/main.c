@@ -55,11 +55,11 @@ void deal_cmd(int caller, int cmd, qword *param) {
 }
 
 void kmod_main(void) {
-    set_logging_name("VIDEO");
+    set_logging_name("Video");
 
     qword infomations[16] = {DISP_MODE_NONE, 0, 0, NULL};
 
-    while (recv_any_msg(infomations) == -1);
+    recv_any_msg_and_wait(infomations);
 
     display_mode = infomations[0];
     screen_width = infomations[1];
@@ -68,14 +68,12 @@ void kmod_main(void) {
 
     init_heap();
 
-    qword *commands = malloc(600 * sizeof(qword));
+    qword * command = malloc(600 * sizeof(qword));
 
     while (true) {
-        int caller = 0;
-
-        while ((caller = recv_any_msg(commands)) == -1);
-
-        deal_cmd(caller, commands[0], &commands[1]);
+        int caller = recv_any_msg_and_wait(command);
+        
+        deal_cmd(caller, command[0], &command[1]);
     }
 
     while (true);

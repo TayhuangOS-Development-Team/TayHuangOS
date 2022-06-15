@@ -215,9 +215,7 @@ void kmod_main(void) {
     qword *command = malloc(300 * sizeof(qword));
 
     while (true) {
-        int caller = 0;
-
-        while ((caller = recv_any_msg(command)) == -1);
+        int caller = recv_any_msg_and_wait(command);
 
         deal_cmd(caller, command[0], &command[1]);
     }

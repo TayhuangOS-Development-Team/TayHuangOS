@@ -25,14 +25,14 @@
 #include <printf.h>
 
 void kmod_main(void) {
-    set_logging_name("SETUP");
+    set_logging_name("Setup");
 
     char buffer[256] = {};
 
     char mod_name[64] = {};
 
     int kernel = 0;
-    while (recv_any_msg(&kernel) == -1); //获取内核进程pid
+    recv_any_msg_and_wait(&kernel); //获取内核进程pid
 
 
     sprintf (buffer, "Kernel PID: %d", kernel);

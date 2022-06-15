@@ -38,12 +38,12 @@ PUBLIC void load_segment(Elf64_Phdr *program, void *addr, void **start, void **e
 
 
         sprintk (buffer, "Segment %P~%P", program->p_vaddr, program->p_vaddr + program->p_memsz);
-        linfo ("KModLoader", buffer);
+        linfo ("KMod Loader", buffer);
 
         int require_pages = (program->p_memsz / MEMUNIT_SZ) + (program->p_memsz % MEMUNIT_SZ != 0);
 
         sprintk (buffer, "Require pages = %d ; Require to copy %d bytes", require_pages, program->p_filesz);
-        linfo ("KModLoader", buffer);
+        linfo ("KMod Loader", buffer);
 
         int remain_copy = program->p_filesz;
 

@@ -1,24 +1,27 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
- * ipc.h
- * 
- * IPC
- * 
+ *
+ * main.c
+ *
+ * 键盘驱动主程序
+ *
  */
 
 
 
-#pragma once
+#include <debug/logging.h>
 
-int send_msg(void *msg, int dest, int len, int tickout);
-int recv_msg(void *msg, int source);
-int recv_any_msg(void *msg);
-int recv_any_msg_and_wait(void *msg);
+void kmod_main(void) {
+    set_logging_name("Keyboard");
+
+    linfo ("Hello TayhuangOS! I'm keyboard driver");
+
+    while (true);
+}

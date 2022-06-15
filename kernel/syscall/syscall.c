@@ -26,6 +26,8 @@ PRIVATE int __get_pid(void) {
     return current_task->pid; //当前pid
 }
 
+#define WAIT_FROM_ANY_MAGIC (-314159)
+
 PRIVATE bool __receive_msg(void *msg, int source) {
     task_struct *src_task = find_task(source);
     if (src_task == NULL) {//目标不存在
@@ -88,6 +90,20 @@ PRIVATE int __receive_any_msg(void *msg) { //收取第一个消息
     return from;
 }
 
+PRIVATE int __receive_any_msg_and_wait(void *msg) { //收取第一个消息 如果没有就等待
+    if (current_task->ipc_info.queue == NULL) { //无消息
+        //没有期望消息
+        //等待
+        current_task->ipc_info.msg = msg;
+        current_task->ipc_info.wait_for = WAIT_FROM_ANY_MAGIC;
+        current_task->state = WAITING_FOR_RECEIVING;
+        return -1;
+    }
+    else {
+        return __receive_any_msg(msg);
+    }
+}
+
 PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
     task_struct *dest_task = find_task(dest);
     if (dest_task == NULL) {//目标不存在
@@ -105,6 +121,18 @@ PRIVATE bool __send_msg(void *msg, int dest, int len, int tickout) {
         );
         dest_task->ipc_info.wait_for = 0;
         dest_task->ipc_info.msg = NULL;
+        dest_task->state = READY; //同步
+        return true;
+    }
+    if (dest_task->ipc_info.wait_for == WAIT_FROM_ANY_MAGIC) { //是否在等待任意进程来信
+        memcpy(
+            __pa(dest_task->mm_info->pgd, dest_task->ipc_info.msg),
+            __pa(current_task->mm_info->pgd, msg),
+            len
+        );
+        dest_task->ipc_info.wait_for = 0;
+        dest_task->ipc_info.msg = NULL;
+        dest_task->thread_info.rax = pid; //设置返回值
         dest_task->state = READY; //同步
         return true;
     }
@@ -213,6 +241,8 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
         return __signal(arg1, data);
     case 10:
         return __wait_irq(data);
+    case 11:
+        return __receive_any_msg_and_wait(dst);
     }
     return -1;
 }
@@ -263,6 +293,10 @@ PUBLIC bool signal(int pid, int signal) {
 
 PUBLIC void wait_irq(int irq) {
     dosyscall(10, 0, 0, irq, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC int receive_any_msg_and_wait(const void *msg) { //收消息
+    return dosyscall(11, 0, 0, 0, NULL, (void*)msg, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout) {

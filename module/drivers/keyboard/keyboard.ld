@@ -1,24 +1,29 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: Flysong
- * 
- * ipc.h
- * 
- * IPC
- * 
+ *
+ * video.ld
+ *
+ * 键盘驱动LD脚本
+ *
  */
 
 
 
-#pragma once
+ENTRY(_start)
+OUTPUT_FORMAT("elf64-x86-64")
+OUTPUT_ARCH("i386:x86-64")
 
-int send_msg(void *msg, int dest, int len, int tickout);
-int recv_msg(void *msg, int source);
-int recv_any_msg(void *msg);
-int recv_any_msg_and_wait(void *msg);
+SECTIONS
+{
+    . = 0x3000000;
+    .text : { *(.text) }
+    .data : { *(.data) }
+    .bss : { *(.bss) }
+}

@@ -284,8 +284,7 @@ PUBLIC void taskman(void) {
     char buffer[128];
     while (true) {
         qword pack[20];
-        int caller = 0;
-        while ((caller = receive_any_msg(pack)) == -1);
+        int caller = receive_any_msg_and_wait(pack);
         int cmdid = pack[0];
         switch (cmdid)
         {

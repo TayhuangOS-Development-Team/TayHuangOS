@@ -22,6 +22,8 @@
 .type recv_msg, @function
 .global recv_any_msg
 .type recv_any_msg, @function
+.global recv_any_msg_and_wait
+.type recv_any_msg_and_wait, @function
 
 send_msg: /*int send_msg(void *msg, int dest, int len, int tickout)*/
     movq %rsi, %r8
@@ -42,6 +44,12 @@ recv_msg: /*int recv_msg(void *msg, int source)*/
 
 recv_any_msg: /*int recv_any_msg(void *msg)*/
     movq $2, %rax /*sysno = 2(recv_any_msg)*/
+
+    int $0x40
+    ret
+
+recv_any_msg_and_wait: /*int recv_any_msg_and_wait(void *msg)*/
+    movq $11, %rax /*sysno = 11(recv_any_msg_and_wait)*/
 
     int $0x40
     ret
