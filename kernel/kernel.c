@@ -53,7 +53,6 @@
 #include <kmod/kmod_loader.h>
 
 #include <intterup/clock/clock.h>
-#include <intterup/keyboard/keyboard.h>
 
 PRIVATE struct desc_struct GDT[8];
 PRIVATE struct gdt_ptr gdtr;
@@ -276,24 +275,24 @@ void init(void) { //init进程 代表内核
 
     //----------KEYBOARD---------------
     
-    #define KEYBOARD_SIZE (16 * MEMUNIT_SZ)
-    program_info keyboard_mod_info;
-    status = load_kmod_bysetup("keyboard.mod", KEYBOARD_SIZE, &keyboard_mod_info);
+    // #define KEYBOARD_SIZE (16 * MEMUNIT_SZ)
+    // program_info keyboard_mod_info;
+    // status = load_kmod_bysetup("keyboard.mod", KEYBOARD_SIZE, &keyboard_mod_info);
     
-    if (!status) {
-        lerror ("Init", "Can't load keyboard driver!");
-        panic ("Can't load keyboard driver!");
-    }
+    // if (!status) {
+    //     lerror ("Init", "Can't load keyboard driver!");
+    //     panic ("Can't load keyboard driver!");
+    // }
 
-    print_mod_info(&keyboard_mod_info);
+    // print_mod_info(&keyboard_mod_info);
     
-    create_task(KEYBOARD_DRIVER_SERVICE,
-        1, keyboard_mod_info.entry, RFLAGS_KERNEL,
-        keyboard_mod_info.stack_top, keyboard_mod_info.stack_bottom,
-        CS_KERNEL, keyboard_mod_info.pgd,
-        keyboard_mod_info.start, keyboard_mod_info.end,
-        keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top
-    ); //KEYBOARD DRIVER 内核模块进程
+    // create_task(KEYBOARD_DRIVER_SERVICE,
+    //     1, keyboard_mod_info.entry, RFLAGS_KERNEL,
+    //     keyboard_mod_info.stack_top, keyboard_mod_info.stack_bottom,
+    //     CS_KERNEL, keyboard_mod_info.pgd,
+    //     keyboard_mod_info.start, keyboard_mod_info.end,
+    //     keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top
+    // ); //KEYBOARD DRIVER 内核模块进程
 
     //------TTY---------
     #define TTY_SIZE (16 * MEMUNIT_SZ)

@@ -24,7 +24,7 @@ MEMORY_C_SRC := memory/paging memory/pmm memory/shared_memory memory/mm_malloc m
 DISPLAY_C_SRC := display/printk display/video
 TOOL_C_SRC := tool/tostring tool/debug
 INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception \
-        intterup/clock/clock intterup/keyboard/keyboard intterup/keyboard/keymap
+        intterup/clock/clock
 INIT_C_SRC := init/init_clock
 PROCESS_C_SRC := process/vmareas process/task_manager
 SYSCALL_C_SRC := syscall/syscall
