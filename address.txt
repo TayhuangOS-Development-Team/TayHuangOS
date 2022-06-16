@@ -1,5 +1,0 @@
-0000:7c00 Boot Start
-0900:0100 Loader Start
-0900:0178 Loader -> Stage2
-6000:0600 Stage2 Entry
-01000: Stage3 Entry
