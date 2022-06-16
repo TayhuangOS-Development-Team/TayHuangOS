@@ -409,9 +409,9 @@ void entry(struct boot_args *_args) {
     stop_switch = true;
 
     register_irq_handler(0, clock_int_handler);
-    register_irq_handler(1, keyboard_int_handler);
+    //register_irq_handler(1, keyboard_int_handler);
     
-    for (int i = 2 ; i < 16 ; i ++)
+    for (int i = 1 ; i < 16 ; i ++)
         register_irq_handler(i, wakeup_irq_handler); //中断处理器
     
     asmv ("movq $0x125000, %rsp"); //设置堆

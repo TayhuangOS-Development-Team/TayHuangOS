@@ -38,7 +38,6 @@ C_SRC := kernel kheap \
 		$(INTTERUP_C_SRC) \
 		$(INIT_C_SRC) \
 		$(PROCESS_C_SRC) \
-		$(KEYBOARD_C_SRC) \
 		$(SYSCALL_C_SRC) \
 		$(DEBUG_C_SRC) \
 		$(KMOD_C_SRC)
