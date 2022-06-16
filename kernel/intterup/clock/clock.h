@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <tayhuang/defs.h>
+#include <intterup/init_int.h>
 
 extern volatile int ticks;
 PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler);
