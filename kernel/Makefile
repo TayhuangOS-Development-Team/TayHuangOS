@@ -54,13 +54,14 @@ C_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/
 CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(ROOTDIR)/include/std/"  -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
-LD_FLAGS :=
+LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
+LIBRARIES := -lfifo
 
 ifeq ($(MODE), debug)
-	LD_FLAGS := -g
+	LD_FLAGS += -g
 	C_DEFS += -D_DEBUG
 else
-	LD_FLAGS := -s
+	LD_FLAGS += -s
 	CPP_DEFS += -D_DEBUG
 endif
 
@@ -82,7 +83,7 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	$(LD) $(LD_FLAGS) -T kernel.ld -o $(KERNEL_OUTPUT) $^
+	$(LD) $(LD_FLAGS) -T kernel.ld -o $(KERNEL_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
 	$(OBJCOPY) --only-keep-debug $(KERNEL_OUTPUT) $(KERNEL_SYMBOL_OUTPUT)
 	$(OBJCOPY) --strip-debug $(KERNEL_OUTPUT)

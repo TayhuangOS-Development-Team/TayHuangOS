@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * gtty.ld
+ * tty.ld
  *
- * GTTY LD脚本
+ * TTY LD脚本
  *
  */
 
