@@ -1,29 +1,30 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- *
+ * 
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
+ * 
  * --------------------------------------------------------------------------------
- *
+ * 
  * 作者: Flysong
- *
- * video.ld
- *
- * 视频驱动LD脚本
- *
+ * 
+ * fifo.h
+ * 
+ * FIFO POOL
+ * 
  */
 
 
 
-ENTRY(_start)
-OUTPUT_FORMAT("elf64-x86-64")
-OUTPUT_ARCH("i386:x86-64")
+#pragma once
 
-SECTIONS
-{
-    . = 0x5000000;
-    .text : { *(.text) }
-    .data : { *(.data) }
-    .bss : { *(.bss) }
-}
+#include <tayhuang/defs.h>
+#include <fifo.h>
+
+#define FIFO_ADDRESS (0x2000000)
+#define FIFO_SIZE (0x500000)
+
+PUBLIC void mapping_fifo(void);
+PUBLIC void mark_fifo_used(void);
+PUBLIC void init_fifo(void);
+PUBLIC void *alloc_fifo(int size);

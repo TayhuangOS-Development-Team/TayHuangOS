@@ -24,6 +24,7 @@
 #include <display/printk.h>
 #include <memory/pmm.h>
 #include <memory/paging.h>
+#include <memory/fifo_pool.h>
 #include <tayhuang/paging.h>
 #include <kheap.h>
 #include <tayhuang/control_registers.h>

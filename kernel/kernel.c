@@ -33,6 +33,7 @@
 #include <memory/shared_memory.h>
 #include <memory/mm_malloc.h>
 #include <memory/mm.h>
+#include <memory/fifo_pool.h>
 
 #include <display/video.h>
 #include <display/printk.h>
@@ -393,6 +394,8 @@ void initialize(struct boot_args *args) {
     set_mapping(0, 0, pmemsz / 4096, true, false); //全部映射到自身
     mapping_kernel();
 
+    init_fifo();
+
     cr3_t cr3 = get_cr3();
     cr3.page_entry = (qword)kernel_pml4; //设置CR3
     set_cr3(cr3);
@@ -429,7 +432,6 @@ void entry(struct boot_args *_args) {
     stop_switch = true;
 
     register_irq_handler(0, clock_int_handler);
-    //register_irq_handler(1, keyboard_int_handler);
     
     for (int i = 1 ; i < 16 ; i ++)
         register_irq_handler(i, wakeup_irq_handler); //中断处理器
