@@ -1,0 +1,35 @@
+{
+    "fileHeaderComment.parameter":{
+        "*":{
+            "author": "{AUTHOR}",
+            "lic_spdx":[
+                " SPDX-License-Identifier: GPL-3.0-only"
+            ],
+            "lic_tayhuang": [
+                " -------------------------------*-TayhuangOS-*-----------------------------------",
+                " ",
+                "    Copyright (C) ${year}, ${year} TayhuangOS Development Team - All Rights Reserved",
+                " ",
+                " --------------------------------------------------------------------------------",
+                " ",
+                " 作者: ${author}",
+                " ",
+                " ${filename}",
+                " ",
+                " 在此处键入描述",
+                " "
+            ]
+        }
+    },
+    "fileHeaderComment.template":{
+        "header":[
+            "${commentbegin}",
+            "${commentprefix}${lic_spdx}",
+            "${commentprefix}${lic_tayhuang}",
+            "${commentend}",
+            "",
+            "",
+            ""
+        ]
+    }
+}

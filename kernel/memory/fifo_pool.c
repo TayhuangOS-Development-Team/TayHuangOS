@@ -29,7 +29,7 @@ PUBLIC void mapping_fifo(void) {
 }
 
 PUBLIC void mark_fifo_used(void) {
-    for (int i = 0 ; i < FIFO_SIZE ; i += 4096) { //0~内核limit 不可用
+    for (int i = 0 ; i < FIFO_SIZE ; i += 4096) { //设置FIFO已被使用
         mark_used(FIFO_ADDRESS + i);
     }
 }
