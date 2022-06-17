@@ -54,7 +54,7 @@
 
 #include <intterup/clock/clock.h>
 
-PRIVATE struct desc_struct GDT[8];
+PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
 
@@ -74,15 +74,19 @@ PRIVATE inline void set_tss(void *addr, qword base, dword limit, byte type) { //
 
 #define cs0_idx (4)
 #define cs3_idx (6)
+#define cs1_idx (8)
 #define ds0_idx (3)
 #define ds3_idx (5)
+#define ds1_idx (7)
 #define tr_idx (1)
 
 PRIVATE void init_gdt(void) { //初始化GDT
     GDT[0] = (struct desc_struct)GDT_ENTRY(0, 0, 0);
     GDT[cs0_idx] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF);
+    GDT[cs1_idx] = (struct desc_struct)GDT_ENTRY(0xA0BA, 0, 0xFFFFF);
     GDT[cs3_idx] = (struct desc_struct)GDT_ENTRY(0xA0FA, 0, 0xFFFFF);
     GDT[ds0_idx] = (struct desc_struct)GDT_ENTRY(0xA092, 0, 0xFFFFF);
+    GDT[ds1_idx] = (struct desc_struct)GDT_ENTRY(0xA0B2, 0, 0xFFFFF);
     GDT[ds3_idx] = (struct desc_struct)GDT_ENTRY(0xA0F2, 0, 0xFFFFF);
 
     set_tss(&GDT[tr_idx], &TSS, sizeof(TSS), DESC_TSS); //设置TSS
@@ -122,6 +126,8 @@ PUBLIC void *kernel_pml4 = NULL;
 
 #define CS_USER (cs3_idx << 3 | 3)
 #define RFLAGS_USER ((1 << 9) | (3 << 12))
+#define CS_SERVICE (cs1_idx << 3 | 1)
+#define RFLAGS_SERVICE ((1 << 9) | (1 << 12))
 #define CS_KERNEL (cs0_idx << 3)
 #define RFLAGS_KERNEL (1 << 9)
 
@@ -196,9 +202,9 @@ void init(void) { //init进程 代表内核
     //----------EMPTY---------------
 
     empty_task = create_task(0,
-        -1, empty, RFLAGS_KERNEL,
+        -1, empty, RFLAGS_SERVICE,
         0x1400000, 0x1399900,
-        CS_KERNEL, kernel_pml4,
+        CS_SERVICE, kernel_pml4,
         0x1399900, args.kernel_limit,
         args.kernel_limit, args.kernel_limit + 0x100
     );
@@ -206,9 +212,9 @@ void init(void) { //init进程 代表内核
     //----------TASK MANAGER---------------
 
     create_task(TASKMAN_SERVICE,
-        1, taskman, RFLAGS_KERNEL,
+        1, taskman, RFLAGS_SERVICE,
         0x1300000, 0x1250000,
-        CS_KERNEL, kernel_pml4,
+        CS_SERVICE, kernel_pml4,
         0x1250000, args.kernel_limit,
         args.kernel_limit + 0x2000, args.kernel_limit + 0x3000
     );
@@ -216,9 +222,9 @@ void init(void) { //init进程 代表内核
     //----------MM ---------------
 
     create_task(MM_SERVICE,
-        1, mm, RFLAGS_KERNEL,
+        1, mm, RFLAGS_SERVICE,
         0x1350000, 0x1200000,
-        CS_KERNEL, kernel_pml4,
+        CS_SERVICE, kernel_pml4,
         0x1250000, args.kernel_limit,
         args.kernel_limit + 0x2000, args.kernel_limit + 0x3000
     );
@@ -226,9 +232,9 @@ void init(void) { //init进程 代表内核
     //----------SETUP---------------
 
     create_task(SETUP_SERVICE,
-        1, setup_mod_info.entry, RFLAGS_KERNEL,
+        1, setup_mod_info.entry, RFLAGS_SERVICE,
         setup_mod_info.stack_top, setup_mod_info.stack_bottom,
-        CS_KERNEL, setup_mod_info.pgd,
+        CS_SERVICE, setup_mod_info.pgd,
         setup_mod_info.start, setup_mod_info.end,
         setup_mod_info.heap_bottom, setup_mod_info.heap_top
     ); //SETUP MODULE 内核模块进程
@@ -252,9 +258,9 @@ void init(void) { //init进程 代表内核
     print_mod_info(&video_mod_info);
     
     create_task(VIDEO_DRIVER_SERVICE,
-        1, video_mod_info.entry, RFLAGS_KERNEL,
+        1, video_mod_info.entry, RFLAGS_SERVICE,
         video_mod_info.stack_top, video_mod_info.stack_bottom,
-        CS_KERNEL, video_mod_info.pgd,
+        CS_SERVICE, video_mod_info.pgd,
         video_mod_info.start, video_mod_info.end,
         video_mod_info.heap_bottom, video_mod_info.heap_top
     ); //VIDEO DRIVER 内核模块进程
@@ -275,24 +281,24 @@ void init(void) { //init进程 代表内核
 
     //----------KEYBOARD---------------
     
-    // #define KEYBOARD_SIZE (16 * MEMUNIT_SZ)
-    // program_info keyboard_mod_info;
-    // status = load_kmod_bysetup("keyboard.mod", KEYBOARD_SIZE, &keyboard_mod_info);
+    #define KEYBOARD_SIZE (16 * MEMUNIT_SZ)
+    program_info keyboard_mod_info;
+    status = load_kmod_bysetup("keyboard.mod", KEYBOARD_SIZE, &keyboard_mod_info);
     
-    // if (!status) {
-    //     lerror ("Init", "Can't load keyboard driver!");
-    //     panic ("Can't load keyboard driver!");
-    // }
+    if (!status) {
+        lerror ("Init", "Can't load keyboard driver!");
+        panic ("Can't load keyboard driver!");
+    }
 
-    // print_mod_info(&keyboard_mod_info);
+    print_mod_info(&keyboard_mod_info);
     
-    // create_task(KEYBOARD_DRIVER_SERVICE,
-    //     1, keyboard_mod_info.entry, RFLAGS_KERNEL,
-    //     keyboard_mod_info.stack_top, keyboard_mod_info.stack_bottom,
-    //     CS_KERNEL, keyboard_mod_info.pgd,
-    //     keyboard_mod_info.start, keyboard_mod_info.end,
-    //     keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top
-    // ); //KEYBOARD DRIVER 内核模块进程
+    create_task(KEYBOARD_DRIVER_SERVICE,
+        1, keyboard_mod_info.entry, RFLAGS_SERVICE,
+        keyboard_mod_info.stack_top, keyboard_mod_info.stack_bottom,
+        CS_SERVICE, keyboard_mod_info.pgd,
+        keyboard_mod_info.start, keyboard_mod_info.end,
+        keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top
+    ); //KEYBOARD DRIVER 内核模块进程
 
     //------TTY---------
     #define TTY_SIZE (16 * MEMUNIT_SZ)
@@ -308,9 +314,9 @@ void init(void) { //init进程 代表内核
     print_mod_info(&tty_mod_info);
     
     create_task(TTY_DRIVER_SERVICE,
-        1, tty_mod_info.entry, RFLAGS_KERNEL,
+        1, tty_mod_info.entry, RFLAGS_SERVICE,
         tty_mod_info.stack_top, tty_mod_info.stack_bottom,
-        CS_KERNEL, tty_mod_info.pgd,
+        CS_SERVICE, tty_mod_info.pgd,
         tty_mod_info.start, tty_mod_info.end,
         tty_mod_info.heap_bottom, tty_mod_info.heap_top
     ); //tty 内核模块进程
@@ -329,9 +335,9 @@ void init(void) { //init进程 代表内核
     print_mod_info(&tb_mod_info);
     
     create_task(alloc_pid(),
-        1, tb_mod_info.entry, RFLAGS_KERNEL,
+        1, tb_mod_info.entry, RFLAGS_SERVICE,
         tb_mod_info.stack_top, tb_mod_info.stack_bottom,
-        CS_KERNEL, tb_mod_info.pgd,
+        CS_SERVICE, tb_mod_info.pgd,
         tb_mod_info.start, tb_mod_info.end,
         tb_mod_info.heap_bottom, tb_mod_info.heap_top
     ); //Test bench 内核模块进程
