@@ -316,6 +316,11 @@ void init(void) { //init进程 代表内核
     fifo->len ++;
     fifo->wr_pos ++;
 
+    void *fifo1 = alloc_fifo(32);
+    void *fifo2 = alloc_fifo(32);
+    free_fifo (fifo2);
+    free_fifo (fifo1);
+
     //------TTY---------
     #define TTY_SIZE (16 * MEMUNIT_SZ)
 

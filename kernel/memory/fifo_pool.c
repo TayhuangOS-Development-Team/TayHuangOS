@@ -64,7 +64,7 @@ PUBLIC void *alloc_fifo(int size) {
     linfo ("FIFO", buffer);
 
     fifo_area *current = areas;
-    while (current != NULL && current->size < fixed_size) {
+    while (current != NULL && (current->size < fixed_size || current->used)) {
         current = current->next;
     }
 
@@ -91,10 +91,10 @@ PUBLIC void *alloc_fifo(int size) {
 
     sprintk (buffer, "Alloc chunk(start = %P, len = %d)", current->address, current->size);
     linfo ("FIFO", buffer);
-    return NULL;
+    return current->address;
 }
 
-void free_fifo(void *addr) {
+PUBLIC void free_fifo(void *addr) {
     char buffer[160];
 
     fifo_area *last = NULL;
@@ -127,12 +127,14 @@ void free_fifo(void *addr) {
     if (current->next != NULL) {
         if (! current->next->used) {
             current->size += current->next->size;
-            current->next = current->next->next;
+            fifo_area *new_next = current->next->next;
 
             sprintk (buffer, "Combine %P and %P", current->address, current->next->address);
             linfo ("FIFO", buffer);
 
             kfree(current->next);
+
+            current->next = new_next;
         }
     }
 }

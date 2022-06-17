@@ -28,3 +28,4 @@ PUBLIC void mapping_fifo(void);
 PUBLIC void mark_fifo_used(void);
 PUBLIC void init_fifo(void);
 PUBLIC void *alloc_fifo(int size);
+PUBLIC void free_fifo(void *addr);
