@@ -54,6 +54,8 @@
 
 #include <intterup/clock/clock.h>
 
+#include <fifo.h>
+
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
@@ -299,6 +301,19 @@ void init(void) { //init进程 代表内核
         keyboard_mod_info.start, keyboard_mod_info.end,
         keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top
     ); //KEYBOARD DRIVER 内核模块进程
+
+    send_msg(&current_task->pid, KEYBOARD_DRIVER_SERVICE, sizeof(current_task->pid), 20);
+
+    fifo_struct *fifo;
+    receive_msg(&fifo, KEYBOARD_DRIVER_SERVICE);
+    fifo = __pa(keyboard_mod_info.pgd, fifo);
+    *((char*)__pa(keyboard_mod_info.pgd, fifo->buffer)) = '2';
+    
+    //TODO: 在MM进程中添加一个用于分配FIFO的函数 增加FIFO池
+    //内核与所有进程对于FIFO池的地址均一致
+
+    fifo->len ++;
+    fifo->wr_pos ++;
 
     //------TTY---------
     #define TTY_SIZE (16 * MEMUNIT_SZ)

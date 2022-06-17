@@ -30,22 +30,6 @@
 #define SERIAL_STATUS        (SERIAL_BASE + 5)
 #define SERIAL_MODEM_STATUS  (SERIAL_BASE + 6)
 
-bool init_serial(void) {
-    outb(SERIAL_INT_VALID, 0); //禁用COM中断
-    outb(SERIAL_CONTROL, 0x80); //启用DLAB
-    outb(SERIAL_SEND, 0x03); //设置比特波除数(低)
-    outb(SERIAL_INT_VALID, 0x00); //设置比特波除数(高)
-    outb(SERIAL_CONTROL, 0x03); //无奇偶性 1停止位
-    outb(SERIAL_INT_ID, 0xC7); //FIFO(size = 14)
-    outb(SERIAL_MODEM_CONTROL, 0x0B); //
-    outb(SERIAL_MODEM_CONTROL, 0x1E); //
-    outb(SERIAL_SEND, 0xAE);
-    if (inb(SERIAL_KEEP) == 0xAE)
-        return false;
-    outb(SERIAL_MODEM_CONTROL, 0x0F);
-    return true;
-}
-
 void write_serial_char(char ch) {
     while ((inb(SERIAL_STATUS) & 0x20) == 0);
     outb(SERIAL_SEND, ch);

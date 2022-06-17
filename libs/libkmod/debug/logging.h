@@ -20,7 +20,6 @@
 
 #include <tayhuang/types.h>
 
-bool init_serial(void);
 void write_serial_char(char ch);
 void write_serial_str(const char *str);
 void set_logging_name(const char *name);

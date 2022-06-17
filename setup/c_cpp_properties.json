@@ -21,6 +21,7 @@
             "includePath": [
                 "${workspaceFolder}/include/**",
                 "${workspaceFolder}/libs/libkmod/**",
+                "${workspaceFolder}/libs/libfifo/**",
                 "${workspaceFolder}/module/**"
             ],
             "defines": [
@@ -38,7 +39,8 @@
             "name": "Kernel",
             "includePath": [
                 "${workspaceFolder}/include/**",
-                "${workspaceFolder}/kernel/**"
+                "${workspaceFolder}/kernel/**",
+                "${workspaceFolder}/libs/libfifo/**"
             ],
             "defines": [
                 "_DEBUG",

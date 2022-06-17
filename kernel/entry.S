@@ -57,6 +57,13 @@ __set_cr3: /*设置cr3*/
     movq %rdi, %cr3
     ret
 
+    .global __set_cr32
+    .type __set_cr32, @function
+__set_cr32: /*设置cr3*/
+    ud2
+    movq %rdi, %cr3
+    ret
+
     .global __get_cr3
     .type __get_cr3, @function
 __get_cr3: /*获取cr3*/
