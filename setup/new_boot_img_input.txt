@@ -1,7 +1,0 @@
-1
-hd
-flat
-512
-25
-tayhuangBoot.img
-yes

@@ -36,12 +36,12 @@ setup_workspace:
 	else \
 		echo "mount directory already created"; \
 	fi;
-	if [ ! -d "$(TAYHUANGBOOT_MOUNT_DIR)" ];then \
-		sudo mkdir $(TAYHUANGBOOT_MOUNT_DIR); \
-	else \
-		echo "mount directory already created"; \
-	fi;
-	bximage < ./setup/new_boot_img_input.txt
+	# if [ ! -d "$(TAYHUANGBOOT_MOUNT_DIR)" ];then \
+	# 	sudo mkdir $(TAYHUANGBOOT_MOUNT_DIR); \
+	# else \
+	# 	echo "mount directory already created"; \
+	# fi;
+	# bximage < ./setup/new_boot_img_input.txt
 	bximage < ./setup/new_system_img_input.txt
 	mkfs.msdos -F 32 ./tayhuangOS.img
 	mkdir -v -p $(BUILDDIR)
@@ -51,25 +51,25 @@ setup_workspace:
 #编译
 .PHONY: build
 build:
-	cd arch/$(ARCHITECTURE)/ ; make build
+	#cd arch/$(ARCHITECTURE)/ ; make build
 	cd libs ; make build
-	cd kernel ; make build
+	#cd kernel ; make build
 	cd module ; make build
 
 #清理
 .PHONY: clean
 clean:
-	cd arch/$(ARCHITECTURE)/ ; make clean
+	# cd arch/$(ARCHITECTURE)/ ; make clean
 	cd libs ; make clean
-	cd kernel ; make clean
+	# cd kernel ; make clean
 	cd module ; make clean
 
 #写入映像
 .PHONY: image
 image:
-	cd arch/$(ARCHITECTURE)/ ; make image
-	sudo umount $(TAYHUANGBOOT_MOUNT_DIR)
+	# cd arch/$(ARCHITECTURE)/ ; make image
+	# sudo umount $(TAYHUANGBOOT_MOUNT_DIR)
 	sudo mount -o loop tayhuangOS.img $(TAYHUANGOS_MOUNT_DIR)
-	cd kernel ; make image
-	cd module ; make image
+	# cd kernel ; make image
+	# cd module ; make image
 	sudo umount $(TAYHUANGOS_MOUNT_DIR)

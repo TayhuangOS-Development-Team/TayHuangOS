@@ -85,3 +85,4 @@ wait_irq: /*void wait_irq(int irq)*/
 
     int $0x40
     ret
+    
