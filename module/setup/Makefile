@@ -2,7 +2,6 @@ OBJECTSDIR := $(OBJECTSDIR)/setup/
 
 SETUP_OUTPUT := $(BINDIR)/setup.mod
 SETUP_SYMBOL_OUTPUT := $(BINDIR)/setup.sym
-OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -63,4 +62,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(SETUP_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(SETUP_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

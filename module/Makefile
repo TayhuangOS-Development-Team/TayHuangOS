@@ -6,22 +6,22 @@ export OBJECTSDIR MODULEDIR
 #编译
 .PHONY: build
 build:
-	cd drivers ; make build
-	cd setup ; make build
-	cd test ; make build
-	cd vdd ; make build
+	$(CHANGE_DIR) drivers ; $(MAKE) build
+	$(CHANGE_DIR) setup ; $(MAKE) build
+	$(CHANGE_DIR) test ; $(MAKE) build
+	$(CHANGE_DIR) vdd ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	cd drivers ; make clean
-	cd setup ; make clean
-	cd test ; make clean
-	cd vdd ; make clean
+	$(CHANGE_DIR) drivers ; $(MAKE) clean
+	$(CHANGE_DIR) setup ; $(MAKE) clean
+	$(CHANGE_DIR) test ; $(MAKE) clean
+	$(CHANGE_DIR) vdd ; $(MAKE) clean
 
 .PHONY: image
 image:
-	cd drivers ; make image
-	cd setup ; make image
-	cd test ; make image
-	cd vdd ; make image
+	$(CHANGE_DIR) drivers ; $(MAKE) image
+	$(CHANGE_DIR) setup ; $(MAKE) image
+	$(CHANGE_DIR) test ; $(MAKE) image
+	$(CHANGE_DIR) vdd ; $(MAKE) image

@@ -2,7 +2,6 @@ OBJECTSDIR := $(OBJECTSDIR)/tty/
 
 TTY_OUTPUT := $(BINDIR)/tty.mod
 TTY_SYMBOL_OUTPUT := $(BINDIR)/tty.sym
-OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -61,4 +60,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(TTY_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(TTY_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

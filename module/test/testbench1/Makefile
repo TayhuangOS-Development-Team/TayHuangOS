@@ -2,7 +2,6 @@ OBJECTSDIR := $(OBJECTSDIR)/testbench1/
 
 TESTBENCH_OUTPUT := $(BINDIR)/tb1.mod
 TESTBENCH_SYMBOL_OUTPUT := $(BINDIR)/tb1.sym
-OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -61,4 +60,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(TESTBENCH_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(TESTBENCH_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

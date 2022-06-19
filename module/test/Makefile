@@ -6,13 +6,13 @@ export OBJECTSDIR DRIVERSDIR
 #编译
 .PHONY: build
 build:
-	cd ./testbench1/ ; make build
+	$(CHANGE_DIR) ./testbench1/ ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	cd ./testbench1/ ; make clean
+	$(CHANGE_DIR) ./testbench1/ ; $(MAKE) clean
 
 .PHONY: image
 image:
-	cd ./testbench1/ ; make image
+	$(CHANGE_DIR) ./testbench1/ ; $(MAKE) image

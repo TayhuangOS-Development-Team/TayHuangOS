@@ -6,16 +6,16 @@ export OBJECTSDIR DRIVERSDIR
 #编译
 .PHONY: build
 build:
-	cd ./video/ ; make build
-	cd ./keyboard/ ; make build
+	$(CHANGE_DIR) ./video/ ; $(MAKE) build
+	$(CHANGE_DIR) ./keyboard/ ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	cd ./video/ ; make clean
-	cd ./keyboard/ ; make clean
+	$(CHANGE_DIR) ./video/ ; $(MAKE) clean
+	$(CHANGE_DIR) ./keyboard/ ; $(MAKE) clean
 
 .PHONY: image
 image:
-	cd ./video/ ; make image
-	cd ./keyboard/ ; make image
+	$(CHANGE_DIR) ./video/ ; $(MAKE) image
+	$(CHANGE_DIR) ./keyboard/ ; $(MAKE) image

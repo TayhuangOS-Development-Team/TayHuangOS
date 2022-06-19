@@ -2,7 +2,6 @@ OBJECTSDIR := $(OBJECTSDIR)/keyboard/
 
 KEYBOARD_OUTPUT := $(BINDIR)/keyboard.mod
 KEYBOARD_SYMBOL_OUTPUT := $(BINDIR)/keyboard.sym
-OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -60,4 +59,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(KEYBOARD_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(KEYBOARD_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

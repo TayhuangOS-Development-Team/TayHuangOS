@@ -6,13 +6,13 @@ export OBJECTSDIR VDDDIR
 #编译
 .PHONY: build
 build:
-	cd tty ; make build
+	$(CHANGE_DIR) tty ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	cd tty ; make clean
+	$(CHANGE_DIR) tty ; $(MAKE) clean
 
 .PHONY: image
 image:
-	cd tty ; make image
+	$(CHANGE_DIR) tty ; $(MAKE) image

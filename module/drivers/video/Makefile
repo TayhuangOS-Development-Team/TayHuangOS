@@ -2,7 +2,6 @@ OBJECTSDIR := $(OBJECTSDIR)/video/
 
 VIDEO_OUTPUT := $(BINDIR)/video.mod
 VIDEO_SYMBOL_OUTPUT := $(BINDIR)/video.sym
-OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -65,4 +64,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(VIDEO_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(VIDEO_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

@@ -4,13 +4,13 @@ export OBJECTSDIR
 #编译
 .PHONY: build
 build:
-	cd libc ; make build
-	cd libkmod ; make build
-	cd libfifo ; make build
+	$(CHANGE_DIR) libc ; $(MAKE) build
+	$(CHANGE_DIR) libkmod ; $(MAKE) build
+	$(CHANGE_DIR) libfifo ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	cd libc ; make clean
-	cd libkmod ; make clean
-	cd libfifo ; make clean
+	$(CHANGE_DIR) libc ; $(MAKE) clean
+	$(CHANGE_DIR) libkmod ; $(MAKE) clean
+	$(CHANGE_DIR) libfifo ; $(MAKE) clean
