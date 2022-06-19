@@ -92,6 +92,11 @@ setup_workspace:
 	$(SUDO) $(LOOP_SETUP) /dev/loop17 $(TAYHUANGOS_IMG) -o 1048576
 
 	$(SUDO) $(MKFS) -F 32 /dev/loop17
+	$(SUDO) $(MOUNT) /dev/loop17 $(TAYHUANGOS_MOUNT_DIR)
+
+	$(SUDO) $(GRUB_INSTALL) --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="normal part_msdos ext2 multiboot" /dev/loop16
+
+	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 
 	$(SUDO) $(LOOP_SETUP) -d /dev/loop16
 	$(SUDO) $(LOOP_SETUP) -d /dev/loop17
