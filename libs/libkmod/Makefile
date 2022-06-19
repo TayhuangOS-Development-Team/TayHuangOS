@@ -53,6 +53,7 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
+	$(MKDIR) -p -v $(dir $@)
 	$(AR) rvs $(LIBKMOD_OUTPUT) $^
 
 .PHONY: clean

@@ -4,6 +4,14 @@
 # FILESYSTEM := msdos
 # MODE := debug
 
+#定义区
+
+ARCHITECTURE ?= x86_64
+ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
+MODE ?= debug
+
+export ARCHITECTURE ARCHDEF_C MODE
+
 #目录区
 
 ROOTDIR := $(shell pwd)
@@ -11,7 +19,6 @@ BUILDDIR := $(ROOTDIR)/build/$(MODE)/
 BINDIR := $(BUILDDIR)/bin/
 OBJECTSDIR := $(BUILDDIR)/objects/
 TAYHUANGOS_MOUNT_DIR := /mnt/tayhuangOS
-TAYHUANGBOOT_MOUNT_DIR := /mnt/tayhuangBoot
 TAYHUANGOS_IMG := tayhuangOS.img
 
 #工具区
@@ -41,14 +48,6 @@ LOOP_SETUP := losetup
 export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
 export GCC GPP ASM GAS RM MKDIR LD IMAGEGEN _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
 
-#定义区
-
-ARCHITECTURE ?= x86_64
-ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
-MODE ?= debug
-
-export ARCHITECTURE ARCHDEF_C MODE
-
 #任务区
 
 #编译并写入映像
@@ -74,12 +73,6 @@ setup_workspace:
 	else \
 		$(ECHO) "mount directory already created"; \
 	fi;
-	# if [ ! -d "$(TAYHUANGBOOT_MOUNT_DIR)" ];then \
-	# 	$(SUDO) $(MKDIR) $(TAYHUANGBOOT_MOUNT_DIR); \
-	# else \
-	# 	$(ECHO) "mount directory already created"; \
-	# fi;
-	# $(IMAGEGEN) < ./setup/new_boot_img_input.txt
 	$(IMAGEGEN) < ./setup/new_system_img_input.txt
 
 	$(MKDIR) -v -p $(BUILDDIR)
@@ -105,28 +98,30 @@ setup_workspace:
 #编译
 .PHONY: build
 build:
-	#$(CHANGE_DIR) arch/$(ARCHITECTURE)/ ; $(MAKE) build
 	$(CHANGE_DIR) libs ; $(MAKE) build
+	$(CHANGE_DIR) loader ; $(MAKE) build
 	#$(CHANGE_DIR) kernel ; $(MAKE) build
 	$(CHANGE_DIR) module ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	# $(CHANGE_DIR) arch/$(ARCHITECTURE)/ ; $(MAKE) clean
 	$(CHANGE_DIR) libs ; $(MAKE) clean
+	$(CHANGE_DIR) loader ; $(MAKE) clean
 	# $(CHANGE_DIR) kernel ; $(MAKE) clean
 	$(CHANGE_DIR) module ; $(MAKE) clean
 
 #写入映像
 .PHONY: image
 image:
-	# $(CHANGE_DIR) arch/$(ARCHITECTURE)/ ; $(MAKE) image
-	# $(SUDO) $(UMOUNT) $(TAYHUANGBOOT_MOUNT_DIR)
 	$(SUDO) $(LOOP_SETUP) /dev/loop17 $(TAYHUANGOS_IMG) -o 1048576
 	$(SUDO) $(MOUNT) /dev/loop17 $(TAYHUANGOS_MOUNT_DIR)
-	# $(CHANGE_DIR) kernel ; $(MAKE) image
+
 	$(SUDO) $(COPY) ./configs/grub.cfg $(TAYHUANGOS_MOUNT_DIR)/boot/grub
+
+	$(CHANGE_DIR) loader ; $(MAKE) image
+	# $(CHANGE_DIR) kernel ; $(MAKE) image
 	$(CHANGE_DIR) module ; $(MAKE) image
+
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 	$(SUDO) $(LOOP_SETUP) -d /dev/loop17

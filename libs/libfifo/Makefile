@@ -43,6 +43,7 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
+	$(MKDIR) -p -v $(dir $@)
 	$(AR) rvs $(LIBFIFO_OUTPUT) $^
 
 .PHONY: clean
