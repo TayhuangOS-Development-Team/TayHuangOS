@@ -126,6 +126,7 @@ image:
 	$(SUDO) $(LOOP_SETUP) /dev/loop17 $(TAYHUANGOS_IMG) -o 1048576
 	$(SUDO) $(MOUNT) /dev/loop17 $(TAYHUANGOS_MOUNT_DIR)
 	# $(CHANGE_DIR) kernel ; $(MAKE) image
+	$(SUDO) $(COPY) ./configs/grub.cfg $(TAYHUANGOS_MOUNT_DIR)/boot/grub
 	$(CHANGE_DIR) module ; $(MAKE) image
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 	$(SUDO) $(LOOP_SETUP) -d /dev/loop17

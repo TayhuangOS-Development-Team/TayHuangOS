@@ -1,1 +1,1 @@
-qemu-system-x86_64 -hda tayhuangBoot.img -hdc tayhuangOS.img -m 64 -serial stdio -s -S
+qemu-system-x86_64 -hda tayhuangOS.img -m 64 -serial stdio -s -S

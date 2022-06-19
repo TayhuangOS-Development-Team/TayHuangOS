@@ -17,6 +17,23 @@
             "intelliSenseMode": "{YOUR MODE}"
         },
         {
+            "name": "Loader",
+            "includePath": [
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/loader/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64"
+            ],
+            "compilerPath": "{YOUR COMPILER}",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "{YOUR MODE}"
+        },
+        {
             "name": "Module",
             "includePath": [
                 "${workspaceFolder}/include/**",
