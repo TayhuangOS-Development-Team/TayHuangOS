@@ -1,6 +1,6 @@
 #include "multiboot2.h"
 
-#define HEADER_LENGTH (64)
+#define HEADER_LENGTH (16)
 
 struct multiboot_header HEADER __attribute__((section(".multiboot"))) = {
     .magic    = MULTIBOOT2_HEADER_MAGIC,
@@ -10,5 +10,6 @@ struct multiboot_header HEADER __attribute__((section(".multiboot"))) = {
 };
 
 void entry(void) {
+    *(short*)(0xB8000) = 0x0F42;
     while (1);
 }
