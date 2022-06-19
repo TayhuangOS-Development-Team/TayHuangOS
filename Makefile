@@ -11,7 +11,17 @@ BINDIR := $(BUILDDIR)/bin/
 OBJECTSDIR := $(BUILDDIR)/objects/
 TAYHUANGOS_MOUNT_DIR := /mnt/tayhuangOS
 TAYHUANGBOOT_MOUNT_DIR := /mnt/tayhuangBoot
-export ROOTDIR MODE BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
+
+MKDIR := mkdir
+GCC := gcc
+GPP := g++
+ASM := nasm
+GAS := as
+RM := rm
+LD := ld
+
+export ROOTDIR MODE BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR 
+export GCC GPP ASM GAS RM MKDIR LD
 
 #编译并写入映像
 .PHONY: all
@@ -32,21 +42,22 @@ setup_and_build: setup_workspace all
 .PHONY: setup_workspace
 setup_workspace:
 	if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
-		sudo mkdir $(TAYHUANGOS_MOUNT_DIR); \
+		sudo $(MKDIR) $(TAYHUANGOS_MOUNT_DIR); \
 	else \
 		echo "mount directory already created"; \
 	fi;
 	# if [ ! -d "$(TAYHUANGBOOT_MOUNT_DIR)" ];then \
-	# 	sudo mkdir $(TAYHUANGBOOT_MOUNT_DIR); \
+	# 	sudo $(MKDIR) $(TAYHUANGBOOT_MOUNT_DIR); \
 	# else \
 	# 	echo "mount directory already created"; \
 	# fi;
 	# bximage < ./setup/new_boot_img_input.txt
 	bximage < ./setup/new_system_img_input.txt
 	mkfs.msdos -F 32 ./tayhuangOS.img
-	mkdir -v -p $(BUILDDIR)
-	mkdir -v -p $(OBJECTSDIR)
-	mkdir -v -p $(BINDIR)
+
+	$(MKDIR) -v -p $(BUILDDIR)
+	$(MKDIR) -v -p $(OBJECTSDIR)
+	$(MKDIR) -v -p $(BINDIR)
 
 #编译
 .PHONY: build
