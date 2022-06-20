@@ -3,14 +3,16 @@
 # ARCHITECTURE := x86_64 #架构
 # FILESYSTEM := msdos
 # MODE := debug
+# VBE_MODE ?= DISABLE
 
 #定义区
 
 ARCHITECTURE ?= x86_64
 ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
 MODE ?= debug
+VBE_MODE ?= DISABLE
 
-export ARCHITECTURE ARCHDEF_C MODE
+export ARCHITECTURE ARCHDEF_C MODE VBE_MODE
 
 #目录区
 
@@ -79,7 +81,7 @@ setup_workspace:
 	$(MKDIR) -v -p $(OBJECTSDIR)
 	$(MKDIR) -v -p $(BINDIR)
 
-	$(FDISK) $(TAYHUANGOS_IMG) < ./setup/fdisk_img.txt
+	$(FDISK) $(TAYHUANGOS_IMG)
 
 	$(SUDO) $(LOOP_SETUP) /dev/loop16 $(TAYHUANGOS_IMG)
 	$(SUDO) $(LOOP_SETUP) /dev/loop17 $(TAYHUANGOS_IMG) -o 1048576

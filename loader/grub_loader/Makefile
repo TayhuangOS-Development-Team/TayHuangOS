@@ -7,9 +7,15 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-C_SRC := main
+C_SRC := main printf
 ASM_SRC :=
 C_DEFS := $(ARCHDEF_C)
+
+ifeq ($(VBE_MODE), ENABLE)
+	C_DEFS := -DVBE_ENABLE
+endif
+
+
 C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include" -I"$(LOADER_DIR)/grub_loader"
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
@@ -26,7 +32,7 @@ $(OBJECTSDIR)/%.o : %.asm
 .PHONY: build
 build: $(OBJECTS)
 	$(MKDIR) -p -v $(dir $(GRUB_LOADER_OUTPUT))
-	$(LD) -m elf_i386 -s -T loader.ld -o $(GRUB_LOADER_OUTPUT) $(OBJECTS)
+	$(LD) -s -T loader.ld -o $(GRUB_LOADER_OUTPUT) $(OBJECTS)
 
 .PHONY: clean
 clean:

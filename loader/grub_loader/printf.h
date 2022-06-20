@@ -8,26 +8,17 @@
  *
  * 作者: Flysong
  *
- * loader.ld
+ * printf.h
  *
- * 加载器LD脚本
+ * printf
  *
  */
 
 
 
-ENTRY(entry)
-OUTPUT_FORMAT("elf32-i386")
-OUTPUT_ARCH("i386")
+#pragma once
 
-SECTIONS
-{
-    . = 0x1008000;
-    .text : {
-        . = ALIGN(8);
-        KEEP(*(.multiboot));
-        *(.text)
-    }
-    .data : { *(.data) }
-    .bss : { *(.bss) }
-}
+#define VIDEO_ADDRESS (0xB8000)
+
+void write_char(char ch, int color, int posx, int posy);
+void write_str(const char *str, int color, int posx, int posy);
