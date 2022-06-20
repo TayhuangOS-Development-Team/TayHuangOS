@@ -18,6 +18,7 @@
 
 #include "multiboot2.h"
 #include "printf.h"
+#include "init.h"
 
 #ifdef VBE_ENABLE
     #define HEADER_LENGTH (24)
@@ -50,5 +51,6 @@ struct multiboot_header_tag mbend MBSC = {
 
 void entry(void) {
     write_str ("Hello, OS World!", 0x0F, 0, 0);
+    init_gdt();
     while (1);
 }
