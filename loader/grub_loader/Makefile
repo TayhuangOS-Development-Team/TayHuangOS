@@ -8,7 +8,7 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 C_SRC := main printf init
-ASM_SRC :=
+ASM_SRC := lm_operators
 C_DEFS := $(ARCHDEF_C)
 
 ifeq ($(VBE_MODE), ENABLE)
