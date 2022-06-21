@@ -52,5 +52,6 @@ struct multiboot_header_tag mbend MBSC = {
 void entry(void) {
     write_str ("Hello, OS World!", 0x0F, 0, 0);
     init_gdt();
+    write_str ("Hello, OS World!", 0x0F, 0, 1);
     while (1);
 }

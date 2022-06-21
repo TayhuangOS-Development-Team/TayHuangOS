@@ -98,15 +98,11 @@ db 0xEA
 .jmp_pos: dd 0
 .jmp_seg: dw 0
 
+%define CS_SELECTOR (1 << 3)
+
 global flush_cs
 flush_cs:
-    mov word [.jmp_seg], ax
-    mov eax, flush_end
-    mov dword [.jmp_pos], eax
-
-db 0xEA
-.jmp_pos: dd 0
-.jmp_seg: dw 0
+    jmp CS_SELECTOR:flush_end
 
 flush_end:
     ret

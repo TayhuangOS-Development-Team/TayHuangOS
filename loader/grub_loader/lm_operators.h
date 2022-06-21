@@ -30,4 +30,4 @@ PUBLIC void set_cr4(int cr4);
 PUBLIC int get_cr4(void);
 PUBLIC void set_efer(int efer);
 PUBLIC int get_efer(void);
-PUBLIC void flush_cs(short cs);
+PUBLIC void flush_cs(void);

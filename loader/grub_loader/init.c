@@ -17,6 +17,7 @@
 
 
 #include "init.h"
+#include "lm_operators.h"
 #include <tayhuang/int_vectors.h>
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
@@ -31,11 +32,13 @@ PUBLIC void init_gdt(void) {
     GDT[1] = (struct desc_struct)GDT_ENTRY(0xC09A, 0, 0xFFFFF); //代码段
     GDT[2] = (struct desc_struct)GDT_ENTRY(0xC093, 0, 0xFFFFF); //数据段
     GDT[3] = (struct desc_struct)GDT_ENTRY(0x0089, 4096, 103); //TSS
-    GDT[4] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF); //代码段64bit
-    GDT[5] = (struct desc_struct)GDT_ENTRY(0xC093, 0, 0xFFFFF); //数据段64bit
+    GDT[6] = (struct desc_struct)GDT_ENTRY(0xA09A, 0, 0xFFFFF); //代码段64bit
+    GDT[7] = (struct desc_struct)GDT_ENTRY(0xC093, 0, 0xFFFFF); //数据段64bit
     gdtr.ptr = GDT;
     gdtr.len = sizeof (GDT) - 1;
     asmv ("lgdtl %0" : : "m"(gdtr)); //加载GDT
+    flush_cs();
+    stds(2 << 3);
 }
 
 PUBLIC void init_pic(void) {
