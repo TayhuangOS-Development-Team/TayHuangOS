@@ -8,7 +8,7 @@
 ;
 ; 作者: Flysong
 ;
-; arch/x86_64/tayboot/stage3/lm/lm_operators.asm
+; arch/x86_64/tayhuang/stage3/lm/lm_operators.asm
 ;
 ; 长模式相关汇编操作
 ;
@@ -102,7 +102,7 @@ db 0xEA
 
 global flush_cs
 flush_cs:
-    jmp CS_SELECTOR:flush_end
+    jmp CS_SELECTOR:flush_end ;利用长跳刷新流水线并更新CS
 
 flush_end:
     ret

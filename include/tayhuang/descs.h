@@ -57,10 +57,19 @@ struct tss_struct {
 	b16	limit1 : 4, zero0 : 3;
 	bool g : 1;
 	b16 base2 : 8;
-#ifdef ARCH_x86_64
 	b32	base3;
 	b32	zero1;
-#endif
+} __attribute__((packed));//引用自linux
+
+struct tss_struct32 {
+	b16	limit0;
+	b16	base0;
+
+	b16	base1 : 8, type : 5, dpl : 2;
+	bool p : 1;
+	b16	limit1 : 4, zero0 : 3;
+	bool g : 1;
+	b16 base2 : 8;
 } __attribute__((packed));//引用自linux
 
 typedef struct tss_struct tss_desc;
@@ -85,13 +94,20 @@ struct _gate_struct {
 	b16		segment;
 	struct idt_bits	bits;
 	b16		offset_middle;
-#ifdef ARCH_x86_64
     b32		offset_high;
 	b32		reserved;
-#endif
 } __attribute__((packed));//引用自linux
 
 typedef struct _gate_struct gate_desc;
+
+struct _gate_struct32 {
+	b16		offset_low;
+	b16		segment;
+	struct idt_bits	bits;
+	b16		offset_middle;
+} __attribute__((packed));//引用自linux
+
+typedef struct _gate_struct32 gate_desc32;
 
 struct desc_ptr {
 	word size;

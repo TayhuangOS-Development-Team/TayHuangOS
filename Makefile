@@ -3,7 +3,7 @@
 # ARCHITECTURE := x86_64 #架构
 # FILESYSTEM := msdos
 # MODE := debug
-# VBE_MODE ?= DISABLE
+# VBE_MODE := DISABLE
 
 #定义区
 

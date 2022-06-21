@@ -7,8 +7,10 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-C_SRC := main printf init
-ASM_SRC := lm_operators
+LIBS_C_SRC := ctype string tostring
+C_SRC := main printf init int_handlers \
+	$(foreach src, $(LIBS_C_SRC), libs/$(src))
+ASM_SRC := lm_operators _int_handlers
 C_DEFS := $(ARCHDEF_C)
 
 ifeq ($(VBE_MODE), ENABLE)

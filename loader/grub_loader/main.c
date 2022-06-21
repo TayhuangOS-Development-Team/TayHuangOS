@@ -16,42 +16,75 @@
 
 
 
-#include "multiboot2.h"
+#include "libs/multiboot2.h"
 #include "printf.h"
 #include "init.h"
 
+//Tayhuang OS GRUB Loader Multiboot2 header struct
+struct tayhuang_header {
+    struct multiboot_header header;
 #ifdef VBE_ENABLE
-    #define HEADER_LENGTH (24)
-#else
-    #define HEADER_LENGTH (24)
+    struct multiboot_header_tag_framebuffer framebuffer;
 #endif
+    struct multiboot_header_tag end;
+} __attribute__((packed));
 
-#define MBSC __attribute__((section(".multiboot")))
-
-struct multiboot_header mbheader MBSC = {
-    .magic    = MULTIBOOT2_HEADER_MAGIC,
-    .architecture = MULTIBOOT_ARCHITECTURE_I386,
-    .header_length = HEADER_LENGTH,
-    .checksum = -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + HEADER_LENGTH),
-};
-
+//将这个头放在.multiboot段下
+struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = {
+    .header = {
+        .magic    = MULTIBOOT2_HEADER_MAGIC,
+        .architecture = MULTIBOOT_ARCHITECTURE_I386,
+        .header_length = sizeof (struct tayhuang_header),
+        .checksum = -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + sizeof(struct tayhuang_header)),
+    },
 #ifdef VBE_ENABLE
-struct multiboot_tag_framebuffer mbframebuffer MBSC = {
-};
-#else
+    #define FRAMEBUFFER_WIDTH 1024
+    #define FRAMEBUFFER_HEIGHT 768
+    #define FRAMEBUFFER_BPP 24
+    //FIXME: Error here
+    .framebuffer = {
+        .type = MULTIBOOT_HEADER_TAG_FRAMEBUFFER,
+        .flags = MULTIBOOT_HEADER_TAG_OPTIONAL,
+        .size = sizeof (struct multiboot_header_tag_framebuffer),
+        .width = FRAMEBUFFER_WIDTH,
+        .height = FRAMEBUFFER_HEIGHT,
+        .depth = FRAMEBUFFER_BPP
+    },
 #endif
-
-
-struct multiboot_header_tag mbend MBSC = {
-    .type = MULTIBOOT_HEADER_TAG_END,
-    .flags = 0,
-    .size = 8
+    .end = {
+        .type = MULTIBOOT_HEADER_TAG_END,
+        .flags = 0,
+        .size = sizeof (struct multiboot_header_tag)
+    }
 };
 
+//loader主函数
+void loader_main(void *multiboot_info) {
+    asmv ("finit");
 
-void entry(void) {
-    write_str ("Hello, OS World!", 0x0F, 0, 0);
     init_gdt();
-    write_str ("Hello, OS World!", 0x0F, 0, 1);
-    while (1);
+
+    #ifndef VBE_ENABLE
+        printf ("Hello, OS World!I'm \"%s\"\n", "Tayhuang OS Grub Loader");
+        printf ("Loading Kernel and Setup Module Now...\n");
+    #endif
+
+    init_idt();
+    init_pic();
+    
+    asmv ("sti");
+}
+
+//loader入口点
+void entry(void) {
+    register int magic __asm__("eax"); //Loader 魔数 存放在eax
+    register void *multiboot_info __asm__("ebx"); //multiboot info 存放在ebx
+
+    if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
+        while (true);
+    }
+
+    loader_main(multiboot_info); //进入loader主函数
+
+    while (1); //jmp $
 }
