@@ -12,17 +12,17 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-STD_C_SRC := std/ctype std/string
-IPC_C_SRC := ipc/ipc
-DEBUG_C_SRC := debug/logging
-TOOL_C_SRC := tool/tostring
-MEMORY_C_SRC := memory/malloc memory/shared_memory
+STD_C_SRC := ctype string
+IPC_C_SRC := ipc
+DEBUG_C_SRC := logging
+TOOL_C_SRC := tostring
+MEMORY_C_SRC := malloc shared_memory
 C_SRC := printf \
-         $(IPC_C_SRC) \
-         $(DEBUG_C_SRC) \
-		 $(TOOL_C_SRC) \
-		 $(STD_C_SRC) \
-		 $(MEMORY_C_SRC)
+         $(foreach src, $(IPC_C_SRC), ipc/$(src)) \
+         $(foreach src, $(DEBUG_C_SRC), debug/$(src)) \
+         $(foreach src, $(TOOL_C_SRC), tool/$(src)) \
+         $(foreach src, $(STD_C_SRC), std/$(src)) \
+         $(foreach src, $(MEMORY_C_SRC), memory/$(src))
 
 CPP_SRC :=
 

@@ -12,8 +12,8 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-MISC_C_SRC := misc/timer
-C_SRC := $(MISC_C_SRC)
+MISC_C_SRC := timer
+C_SRC := $(foreach src, $(MISC_C_SRC), misc/$(src))
 
 CPP_SRC :=
 

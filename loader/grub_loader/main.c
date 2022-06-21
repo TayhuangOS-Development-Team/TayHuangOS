@@ -80,6 +80,8 @@ void entry(void) {
     register int magic __asm__("eax"); //Loader 魔数 存放在eax
     register void *multiboot_info __asm__("ebx"); //multiboot info 存放在ebx
 
+    asmv ("movl $0x1008000, %esp");
+
     if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
         while (true);
     }
