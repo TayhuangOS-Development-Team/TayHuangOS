@@ -102,7 +102,7 @@ setup_workspace:
 build:
 	$(CHANGE_DIR) libs ; $(MAKE) build
 	$(CHANGE_DIR) loader ; $(MAKE) build
-	#$(CHANGE_DIR) kernel ; $(MAKE) build
+	$(CHANGE_DIR) kernel ; $(MAKE) build
 	$(CHANGE_DIR) module ; $(MAKE) build
 
 #清理
@@ -110,7 +110,7 @@ build:
 clean:
 	$(CHANGE_DIR) libs ; $(MAKE) clean
 	$(CHANGE_DIR) loader ; $(MAKE) clean
-	# $(CHANGE_DIR) kernel ; $(MAKE) clean
+	$(CHANGE_DIR) kernel ; $(MAKE) clean
 	$(CHANGE_DIR) module ; $(MAKE) clean
 
 #写入映像
@@ -122,7 +122,7 @@ image:
 	$(SUDO) $(COPY) ./configs/grub.cfg $(TAYHUANGOS_MOUNT_DIR)/boot/grub
 
 	$(CHANGE_DIR) loader ; $(MAKE) image
-	# $(CHANGE_DIR) kernel ; $(MAKE) image
+	$(CHANGE_DIR) kernel ; $(MAKE) image
 	$(CHANGE_DIR) module ; $(MAKE) image
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
