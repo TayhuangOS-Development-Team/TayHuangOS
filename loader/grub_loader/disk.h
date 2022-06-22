@@ -33,4 +33,4 @@
 PUBLIC void init_disk_driver(void);
 PUBLIC void identify_disk(int selector, void *dst);
 PUBLIC void read_sector(dword lba, int num, int selector, void *dst);
-PUBLIC void get_partition(int number, partition_member *member);
+PUBLIC void get_partition(int selector, int number, partition_member *member);

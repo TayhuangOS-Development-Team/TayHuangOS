@@ -19,6 +19,9 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-#include <tayhuang/partition.h>
 
 typedef void *fs_context;
+
+PUBLIC fs_context load_fs(int partition_id, int disk_selector);
+PUBLIC void load_file(fs_context context, const char *name);
+PUBLIC void terminate_fs(fs_context context);

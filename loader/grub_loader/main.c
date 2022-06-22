@@ -20,6 +20,7 @@
 #include "printf.h"
 #include "init.h"
 #include "lheap.h"
+#include "disk.h"
 
 //Tayhuang OS GRUB Loader Multiboot2 header struct
 struct tayhuang_header {
@@ -74,6 +75,19 @@ void loader_main(void *multiboot_info) {
     init_pic();
 
     init_lheap(0x400000);
+
+    partition_member members[4];
+
+    get_partition(DISK_SEL_IDE0_MASTER, 0, &members[0]);
+    get_partition(DISK_SEL_IDE0_MASTER, 1, &members[1]);
+    get_partition(DISK_SEL_IDE0_MASTER, 2, &members[2]);
+    get_partition(DISK_SEL_IDE0_MASTER, 3, &members[3]);
+
+    for (int i = 0 ; i < 4 ; i ++) {
+        printf ("Partition %d: Start LBA=%d, Sector Number = %d, Bootable = %s\n",
+            i, members[i].start_lba, members[i].sector_number,
+            members[i].state == PS_BOOTABLE ? "true" : "false");
+    }
     
     asmv ("sti");
 }

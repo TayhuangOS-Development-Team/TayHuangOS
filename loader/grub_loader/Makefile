@@ -9,7 +9,7 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
 
 LIBS_C_SRC := ctype string tostring
 FS_C_SRC := common
-C_SRC := main printf init int_handlers lheap \
+C_SRC := main printf init int_handlers lheap disk \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
 	$(foreach src, $(FS_C_SRC), fs/$(src))
 ASM_SRC := lm_operators _int_handlers
