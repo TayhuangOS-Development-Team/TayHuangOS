@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * common.h
+ * fat32.h
  *
- * 通用FS接口函数
+ * FAT32文件系统
  *
  */
 
@@ -19,8 +19,7 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-
-typedef void *fs_context;
+#include "common.h"
 
 PUBLIC fs_context load_fs(int partition_id, int disk_selector);
 PUBLIC void load_file(fs_context context, const char *name, void *dst);

@@ -8,7 +8,7 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 LIBS_C_SRC := ctype string tostring
-FS_C_SRC := common
+FS_C_SRC := common fat32
 C_SRC := main printf init int_handlers lheap disk \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
 	$(foreach src, $(FS_C_SRC), fs/$(src))
@@ -19,7 +19,7 @@ ifeq ($(VBE_MODE), ENABLE)
 	C_DEFS := -DVBE_ENABLE
 endif
 
-C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include" -I"$(LOADER_DIR)/grub_loader"
+C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include" -I"$(LOADERDIR)/grub_loader"
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o)
