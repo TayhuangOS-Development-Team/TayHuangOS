@@ -22,6 +22,8 @@ int strcmp(const char *str1, const char *str2); //比较两个字符串，相同
 int strlen(const char *str); //计算str长度
 char *strcpy(void *dst, const char *src); //复制字符串src至字符串dst
 
+#ifndef LOADER32BIT
+
 static inline void memset(void *dst, int val, unsigned long long sz) {
     unsigned long long _val = val;
     __asm__ __volatile__ ("movq %0, %%rcx\n\t\
@@ -40,3 +42,27 @@ cld\n\t\
 rep\n\t\
 movsb" : : "g"(sz), "g"(src), "g"(dst) : "%rcx", "%rdi", "%rsi");
 }
+
+#else
+
+
+static inline void memset(void *dst, int val, unsigned int sz) {
+    unsigned int _val = val;
+    __asm__ __volatile__ ("movl %0, %%ecx\n\t\
+movl %1, %%eax\n\t\
+movl %2, %%edi\n\t\
+cld\n\t\
+rep\n\t\
+stosb" : : "g"(sz), "g"(_val), "g"(dst) : "%ecx", "%edi", "%eax");
+}
+
+static inline void memcpy(void *dst, void *src, unsigned int sz) {
+    __asm__ __volatile__ ("movl %0, %%ecx\n\t\
+movl %1, %%esi\n\t\
+movl %2, %%edi\n\t\
+cld\n\t\
+rep\n\t\
+movsb" : : "g"(sz), "g"(src), "g"(dst) : "%ecx", "%edi", "%esi");
+}
+
+#endif

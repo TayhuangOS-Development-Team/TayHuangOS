@@ -25,7 +25,7 @@
 
 struct desc_struct GDT[GDT_SIZE];
 struct gdt_ptr gdtr;
-gate_desc32 IDT[IDT_SIZE];
+gate_desc IDT[IDT_SIZE];
 struct desc_ptr idtr;
 
 PUBLIC void init_gdt(void) {

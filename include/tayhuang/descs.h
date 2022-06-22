@@ -48,6 +48,8 @@ struct gdt_ptr {
 	b32 ptr;
 } __attribute__((packed));//引用自linux
 
+#ifndef LOADER32BIT
+
 struct tss_struct {
 	b16	limit0;
 	b16	base0;
@@ -61,7 +63,9 @@ struct tss_struct {
 	b32	zero1;
 } __attribute__((packed));//引用自linux
 
-struct tss_struct32 {
+#else
+
+struct tss_struct {
 	b16	limit0;
 	b16	base0;
 
@@ -71,6 +75,8 @@ struct tss_struct32 {
 	bool g : 1;
 	b16 base2 : 8;
 } __attribute__((packed));//引用自linux
+
+#endif
 
 typedef struct tss_struct tss_desc;
 
@@ -89,6 +95,8 @@ struct idt_data {
 	const void	*addr;
 };//引用自linux
 
+#ifndef LOADER32BIT
+
 struct _gate_struct {
 	b16		offset_low;
 	b16		segment;
@@ -98,16 +106,18 @@ struct _gate_struct {
 	b32		reserved;
 } __attribute__((packed));//引用自linux
 
-typedef struct _gate_struct gate_desc;
+#else
 
-struct _gate_struct32 {
+struct _gate_struct {
 	b16		offset_low;
 	b16		segment;
 	struct idt_bits	bits;
 	b16		offset_middle;
 } __attribute__((packed));//引用自linux
 
-typedef struct _gate_struct32 gate_desc32;
+#endif
+
+typedef struct _gate_struct gate_desc;
 
 struct desc_ptr {
 	word size;

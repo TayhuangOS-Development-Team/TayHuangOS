@@ -8,15 +8,16 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 LIBS_C_SRC := ctype string tostring
-C_SRC := main printf init int_handlers \
-	$(foreach src, $(LIBS_C_SRC), libs/$(src))
+FS_C_SRC := common
+C_SRC := main printf init int_handlers lheap \
+	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
+	$(foreach src, $(FS_C_SRC), fs/$(src))
 ASM_SRC := lm_operators _int_handlers
-C_DEFS := $(ARCHDEF_C)
+C_DEFS := $(ARCHDEF_C) -DLOADER32BIT
 
 ifeq ($(VBE_MODE), ENABLE)
 	C_DEFS := -DVBE_ENABLE
 endif
-
 
 C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include" -I"$(LOADER_DIR)/grub_loader"
 

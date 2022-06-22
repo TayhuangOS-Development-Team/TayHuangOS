@@ -28,7 +28,7 @@ typedef void(*int_handler)(void);
 //GDT IDT表
 extern struct desc_struct GDT[GDT_SIZE];
 extern struct gdt_ptr gdtr;
-extern gate_desc32 IDT[IDT_SIZE];
+extern gate_desc IDT[IDT_SIZE];
 extern struct desc_ptr idtr;
 
 //初始化函数

@@ -19,6 +19,7 @@
 #include "libs/multiboot2.h"
 #include "printf.h"
 #include "init.h"
+#include "lheap.h"
 
 //Tayhuang OS GRUB Loader Multiboot2 header struct
 struct tayhuang_header {
@@ -71,6 +72,8 @@ void loader_main(void *multiboot_info) {
 
     init_idt();
     init_pic();
+
+    init_lheap(0x400000);
     
     asmv ("sti");
 }

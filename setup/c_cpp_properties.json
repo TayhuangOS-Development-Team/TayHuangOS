@@ -26,7 +26,8 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "ARCH_x86_64"
+                "ARCH_x86_64",
+                "LOADER32BIT"
             ],
             "compilerPath": "{YOUR COMPILER}",
             "cStandard": "gnu11",
