@@ -1,7 +1,7 @@
 # 配置区
 
 # ARCHITECTURE := x86_64 #架构
-# FILESYSTEM := msdos
+# FILESYSTEM := fat32
 # MODE := debug
 # VBE_MODE := DISABLE
 
@@ -9,6 +9,7 @@
 
 ARCHITECTURE ?= x86_64
 ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
+FILESYSTEM ?= fat32
 MODE ?= debug
 VBE_MODE ?= DISABLE
 
@@ -34,8 +35,6 @@ RM := rm
 LD := ld
 IMAGEGEN := bximage
 _MKFS := mkfs
-FILESYSTEM ?= msdos
-MKFS := $(_MKFS).$(FILESYSTEM)
 GRUB_INSTALL := grub-install
 SUDO := sudo
 MOUNT := mount
@@ -49,6 +48,10 @@ LOOP_SETUP := losetup
 
 export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
 export GCC GPP ASM GAS RM MKDIR LD IMAGEGEN _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
+
+ifeq ($(FILESYSTEM), fat32)
+	MKFS := $(_MKFS).msdos -F 32 -n "TayhuangOS" -v -f 2
+endif
 
 #任务区
 
@@ -86,7 +89,7 @@ setup_workspace:
 	$(SUDO) $(LOOP_SETUP) /dev/loop16 $(TAYHUANGOS_IMG)
 	$(SUDO) $(LOOP_SETUP) /dev/loop17 $(TAYHUANGOS_IMG) -o 1048576
 
-	$(SUDO) $(MKFS) -F 32 /dev/loop17
+	$(SUDO) $(MKFS) /dev/loop17
 	$(SUDO) $(MOUNT) /dev/loop17 $(TAYHUANGOS_MOUNT_DIR)
 
 	$(SUDO) $(GRUB_INSTALL) --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="normal part_msdos ext2 multiboot" /dev/loop16

@@ -22,6 +22,7 @@
 
 typedef void *fs_context;
 
-PUBLIC fs_context load_fs(int partition_id, int disk_selector);
-PUBLIC void load_file(fs_context context, const char *name, void *dst);
+PUBLIC fs_context load_fs(int disk_selector, int partition_id);
+PUBLIC bool load_file(fs_context context, const char *name, void *dst, bool show_progress);
 PUBLIC void terminate_fs(fs_context context);
+PUBLIC void display_fs_info(fs_context context);
