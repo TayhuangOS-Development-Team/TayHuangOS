@@ -140,7 +140,7 @@ PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id) {
     context->buffer_start = 0;
 
     //FIXME: Bug here
-    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, true);
+    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, false);
 
     lfree(boot);
     return context;
