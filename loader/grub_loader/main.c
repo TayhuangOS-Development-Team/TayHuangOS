@@ -94,6 +94,8 @@ void loader_main(void *multiboot_info) {
 
     fs_context ctx = load_fat32_fs(DISK_SEL_IDE0_MASTER, 0);
 
+    //display_fat32_fs_info(ctx);
+
     void *kernel_bin_buffer = lmalloc(KERNEL_BIN_SIZE);
     if (! load_fat32_file(ctx, "kernel.bin", kernel_bin_buffer, true)) {
         printf ("Load kernel failed!\n");

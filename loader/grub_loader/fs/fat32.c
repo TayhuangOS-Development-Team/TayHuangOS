@@ -106,8 +106,9 @@ PRIVATE void __load_file(fs_context context, dword clus, void *dst, bool show_pr
         if (show_progress) {
             printf ("%#X->", clus);
         }
+        int start_sector = _context->data_start + (clus - 2) * sectors_per_clus;
         for (int i = 0 ; i < sectors_per_clus ; i ++) {
-            read_sector(_context->data_start + (clus - 2) * sectors_per_clus + i, 1, _context->selector, dst);
+            read_sector(start_sector + i, 1, _context->selector, dst);
             dst += 512;
         }
         clus = get_fat32_entry(context, clus);
