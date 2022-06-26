@@ -86,7 +86,10 @@ PRIVATE dword get_fat32_entry(fs_context context, dword last) {
     int _offset = last % FAT32_ENTRIES_PER_SECTOR;
 
     if (num >= _context->buffer_start + FAT_BUFFER_SECTORS) { //不在缓冲区里
-        read_sector(_sector, FAT_BUFFER_SECTORS, _context->selector, _context->fat_buffer); //读入
+        read_sector(_sector + 0, 1, _context->selector, _context->fat_buffer + 0x000);
+        read_sector(_sector + 1, 1, _context->selector, _context->fat_buffer + 0x200);
+        read_sector(_sector + 2, 1, _context->selector, _context->fat_buffer + 0x400);
+        read_sector(_sector + 3, 1, _context->selector, _context->fat_buffer + 0x600); //读入
         _context->buffer_start = num; //设置开始编号
     }
 
@@ -103,14 +106,17 @@ PRIVATE void __load_file(fs_context context, dword clus, void *dst, bool show_pr
     //起始簇号为2
     int sectors_per_clus = INFO.sectors_per_clus;
     while (clus < 0x0FFFFFF0) {
-        if (show_progress) {
-            printf ("%#X->", clus);
-        }
         int start_sector = _context->data_start + (clus - 2) * sectors_per_clus;
-        for (int i = 0 ; i < sectors_per_clus ; i ++) {
-            read_sector(start_sector + i, 1, _context->selector, dst);
-            dst += 512;
+        if (show_progress) {
+            printf ("%#X(%#X)->", clus, start_sector);
         }
+        //read_sector(start_sector, INFO.sectors_per_clus, _context->selector, dst);
+        read_sector(0x17C2, 1, DISK_SEL_IDE0_MASTER, dst);
+        printf ("%c%c%c%c",
+     *(char*)(dst), *(char*)(dst + 1), *(char*)(dst + 2), *(char*)(dst + 3));
+
+        dst += INFO.sectors_per_clus * INFO.bytes_per_sector;
+
         clus = get_fat32_entry(context, clus);
     }
     if (show_progress) {
@@ -137,11 +143,14 @@ PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id) {
     context->root_directory = lmalloc(16 * context->infomations.bytes_per_sector); //16个扇区
     context->fat_buffer = lmalloc(FAT_BUFFER_SECTORS * context->infomations.bytes_per_sector); //4个扇区
 
-    read_sector(context->fat1_start, FAT_BUFFER_SECTORS, disk_selector, context->fat_buffer);
+    read_sector(context->fat1_start + 0, 1, disk_selector, context->fat_buffer + 0x000);
+    read_sector(context->fat1_start + 1, 1, disk_selector, context->fat_buffer + 0x200);
+    read_sector(context->fat1_start + 2, 1, disk_selector, context->fat_buffer + 0x400);
+    read_sector(context->fat1_start + 3, 1, disk_selector, context->fat_buffer + 0x600);
     context->buffer_start = 0;
 
     //FIXME: Bug here
-    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, false);
+    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, true);
 
     lfree(boot);
     return context;

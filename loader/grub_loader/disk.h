@@ -31,6 +31,6 @@
 #define DISK_SEL_IDE1_SLAVE (DISK_SEL_IDE1 | DISK_SEL_SLAVE)
 
 PUBLIC void init_disk_driver(void);
-PUBLIC void identify_disk(int selector, void *dst);
-PUBLIC void read_sector(dword lba, int num, int selector, void *dst);
+PUBLIC void identify_disk(int selector, void *dst); //获取硬盘参数
+PUBLIC void read_sector(dword lba, int num, int selector, void *dst); //读扇区
 PUBLIC void get_partition(int selector, int number, partition_member *member);

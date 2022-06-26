@@ -8,20 +8,39 @@
  *
  * 作者: Flysong
  *
- * disk.c
+ * disk.h
  *
- * 硬盘操作函数
+ * 实现硬盘操作函数
  *
  */
 
 
 
 #include "disk.h"
-#include "int_handlers.h"
 #include "lheap.h"
+#include "int_handlers.h"
+#include "printf.h"
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
 #include <string.h>
+
+PRIVATE volatile bool FLAG_IDE0 = false;
+PRIVATE volatile bool FLAG_IDE1 = false;
+
+PRIVATE void process_ide0_irq(int irq) { //处理IDE0的IRQ
+    FLAG_IDE0 = true;
+}
+
+PRIVATE void process_ide1_irq(int irq) { //处理IDE1的IRQ
+    FLAG_IDE1 = true;
+}
+
+PUBLIC void init_disk_driver(void) {
+    register_irq_handler(14, process_ide0_irq);
+    register_irq_handler(15, process_ide1_irq);
+    enable_irq(14);
+    enable_irq(15);
+}
 
 #define IDE_MASK (0x1)
 #define SLAVE_MASK (0x2)
@@ -40,10 +59,6 @@ PRIVATE inline void relax_ide0(void) { //延迟
     inb (IDE0_STATUS);
 }
 
-PRIVATE inline void wait_ide0_drq(void) {
-    while (! (inb(IDE0_STATUS) & 0x8));
-}
-
 PRIVATE inline void wait_for_ide1_free(void) { //等待ide1空闲
     while (inb(IDE1_STATUS) & 0x80);
 }
@@ -56,24 +71,20 @@ PRIVATE inline void relax_ide1(void) { //延迟
     inb (IDE1_STATUS);
 }
 
-PRIVATE inline void wait_ide1_drq(void) {
-    while (! (inb(IDE1_STATUS) & 0x8));
-}
-
 PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     outb (IDE0_DEVICE, MAKE_DEVICE_REG(0, slave, 0));
     relax_ide0();
     wait_for_ide0_free();
-    outb (IDE0_DEVICE_CONTROL, 2);
+    FLAG_IDE0 = false;
     outb (IDE0_FEATURES, 0);
+    outb (IDE0_DEVICE_CONTROL, 0);
     outb (IDE0_SECTOR_COUNTER, 1);
     outb (IDE0_LBA_LOW, 0);
     outb (IDE0_LBA_MID, 0);
     outb (IDE0_LBA_HIGH, 0);
     outb (IDE0_COMMAND, 0xEC); //0xEC: IDENTIFY
-
-    wait_ide0_drq();
-
+    while (! FLAG_IDE0); //等待数据准备好
+    FLAG_IDE0 = false;
     for (int i = 0 ; i < 256 ; i ++) {
         *(((word*)dst) + i) = inw(IDE0_DATA); //256字数据
     }
@@ -83,16 +94,16 @@ PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
     outb (IDE1_DEVICE, MAKE_DEVICE_REG(0, slave, 0));
     relax_ide1();
     wait_for_ide1_free();
-    outb (IDE1_DEVICE_CONTROL, 2);
+    FLAG_IDE1 = false;
+    outb (IDE1_DEVICE_CONTROL, 0);
     outb (IDE1_FEATURES, 0);
     outb (IDE1_SECTOR_COUNTER, 1);
     outb (IDE1_LBA_LOW, 0);
     outb (IDE1_LBA_MID, 0);
     outb (IDE1_LBA_HIGH, 0);
     outb (IDE1_COMMAND, 0xEC); //0xEC: IDENTIFY
-
-    wait_ide1_drq();
-
+    while (! FLAG_IDE1); //等待数据准备好
+    FLAG_IDE1 = false;
     for (int i = 0 ; i < 256 ; i ++) {
         *(((word*)dst) + i) = inw(IDE1_DATA); //256字数据
     }
@@ -107,21 +118,22 @@ PUBLIC void identify_disk(int selector, void *dst) {
     }
 }
 
+//FIXME: 无法一次性读取多个扇区
 PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void *dst) { //读IDE0的扇区
     outb (IDE0_DEVICE, MAKE_DEVICE_REG(1, slave, lba >> 24));
     relax_ide0();
     wait_for_ide0_free();
-    outb (IDE0_DEVICE_CONTROL, 2);
+    FLAG_IDE0 = false;
+    outb (IDE0_DEVICE_CONTROL, 0);
     outb (IDE0_FEATURES, 0);
     outb (IDE0_SECTOR_COUNTER, num);
     outb (IDE0_LBA_LOW, lba & 0xFF);
     outb (IDE0_LBA_MID, (lba >> 8) & 0xFF);
     outb (IDE0_LBA_HIGH, (lba >> 16) & 0xFF);
     outb (IDE0_COMMAND, 0x20); //0x20: READ SECTOR
-
-    wait_ide0_drq();
-
     for (int i = 0 ; i < num ; i ++) { //num个扇区
+        while (! FLAG_IDE0); //等待数据准备好
+        FLAG_IDE0 = false;
         for (int j = 0 ; j < 256 ; j ++) { //每扇区256个字
             *(((word*)dst) + i * 256 + j) = inw(IDE0_DATA);
         }
@@ -133,17 +145,17 @@ PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void *dst) { //读
     outb (IDE1_DEVICE, MAKE_DEVICE_REG(1, slave, lba >> 24));
     relax_ide1();
     wait_for_ide1_free();
-    outb (IDE1_DEVICE_CONTROL, 2);
+    FLAG_IDE1 = false;
+    outb (IDE1_DEVICE_CONTROL, 0);
     outb (IDE1_FEATURES, 0);
     outb (IDE1_SECTOR_COUNTER, num);
     outb (IDE1_LBA_LOW, lba & 0xFF);
     outb (IDE1_LBA_MID, (lba >> 8) & 0xFF);
     outb (IDE1_LBA_HIGH, (lba >> 16) & 0xFF);
     outb (IDE1_COMMAND, 0x20); //0x20: READ SECTOR
-
-    wait_ide1_drq();
-
     for (int i = 0 ; i < num ; i ++) { //num个扇区
+        while (! FLAG_IDE1); //等待数据准备好
+        FLAG_IDE1 = false;
         for (int j = 0 ; j < 256 ; j ++) { //每扇区256个字
             *(((word*)dst) + i * 256 + j) = inw(IDE1_DATA);
         }
@@ -168,6 +180,6 @@ PUBLIC void get_partition(int selector, int number, partition_member *member) {
     int member_sz = sizeof(partition_member);
 
     memcpy(member, table_start + number * member_sz, member_sz);
-    
+
     lfree (buffer);
 }
