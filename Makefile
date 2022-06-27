@@ -3,6 +3,7 @@
 # ARCHITECTURE := x86_64 #架构
 # FILESYSTEM := fat32
 # MODE := debug
+# QEMU_ARGS := 
 # VBE_MODE := DISABLE
 
 #定义区
@@ -36,6 +37,7 @@ LD := ld
 IMAGEGEN := bximage
 _MKFS := mkfs
 GRUB_INSTALL := grub-install
+GRUB_MODULES := normal part_msdos ext2 fat multiboot all_video
 SUDO := sudo
 MOUNT := mount
 UMOUNT := umount
@@ -46,12 +48,26 @@ OBJCOPY := objcopy
 FDISK := fdisk
 LOOP_SETUP := losetup
 
-export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
-export GCC GPP ASM GAS RM MKDIR LD IMAGEGEN _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
+ifeq ($(ARCHITECTURE), x86_64)
+	QEMU := qemu-system-x86_64
+endif
+
+QEMU_ARGS ?=
+QEMU_ARGS += -hda tayhuangOS.img \
+             -m 64m \
+			 -serial stdio \
+			 -rtc base=localtime \
+			 -name "TayhuangOS"
+
+QEMU_DEBUG_ARGS := $(QEMU_ARGS) -s -S
 
 ifeq ($(FILESYSTEM), fat32)
 	MKFS := $(_MKFS).msdos -F 32 -n "TayhuangOS" -v -f 2
 endif
+
+export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
+export GCC GPP ASM GAS RM MKDIR LD IMAGEGEN _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
+
 
 #任务区
 
@@ -92,7 +108,7 @@ setup_workspace:
 	$(SUDO) $(MKFS) /dev/loop17
 	$(SUDO) $(MOUNT) /dev/loop17 $(TAYHUANGOS_MOUNT_DIR)
 
-	$(SUDO) $(GRUB_INSTALL) --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="normal part_msdos ext2 multiboot" /dev/loop16
+	$(SUDO) $(GRUB_INSTALL) --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="$(GRUB_MODULES)" /dev/loop16
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 
@@ -130,3 +146,19 @@ image:
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 	$(SUDO) $(LOOP_SETUP) -d /dev/loop17
+
+.PHONY: run
+run:
+	$(QEMU) $(QEMU_ARGS)
+
+.PHONY: debug
+debug:
+	$(QEMU) $(QEMU_DEBUG_ARGS)
+
+.PHONY: build_and_run
+build_and_run: all run
+	$(ECHO) "done"
+
+.PHONY: build_and_debug
+build_and_debug: all debug
+	$(ECHO) "done"

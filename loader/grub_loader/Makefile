@@ -9,10 +9,12 @@ CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i
 
 LIBS_C_SRC := ctype string tostring
 FS_C_SRC := common fat32
+LM_C_SRC := load_kernel setup_lm
 C_SRC := main printf init int_handlers lheap disk \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
-	$(foreach src, $(FS_C_SRC), fs/$(src))
-ASM_SRC := lm_operators _int_handlers
+	$(foreach src, $(FS_C_SRC), fs/$(src))\
+	$(foreach src, $(LM_C_SRC), lm/$(src))
+ASM_SRC := lm/lm_operators _int_handlers
 C_DEFS := $(ARCHDEF_C) -DLOADER32BIT
 
 ifeq ($(VBE_MODE), ENABLE)

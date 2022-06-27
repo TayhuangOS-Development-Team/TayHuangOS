@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * disk.ld
+ * kernel.ld
  *
- * 内核驱动LD脚本
+ * 内核LD脚本
  *
  */
 
@@ -22,7 +22,7 @@ OUTPUT_ARCH("i386:x86-64")
 
 SECTIONS
 {
-    . = 0x1400000;
+    . = 0x600000;
     .text : { *(.text) }
     .data : { *(.data) }
     .bss : { *(.bss) }

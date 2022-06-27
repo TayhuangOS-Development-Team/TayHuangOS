@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * fat32.h
+ * setup_longmode.h
  *
- * FAT32文件系统
+ * 设置长模式
  *
  */
 
@@ -19,10 +19,5 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-#include "common.h"
 
-#define FAT32_CONTEXT_MAGIC (0x93186A8E)
-PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id);
-PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst, bool show_progress);
-PUBLIC void terminate_fat32_fs(fs_context context);
-PUBLIC void display_fat32_fs_info(fs_context context);
+PUBLIC void goto_ia32e(void *entrypoint, void *args, word selector64);

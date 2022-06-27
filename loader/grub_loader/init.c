@@ -17,7 +17,7 @@
 
 
 #include "init.h"
-#include "lm_operators.h"
+#include "lm/lm_operators.h"
 #include "int_handlers.h"
 #include <tayhuang/int_vectors.h>
 #include <tayhuang/ports.h>

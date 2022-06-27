@@ -58,8 +58,8 @@ struct fat32_info_struct {
 
 typedef struct {
     // 
-    int selector; //Selector of Context
     dword magic; //0x93186A8E (MD5 of "File Allocation Table 32"的前32位)
+    int selector; //Selector of Context
     partition_member partition;
     struct fat32_info_struct infomations;
     //Extension
@@ -70,7 +70,6 @@ typedef struct {
     int buffer_start; //FAT缓冲开始扇区编号 (编号 + FAT1_START = 所在扇区)
 } FAT32_CONTEXT;
 
-#define FAT32_CONTEXT_MAGIC (0x93186A8E)
 #define FAT32_FILE_ENTRY_SIZE (0x20)
 #define FAT32_FILE_ENTRIES_PER_SECTOR (0x200 / FAT32_FILE_ENTRY_SIZE)
 #define FAT32_ENTRY_SIZE (4)
@@ -105,7 +104,7 @@ PRIVATE void __load_file(fs_context context, dword clus, void *dst, bool show_pr
     while (clus < 0x0FFFFFF0) {
         int start_sector = _context->data_start + (clus - 2) * sectors_per_clus;
         if (show_progress) {
-            printf ("%#X(%#X)->", clus, start_sector);
+            putchar ('.');
         }
         read_sector(start_sector, INFO.sectors_per_clus, _context->selector, dst);
 
@@ -114,7 +113,7 @@ PRIVATE void __load_file(fs_context context, dword clus, void *dst, bool show_pr
         clus = get_fat32_entry(context, clus);
     }
     if (show_progress) {
-        printf("%#X\n", clus);
+        putchar ('\n');
     }
 }
 
@@ -140,7 +139,7 @@ PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id) {
     read_sector(context->fat1_start, 4, disk_selector, context->fat_buffer);
     context->buffer_start = 0;
 
-    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, true);
+    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, false);
 
     lfree(boot);
     return context;

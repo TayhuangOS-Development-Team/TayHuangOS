@@ -14,50 +14,50 @@
 ;
 
 
-global set_cr0
-global get_cr0
-global set_cr2
-global get_cr2
-global set_cr3
-global get_cr3
-global set_cr4
-global get_cr4
-global set_efer
-global get_efer
+global __set_cr0
+global __get_cr0
+global __set_cr2
+global __get_cr2
+global __set_cr3
+global __get_cr3
+global __set_cr4
+global __get_cr4
+global __set_efer
+global __get_efer
 
-set_cr0:
+__set_cr0:
     mov cr0, eax
     ret
 
-get_cr0:
+__get_cr0:
     mov eax, cr0
     ret
 
-set_cr2:
+__set_cr2:
     mov cr2, eax
     ret
 
-get_cr2:
+__get_cr2:
     mov eax, cr2
     ret
 
-set_cr3:
+__set_cr3:
     mov cr3, eax
     ret
 
-get_cr3:
+__get_cr3:
     mov eax, cr3
     ret
 
-set_cr4:
+__set_cr4:
     mov cr4, eax
     ret
 
-get_cr4:
+__get_cr4:
     mov eax, cr4
     ret
 
-get_efer:
+__get_efer:
     push edx
     push ecx
     xor edx, edx
@@ -67,7 +67,7 @@ get_efer:
     pop edx
     ret
 
-set_efer:
+__set_efer:
     push edx
     push ecx
     xor edx, edx
@@ -83,6 +83,8 @@ goto_ia32e:
     mov bx, word [esp + 8] ;bx -> selector64
     mov word [.jmp_seg], bx
     mov dword [.jmp_pos], eax
+    add bx, 8
+    mov ds, bx
 
     mov esp, eax
     sub esp, 0x20 ;设置esp
@@ -93,6 +95,8 @@ goto_ia32e:
     xor ecx, ecx
     xor edx, edx
     xor esi, esi
+
+    jmp $ ;Bug here
 
 db 0xEA
 .jmp_pos: dd 0

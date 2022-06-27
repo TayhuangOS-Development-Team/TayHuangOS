@@ -8,7 +8,7 @@
  *
  * 作者: Flysong
  *
- * setup_longmode.h
+ * setup_lm.h
  *
  * 设置长模式
  *
@@ -20,14 +20,8 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void set_cr0(int cr0);
-PUBLIC int get_cr0(void);
-PUBLIC void set_cr2(int cr2);
-PUBLIC int get_cr2(void);
-PUBLIC void set_cr3(int cr3);
-PUBLIC int get_cr3(void);
-PUBLIC void set_cr4(int cr4);
-PUBLIC int get_cr4(void);
-PUBLIC void set_efer(int efer);
-PUBLIC int get_efer(void);
-PUBLIC void flush_cs(void);
+#define PAGE_ADDRESS (0x2000000)
+PUBLIC void setup_longmode(void *pml4);
+PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit);
+
+PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool is_graphic, int screen_width, int screen_height, void *framebuffer);

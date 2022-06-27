@@ -23,6 +23,7 @@
 #include "disk.h"
 #include "fs/fat32.h"
 #include "int_handlers.h"
+#include "lm/setup_lm.h"
 
 //Tayhuang OS GRUB Loader Multiboot2 header struct
 struct tayhuang_header {
@@ -54,6 +55,7 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
         .height = FRAMEBUFFER_HEIGHT,
         .depth = FRAMEBUFFER_BPP
     },
+
 #endif
     .end = {
         .type = MULTIBOOT_HEADER_TAG_END,
@@ -61,8 +63,6 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
         .size = sizeof (struct multiboot_header_tag)
     }
 };
-
-#define KERNEL_BIN_SIZE (256 * 1024)
 
 //loader主函数
 void loader_main(void *multiboot_info) {
@@ -95,20 +95,7 @@ void loader_main(void *multiboot_info) {
             members[i].state == PS_BOOTABLE ? "true" : "false");
     }
 
-    fs_context ctx = load_fat32_fs(DISK_SEL_IDE0_MASTER, 0);
-
-    display_fat32_fs_info(ctx);
-
-    void *kernel_bin_buffer = lmalloc(KERNEL_BIN_SIZE);
-    if (! load_fat32_file(ctx, "kernel.bin", kernel_bin_buffer, true)) {
-        printf ("Load kernel failed!\n");
-        while (1);
-    }
-
-    terminate_fat32_fs(ctx);
-
-    printf ("Load kernel success!\n");
-
+    goto_longmode(7, 0x4000000, 0, NULL, 0, 0, NULL);
 }
 
 //loader入口点
