@@ -110,10 +110,7 @@ PRIVATE void __load_file(fs_context context, dword clus, void *dst, bool show_pr
         if (show_progress) {
             printf ("%#X(%#X)->", clus, start_sector);
         }
-        //read_sector(start_sector, INFO.sectors_per_clus, _context->selector, dst);
-        read_sector(0x17C2, 1, DISK_SEL_IDE0_MASTER, dst);
-        printf ("%c%c%c%c",
-     *(char*)(dst), *(char*)(dst + 1), *(char*)(dst + 2), *(char*)(dst + 3));
+        read_sector(start_sector, INFO.sectors_per_clus, _context->selector, dst);
 
         dst += INFO.sectors_per_clus * INFO.bytes_per_sector;
 
@@ -149,7 +146,6 @@ PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id) {
     read_sector(context->fat1_start + 3, 1, disk_selector, context->fat_buffer + 0x600);
     context->buffer_start = 0;
 
-    //FIXME: Bug here
     __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, true);
 
     lfree(boot);

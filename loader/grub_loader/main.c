@@ -82,9 +82,6 @@ void loader_main(void *multiboot_info) {
 
     asmv ("sti");
 
-    enable_irq(2);
-    init_disk_driver();
-
     partition_member members[4];
 
     get_partition(DISK_SEL_IDE0_MASTER, 0, &members[0]);
