@@ -28,6 +28,9 @@
 
 #define MAKE_DEVICE_REG(mode, device, lba) (((mode) << 6) | ((device) << 4) | (lba & 0xF) | 0xA0) //MAKE Device寄存器
 
+#define ATA_READ (0x20)
+#define ATA_IDENTIFY (0xEC)
+
 PRIVATE inline void wait_for_ide0_free(void) { //等待ide0空闲
     while (inb(IDE0_STATUS) & 0x80);
 }
@@ -70,7 +73,7 @@ PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     outb (IDE0_LBA_LOW, 0);
     outb (IDE0_LBA_MID, 0);
     outb (IDE0_LBA_HIGH, 0);
-    outb (IDE0_COMMAND, 0xEC); //0xEC: IDENTIFY
+    outb (IDE0_COMMAND, ATA_IDENTIFY);
 
     wait_ide0_drq();
 
@@ -89,7 +92,7 @@ PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
     outb (IDE1_LBA_LOW, 0);
     outb (IDE1_LBA_MID, 0);
     outb (IDE1_LBA_HIGH, 0);
-    outb (IDE1_COMMAND, 0xEC); //0xEC: IDENTIFY
+    outb (IDE1_COMMAND, ATA_IDENTIFY);
 
     wait_ide1_drq();
 
@@ -117,14 +120,15 @@ PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void *dst) { //读
     outb (IDE0_LBA_LOW, lba & 0xFF);
     outb (IDE0_LBA_MID, (lba >> 8) & 0xFF);
     outb (IDE0_LBA_HIGH, (lba >> 16) & 0xFF);
-    outb (IDE0_COMMAND, 0x20); //0x20: READ SECTOR
-
-    wait_ide0_drq();
+    outb (IDE0_COMMAND, ATA_READ);
 
     for (int i = 0 ; i < num ; i ++) { //num个扇区
+        wait_ide0_drq(); //等待DRQ
         for (int j = 0 ; j < 256 ; j ++) { //每扇区256个字
             *(((word*)dst) + i * 256 + j) = inw(IDE0_DATA);
         }
+        for (int j = 0 ; j < 3 ; j ++)
+            outb(DELAY_PORT, 0); //延迟一会儿
     }
 }
 
@@ -139,14 +143,16 @@ PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void *dst) { //读
     outb (IDE1_LBA_LOW, lba & 0xFF);
     outb (IDE1_LBA_MID, (lba >> 8) & 0xFF);
     outb (IDE1_LBA_HIGH, (lba >> 16) & 0xFF);
-    outb (IDE1_COMMAND, 0x20); //0x20: READ SECTOR
+    outb (IDE1_COMMAND, ATA_READ);
 
-    wait_ide1_drq();
 
     for (int i = 0 ; i < num ; i ++) { //num个扇区
+        wait_ide1_drq(); //等待DRQ
         for (int j = 0 ; j < 256 ; j ++) { //每扇区256个字
             *(((word*)dst) + i * 256 + j) = inw(IDE1_DATA);
         }
+        for (int j = 0 ; j < 3 ; j ++)
+            outb(DELAY_PORT, 0); //延迟一会儿
     }
 }
 

@@ -86,10 +86,7 @@ PRIVATE dword get_fat32_entry(fs_context context, dword last) {
     int _offset = last % FAT32_ENTRIES_PER_SECTOR;
 
     if (num >= _context->buffer_start + FAT_BUFFER_SECTORS) { //不在缓冲区里
-        read_sector(_sector + 0, 1, _context->selector, _context->fat_buffer + 0x000);
-        read_sector(_sector + 1, 1, _context->selector, _context->fat_buffer + 0x200);
-        read_sector(_sector + 2, 1, _context->selector, _context->fat_buffer + 0x400);
-        read_sector(_sector + 3, 1, _context->selector, _context->fat_buffer + 0x600); //读入
+        read_sector(_sector, 4, _context->selector, _context->fat_buffer);
         _context->buffer_start = num; //设置开始编号
     }
 
@@ -140,10 +137,7 @@ PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id) {
     context->root_directory = lmalloc(16 * context->infomations.bytes_per_sector); //16个扇区
     context->fat_buffer = lmalloc(FAT_BUFFER_SECTORS * context->infomations.bytes_per_sector); //4个扇区
 
-    read_sector(context->fat1_start + 0, 1, disk_selector, context->fat_buffer + 0x000);
-    read_sector(context->fat1_start + 1, 1, disk_selector, context->fat_buffer + 0x200);
-    read_sector(context->fat1_start + 2, 1, disk_selector, context->fat_buffer + 0x400);
-    read_sector(context->fat1_start + 3, 1, disk_selector, context->fat_buffer + 0x600);
+    read_sector(context->fat1_start, 4, disk_selector, context->fat_buffer);
     context->buffer_start = 0;
 
     __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, true);
