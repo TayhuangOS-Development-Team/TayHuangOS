@@ -5,6 +5,8 @@
 # MODE := debug
 # QEMU_ARGS := 
 # VBE_MODE := DISABLE
+# LOOPA := /dev/loop19
+# LOOPB := /dev/loop20
 
 #定义区
 
@@ -13,6 +15,8 @@ ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
 FILESYSTEM ?= fat32
 MODE ?= debug
 VBE_MODE ?= DISABLE
+LOOPA ?= /dev/loop19
+LOOPB ?= /dev/loop20
 
 export ARCHITECTURE ARCHDEF_C MODE VBE_MODE
 
@@ -102,18 +106,18 @@ setup_workspace:
 
 	$(FDISK) $(TAYHUANGOS_IMG)
 
-	$(SUDO) $(LOOP_SETUP) /dev/loop16 $(TAYHUANGOS_IMG)
-	$(SUDO) $(LOOP_SETUP) /dev/loop17 $(TAYHUANGOS_IMG) -o 1048576
+	$(SUDO) $(LOOP_SETUP) $(LOOPA) $(TAYHUANGOS_IMG)
+	$(SUDO) $(LOOP_SETUP) $(LOOPB) $(TAYHUANGOS_IMG) -o 1048576
 
-	$(SUDO) $(MKFS) /dev/loop17
-	$(SUDO) $(MOUNT) /dev/loop17 $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(MKFS) $(LOOPB)
+	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
 
-	$(SUDO) $(GRUB_INSTALL) --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="$(GRUB_MODULES)" /dev/loop16
+	$(SUDO) $(GRUB_INSTALL) --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="$(GRUB_MODULES)" $(LOOPA)
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 
-	$(SUDO) $(LOOP_SETUP) -d /dev/loop16
-	$(SUDO) $(LOOP_SETUP) -d /dev/loop17
+	$(SUDO) $(LOOP_SETUP) -d $(LOOPA)
+	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
 
 
 #编译
@@ -135,8 +139,8 @@ clean:
 #写入映像
 .PHONY: image
 image:
-	$(SUDO) $(LOOP_SETUP) /dev/loop17 $(TAYHUANGOS_IMG) -o 1048576
-	$(SUDO) $(MOUNT) /dev/loop17 $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(LOOP_SETUP) $(LOOPB) $(TAYHUANGOS_IMG) -o 1048576
+	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
 
 	$(SUDO) $(COPY) ./configs/grub.cfg $(TAYHUANGOS_MOUNT_DIR)/boot/grub
 
@@ -145,7 +149,7 @@ image:
 	$(CHANGE_DIR) module ; $(MAKE) image
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
-	$(SUDO) $(LOOP_SETUP) -d /dev/loop17
+	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
 
 .PHONY: run
 run:

@@ -95,7 +95,7 @@ void loader_main(void *multiboot_info) {
             members[i].state == PS_BOOTABLE ? "true" : "false");
     }
 
-    goto_longmode(7, 0x4000000, 0, NULL, 0, 0, NULL);
+    goto_longmode(7 << 3, 0x4000000, 0, NULL, 0, 0, NULL);
 }
 
 //loader入口点

@@ -39,7 +39,7 @@ PUBLIC void setup_longmode(void *pml4) {
     efer.lme = true; //Long Mode Enable
     set_efer(efer);
     cr0.pg = true; //启用分页 LMA自动为1
-    set_cr0(cr0); 
+    set_cr0(cr0);
 }
 
 PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
@@ -200,6 +200,8 @@ PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool i
         printf ("Error!Couldn't goto long mode!\n");
         return;
     }
+
+    printf ("start: %#08X, limit: %#08X, entry: %#08X", result.kernel_start, result.kernel_limit, result.kernel_entry);
 
     void *page_limit;
     void *page_start = setup_paging(memsz, memsz_high, &page_limit); //设置分页
