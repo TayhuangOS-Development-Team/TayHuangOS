@@ -106,5 +106,7 @@ void entry(struct boot_args *_args) {
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
 
+    ((short*)args.framebuffer)[12 * args.screen_width + 20] = 0x0C4A;
+
     while(true);
 }
