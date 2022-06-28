@@ -92,7 +92,7 @@ PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
 
     for (int i = 0 ; i < 4 ; i ++) {
         printf ("Partition %d: Start LBA=%d, Sector Number = %d, Bootable = %s\n",
-            i, members[i].start_lba, members[i].sector_number,
+            i + 1, members[i].start_lba, members[i].sector_number,
             members[i].state == PS_BOOTABLE ? "true" : "false");
     }
 

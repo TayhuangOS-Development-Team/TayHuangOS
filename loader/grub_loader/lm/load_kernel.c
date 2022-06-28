@@ -48,7 +48,7 @@ void load_kernel(load_result_struct *result) {
     void *kernel_bin_buffer = lmalloc(KERNEL_BIN_SIZE);
     void *setup_mod_buffer = lmalloc(SETUP_MOD_SIZE);
     for (int i = 0 ; i < 4 ; i ++) {
-        fs_context context = load_fs(DISK_SEL_IDE0_MASTER, 0);
+        fs_context context = load_fs(DISK_SEL_IDE0_MASTER, i);
 
         if (context == NULL)
             continue;
@@ -69,12 +69,14 @@ void load_kernel(load_result_struct *result) {
         result->kernel_entry = load_elf(kernel_bin_buffer, &result->kernel_start, &result->kernel_limit);
 
         terminate_fs(context);
+        lfree (kernel_bin_buffer);
 
         result->status = true;
         return;
     }
 
     lfree (kernel_bin_buffer);
+    lfree (setup_mod_buffer);
 
     printf ("Couldn't load kernel!");
     result->status = false;
