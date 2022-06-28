@@ -201,7 +201,7 @@ PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool i
         return;
     }
 
-    printf ("start: %#08X, limit: %#08X, entry: %#08X", result.kernel_start, result.kernel_limit, result.kernel_entry);
+    printf ("start: %p, limit: %p, entry: %p", result.kernel_start, result.kernel_limit, result.kernel_entry);
 
     void *page_limit;
     void *page_start = setup_paging(memsz, memsz_high, &page_limit); //设置分页

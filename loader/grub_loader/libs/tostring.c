@@ -17,9 +17,8 @@
 
 
 #include <tool/tostring.h>
-#include <tayhuang/defs.h>
 
-PRIVATE const char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+static const char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 char *itoa(int val, char *buffer, int base) {
     char *save = buffer;

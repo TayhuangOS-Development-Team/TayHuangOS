@@ -24,6 +24,7 @@
 #include "fs/fat32.h"
 #include "int_handlers.h"
 #include "lm/setup_lm.h"
+#include "info_parser.h"
 
 //Tayhuang OS GRUB Loader Multiboot2 header struct
 struct tayhuang_header {
@@ -65,7 +66,7 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
 };
 
 //loader主函数
-void loader_main(void *multiboot_info) {
+PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
     asmv ("finit");
 
     init_gdt();
@@ -95,13 +96,17 @@ void loader_main(void *multiboot_info) {
             members[i].state == PS_BOOTABLE ? "true" : "false");
     }
 
-    goto_longmode(7 << 3, 0x4000000, 0, NULL, 0, 0, NULL);
+    parse_result_struct result;
+
+    parse_args(multiboot_info, &result);
+
+    goto_longmode(7 << 3, result.memsz, result.memsz_high, result.is_graphic, result.screen_width, result.screen_height, result.framebuffer);
 }
 
 //loader入口点
-void entry(void) {
+PUBLIC void entry(void) {
     register int magic __asm__("eax"); //Loader 魔数 存放在eax
-    register void *multiboot_info __asm__("ebx"); //multiboot info 存放在ebx
+    register struct multiboot_tag *multiboot_info __asm__("ebx"); //multiboot info 存放在ebx
 
     asmv ("movl $0x1008000, %esp");
 
