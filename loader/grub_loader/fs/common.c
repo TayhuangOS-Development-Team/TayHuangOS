@@ -33,9 +33,24 @@ typedef enum {
 } FS_TYPES;
 
 PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
-    //
-    // FS_TYPES fst;
-    return FS_FAT32;
+    partition_member partition;
+    get_partition(disk_selector, partition_id, &partition); //获取分区
+
+    void *superblock = lmalloc(512);
+    read_sector(partition.start_lba, 1,  disk_selector, superblock); //读取超级块
+
+    char bpb_filesystem[9];
+
+    memcpy(bpb_filesystem, superblock + 0x36, 8);
+    bpb_filesystem[8] = '\0';
+
+    lfree (superblock);
+
+    if (strcmp(bpb_filesystem, "fat32")) {
+        return FS_FAT32;
+    }
+
+    return FS_UNKNOWN;
 }
 
 PUBLIC fs_context load_fs(int disk_selector, int partition_id){
