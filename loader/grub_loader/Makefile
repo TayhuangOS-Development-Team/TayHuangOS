@@ -18,7 +18,7 @@ ASM_SRC := lm/lm_operators _int_handlers
 C_DEFS := $(ARCHDEF_C) -DLOADER32BIT
 
 ifeq ($(VBE_MODE), ENABLE)
-	C_DEFS := -DVBE_ENABLE
+	C_DEFS += -DVBE_ENABLE
 endif
 
 C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include" -I"$(LOADERDIR)/grub_loader"

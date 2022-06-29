@@ -19,7 +19,11 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-C_SRC := kernel
+LIBS_C_SRC := ctype string tostring
+MEMORY_C_SRC := kheap pmm
+C_SRC := kernel printk \
+	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
+	$(foreach src, $(MEMORY_C_SRC), memory/$(src))
 
 CPP_SRC :=
 

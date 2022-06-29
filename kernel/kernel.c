@@ -27,6 +27,7 @@
 #include <assert.h>
 
 #include <printk.h>
+#include <memory/kheap.h>
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -94,6 +95,13 @@ void initialize(struct boot_args *args) {
     init_gdt(); //初始化GDT
 
     en_int();
+
+    init_video(args->framebuffer, args->screen_width, args->screen_height);
+    
+    init_kheap(args->kernel_start - 0x40000);
+
+    TSS.ist1 = 0x1400000;
+    TSS.rsp0 = 0x1250000;
 }
 
 void entry(struct boot_args *_args) {
@@ -105,8 +113,9 @@ void entry(struct boot_args *_args) {
 
     initialize(&args); //初始化
 
-    TSS.ist1 = 0x1400000;
-    TSS.rsp0 = 0x1250000;
+    clrscr(); 
+
+    printk ("Hello, World!");
 
     while(true);
 }

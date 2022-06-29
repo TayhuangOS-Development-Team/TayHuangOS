@@ -31,5 +31,6 @@
             "",
             ""
         ]
-    }
+    },
+    "C_Cpp.default.systemIncludePath": ["${workspaceFolder}/"]
 }

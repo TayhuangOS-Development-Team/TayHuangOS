@@ -120,8 +120,8 @@ PUBLIC void clrscr(void) {
     print_y = 0;
 }
 
-//基础vsprintf实现
-PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
+//基础vsprintk实现
+PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
     #define FLAG_SIGN 1
     #define FLAG_LEFT_ALIGN 2
     #define FLAG_FILL_ZERO 4
@@ -367,11 +367,11 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
 }
 
 //输出内容到buffer中
-PUBLIC int sprintf(char *buffer, const char *format, ...) {
+PUBLIC int sprintk(char *buffer, const char *format, ...) {
     va_list args;
     va_start(args, format);
 
-    int res = vsprintf(buffer, format, args);
+    int res = vsprintk(buffer, format, args);
 
     va_end(args);
 
@@ -379,12 +379,12 @@ PUBLIC int sprintf(char *buffer, const char *format, ...) {
 }
 
 //输出内容到屏幕中
-PUBLIC int printf(const char *format, ...) {
+PUBLIC int printk(const char *format, ...) {
     va_list args;
     va_start(args, format);
 
     char buffer[256];
-    int res = vsprintf(buffer, format, args);
+    int res = vsprintk(buffer, format, args);
     puts(buffer);
 
     va_end(args);
