@@ -31,14 +31,14 @@ PUBLIC void init_pmm(qword totalmem) {
     memstates = kmalloc(totalmem / MEMUNIT_SZ / 8);
 }
 
-PRIVATE bool __get_page_state(void *page) {
-    qword page_no = ((qword)page) / MEMUNIT_SZ;
-    qword page_idx = page_no / sizeof(qword);
-    qword page_bit = page_no % sizeof(qword);
+// PRIVATE bool __get_page_state(void *page) {
+//     qword page_no = ((qword)page) / MEMUNIT_SZ;
+//     qword page_idx = page_no / sizeof(qword);
+//     qword page_bit = page_no % sizeof(qword);
 
-    qword states = memstates[page_idx];
-    return (states & (1 << page_bit)) != 0;
-}
+//     qword states = memstates[page_idx];
+//     return (states & (1 << page_bit)) != 0;
+// }
 
 PRIVATE void __set_page_state(void *page, bool state) {
     qword page_no = ((qword)page) / MEMUNIT_SZ;

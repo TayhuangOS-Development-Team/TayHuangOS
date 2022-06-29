@@ -26,8 +26,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include <printk.h>
 #include <memory/kheap.h>
+#include <memory/pmm.h>
+
+#include <printk.h>
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -100,6 +102,11 @@ void initialize(struct boot_args *args) {
     
     init_kheap(args->kernel_start - 0x40000);
 
+    qword memsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
+    init_pmm(memsz);
+
+    __set_pages_state(NULL, 256, true);
+
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
 }
@@ -115,7 +122,7 @@ void entry(struct boot_args *_args) {
 
     clrscr(); 
 
-    printk ("Hello, World!");
+    printk ("Hello, I'm TayhuangOS Kernel!");
 
     while(true);
 }

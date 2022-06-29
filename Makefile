@@ -4,7 +4,7 @@
 # FILESYSTEM := fat32
 # MODE := debug
 # QEMU_ARGS := 
-# VBE_MODE := DISABLE
+VBE_MODE := ENABLE
 # LOOPA := /dev/loop19
 # LOOPB := /dev/loop20
 # KERNEL_PARTITION_OFFSET := 1048576

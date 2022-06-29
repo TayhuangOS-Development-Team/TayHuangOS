@@ -31,6 +31,7 @@ struct tayhuang_header {
     struct multiboot_header header;
 #ifdef VBE_ENABLE
     struct multiboot_header_tag_framebuffer framebuffer;
+    multiboot_uint32_t reserved0;
 #endif
     struct multiboot_header_tag end;
 } __attribute__((packed));
