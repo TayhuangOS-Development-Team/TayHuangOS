@@ -8,9 +8,9 @@
  *
  * 作者: Flysong
  *
- * fat32.h
+ * common.h
  *
- * FAT32文件系统
+ * 通用FS接口函数
  *
  */
 
@@ -19,10 +19,10 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-#include "common.h"
 
-#define FAT32_CONTEXT_MAGIC (0x93186A8E)
-PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id);
-PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst, bool show_progress);
-PUBLIC void terminate_fat32_fs(fs_context context);
-PUBLIC void display_fat32_fs_info(fs_context context);
+typedef void *fs_context;
+
+PUBLIC fs_context load_fs(int disk_selector, int partition_id);
+PUBLIC bool load_file(fs_context context, const char *name, void *dst, bool show_progress);
+PUBLIC void terminate_fs(fs_context context);
+PUBLIC void display_fs_info(fs_context context);

@@ -17,12 +17,12 @@
 
 #include "common.h"
 #include "fat32.h"
-#include <lheap.h>
 #include <disk.h>
 #include <printf.h>
 #include <ctype.h>
 #include <string.h>
 #include <tayhuang/partition.h>
+#include <memory/malloc.h>
 
 typedef enum {
     FS_UNKNOWN = 0,
@@ -35,7 +35,7 @@ PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
     partition_member partition;
     get_partition(disk_selector, partition_id, &partition); //获取分区
 
-    void *superblock = lmalloc(512);
+    void *superblock = malloc(512);
     read_sector(partition.start_lba, 1,  disk_selector, superblock); //读取超级块
 
     char bpb_filesystem[9];
@@ -43,7 +43,7 @@ PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
     memcpy(bpb_filesystem, superblock + 0x36, 8);
     bpb_filesystem[8] = '\0';
 
-    lfree (superblock);
+    free (superblock);
 
     if (strcmp(bpb_filesystem, "fat32")) {
         return FS_FAT32;

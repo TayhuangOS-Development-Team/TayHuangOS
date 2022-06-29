@@ -21,7 +21,7 @@
 #include <ipc/ipc.h>
 #include <tool/tostring.h>
 #include <disk.h>
-#include <fs/fat32.h>
+#include <fs/common.h>
 #include <printf.h>
 
 void kmod_main(void) {
@@ -38,8 +38,7 @@ void kmod_main(void) {
     sprintf (buffer, "Kernel PID: %d", kernel);
     linfo (buffer);
 
-    char context[8192];
-    get_context(DISK_SEL_IDE1_MASTER, (void**)context); //获取文件系统上下文
+    void *context = load_fs(DISK_SEL_IDE0_MASTER, 0);
 
     while (true) {
         recv_msg (mod_name, kernel); //获取模块名
@@ -56,12 +55,14 @@ void kmod_main(void) {
         bool status = false;
         int times = 5;
         while (times --) {
-            status = loadfile(context, mod_name, mod_addr); //加载文件
+            status = load_file(context, mod_name, mod_addr, false);
             if (status) break;
         }
 
         send_msg (&status, kernel, 1, 20); //通知内核
     }
+
+    terminate_fs(context);
 
     while (1);
 }
