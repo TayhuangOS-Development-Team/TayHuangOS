@@ -16,7 +16,7 @@
 
 
 
-#include "ipc.h"
+#include <ipc/ipc.h>
 
 #include <tayhuang/services.h>
 #include <tayhuang/types.h>

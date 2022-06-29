@@ -16,7 +16,7 @@
 
 
 
-#include "cmd.h"
+#include <text/cmd.h>
 #include <general_cmd.h>
 #include <infomations.h>
 

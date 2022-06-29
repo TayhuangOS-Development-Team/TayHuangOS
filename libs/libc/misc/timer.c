@@ -16,7 +16,7 @@
 
 
 
-#include "timer.h"
+#include <misc/timer.h>
 #include <ipc/ipc.h>
 
 int get_ticks(void) {

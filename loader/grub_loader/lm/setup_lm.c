@@ -16,9 +16,9 @@
 
 
 
-#include "setup_lm.h"
-#include "load_kernel.h"
-#include "lm_operators.h"
+#include <lm/setup_lm.h>
+#include <lm/load_kernel.h>
+#include <lm/lm_operators.h>
 #include <printf.h>
 #include <int_handlers.h>
 #include <tayhuang/paging.h>

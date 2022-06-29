@@ -16,8 +16,8 @@
 
 
 
-#include "int_handlers.h"
-#include "printf.h"
+#include <int_handlers.h>
+#include <printf.h>
 #include <tayhuang/int_vectors.h>
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>

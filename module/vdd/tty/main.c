@@ -21,8 +21,8 @@
 #include <tayhuang/services.h>
 #include <memory/malloc.h>
 #include <ctype.h>
-#include "tty.h"
-#include "cmd.h"
+#include <tty.h>
+#include <cmd.h>
 
 #define TTY_NUM (3)
 tty_struct ttys[TTY_NUM];

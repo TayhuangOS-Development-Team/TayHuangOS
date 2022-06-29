@@ -16,7 +16,7 @@
 
 
 
-#include "cmd.h"
+#include <graphic/cmd.h>
 
 #include <debug/logging.h>
 

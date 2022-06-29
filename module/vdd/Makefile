@@ -1,6 +1,6 @@
 OBJECTSDIR := $(OBJECTSDIR)/vdd/
 BINDIR := $(BINDIR)/vdd/
-VDDDIR := $(ROOTDIR)/vdd/
+VDDDIR := $(MODULEDIR)/vdd/
 export OBJECTSDIR VDDDIR
 
 #编译

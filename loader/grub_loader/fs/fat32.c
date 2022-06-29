@@ -16,7 +16,7 @@
 
 
 
-#include "fat32.h"
+#include <fs/fat32.h>
 #include <lheap.h>
 #include <disk.h>
 #include <printf.h>

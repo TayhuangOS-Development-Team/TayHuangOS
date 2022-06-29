@@ -21,3 +21,4 @@
 #include <tayhuang/defs.h>
 
 PUBLIC void goto_ia32e(void *entrypoint, void *args, word selector64);
+PUBLIC void flush_cs(void);

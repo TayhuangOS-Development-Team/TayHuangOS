@@ -8,30 +8,40 @@
  *
  * 作者: Flysong
  *
- * printf.c
+ * printk.c
  *
- * printf
+ * printk
  *
  */
 
 
 
-#include <printf.h>
+#include <printk.h>
 #include <ctype.h>
 #include <tool/tostring.h>
 #include <string.h>
 
+PRIVATE void *video_address = NULL;
+PRIVATE int screen_width = 0;
+PRIVATE int screen_height = 0;
+
+PUBLIC void init_video(void *video_addr, int width, int height) {
+    video_address = video_addr;
+    screen_width = width;
+    screen_height = height;
+}
+
 //写生字符(串)
 PUBLIC void write_char(char ch, int color, int posx, int posy) {
     int pos = posx + posy * 80;
-    *(((short*)VIDEO_ADDRESS) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
+    *(((short*)video_address) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
 }
 
 PUBLIC  void write_str(const char *str, int color, int posx, int posy) {
     int pos = posx + posy * 80;
     while (*str != '\0') {
         char ch = *str;
-        *(((short*)VIDEO_ADDRESS) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
+        *(((short*)video_address) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
         pos ++;
         str ++;
     }
@@ -73,8 +83,8 @@ PUBLIC void putchar(char ch) {
     else { //普通字符
         write_char(ch, print_color, print_x ++, print_y);
     }
-    if (print_x >= SCREEN_WIDTH) { //自动换行
-        print_x -= SCREEN_WIDTH;
+    if (print_x >= screen_width) { //自动换行
+        print_x -= screen_width;
         print_y ++;
     }
 }
@@ -101,8 +111,8 @@ PUBLIC int get_pos_y(void) {
 
 PUBLIC void clrscr(void) {
     //通过画空格实现清屏
-    for (int i = 0 ; i < SCREEN_WIDTH ; i ++) {
-        for (int j = 0 ; j < SCREEN_HEIGHT ; j ++) {
+    for (int i = 0 ; i < screen_width ; i ++) {
+        for (int j = 0 ; j < screen_height ; j ++) {
             write_char(' ', print_color, i, j);
         }
     }

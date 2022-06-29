@@ -15,7 +15,7 @@
  */
 
 
-#include "load_kernel.h"
+#include <lm/load_kernel.h>
 #include <fs/common.h>
 #include <disk.h>
 #include <printf.h>

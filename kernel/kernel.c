@@ -26,6 +26,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include <printk.h>
+
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
@@ -105,8 +107,6 @@ void entry(struct boot_args *_args) {
 
     TSS.ist1 = 0x1400000;
     TSS.rsp0 = 0x1250000;
-
-    ((short*)args.framebuffer)[12 * args.screen_width + 20] = 0x0C4A;
 
     while(true);
 }

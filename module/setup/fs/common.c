@@ -15,8 +15,8 @@
  */
 
 
-#include "common.h"
-#include "fat32.h"
+#include <fs/common.h>
+#include <fs/fat32.h>
 #include <disk.h>
 #include <printf.h>
 #include <ctype.h>
