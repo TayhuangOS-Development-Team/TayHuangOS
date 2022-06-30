@@ -11,7 +11,7 @@
                 "_UNICODE",
                 "ARCH_x86_64"
             ],
-            "compilerPath": "{YOUR_COMIPLER}",
+            "compilerPath": "{YOUR_COMPILER}",
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "{YOUR_MODE}",
@@ -33,7 +33,7 @@
                 "ARCH_x86_64",
                 "VBE_ENABLE"
             ],
-            "compilerPath": "{YOUR_COMIPLER}",
+            "compilerPath": "{YOUR_COMPILER}",
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "{YOUR_MODE}",
@@ -56,7 +56,7 @@
                 "_UNICODE",
                 "ARCH_x86_64"
             ],
-            "compilerPath": "{YOUR_COMIPLER}",
+            "compilerPath": "{YOUR_COMPILER}",
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "{YOUR_MODE}",
@@ -78,7 +78,7 @@
                 "_UNICODE",
                 "ARCH_x86_64"
             ],
-            "compilerPath": "{YOUR_COMIPLER}",
+            "compilerPath": "{YOUR_COMPILER}",
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "{YOUR_MODE}",
