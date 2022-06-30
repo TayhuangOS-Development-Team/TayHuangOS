@@ -53,6 +53,7 @@ COPY := cp
 OBJCOPY := objcopy
 FDISK := fdisk
 LOOP_SETUP := losetup
+CHMOD := chmod
 
 ifeq ($(ARCHITECTURE), x86_64)
 	QEMU := qemu-system-x86_64
@@ -74,6 +75,10 @@ endif
 export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
 export GCC GPP ASM GAS RM MKDIR LD IMAGEGEN _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
 
+RAW_ICON := $(BINDIR)/TayhuangOS.raw
+TAYHUANG_ICON := $(ROOTDIR)/TayhuangOS.png
+TOOLS_DIR := $(ROOTDIR)/tools/
+PNG_CONV := $(TOOLS_DIR)/png_converter/converter.py
 
 #任务区
 
@@ -121,6 +126,7 @@ setup_workspace:
 	$(SUDO) $(LOOP_SETUP) -d $(LOOPA)
 	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
 
+	$(SUDO) $(CHMOD) +x $(PNG_CONV)
 
 #编译
 .PHONY: build
@@ -129,6 +135,7 @@ build:
 	$(CHANGE_DIR) loader ; $(MAKE) build
 	$(CHANGE_DIR) kernel ; $(MAKE) build
 	$(CHANGE_DIR) module ; $(MAKE) build
+	$(PNG_CONV) $(TAYHUANG_ICON) $(RAW_ICON)
 
 #清理
 .PHONY: clean
@@ -145,10 +152,12 @@ image:
 	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
 
 	$(SUDO) $(COPY) ./configs/grub.cfg $(TAYHUANGOS_MOUNT_DIR)/boot/grub
+	$(SUDO) $(COPY) $(RAW_ICON) $(TAYHUANGOS_MOUNT_DIR)/
 
 	$(CHANGE_DIR) loader ; $(MAKE) image
 	$(CHANGE_DIR) kernel ; $(MAKE) image
 	$(CHANGE_DIR) module ; $(MAKE) image
+
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
