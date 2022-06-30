@@ -9,7 +9,7 @@ output = open(sys.argv[2], mode='wb+')
 width = img.shape[0]
 height = img.shape[1]
 
-shrink = 8
+shrink = 2
 
 output.write(int(width / shrink).to_bytes(4, 'little'))
 output.write(int(height / shrink).to_bytes(4, 'little'))

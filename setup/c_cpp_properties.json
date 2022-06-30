@@ -24,7 +24,7 @@
             "includePath": [
                 "${workspaceFolder}/include/",
                 "${workspaceFolder}/include/std/",
-                "${workspaceFolder}/loader/"
+                "${workspaceFolder}/loader/grub_loader/"
             ],
             "defines": [
                 "_DEBUG",
