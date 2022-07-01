@@ -24,7 +24,6 @@
 _start: /*入口*/
     finit
     call entry
-    xorq %rax, %rax
     jmp .
 
     .global __set_cr0

@@ -29,10 +29,10 @@ PRIVATE kh_seg *KHEAP_SEGMENTS = NULL; //内存项表
 PRIVATE void *KHEAP_TOP = NULL; //堆顶
 PRIVATE void *KHEAP_BOTTOM = NULL; //堆底
 
-PUBLIC void init_kheap(void *kheap_limit) { //初始化堆
+PUBLIC void init_kheap(void *kheap_base, void *kheap_limit) { //初始化堆
     KHEAP_SEGMENTS = (kh_seg*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
     KHEAP_TOP = (void*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
-    KHEAP_BOTTOM = (void*)KHEAP_BASE;
+    KHEAP_BOTTOM = kheap_base;
     memset(KHEAP_SEGMENTS, 0, sizeof(kh_seg) * KH_SEG_NUM);
 }
 

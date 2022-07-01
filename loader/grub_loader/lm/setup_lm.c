@@ -26,6 +26,7 @@
 #include <tayhuang/boot_args.h>
 #include <tayhuang/descs.h>
 #include <string.h>
+#include <logging.h>
 
 PUBLIC void setup_longmode(void *pml4) {
     cr0_t cr0 = get_cr0();
@@ -66,7 +67,7 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
     const int pml4_num = pml4e_num / pml4e_pmu
                         + ((pml4e_num  % pml4e_pmu) ? 1 : 0); //有余数则 + 1
     if (pml4_num != 1) { //4级分页, 支持到8TB
-        printf ("Error!Too much memory!\n");
+        lerror ("Loader", "Error!Too much memory!\n");
         return NULL;
     }
 
@@ -197,17 +198,19 @@ PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool i
     load_kernel(&result); //加载内核
 
     if (! result.status) {
-        printf ("Error!Couldn't goto long mode!\n");
+        lerror ("Loader", "Error!Couldn't goto long mode!");
         return;
     }
 
-    printf ("start: %p, limit: %p, entry: %p", result.kernel_start, result.kernel_limit, result.kernel_entry);
+    char buffer[256];
+    sprintf (buffer, "start: %p, limit: %p, entry: %p", result.kernel_start, result.kernel_limit, result.kernel_entry);
+    linfo ("Loader", buffer);
 
     void *page_limit;
     void *page_start = setup_paging(memsz, memsz_high, &page_limit); //设置分页
 
     if (page_start == NULL) {
-        printf ("Error!Could setup paging!\n");
+        lerror ("Loader", "Error!Could setup paging!");
         return;
     }
 

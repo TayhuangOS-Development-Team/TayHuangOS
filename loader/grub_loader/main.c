@@ -25,6 +25,7 @@
 #include <int_handlers.h>
 #include <lm/setup_lm.h>
 #include <info_parser.h>
+#include <logging.h>
 
 //Tayhuang OS GRUB Loader Multiboot2 header struct
 struct tayhuang_header {
@@ -68,51 +69,8 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
 
 #define ICON_SIZE (1028 * 1024)
 
-//loader主函数
-PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
-    asmv ("finit");
-
-    init_gdt();
-
-    #ifndef VBE_ENABLE
-        printf ("Hello, OS World!I'm \"%s\"\n", "Tayhuang OS Grub Loader");
-        printf ("Loading Kernel and Setup Module Now...\n");
-    #endif
-
-    init_idt();
-    init_pic();
-
-    init_lheap(0x400000);
-
-    parse_result_struct result;
-
-    parse_args(multiboot_info, &result);
-
-    asmv ("sti");
-
-    partition_member members[4];
-
-    get_partition(DISK_SEL_IDE0_MASTER, 0, &members[0]);
-    get_partition(DISK_SEL_IDE0_MASTER, 1, &members[1]);
-    get_partition(DISK_SEL_IDE0_MASTER, 2, &members[2]);
-    get_partition(DISK_SEL_IDE0_MASTER, 3, &members[3]);
-
-    for (int i = 0 ; i < 4 ; i ++) {
-        printf ("Partition %d: Start LBA=%d, Sector Number = %d, Bootable = %s\n",
-            i + 1, members[i].start_lba, members[i].sector_number,
-            members[i].state == PS_BOOTABLE ? "true" : "false");
-    }
-
-    void *framebuffer = result.framebuffer;
-    int width = result.screen_width;
-    int height = result.screen_height;
-
-    fs_context ctx = load_fs(DISK_SEL_IDE0, 0);
-
-    void *icon = lmalloc(ICON_SIZE);
-
-    load_file(ctx, "tayicon.raw", icon, false);
-
+#ifdef VBE_ENABLE
+void display_icon(void *framebuffer, int width, int height) {
     for (int i = 0 ; i < height ; i ++) {
         for (int j = 0 ; j < width ; j ++) {
             *(char*)(framebuffer + (i * width + j) * 3 + 0) = 0xFF;
@@ -121,13 +79,21 @@ PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
         }
     }
 
+    fs_context ctx = load_fs(DISK_SEL_IDE0, 0);
+
+    void *icon = lmalloc(ICON_SIZE);
+
+    load_file(ctx, "tayicon.raw", icon, false);
+
+    terminate_fs(ctx);
 
     int ic_width = *(int*)icon;
     int ic_height = *(int*)(icon + 4);
     icon += 8;
 
-    int offset_x = result.screen_width / 2 - ic_width / 2;
-    int offset_y = result.screen_height / 2 - ic_height / 2;
+    //居中
+    int offset_x = width / 2 - ic_width / 2;
+    int offset_y = height / 2 - ic_height / 2;
 
     for (int i = 0 ; i < ic_height ; i ++) {
         for (int j = 0 ; j < ic_width ; j ++) {
@@ -136,7 +102,46 @@ PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
             *(char*)(framebuffer + ((i + offset_y) * width + j + offset_x) * 3 + 2) = *(char*)(icon + (i * ic_width + j) * 4 + 0);
         }
     }
-    //goto_longmode(7 << 3, result.memsz, result.memsz_high, result.is_graphic, result.screen_width, result.screen_height, result.framebuffer);
+
+    lfree (icon);
+}
+#endif
+
+//loader主函数
+PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
+    asmv ("finit");
+
+    init_gdt();
+
+    char buffer[256];
+
+    sprintf (buffer, "Hello, OS World!I'm \"%s\"", "Tayhuang OS Grub Loader");
+    linfo ("Loader", buffer);
+    sprintf (buffer, "Loading Kernel and Setup Module Now...");
+    linfo ("Loader", buffer);
+
+    init_idt();
+    init_pic();
+
+    init_serial();
+
+    init_lheap(0x800000);
+
+    parse_result_struct result;
+
+    parse_args(multiboot_info, &result);
+
+    asmv ("sti");
+
+    void *framebuffer = result.framebuffer;
+    int width = result.screen_width;
+    int height = result.screen_height;
+
+#ifdef VBE_ENABLE
+    display_icon (framebuffer, width, height);
+#endif
+
+    goto_longmode(7 << 3, result.memsz, result.memsz_high, result.is_graphic, result.screen_width, result.screen_height, result.framebuffer);
 }
 
 //loader入口点

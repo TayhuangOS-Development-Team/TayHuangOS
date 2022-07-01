@@ -30,6 +30,7 @@
 #include <memory/pmm.h>
 
 #include <printk.h>
+#include <logging.h>
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -98,17 +99,19 @@ void initialize(struct boot_args *args) {
 
     en_int();
 
+    init_serial();
+
     init_video(args->framebuffer, args->screen_width, args->screen_height);
     
-    init_kheap(args->kernel_start - 0x40000);
+    init_kheap(args->kernel_limit + 0x20000, args->kernel_limit + 0xA0000);
 
     qword memsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
     init_pmm(memsz);
 
     __set_pages_state(NULL, 256, true);
 
-    TSS.ist1 = 0x1400000;
-    TSS.rsp0 = 0x1250000;
+    TSS.ist1 = 0x600000;
+    TSS.rsp0 = 0x500000;
 }
 
 void entry(struct boot_args *_args) {
@@ -120,9 +123,7 @@ void entry(struct boot_args *_args) {
 
     initialize(&args); //初始化
 
-    clrscr(); 
-
-    printk ("Hello, I'm TayhuangOS Kernel!");
+    linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
 
     while(true);
 }

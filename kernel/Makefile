@@ -20,8 +20,8 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 LIBS_C_SRC := ctype string tostring
-MEMORY_C_SRC := kheap pmm
-C_SRC := kernel printk \
+MEMORY_C_SRC := kheap pmm 
+C_SRC := kernel printk logging \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
 	$(foreach src, $(MEMORY_C_SRC), memory/$(src))
 
@@ -45,6 +45,10 @@ ifeq ($(MODE), debug)
 else
 	LD_FLAGS += -s
 	CPP_DEFS += -D_DEBUG
+endif
+
+ifeq ($(VBE_MODE), ENABLE)
+	C_DEFS += -DVBE_ENABLE
 endif
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \

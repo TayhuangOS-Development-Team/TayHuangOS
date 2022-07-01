@@ -37,7 +37,7 @@ PUBLIC void write_char(char ch, int color, int posx, int posy) {
     *(((short*)video_address) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
 }
 
-PUBLIC  void write_str(const char *str, int color, int posx, int posy) {
+PUBLIC void write_str(const char *str, int color, int posx, int posy) {
     int pos = posx + posy * 80;
     while (*str != '\0') {
         char ch = *str;
