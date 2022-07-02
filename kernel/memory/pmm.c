@@ -88,6 +88,7 @@ PUBLIC void *__alloc_free_pages(int order, int *order_give) {
             list_head[i] = head->next;
             if (head->next == NULL)
                 list_tail[i] = NULL;
+            *order_give = i;
             return head->address;
         }
     }

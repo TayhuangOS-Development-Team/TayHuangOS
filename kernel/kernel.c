@@ -29,6 +29,7 @@
 
 #include <memory/kheap.h>
 #include <memory/pmm.h>
+#include <memory/paging.h>
 
 #include <intterup/init_int.h>
 #include <intterup/clock/clock.h>
@@ -115,6 +116,8 @@ PRIVATE struct boot_args args;
 #define KHEAP_PRE_BASE (SETUP_MOD_BASE + SETUP_MOD_SIZE)
 #define KHEAP_PRE_SIZE (640 * 1024 - KHEAP_PRE_BASE)
 
+#define RESERVED_LIMIT (0x2000000)
+
 void initialize(struct boot_args *args) {
     init_gdt(); //初始化GDT
 
@@ -137,6 +140,27 @@ void initialize(struct boot_args *args) {
 
     init_sse();
     init_pit(CLOCK_FREQUENCY);
+
+    kernel_pml4 = create_pgd();
+
+    set_mapping(kernel_pml4, NULL, NULL, memsz / MEMUNIT_SZ, true, true);
+    set_mapping(kernel_pml4, NULL, NULL, RESERVED_LIMIT / MEMUNIT_SZ, true, false);
+    
+    if (((qword)args->framebuffer) >= memsz) {
+        set_mapping(kernel_pml4, args->framebuffer, args->framebuffer, (args->screen_width * args->screen_height * 3 * 2) / MEMUNIT_SZ, true, true);
+    }
+
+    __set_cr3(kernel_pml4);
+
+#ifdef VBE_ENABLE
+    for (int i = 0 ; i < 20 ; i ++) {
+        for (int j = 0 ; j < 20 ; j ++) {
+            *(char*)(args->framebuffer + (i * args->screen_width + j) * 3 + 0) = 0x00;
+            *(char*)(args->framebuffer + (i * args->screen_width + j) * 3 + 1) = 0xFF;
+            *(char*)(args->framebuffer + (i * args->screen_width + j) * 3 + 2) = 0x00;
+        }
+    }
+#endif
 
     TSS.ist1 = 0x600000;
     TSS.rsp0 = 0x500000;
