@@ -22,123 +22,103 @@
 #include <tayhuang/partition.h>
 #include <memory/kheap.h>
 #include <string.h>
+#include <logging.h>
 
-PRIVATE qword totalmem_sum = 0;
-PRIVATE qword *memstates = NULL;
+typedef struct __free_area {
+    void *address;
+    struct __free_area *next;
+} free_area_struct; //16B
 
-PUBLIC void init_pmm(qword totalmem) {
-    totalmem_sum = totalmem;
-    memstates = kmalloc(totalmem / MEMUNIT_SZ / 8);
+#define MAX_ORDER (7)
+
+free_area_struct *list_head[MAX_ORDER + 1]; //最多一次性2^7个页面
+free_area_struct *list_tail[MAX_ORDER + 1]; //最多一次性2^7个页面
+
+PRIVATE void add_free_area(int order, void *address) {
+    free_area_struct *head = list_head[order];
+    
+    if (head == NULL) {
+        head = kmalloc(sizeof(free_area_struct));
+        head->address = address;
+        head->next = NULL;
+        list_tail[order] = list_head[order] = head;
+        return;
+    }
+
+    free_area_struct *tail = list_tail[order];
+    list_tail[order] = kmalloc(sizeof(free_area_struct));
+    tail->next = list_tail[order];
+    list_tail[order]->address = address;
+    list_tail[order]->next = NULL;
 }
 
-// PRIVATE bool __get_page_state(void *page) {
-//     qword page_no = ((qword)page) / MEMUNIT_SZ;
-//     qword page_idx = page_no / sizeof(qword);
-//     qword page_bit = page_no % sizeof(qword);
+PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
+    qword pages = ((memsize + (PMM_PAGE_SIZE - 1)) & ~(PMM_PAGE_SIZE - 1)) / PMM_PAGE_SIZE;
+    linfo ("PMM", "memsize = %#016X, %#016X pages in total", memsize, pages);
+    qword reserved_pages = ((((qword)reserved_limit) + (PMM_PAGE_SIZE - 1)) & ~(PMM_PAGE_SIZE - 1)) / PMM_PAGE_SIZE;
+    linfo ("PMM", "%#016X pages need added", pages - reserved_pages);
+    pages -= reserved_pages;
 
-//     qword states = memstates[page_idx];
-//     return (states & (1 << page_bit)) != 0;
-// }
+    void *start = reserved_limit;
 
-PRIVATE void __set_page_state(void *page, bool state) {
-    qword page_no = ((qword)page) / MEMUNIT_SZ;
-    qword page_idx = page_no / sizeof(qword);
-    qword page_bit = page_no % sizeof(qword);
+    for (int i = 0 ; i < MAX_ORDER ; i ++) {
+        if (pages & 1) {
+            add_free_area(i, start);
+            start += PMM_PAGE_SIZE << 1;
+            linfo ("PMM", "%P ~ %P added", start, start + (PMM_PAGE_SIZE << i) - 1);
+        }
+        pages >>= 1;
+    }
 
-    memstates[page_idx] |= (1 << page_bit);
-}
-
-PUBLIC qword get_freemem_sum(void){
-    //TODO
-    return 0;
-}
-
-PUBLIC qword get_usedmem_sum(void){
-    //TODO
-    return 0;
-}
-
-PUBLIC qword get_totalmem_sum(void){
-    return totalmem_sum;
-}
-
-//设置从addr开始的pages个page状态
-PUBLIC void __set_pages_state(void *addr, qword pages, bool used){
-    for (qword i = 0 ; i < pages ; i ++) {
-        __set_page_state(addr + i * MEMUNIT_SZ, used);
+    for (int i = 0 ; i < pages ; i ++) {
+        add_free_area(MAX_ORDER, start);
+        linfo ("PMM", "%P ~ %P added", start, start + (PMM_PAGE_SIZE << MAX_ORDER) - 1);
+        start += PMM_PAGE_SIZE << MAX_ORDER;
     }
 }
 
-PRIVATE qword __get_free_pages(void *addr, qword maxsum) {
-    qword page_no = ((qword)addr) / MEMUNIT_SZ;
-    qword page_idx = page_no / sizeof(qword);
-    qword page_bit = page_no % sizeof(qword);
+PUBLIC void *__alloc_free_pages(int order, int *order_give) {
+    for (int i = order ; i <= MAX_ORDER ; i ++) {
+        free_area_struct *head = list_head[i];
 
-    qword states = memstates[page_idx];
-    states >>= page_bit; //移位 除去低位
-
-    qword sum = 0;
-
-    if (states == 0) {
-        sum += sizeof(qword) * 8 - page_bit;
+        if (head != NULL) {
+            list_head[i] = head->next;
+            if (head->next == NULL)
+                list_tail[i] = NULL;
+            return head->address;
+        }
     }
-
-    if (maxsum != -1 && sum >= maxsum)
-        return maxsum;
-
-    qword i = 0;
-    for (i = page_idx + 1 ; memstates[i] == 0 ; i ++) {
-        sum += sizeof(qword) * 8;
-        if (maxsum != -1 && sum >= maxsum)
-            return maxsum;
-    }
-
-    sum += simple_log2(LOWBIT(memstates[i]));
-    return min(sum, maxsum);
+    return NULL;
 }
 
-//从addr开始的pages个page是否全部空闲
-PUBLIC bool __is_pages_all_free(void *addr, qword pages){
-    qword page_no = ((qword)addr) / MEMUNIT_SZ;
-    qword page_idx = page_no / sizeof(qword);
-    qword page_bit = page_no % sizeof(qword);
-
-    qword states = memstates[page_idx];
-    states >>= page_bit; //移位 除去低位
-
-    qword sum = 0;
-
-    if (states == 0) {
-        sum += sizeof(qword) * 8 - page_bit;
-    }
-
-    if (sum >= pages)
-        return true;
-
-    qword i = 0;
-    for (i = page_idx + 1 ; memstates[i] == 0 ; i ++) {
-        sum += sizeof(qword) * 8;
-        if (sum >= pages)
-            return true;
-    }
-
-    sum += simple_log2(LOWBIT(memstates[i]));
-    if (sum >= pages)
-        return true;
-
-    return false;
+PUBLIC void __return_pages(void *addr, int order) {
+    add_free_area(order, addr);
 }
 
+PUBLIC void return_pages(void *addr, int pages) {
+    void *start = addr;
 
-//获取pages个连续页（强制性）
-PUBLIC void *__find_continuous_pages(qword pages) {
-    //TODO
-    qword pos = 0;
-    for (qword free_pages = __get_free_pages(pos * MEMUNIT_SZ, pages) ;
-        free_pages < pages ;
-    ) {
-        pos += free_pages;
+    for (int i = 0 ; i < MAX_ORDER ; i ++) {
+        if (pages & 1) {
+            add_free_area(i, start);
+            start += PMM_PAGE_SIZE << 1;
+        }
+        pages >>= 1;
     }
-    __set_pages_state((void*)(pos * MEMUNIT_SZ), pages, true);
-    return pos * MEMUNIT_SZ;
+
+    for (int i = 0 ; i < pages ; i ++) {
+        add_free_area(MAX_ORDER, start);
+        start += PMM_PAGE_SIZE << MAX_ORDER;
+    }
+}
+
+PUBLIC void *alloc_pages(int order) {
+    int order_give = 0;
+    // 寻找可用页
+    void *addr = __alloc_free_pages(order, &order_give);
+
+    //返还多余页
+    return_pages(addr + (PMM_PAGE_SIZE << order), (1 << order_give) - (1 << order));
+
+    return addr;
 }

@@ -4,7 +4,7 @@
 # FILESYSTEM := fat32
 # MODE := debug
 # QEMU_ARGS := 
-VBE_MODE := ENABLE
+# VBE_MODE := ENABLE
 # LOOPA := /dev/loop19
 # LOOPB := /dev/loop20
 # KERNEL_PARTITION_OFFSET := 1048576
@@ -61,7 +61,7 @@ endif
 
 QEMU_ARGS ?=
 QEMU_ARGS += -hda tayhuangOS.img \
-             -m 64m \
+             -m 256m \
 			 -serial stdio \
 			 -rtc base=localtime \
 			 -name "TayhuangOS"

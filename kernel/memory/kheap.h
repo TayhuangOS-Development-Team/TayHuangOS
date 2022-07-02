@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void init_kheap(void *kheap_base, void *kheap_limit); //初始化堆
+PUBLIC void init_kheap(void *prepare_base, int prepare_size);
 PUBLIC void *kmalloc(int size); //分配内存
 static inline void *kcalloc(int num, int size) { //分配num个size的内存
     return kmalloc(num * size);

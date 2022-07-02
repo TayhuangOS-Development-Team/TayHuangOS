@@ -99,7 +99,7 @@ bool init_heap(void) {
 void *malloc(int size) {
     char buffer[160];
 
-    int fixed_size = ((size / HEAPUNIT_SZ) + ((size % HEAPUNIT_SZ) != 0)) * HEAPUNIT_SZ;
+    int fixed_size = (size & (HEAPUNIT_SZ - 1)) & ~(HEAPUNIT_SZ - 1);
 
     sprintf (buffer, "require size = %d ; fixed size = %d", size, fixed_size);
     linfo (buffer);

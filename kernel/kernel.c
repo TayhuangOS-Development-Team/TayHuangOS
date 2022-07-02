@@ -94,6 +94,11 @@ PRIVATE struct boot_args args;
 
 #define CLOCK_FREQUENCY (50.0f) //时钟周期
 
+#define SETUP_MOD_BASE (64 * 1024)
+#define SETUP_MOD_SIZE (320 * 1024)
+#define KHEAP_PRE_BASE (SETUP_MOD_BASE + SETUP_MOD_SIZE)
+#define KHEAP_PRE_SIZE (640 * 1024 - KHEAP_PRE_BASE)
+
 void initialize(struct boot_args *args) {
     init_gdt(); //初始化GDT
 
@@ -102,13 +107,14 @@ void initialize(struct boot_args *args) {
     init_serial();
 
     init_video(args->framebuffer, args->screen_width, args->screen_height);
-    
-    init_kheap(args->kernel_limit + 0x20000, args->kernel_limit + 0xA0000);
+
+    memcpy (SETUP_MOD_BASE, args->setup_mod_addr, SETUP_MOD_SIZE);
+
+    init_kheap(KHEAP_PRE_BASE, KHEAP_PRE_SIZE);
 
     qword memsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
-    init_pmm(memsz);
 
-    __set_pages_state(NULL, 256, true);
+    init_pmm(memsz, 0x2000000);
 
     TSS.ist1 = 0x600000;
     TSS.rsp0 = 0x500000;
@@ -123,7 +129,7 @@ void entry(struct boot_args *_args) {
 
     initialize(&args); //初始化
 
-    linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
+    linfo ("Kernel", "Hello, I'm %s!", "TayhuangOS Kernel");
 
     while(true);
 }

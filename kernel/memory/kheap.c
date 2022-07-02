@@ -17,82 +17,112 @@
 
 
 #include <memory/kheap.h>
+#include <memory/pmm.h>
 #include <string.h>
 
-typedef struct {
-    void *start;
-    void *size;
-} kh_seg; //内存项信息
+PRIVATE void *start_addr = NULL;
 
-#define KH_SEG_NUM (8192) //内存项数
-PRIVATE kh_seg *KHEAP_SEGMENTS = NULL; //内存项表
-PRIVATE void *KHEAP_TOP = NULL; //堆顶
-PRIVATE void *KHEAP_BOTTOM = NULL; //堆底
+struct __seg_info {
+    qword size : 63;
+    bool used : 1;
+    struct __seg_info *next;
+    struct __seg_info *last;
+} __attribute__((packed));
 
-PUBLIC void init_kheap(void *kheap_base, void *kheap_limit) { //初始化堆
-    KHEAP_SEGMENTS = (kh_seg*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
-    KHEAP_TOP = (void*)(kheap_limit - sizeof(kh_seg) * KH_SEG_NUM);
-    KHEAP_BOTTOM = kheap_base;
-    memset(KHEAP_SEGMENTS, 0, sizeof(kh_seg) * KH_SEG_NUM);
+typedef struct __seg_info seg_info_struct;
+
+#define MIN_SEG_SIZE (64)
+
+PUBLIC void init_kheap(void *prepare_base, int prepare_size) {
+    start_addr = prepare_base;
+    seg_info_struct *start_seg = (seg_info_struct*)prepare_base;
+
+    start_seg->size = prepare_size;
+    start_seg->used = false;
+    start_seg->next = NULL;
+    start_seg->last = NULL;
 }
 
-PRIVATE void *__get_segment_size(void *base, int size) { //获得项大小
-    for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
-        if (max(KHEAP_SEGMENTS[i].start, base) < min(KHEAP_SEGMENTS[i].size, (base + size))) {
-            return KHEAP_SEGMENTS[i].size;
-        }
+#define ALLOC_PAGE_ORDER (4)
+
+PRIVATE seg_info_struct *extend_heap(int *order_give) {
+    void *addr = __alloc_free_pages(ALLOC_PAGE_ORDER, order_give);
+    seg_info_struct *seg = (seg_info_struct*)addr;
+    seg->size = (PMM_PAGE_SIZE << ALLOC_PAGE_ORDER);
+    seg->used = false;
+    seg->next = NULL;
+    return seg;
+}
+
+PRIVATE seg_info_struct *do_combine(seg_info_struct *seg) {
+    if ((seg->next != NULL) && (! seg->next->used)) {
+        seg->size += seg->next->size;
+        seg->next = seg->next->next;
+        if (seg->next != NULL)
+            seg->next->last = seg;
     }
-    return NULL;
-}
 
-PRIVATE void *__lookup_free_mem(int size) { //寻找空闲内存
-    for (void *i = KHEAP_BOTTOM ; i < KHEAP_TOP ;) {
-        void *sz = __get_segment_size(i, size); //获取这个项的大小
-        if (sz == NULL) //没大小:空闲内存
-            return i;
-        i = sz + 1; //加上size继续寻找
+    if ((seg->last != NULL) && (! seg->last->used)) {
+        seg->last->size += seg->size;
+        seg->last->next = seg->next;
+        if (seg->next != NULL)
+            seg->next->last = seg->last;
+        return seg->last;
     }
-    return NULL;
+
+    return seg;
 }
 
-PRIVATE int __lookup_free_kh_seg(void) { //查找未被使用的内存项
-    for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
-        if ((KHEAP_SEGMENTS[i].start == NULL) && (KHEAP_SEGMENTS[i].size == NULL)) {
-            return i;
-        }
+PUBLIC void *kmalloc(int size) {
+    size += sizeof(seg_info_struct);
+
+    int fixed_size = (size + (MIN_SEG_SIZE - 1)) & ~(MIN_SEG_SIZE - 1);
+
+    seg_info_struct *cur_seg = (seg_info_struct*)start_addr;
+
+    while ((cur_seg->size < fixed_size || cur_seg->used) && cur_seg->next != NULL) {
+        cur_seg = cur_seg->next;
     }
-    return -1;
-}
 
-PRIVATE bool __insert_kh_seg(void *start, void *size) { //插入内存项
-    int idx = __lookup_free_kh_seg(); //寻找空闲内存项
-    if (idx == -1) {
-        return false;
+    if (cur_seg->size < fixed_size || cur_seg->used) {
+        //ask pmm for more memories
+        linfo ("KHeap", "Ask pmm for more memories!");
+        int order_give = 0;
+        seg_info_struct *seg = extend_heap(&order_give);
+        seg->last = cur_seg;
+        cur_seg->next = seg;
+
+        cur_seg = do_combine(seg);
+
+        return_pages(((void*)seg) + (PMM_PAGE_SIZE << ALLOC_PAGE_ORDER), (1 << order_give) - (1 << ALLOC_PAGE_ORDER));
+
+        return kmalloc(size);
     }
-    KHEAP_SEGMENTS[idx].start = start;
-    KHEAP_SEGMENTS[idx].size = size; //设置
-    return true;
-}
 
-PRIVATE void __delete_kh_seg(void *start) { //删除内存项
-    for (int i = 0 ; i < KH_SEG_NUM ; i ++) {
-        if ((KHEAP_SEGMENTS[i].start == start)) {
-            KHEAP_SEGMENTS[i].start = NULL;
-            KHEAP_SEGMENTS[i].size = NULL; //设0
-            break;
-        }
+    if ((cur_seg->size - fixed_size) >= MIN_SEG_SIZE) {
+        //进行分割
+        seg_info_struct *new_seg = (seg_info_struct*)(((void*)cur_seg) + fixed_size);
+        new_seg->size = cur_seg->size - fixed_size;
+        new_seg->next = cur_seg->next;
+        if (cur_seg->next != NULL)
+            cur_seg->next->last = new_seg;
+        new_seg->used = false;
+        new_seg->last = cur_seg;
+
+        cur_seg->size = fixed_size;
+        cur_seg->next = new_seg;
+        cur_seg->used = true;
     }
+    else {
+        cur_seg->used = true;
+    }
+
+    return (void*)(cur_seg) + sizeof(seg_info_struct);
 }
 
-PUBLIC void *kmalloc(int size) { //分配内存
-    void *mem = __lookup_free_mem(size);
-    if (mem == NULL)
-        return NULL;
-    if (! __insert_kh_seg(mem, mem + size - 1))
-        return NULL;
-    return mem;
-}
+PUBLIC void kfree(void *ptr) {
+    seg_info_struct *seg = (seg_info_struct*)(ptr - sizeof(seg_info_struct));
+    seg->used = false;
 
-PUBLIC void kfree(void *ptr) { //释放内存
-    __delete_kh_seg(ptr);
+    do_combine(seg);
 }

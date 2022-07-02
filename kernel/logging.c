@@ -19,6 +19,7 @@
 #include <logging.h>
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
+#include <printk.h>
 
 PUBLIC void init_serial(void) {
     outb(SERIAL_INT_VALID, 0); //禁用COM中断
@@ -45,7 +46,7 @@ PUBLIC void write_serial_str(const char *str) {
     }
 }
 
-PUBLIC void _log(const char *name, const char *type, const char *msg) {
+PUBLIC void __log(const char *name, const char *type, const char *msg) {
     asmv ("cli");
     write_serial_char('(');
     write_serial_str(name);
@@ -58,7 +59,7 @@ PUBLIC void _log(const char *name, const char *type, const char *msg) {
     asmv ("sti");
 }
 
-PUBLIC void log(const char *name, const int type, const char *msg) {
+PUBLIC void _log(const char *name, const int type, const char *fmt, va_list args) {
     const char *typename;
     switch (type) {
     case INFO: typename = "INFO"; break;
@@ -69,29 +70,76 @@ PUBLIC void log(const char *name, const int type, const char *msg) {
     case ATTENTION: typename = "ATTENTION"; break;
     default: typename = "UNKNOWN"; break;
     }
-    _log(name, typename, msg);
+
+    char buffer[512];
+
+    vsprintk(buffer, fmt, args);
+
+    __log(name, typename, buffer);
 }
 
-PUBLIC void linfo(const char *name, const char *msg) {
-    log(name, INFO, msg);
+PUBLIC void log(const char *name, const char *type, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    char buffer[512];
+    vsprintk(buffer, fmt, args);
+
+    __log(name, type, buffer);
+
+    va_end(args);
 }
 
-PUBLIC void lwarn(const char *name, const char *msg) {
-    log(name, WARN, msg);
+PUBLIC void linfo(const char *name, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(name, INFO, fmt, args);
+
+    va_end(args);
 }
 
-PUBLIC void lerror(const char *name, const char *msg) {
-    log(name, ERROR, msg);
+PUBLIC void lwarn(const char *name, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(name, WARN, fmt, args);
+
+    va_end(args);
 }
 
-PUBLIC void lfatal(const char *name, const char *msg) {
-    log(name, FATAL, msg);
+PUBLIC void lerror(const char *name, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(name, ERROR, fmt, args);
+
+    va_end(args);
 }
 
-PUBLIC void ltips(const char *name, const char *msg) {
-    log(name, TIPS, msg);
+PUBLIC void lfatal(const char *name, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(name, FATAL, fmt, args);
+
+    va_end(args);
 }
 
-PUBLIC void lattention(const char *name, const char *msg) {
-    log(name, ATTENTION, msg);
+PUBLIC void ltips(const char *name, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(name, TIPS, fmt, args);
+
+    va_end(args);
+}
+
+PUBLIC void lattention(const char *name, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(name, ATTENTION, fmt, args);
+
+    va_end(args);
 }

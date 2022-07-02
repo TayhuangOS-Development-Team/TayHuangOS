@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-#define LHEAP_BASE (0x1400000)
+#define LHEAP_BASE (0x2200000)
 
 PUBLIC void init_lheap(void *lheap_size); //初始化堆
 PUBLIC void *lmalloc(int size); //分配内存

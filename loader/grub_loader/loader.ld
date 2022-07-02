@@ -22,7 +22,7 @@ OUTPUT_ARCH("i386")
 
 SECTIONS
 {
-    . = 0x1008000;
+    . = 0x2008000;
     .text : {
         . = ALIGN(8);
         KEEP(*(.multiboot));

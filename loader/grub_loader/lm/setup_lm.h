@@ -20,7 +20,7 @@
 
 #include <tayhuang/defs.h>
 
-#define PAGE_ADDRESS (0x2000000)
+#define PAGE_ADDRESS (0x3000000)
 PUBLIC void setup_longmode(void *pml4);
 PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit);
 
