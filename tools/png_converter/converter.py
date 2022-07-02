@@ -1,4 +1,21 @@
 #!/usr/bin/python3
+#
+# SPDX-License-Identifier: GPL-3.0-only
+# -------------------------------*-TayhuangOS-*-----------------------------------
+# 
+#    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+# 
+# --------------------------------------------------------------------------------
+# 
+# 作者: theflysong
+# 
+# converter.py
+# 
+# 图片转换器
+# 
+#
+
+
 
 import cv2
 import sys

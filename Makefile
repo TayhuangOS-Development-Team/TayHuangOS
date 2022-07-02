@@ -1,3 +1,21 @@
+#
+# SPDX-License-Identifier: GPL-3.0-only
+# -------------------------------*-TayhuangOS-*-----------------------------------
+# 
+#    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+# 
+# --------------------------------------------------------------------------------
+# 
+# 作者: theflysong
+# 
+# Makefile
+# 
+# Makefile
+# 
+#
+
+
+
 # 配置区
 
 # ARCHITECTURE := x86_64 #架构
