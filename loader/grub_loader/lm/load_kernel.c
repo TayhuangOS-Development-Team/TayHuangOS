@@ -16,16 +16,20 @@
 
 
 #include <lm/load_kernel.h>
+
 #include <fs/common.h>
 #include <disk.h>
+
 #include <printf.h>
 #include <lheap.h>
+
 #include <elf.h>
 #include <string.h>
 
 PUBLIC void load_program(void *kernel_bin, Elf64_Phdr *program_header, void **start, void **limit) {
-    if (program_header->p_type != PT_LOAD) //不是要被加载的段
+    if (program_header->p_type != PT_LOAD) { //不是要被加载的段
         return;
+    }
     memcpy(program_header->p_vaddr, kernel_bin + program_header->p_offset, program_header->p_filesz);
     memset(program_header->p_vaddr + program_header->p_filesz, 0, program_header->p_memsz - program_header->p_filesz);
     *limit = program_header->p_vaddr + program_header->p_memsz;
@@ -50,12 +54,13 @@ void load_kernel(load_result_struct *result) {
     for (int i = 0 ; i < 4 ; i ++) {
         fs_context context = load_fs(DISK_SEL_IDE0_MASTER, i);
 
-        if (context == NULL)
+        if (context == NULL) {
             continue;
+        }
 
-        bool status = load_file(context, "kernel.bin", kernel_bin_buffer, true);
+        bool status = load_file(context, "kernel.bin", kernel_bin_buffer);
 
-        status &= load_file(context, "setup.mod", setup_mod_buffer, true);
+        status &= load_file(context, "setup.mod", setup_mod_buffer);
 
         if (! status) {
             terminate_fs(context);

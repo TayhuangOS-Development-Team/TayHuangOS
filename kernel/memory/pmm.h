@@ -19,8 +19,7 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-
-#define PMM_PAGE_SIZE (1024 * 16)
+#include <tayhuang/paging.h>
 
 //0~reserved_limit = used
 PUBLIC void init_pmm(qword memsize, void *reserved_limit);

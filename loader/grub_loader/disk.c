@@ -17,10 +17,13 @@
 
 
 #include <disk.h>
-#include <int_handlers.h>
-#include <lheap.h>
+
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
+
+#include <int_handlers.h>
+#include <lheap.h>
+
 #include <string.h>
 
 #define IDE_MASK (0x1)

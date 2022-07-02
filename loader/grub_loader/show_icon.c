@@ -17,21 +17,27 @@
 
 
 #include <show_icon.h>
+
 #include <tayhuang/ports.h>
-#include <fs/common.h>
-#include <disk.h>
-#include <int_handlers.h>
 #include <tayhuang/io.h>
+
+#include <disk.h>
+#include <fs/common.h>
+
+#include <int_handlers.h>
+#include <lheap.h>
 
 #define PIT_FREQUENCY (1193181.6666f)
 
 PUBLIC bool init_pit(float frequency) { //初始化PIT
-    if (frequency > PIT_FREQUENCY) //频率过高
+    if (frequency > PIT_FREQUENCY) { //频率过高
         return false;
+    }
 
     int count = (int)(PIT_FREQUENCY / frequency);
-    if ((PIT_FREQUENCY - count * frequency) > (frequency / 2))
+    if ((PIT_FREQUENCY - count * frequency) > (frequency / 2)) {
         count ++;
+    }
 
     if (count >= 65535) return false; //频率过低
 
@@ -47,7 +53,7 @@ PRIVATE volatile int progress = -1;
 PRIVATE volatile int cnt = 0;
 
 #define CLOCKS_PER_SECOND (100)
-#define ANIMATION_TIME (20)
+#define ANIMATION_TIME (4)
 
 PUBLIC void clock_irq_handler(int irq) {
     if (progress != -1 && progress < 100) {
@@ -116,14 +122,15 @@ PUBLIC void show_icon(void *framebuffer, int width, int height) {
 
     void *icon = lmalloc(ICON_SIZE);
 
-    load_file(ctx, "tayicon.raw", icon, false);
+    load_file(ctx, "tayicon.raw", icon);
 
     terminate_fs(ctx);
 
     volatile int last_progress = -1;
     while (last_progress < 100) {
-        if (last_progress < progress)
+        if (last_progress < progress) {
             display_icon(icon, framebuffer, width, height);
+        }
         last_progress = progress;
     }
 

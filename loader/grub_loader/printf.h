@@ -19,6 +19,7 @@
 #pragma once
 
 #include <stdarg.h>
+
 #include <tayhuang/defs.h>
 
 #define VIDEO_ADDRESS (0xB8000) //显存地址

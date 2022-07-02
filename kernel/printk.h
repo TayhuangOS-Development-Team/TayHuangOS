@@ -19,6 +19,7 @@
 #pragma once
 
 #include <stdarg.h>
+
 #include <tayhuang/defs.h>
 
 PUBLIC void init_video(void *video_addr, int width, int height);

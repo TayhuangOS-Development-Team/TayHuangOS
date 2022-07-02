@@ -17,9 +17,11 @@
 
 
 #include <printf.h>
+
 #include <ctype.h>
-#include <tool/tostring.h>
 #include <string.h>
+
+#include <tool/tostring.h>
 
 //写生字符(串)
 PUBLIC void write_char(char ch, int color, int posx, int posy) {

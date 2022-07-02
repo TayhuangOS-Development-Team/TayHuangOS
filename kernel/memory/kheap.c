@@ -18,7 +18,10 @@
 
 #include <memory/kheap.h>
 #include <memory/pmm.h>
+
 #include <string.h>
+
+#include <logging.h>
 
 PRIVATE void *start_addr = NULL;
 
@@ -43,12 +46,12 @@ PUBLIC void init_kheap(void *prepare_base, int prepare_size) {
     start_seg->last = NULL;
 }
 
-#define ALLOC_PAGE_ORDER (4)
+#define ALLOC_PAGE_ORDER (6)
 
 PRIVATE seg_info_struct *extend_heap(int *order_give) {
     void *addr = __alloc_free_pages(ALLOC_PAGE_ORDER, order_give);
     seg_info_struct *seg = (seg_info_struct*)addr;
-    seg->size = (PMM_PAGE_SIZE << ALLOC_PAGE_ORDER);
+    seg->size = (MEMUNIT_SZ << ALLOC_PAGE_ORDER);
     seg->used = false;
     seg->next = NULL;
     return seg;
@@ -58,15 +61,17 @@ PRIVATE seg_info_struct *do_combine(seg_info_struct *seg) {
     if ((seg->next != NULL) && (! seg->next->used)) {
         seg->size += seg->next->size;
         seg->next = seg->next->next;
-        if (seg->next != NULL)
+        if (seg->next != NULL) {
             seg->next->last = seg;
+        }
     }
 
     if ((seg->last != NULL) && (! seg->last->used)) {
         seg->last->size += seg->size;
         seg->last->next = seg->next;
-        if (seg->next != NULL)
+        if (seg->next != NULL) {
             seg->next->last = seg->last;
+        }
         return seg->last;
     }
 
@@ -94,7 +99,7 @@ PUBLIC void *kmalloc(int size) {
 
         cur_seg = do_combine(seg);
 
-        return_pages(((void*)seg) + (PMM_PAGE_SIZE << ALLOC_PAGE_ORDER), (1 << order_give) - (1 << ALLOC_PAGE_ORDER));
+        return_pages(((void*)seg) + (MEMUNIT_SZ << ALLOC_PAGE_ORDER), (1 << order_give) - (1 << ALLOC_PAGE_ORDER));
 
         return kmalloc(size);
     }
@@ -104,8 +109,9 @@ PUBLIC void *kmalloc(int size) {
         seg_info_struct *new_seg = (seg_info_struct*)(((void*)cur_seg) + fixed_size);
         new_seg->size = cur_seg->size - fixed_size;
         new_seg->next = cur_seg->next;
-        if (cur_seg->next != NULL)
+        if (cur_seg->next != NULL) {
             cur_seg->next->last = new_seg;
+        }
         new_seg->used = false;
         new_seg->last = cur_seg;
 

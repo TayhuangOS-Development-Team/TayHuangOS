@@ -54,7 +54,7 @@ PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
 
 PUBLIC fs_context load_fs(int disk_selector, int partition_id){
     FS_TYPES type = get_fs_type(disk_selector, partition_id);
-    if (type == FS_FAT32){
+    if (type == FS_FAT32) {
         return load_fat32_fs(disk_selector, partition_id);
     }
     else {

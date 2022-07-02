@@ -19,8 +19,9 @@
 #include <memory/shared_memory.h>
 
 #include <tayhuang/services.h>
+
 #include <ipc/ipc.h>
-#include <malloc.h>
+#include <memory/malloc.h>
 
 #define SHM_MAPPING (5)
 #define SET_MAPPING_FROM (11)

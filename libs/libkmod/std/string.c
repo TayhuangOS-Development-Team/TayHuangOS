@@ -23,23 +23,29 @@ int strcmp(const char *str1, const char *str2) {
     int len1 = strlen(str1);
     int len2 = strlen(str2);
     if (len1 != len2) {
-        if (len1 < len2)
+        if (len1 < len2) {
             return -1;
-        else 
+        }
+        else {
             return 1;
+        }
     }
     int res = 0;
     while (*str1) {
         res = (*str1) - (*str2);
-        if (res != 0) break;
+        if (res != 0) {
+            break;
+        }
         str1 ++;
         str2 ++;
     }
 
-    if (res < 0)
+    if (res < 0) {
         return -1;
-    else if (res > 0)
+    }
+    else if (res > 0) {
         return 1;
+    }
     return 0;
 }
 

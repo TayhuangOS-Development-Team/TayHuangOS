@@ -17,16 +17,22 @@
 
 
 #include <libs/multiboot2.h>
-#include <printf.h>
-#include <init.h>
+#include <logging.h>
+
 #include <lheap.h>
+
 #include <disk.h>
 #include <fs/fat32.h>
+
 #include <int_handlers.h>
+
 #include <lm/setup_lm.h>
-#include <info_parser.h>
-#include <logging.h>
+
+#include <printf.h>
 #include <show_icon.h>
+
+#include <info_parser.h>
+#include <init.h>
 
 //Tayhuang OS GRUB Loader Multiboot2 header struct
 struct tayhuang_header {

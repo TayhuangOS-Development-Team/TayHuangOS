@@ -16,11 +16,15 @@
 
 
 
+#include <tayhuang/services.h>
+#include <tayhuang/defs.h>
+
 #include <debug/logging.h>
 #include <ipc/ipc.h>
-#include <tayhuang/services.h>
 #include <memory/malloc.h>
+
 #include <ctype.h>
+
 #include <tty.h>
 #include <cmd.h>
 
@@ -49,7 +53,7 @@ enum {
 
 #define SCREEN_SIZE (80 * 68 * 2)
 
-void clear_screen(int ttyid, tty_struct *tty) {
+PUBLIC void clear_screen(int ttyid, tty_struct *tty) {
     qword command[6] = {CLEAR_SCREEN, ttyid * SCREEN_SIZE, SCREEN_SIZE};
     send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
 
@@ -75,7 +79,7 @@ static inline void take_action(int ttyid, tty_struct *tty, int ch) {
     }
 }
 
-void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
+PUBLIC void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
     static qword command[600];
     
     command[0] = TEXT_WRITE_CHARS;
@@ -104,7 +108,7 @@ void write_str(int ttyid, tty_struct *tty, int num_characters, qword *str) {
     send_msg(command, VIDEO_DRIVER_SERVICE, sizeof(command), 20);
 }
 
-void deal_cmd(int caller, qword cmd, qword *param) {
+PUBLIC void deal_cmd(int caller, qword cmd, qword *param) {
     switch (cmd)
     {
     case TTY_PUTCHAR: {
@@ -201,7 +205,7 @@ void deal_cmd(int caller, qword cmd, qword *param) {
     }
 }
 
-void kmod_main(void) {
+PUBLIC void kmod_main(void) {
     set_logging_name("TTY");
 
     linfo ("TTY Here!");

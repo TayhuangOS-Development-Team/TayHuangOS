@@ -50,8 +50,9 @@ bool read_fifo(fifo_struct *fifo, void *data, int len) {
     if (fifo_empty(fifo) || (fifo->len < len)) {
         return false;
     }
-    if (len == -1)
+    if (len == -1) {
         len = fifo->len;
+    }
 
     __read_fifo(fifo, data, len);
 

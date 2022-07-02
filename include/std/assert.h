@@ -23,10 +23,10 @@ void panic_failure(const char *expression, const char *file, const char *base_fi
 void panic(const char *format, ...);
 
 #ifdef _DEBUG
-    #define assert(expression) if (! (expression)) \
-        assertion_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
-    #define panic_assert(expression) if (! (expression)) \
-        panic_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
+    #define assert(expression) if (! (expression)) {\
+        assertion_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)}
+    #define panic_assert(expression) if (! (expression)) {\
+        panic_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)}
 #else
     #define assert(expression)
     #define panic_assert(expression)

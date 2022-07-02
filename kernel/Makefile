@@ -19,16 +19,18 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-LIBS_C_SRC := ctype string tostring
+LIBS_C_SRC := ctype string tostring debug
 MEMORY_C_SRC := kheap pmm 
+INTTERUP_C_SRC := clock/clock exception init_int irq_handler
 C_SRC := kernel printk logging \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
-	$(foreach src, $(MEMORY_C_SRC), memory/$(src))
+	$(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
+	$(foreach src, $(INTTERUP_C_SRC), intterup/$(src))
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry
+ASM_SRC := entry intterup/int_handlers
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/libs/libfifo"

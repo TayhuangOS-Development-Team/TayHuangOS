@@ -38,8 +38,9 @@
 #define dis_int() asmv("cli")
 
 static inline dword leading_zeros(dword x) {
-    if (x == 0)
+    if (x == 0) {
         return 32;
+    }
     int n = 1;
     if (x >> 16 == 0) {
         n += 16;

@@ -17,10 +17,12 @@
 
 
 #include <memory/malloc.h>
-#include <debug/logging.h>
-#include <printf.h>
-#include <ipc/ipc.h>
+
 #include <tayhuang/services.h>
+
+#include <debug/logging.h>
+#include <ipc/ipc.h>
+#include <printf.h>
 
 #define GET_CURRENT_PID (0)
 #define GET_START_HEAP (1)

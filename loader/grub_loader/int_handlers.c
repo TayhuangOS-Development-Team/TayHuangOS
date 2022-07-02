@@ -17,10 +17,12 @@
 
 
 #include <int_handlers.h>
-#include <printf.h>
+
 #include <tayhuang/int_vectors.h>
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
+
+#include <printf.h>
 
 PUBLIC void exception_handler(int vector_no, int errcode, int eip, int cs, int eflags) {
     byte old_print_color = get_print_color();

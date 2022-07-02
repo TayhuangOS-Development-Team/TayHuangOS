@@ -17,6 +17,7 @@
 
 
 #include <logging.h>
+
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
 

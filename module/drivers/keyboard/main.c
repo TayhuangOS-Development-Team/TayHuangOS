@@ -16,6 +16,8 @@
 
 
 
+#include <tayhuang/defs.h>
+
 #include <debug/logging.h>
 #include <memory/malloc.h>
 #include <fifo.h>
@@ -23,7 +25,7 @@
 
 #define KEYBUFFER_SIZE (4096)
 
-void kmod_main(void) {
+PUBLIC void kmod_main(void) {
     set_logging_name("Keyboard");
 
     init_heap();

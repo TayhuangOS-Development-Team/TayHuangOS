@@ -17,9 +17,11 @@
 
 
 #include <printk.h>
-#include <ctype.h>
+
 #include <tool/tostring.h>
+
 #include <string.h>
+#include <ctype.h>
 
 PRIVATE void *video_address = NULL;
 PRIVATE int screen_width = 0;

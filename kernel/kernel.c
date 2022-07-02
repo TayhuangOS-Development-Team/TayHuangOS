@@ -22,12 +22,16 @@
 #include <tayhuang/descs.h>
 #include <tayhuang/io.h>
 #include <tayhuang/services.h>
+#include <tayhuang/control_registers.h>
 
 #include <string.h>
 #include <assert.h>
 
 #include <memory/kheap.h>
 #include <memory/pmm.h>
+
+#include <intterup/init_int.h>
+#include <intterup/clock/clock.h>
 
 #include <printk.h>
 #include <logging.h>
@@ -81,6 +85,18 @@ PRIVATE void init_gdt(void) { //初始化GDT
     asmv ("ltr %0" : : "m"(_tr_idx));
 }
 
+static inline void init_sse(void) { //SSE
+    cr0_t cr0 = get_cr0();
+    cr0.em = 0;
+    cr0.mp = 1;
+    set_cr0(cr0);
+
+    cr4_t cr4 = get_cr4();
+    cr4.osfxsr = 1;
+    cr4.osxmmexcpt = 1;
+    set_cr4(cr4);
+}
+
 PUBLIC void *kernel_pml4 = NULL;
 
 #define CS_USER (cs3_idx << 3 | 3)
@@ -115,6 +131,12 @@ void initialize(struct boot_args *args) {
     qword memsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
 
     init_pmm(memsz, 0x2000000);
+
+    init_idt();
+    init_pic();
+
+    init_sse();
+    init_pit(CLOCK_FREQUENCY);
 
     TSS.ist1 = 0x600000;
     TSS.rsp0 = 0x500000;

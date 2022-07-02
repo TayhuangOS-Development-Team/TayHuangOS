@@ -16,17 +16,23 @@
 
 
 
-#include <lm/setup_lm.h>
-#include <lm/load_kernel.h>
-#include <lm/lm_operators.h>
-#include <printf.h>
-#include <int_handlers.h>
 #include <tayhuang/paging.h>
 #include <tayhuang/control_registers.h>
 #include <tayhuang/boot_args.h>
+
 #include <tayhuang/descs.h>
-#include <string.h>
+
+#include <lm/setup_lm.h>
+#include <lm/load_kernel.h>
+#include <lm/lm_operators.h>
+
+#include <printf.h>
 #include <logging.h>
+
+#include <int_handlers.h>
+
+#include <string.h>
+
 
 PUBLIC void setup_longmode(void *pml4) {
     cr0_t cr0 = get_cr0();

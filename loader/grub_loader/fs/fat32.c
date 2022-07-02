@@ -97,23 +97,17 @@ PRIVATE dword get_fat32_entry(fs_context context, dword last) {
     return entry;
 }
 
-PRIVATE void __load_file(fs_context context, dword clus, void *dst, bool show_progress) {
+PRIVATE void __load_file(fs_context context, dword clus, void *dst) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     //起始簇号为2
     int sectors_per_clus = INFO.sectors_per_clus;
     while (clus < 0x0FFFFFF0) {
         int start_sector = _context->data_start + (clus - 2) * sectors_per_clus;
-        if (show_progress) {
-            putchar ('.');
-        }
         read_sector(start_sector, INFO.sectors_per_clus, _context->selector, dst);
 
         dst += INFO.sectors_per_clus * INFO.bytes_per_sector;
 
         clus = get_fat32_entry(context, clus);
-    }
-    if (show_progress) {
-        putchar ('\n');
     }
 }
 
@@ -139,7 +133,7 @@ PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id) {
     read_sector(context->fat1_start, 4, disk_selector, context->fat_buffer);
     context->buffer_start = 0;
 
-    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory, false);
+    __load_file(context, context->infomations.root_directory_start_clus, context->root_directory);
 
     lfree(boot);
     return context;
@@ -152,8 +146,9 @@ PUBLIC void terminate_fat32_fs(fs_context context) {
 }
 
 PRIVATE dword get_file_start_clus(fs_context context, const char *name) {
-    if (strlen(name) != 11)
+    if (strlen(name) != 11) {
         return -1;
+    }
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     char rdname[12] = "";
     rdname[11] = 0;
@@ -195,7 +190,7 @@ PRIVATE char *convert(const char *name, char *buffer) {
     return backup;
 }
 
-PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst, bool show_progress) {
+PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     char _name[12];
     if (convert(name, _name) == NULL) {
@@ -205,7 +200,7 @@ PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst, boo
     if (clus == -1) {
         return false;
     }
-    __load_file(_context, clus, dst, show_progress);
+    __load_file(_context, clus, dst);
     return true;
 }
 

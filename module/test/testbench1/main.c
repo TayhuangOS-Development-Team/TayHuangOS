@@ -16,6 +16,8 @@
 
 
 
+#include <tayhuang/defs.h>
+
 #include <debug/logging.h>
 #include <printf.h>
 #include <memory/malloc.h>
@@ -24,7 +26,7 @@ extern int pos_x;
 extern int pos_y;
 extern int current_pid;
 
-void kmod_main(void) {
+PUBLIC void kmod_main(void) {
     set_logging_name("Testbench1");
     
     set_print_color (0x0F);

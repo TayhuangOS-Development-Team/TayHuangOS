@@ -152,8 +152,9 @@ PUBLIC void terminate_fat32_fs(fs_context context) {
 }
 
 PRIVATE dword get_file_start_clus(fs_context context, const char *name) {
-    if (strlen(name) != 11)
+    if (strlen(name) != 11) {
         return -1;
+    }
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     char rdname[12] = "";
     rdname[11] = 0;

@@ -135,6 +135,9 @@ build:
 	$(CHANGE_DIR) loader ; $(MAKE) build
 	$(CHANGE_DIR) kernel ; $(MAKE) build
 	$(CHANGE_DIR) module ; $(MAKE) build
+	$(MAKE) $(RAW_ICON)
+
+$(RAW_ICON): $(TAYHUANG_ICON)
 	$(PNG_CONV) $(TAYHUANG_ICON) $(RAW_ICON)
 
 #清理

@@ -17,11 +17,13 @@
 
 
 #include <init.h>
-#include <lm/lm_operators.h>
-#include <int_handlers.h>
+
 #include <tayhuang/int_vectors.h>
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
+
+#include <lm/lm_operators.h>
+#include <int_handlers.h>
 
 struct desc_struct GDT[GDT_SIZE];
 struct gdt_ptr gdtr;

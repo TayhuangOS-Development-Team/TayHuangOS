@@ -48,8 +48,9 @@ PRIVATE void *__get_segment_size(void *base, int size) { //获得项大小
 PRIVATE void *__lookup_free_mem(int size) { //寻找空闲内存
     for (void *i = LHEAP_BOTTOM ; i < LHEAP_TOP ;) {
         void *sz = __get_segment_size(i, size); //获取这个项的大小
-        if (sz == NULL) //没大小:空闲内存
+        if (sz == NULL) { //没大小:空闲内存
             return i;
+        }
         i = sz + 1; //加上size继续寻找
     }
     return NULL;
@@ -86,10 +87,12 @@ PRIVATE void __delete_lh_seg(void *start) { //删除内存项
 
 PUBLIC void *lmalloc(int size) { //分配内存
     void *mem = __lookup_free_mem(size);
-    if (mem == NULL)
+    if (mem == NULL) {
         return NULL;
-    if (! __insert_lh_seg(mem, mem + size - 1))
+    }
+    if (! __insert_lh_seg(mem, mem + size - 1)) {
         return NULL;
+    }
     return mem;
 }
 

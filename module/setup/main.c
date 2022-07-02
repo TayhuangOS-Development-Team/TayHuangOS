@@ -20,11 +20,12 @@
 #include <debug/logging.h>
 #include <ipc/ipc.h>
 #include <tool/tostring.h>
-#include <disk.h>
-#include <fs/common.h>
 #include <printf.h>
 
-void kmod_main(void) {
+#include <disk.h>
+#include <fs/common.h>
+
+PUBLIC void kmod_main(void) {
     set_logging_name("Setup");
 
     char buffer[256] = {};
@@ -56,7 +57,9 @@ void kmod_main(void) {
         int times = 5;
         while (times --) {
             status = load_file(context, mod_name, mod_addr, false);
-            if (status) break;
+            if (status) {
+                break;
+            }
         }
 
         send_msg (&status, kernel, 1, 20); //通知内核

@@ -16,12 +16,15 @@
 
 
 
-#include <memory/pmm.h>
 #include <tayhuang/defs.h>
 #include <tayhuang/paging.h>
 #include <tayhuang/partition.h>
+
+#include <memory/pmm.h>
 #include <memory/kheap.h>
+
 #include <string.h>
+
 #include <logging.h>
 
 typedef struct __free_area {
@@ -29,10 +32,10 @@ typedef struct __free_area {
     struct __free_area *next;
 } free_area_struct; //16B
 
-#define MAX_ORDER (7)
+#define MAX_ORDER (9) //最多一次性2^9个页面 2MB
 
-free_area_struct *list_head[MAX_ORDER + 1]; //最多一次性2^7个页面
-free_area_struct *list_tail[MAX_ORDER + 1]; //最多一次性2^7个页面
+free_area_struct *list_head[MAX_ORDER + 1]; 
+free_area_struct *list_tail[MAX_ORDER + 1];
 
 PRIVATE void add_free_area(int order, void *address) {
     free_area_struct *head = list_head[order];
@@ -53,9 +56,9 @@ PRIVATE void add_free_area(int order, void *address) {
 }
 
 PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
-    qword pages = ((memsize + (PMM_PAGE_SIZE - 1)) & ~(PMM_PAGE_SIZE - 1)) / PMM_PAGE_SIZE;
+    qword pages = ((memsize + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
     linfo ("PMM", "memsize = %#016X, %#016X pages in total", memsize, pages);
-    qword reserved_pages = ((((qword)reserved_limit) + (PMM_PAGE_SIZE - 1)) & ~(PMM_PAGE_SIZE - 1)) / PMM_PAGE_SIZE;
+    qword reserved_pages = ((((qword)reserved_limit) + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
     linfo ("PMM", "%#016X pages need added", pages - reserved_pages);
     pages -= reserved_pages;
 
@@ -64,16 +67,16 @@ PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
     for (int i = 0 ; i < MAX_ORDER ; i ++) {
         if (pages & 1) {
             add_free_area(i, start);
-            start += PMM_PAGE_SIZE << 1;
-            linfo ("PMM", "%P ~ %P added", start, start + (PMM_PAGE_SIZE << i) - 1);
+            start += MEMUNIT_SZ << 1;
+            linfo ("PMM", "%P ~ %P added", start, start + (MEMUNIT_SZ << i) - 1);
         }
         pages >>= 1;
     }
 
     for (int i = 0 ; i < pages ; i ++) {
         add_free_area(MAX_ORDER, start);
-        linfo ("PMM", "%P ~ %P added", start, start + (PMM_PAGE_SIZE << MAX_ORDER) - 1);
-        start += PMM_PAGE_SIZE << MAX_ORDER;
+        linfo ("PMM", "%P ~ %P added", start, start + (MEMUNIT_SZ << MAX_ORDER) - 1);
+        start += MEMUNIT_SZ << MAX_ORDER;
     }
 }
 
@@ -101,14 +104,14 @@ PUBLIC void return_pages(void *addr, int pages) {
     for (int i = 0 ; i < MAX_ORDER ; i ++) {
         if (pages & 1) {
             add_free_area(i, start);
-            start += PMM_PAGE_SIZE << 1;
+            start += MEMUNIT_SZ << 1;
         }
         pages >>= 1;
     }
 
     for (int i = 0 ; i < pages ; i ++) {
         add_free_area(MAX_ORDER, start);
-        start += PMM_PAGE_SIZE << MAX_ORDER;
+        start += MEMUNIT_SZ << MAX_ORDER;
     }
 }
 
@@ -118,7 +121,7 @@ PUBLIC void *alloc_pages(int order) {
     void *addr = __alloc_free_pages(order, &order_give);
 
     //返还多余页
-    return_pages(addr + (PMM_PAGE_SIZE << order), (1 << order_give) - (1 << order));
+    return_pages(addr + (MEMUNIT_SZ << order), (1 << order_give) - (1 << order));
 
     return addr;
 }

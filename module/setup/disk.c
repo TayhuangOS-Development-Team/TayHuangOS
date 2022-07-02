@@ -17,10 +17,13 @@
 
 
 #include <disk.h>
-#include <memory/malloc.h>
-#include <syscall/syscall.h>
+
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
+
+#include <memory/malloc.h>
+#include <syscall/syscall.h>
+
 #include <string.h>
 
 #define IDE_MASK (0x1)
@@ -143,12 +146,14 @@ PRIVATE void read_ide1_sector(dword lba, bool slave, void *dst) { //读IDE1的�
 
 PUBLIC void read_sector(dword lba, int num, int selector, void *dst) {
     if ((selector & IDE_MASK) == 0) {
-        for (int i = 0 ; i < num ; i ++)
+        for (int i = 0 ; i < num ; i ++) {
             read_ide0_sector(lba + i, (selector & SLAVE_MASK) != 0, dst + i * 512);
+        }
     }
     else {
-        for (int i = 0 ; i < num ; i ++)
+        for (int i = 0 ; i < num ; i ++) {
             read_ide1_sector(lba + i, (selector & SLAVE_MASK) != 0, dst + i * 512);
+        }
     }
 }
 

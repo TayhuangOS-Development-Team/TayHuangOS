@@ -17,12 +17,17 @@
 
 #include <fs/common.h>
 #include <fs/fat32.h>
-#include <lheap.h>
+
+#include <tayhuang/partition.h>
 #include <disk.h>
+
+#include <lheap.h>
+
 #include <printf.h>
+
 #include <ctype.h>
 #include <string.h>
-#include <tayhuang/partition.h>
+
 
 typedef enum {
     FS_UNKNOWN = 0,
@@ -68,9 +73,9 @@ PUBLIC void display_fs_info(fs_context context) {
     }
 }
 
-PUBLIC bool load_file(fs_context context, const char *name, void *dst, bool show_progress) {
+PUBLIC bool load_file(fs_context context, const char *name, void *dst) {
     if (*((dword*)context) == FAT32_CONTEXT_MAGIC) {
-        return load_fat32_file(context, name, dst, show_progress);
+        return load_fat32_file(context, name, dst);
     }
     return false;
 }
