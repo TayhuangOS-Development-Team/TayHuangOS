@@ -102,50 +102,51 @@ PUBLIC task_struct *get_level1_list(void) {
 //获取空闲进程
 PUBLIC task_struct *dequeue_level0_task(void) {
     task_struct *task = level0_list_head;
-    if (task == NULL) {
-        return NULL;
-    }
+
     level0_list_head = task->free_next;
-    if (task->free_next == NULL) {
+    if (level0_list_head == NULL) {
         level0_list_tail = NULL;
     }
+
     return task;
 }
 
 PUBLIC task_struct *dequeue_level1_task(void) {
     task_struct *task = level1_list_head;
-    if (task == NULL) {
-        return NULL;
-    }
+
     level1_list_head = task->free_next;
-    if (task->free_next == NULL) {
+    if (level1_list_head == NULL) {
         level1_list_tail = NULL;
     }
+
     return task;
+}
+
+//level0是否有task
+PUBLIC bool has_level0_task(void) {
+    return level0_list_head != NULL;
 }
 
 //加入空闲进程
 PUBLIC void enqueue_level0_task(task_struct *task) {
-    task->free_next = NULL;
-
     if (level0_list_tail == NULL) {
-        level0_list_head = level0_list_tail = task;
+        level0_list_tail = level0_list_head = task;
+        task->next = NULL;
         return;
     }
-
     level0_list_tail->free_next = task;
+    task->free_next = NULL;
     level0_list_tail = task;
 }
 
 PUBLIC void enqueue_level1_task(task_struct *task) {
-    task->free_next = NULL;
-
     if (level1_list_tail == NULL) {
-        level1_list_head = level1_list_tail = task;
+        level1_list_tail = level1_list_head = task;
+        task->next = NULL;
         return;
     }
-
     level1_list_tail->free_next = task;
+    task->free_next = NULL;
     level1_list_tail = task;
 }
 

@@ -32,9 +32,11 @@
 #include <memory/paging.h>
 
 #include <intterup/init_int.h>
+#include <intterup/irq_handler.h>
 #include <intterup/clock/clock.h>
 
 #include <task/task_manager.h>
+#include <task/task_scheduler.h>
 
 #include <printk.h>
 #include <logging.h>
@@ -109,6 +111,8 @@ static inline void init_sse(void) { //SSE
 //first task-init
 PUBLIC void init(void) {
     //do something
+    linfo ("init", "!");
+    start_schedule();
     while (true);
 }
 
@@ -152,13 +156,16 @@ PUBLIC void initialize(void) {
 
     __set_cr3(kernel_pml4);
 
-
     create_empty_task(); //创建空进程
     cur_pid = 1;
 
     //初始化TSS
     TSS.ist1 = IST0_STACKTOP;
     TSS.rsp0 = RING0_STACKTOP;
+
+    //初始化中断
+    register_irq_handler(0, clock_int_handler);
+    enable_irq(0);
 }
 
 PUBLIC void entry(struct boot_args *_args) {
@@ -172,13 +179,16 @@ PUBLIC void entry(struct boot_args *_args) {
 
     linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
 
-    create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
+    current_task = __create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
                  kernel_pml4,
                  alloc_pid(), 1, 0
     );
 
+    add_task(current_task);
+    current_task->state = RUNNING;
+
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
     asmv ("jmp init");
 
-    while(true);
+    while (true);
 }

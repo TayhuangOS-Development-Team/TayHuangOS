@@ -21,6 +21,8 @@
 
 #include <intterup/clock/clock.h>
 
+#include <task/task_scheduler.h>
+
 #include <string.h>
 
 #define PIT_FREQUENCY (1193181.6666f)
@@ -46,6 +48,12 @@ PUBLIC bool init_pit(float frequency) {
 
 PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { //时钟中断
     ticks ++;
+
+    after_syscall(regs);
+
+    if (current_task->level == 1) {
+        current_task->count --;
+    }
 
     return 0;
 }
