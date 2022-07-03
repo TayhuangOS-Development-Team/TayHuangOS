@@ -37,6 +37,7 @@
 #define en_int() asmv("sti")
 #define dis_int() asmv("cli")
 
+//32位数x的前导0个数
 static inline dword leading_zeros(dword x) {
     if (x == 0) {
         return 32;
@@ -66,6 +67,7 @@ static inline dword leading_zeros(dword x) {
     return n;
 }
 
+//取log2 x近似值
 static inline int simple_log2(qword x) {
     int l = 0, r = 64;
     int mid = (l + r) >> 1;

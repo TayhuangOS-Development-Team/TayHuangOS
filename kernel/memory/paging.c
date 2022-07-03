@@ -116,7 +116,7 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
     int offset = ((qword)vaddr) & 0xFFF;
 
     PML4E *pml4 = __pml4;
-    if (! pml4[pml4e_idx].p) {
+    if (! pml4[pml4e_idx].p) { //不存在
         lerror ("Paging", "Address %P doesn't exist!", vaddr);
         lerror ("Paging", "Error In PML4 %P, Index %#03X", pml4, pml4e_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
@@ -124,7 +124,7 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
     }
 
     PDPTE *pdpt = pml4[pml4e_idx].address << 12;
-    if (! pdpt[pdpte_idx].p) {
+    if (! pdpt[pdpte_idx].p) { //不存在
         lerror ("Paging", "Address %P doesn't exist!", vaddr);
         lerror ("Paging", "Error In PDPT %P, Index %#03X", pdpt, pdpte_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
@@ -132,7 +132,7 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
     }
 
     PDE *pd = pdpt[pdpte_idx].address << 12;
-    if (! pd[pde_idx].p) {
+    if (! pd[pde_idx].p) { //不存在
         lerror ("Paging", "Address %P doesn't exist!", vaddr);
         lerror ("Paging", "Error In PD %P, Index %#03X", pd, pde_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
@@ -140,7 +140,7 @@ PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
     }
     
     PTE *pt = pd[pde_idx].address << 12;
-    if (! pt[pte_idx].p) {
+    if (! pt[pte_idx].p) { //不存在
         lerror ("Paging", "Address %P doesn't exist!", vaddr);
         lerror ("Paging", "Error In PT %P, Index %#03X", pt, pte_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);

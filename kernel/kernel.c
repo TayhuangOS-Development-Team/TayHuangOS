@@ -118,28 +118,34 @@ PRIVATE struct boot_args args;
 
 #define RESERVED_LIMIT (0x2000000)
 
+//初始化
 void initialize(struct boot_args *args) {
-    init_gdt(); //初始化GDT
-
-    en_int();
-
+    //初始化GDT
+    init_gdt();
+    
+    //初始化输出
     init_serial();
 
     init_video(args->framebuffer, args->screen_width, args->screen_height);
 
-    memcpy (SETUP_MOD_BASE, args->setup_mod_addr, SETUP_MOD_SIZE);
-
-    init_kheap(KHEAP_PRE_BASE, KHEAP_PRE_SIZE);
-
-    qword memsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
-
-    init_pmm(memsz, 0x2000000);
-
+    //初始化中断
     init_idt();
     init_pic();
 
     init_sse();
     init_pit(CLOCK_FREQUENCY);
+
+    en_int();
+
+    //复制setup mod
+    memcpy (SETUP_MOD_BASE, args->setup_mod_addr, SETUP_MOD_SIZE);
+
+    //初始化内存
+    init_kheap(KHEAP_PRE_BASE, KHEAP_PRE_SIZE);
+
+    qword memsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
+
+    init_pmm(memsz, 0x2000000);
 
     kernel_pml4 = create_pgd();
 
@@ -162,6 +168,7 @@ void initialize(struct boot_args *args) {
     }
 #endif
 
+    //初始化TSS
     TSS.ist1 = 0x600000;
     TSS.rsp0 = 0x500000;
 }

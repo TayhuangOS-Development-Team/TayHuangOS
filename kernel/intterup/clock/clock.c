@@ -27,7 +27,8 @@
 
 PUBLIC volatile int ticks = 0;
 
-PUBLIC bool init_pit(float frequency) { //初始化PIT
+//初始化PIT
+PUBLIC bool init_pit(float frequency) {
     if (frequency > PIT_FREQUENCY) //频率过高
         return false;
 

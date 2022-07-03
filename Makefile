@@ -18,14 +18,7 @@
 
 # 配置区
 
-# ARCHITECTURE := x86_64 #架构
-# FILESYSTEM := fat32
-# MODE := debug
-# QEMU_ARGS := 
-# VBE_MODE := ENABLE
-# LOOPA := /dev/loop19
-# LOOPB := /dev/loop20
-# KERNEL_PARTITION_OFFSET := 1048576
+include ./config.mk
 
 #定义区
 
@@ -153,7 +146,9 @@ build:
 	$(CHANGE_DIR) loader ; $(MAKE) build
 	$(CHANGE_DIR) kernel ; $(MAKE) build
 	$(CHANGE_DIR) module ; $(MAKE) build
+ifeq ($(VBE_MODE), ENABLE)
 	$(MAKE) $(RAW_ICON)
+endif
 
 $(RAW_ICON): $(TAYHUANG_ICON)
 	$(PNG_CONV) $(TAYHUANG_ICON) $(RAW_ICON)
@@ -173,7 +168,9 @@ image:
 	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
 
 	$(SUDO) $(COPY) ./configs/grub.cfg $(TAYHUANGOS_MOUNT_DIR)/boot/grub
+ifeq ($(VBE_MODE), ENABLE)
 	$(SUDO) $(COPY) $(RAW_ICON) $(TAYHUANGOS_MOUNT_DIR)/
+endif
 
 	$(CHANGE_DIR) loader ; $(MAKE) image
 	$(CHANGE_DIR) kernel ; $(MAKE) image

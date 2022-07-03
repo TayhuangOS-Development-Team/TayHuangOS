@@ -22,8 +22,11 @@
 #include <tayhuang/paging.h>
 
 //0~reserved_limit = used
+//初始化pmm
 PUBLIC void init_pmm(qword memsize, void *reserved_limit);
+//分配空闲内存
 PUBLIC void *__alloc_free_pages(int order, int *order_give);
+PUBLIC void *alloc_pages(int order);
+//归还内存
 PUBLIC void __return_pages(void *addr, int order);
 PUBLIC void return_pages(void *addr, int pages);
-PUBLIC void *alloc_pages(int order);

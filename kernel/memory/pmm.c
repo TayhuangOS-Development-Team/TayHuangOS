@@ -37,10 +37,10 @@ typedef struct __free_area {
 free_area_struct *list_head[MAX_ORDER + 1]; 
 free_area_struct *list_tail[MAX_ORDER + 1];
 
-PRIVATE void add_free_area(int order, void *address) {
+PRIVATE void add_free_area(int order, void *address) { //增加空闲区域
     free_area_struct *head = list_head[order];
     
-    if (head == NULL) {
+    if (head == NULL) { //头为空
         head = kmalloc(sizeof(free_area_struct));
         head->address = address;
         head->next = NULL;
@@ -48,6 +48,7 @@ PRIVATE void add_free_area(int order, void *address) {
         return;
     }
 
+    //加到队尾
     free_area_struct *tail = list_tail[order];
     list_tail[order] = kmalloc(sizeof(free_area_struct));
     tail->next = list_tail[order];
@@ -55,6 +56,7 @@ PRIVATE void add_free_area(int order, void *address) {
     list_tail[order]->next = NULL;
 }
 
+//初始化pmm
 PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
     qword pages = ((memsize + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
     linfo ("PMM", "memsize = %#016X, %#016X pages in total", memsize, pages);
@@ -64,6 +66,7 @@ PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
 
     void *start = reserved_limit;
 
+    //用二进制拆分添加页面
     for (int i = 0 ; i < MAX_ORDER ; i ++) {
         if (pages & 1) {
             add_free_area(i, start);
@@ -80,10 +83,12 @@ PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
     }
 }
 
+//分配空闲内存
 PUBLIC void *__alloc_free_pages(int order, int *order_give) {
     for (int i = order ; i <= MAX_ORDER ; i ++) {
         free_area_struct *head = list_head[i];
 
+        //可用
         if (head != NULL) {
             list_head[i] = head->next;
             if (head->next == NULL)
@@ -95,27 +100,6 @@ PUBLIC void *__alloc_free_pages(int order, int *order_give) {
     return NULL;
 }
 
-PUBLIC void __return_pages(void *addr, int order) {
-    add_free_area(order, addr);
-}
-
-PUBLIC void return_pages(void *addr, int pages) {
-    void *start = addr;
-
-    for (int i = 0 ; i < MAX_ORDER ; i ++) {
-        if (pages & 1) {
-            add_free_area(i, start);
-            start += MEMUNIT_SZ << 1;
-        }
-        pages >>= 1;
-    }
-
-    for (int i = 0 ; i < pages ; i ++) {
-        add_free_area(MAX_ORDER, start);
-        start += MEMUNIT_SZ << MAX_ORDER;
-    }
-}
-
 PUBLIC void *alloc_pages(int order) {
     int order_give = 0;
     // 寻找可用页
@@ -125,4 +109,27 @@ PUBLIC void *alloc_pages(int order) {
     return_pages(addr + (MEMUNIT_SZ << order), (1 << order_give) - (1 << order));
 
     return addr;
+}
+
+//归还内存
+PUBLIC void __return_pages(void *addr, int order) {
+    add_free_area(order, addr);
+}
+
+PUBLIC void return_pages(void *addr, int pages) {
+    void *start = addr;
+
+    //用二进制拆分归还页面
+    for (int i = 0 ; i < MAX_ORDER ; i ++) {
+        if (pages & 1) {
+            __return_pages(start, i);
+            start += MEMUNIT_SZ << 1;
+        }
+        pages >>= 1;
+    }
+
+    for (int i = 0 ; i < pages ; i ++) {
+        __return_pages(start, MAX_ORDER);
+        start += MEMUNIT_SZ << MAX_ORDER;
+    }
 }

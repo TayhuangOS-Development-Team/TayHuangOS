@@ -26,6 +26,7 @@
 
 PUBLIC int fault_num[32] = {};
 
+//通用异常处理器
 PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs) {
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!",

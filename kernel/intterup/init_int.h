@@ -49,9 +49,13 @@ struct intterup_args {
         ss;
 } __attribute__((packed));
 
+//初始化PIC
 PUBLIC void init_pic(void);
+//禁用/启用 IRQ
 PUBLIC void disable_irq(int irq);
 PUBLIC void enable_irq(int irq);
+//发送EOI
 PUBLIC void send_eoi(int irq);
+//初始化IDT
 PUBLIC void init_idt(void);
 typedef void(*int_handler)(void);

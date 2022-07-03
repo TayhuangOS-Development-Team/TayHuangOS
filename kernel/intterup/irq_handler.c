@@ -25,6 +25,7 @@ PUBLIC short IRQ_FLAGS[16];
 
 PRIVATE irq_handler IRQ_HANDLERS[16] = {};
 
+//注册IRQ处理器
 PUBLIC void register_irq_handler(int irq, irq_handler handler) {
     IRQ_FLAGS[irq] = 0;
     IRQ_HANDLERS[irq] = handler;
@@ -32,6 +33,7 @@ PUBLIC void register_irq_handler(int irq, irq_handler handler) {
 
 PRIVATE bool entered_handler = false;
 
+//通用IRQ处理器
 PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
     bool flag = entered_handler;
     if (! flag) {
@@ -54,6 +56,8 @@ PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
 }
 
 void after_syscall(struct intterup_args *regs);
+
+//系统调用处理器
 PUBLIC void syscall_int_handler(struct intterup_args *regs) {
     bool flag = entered_handler;
     if (! flag) {
