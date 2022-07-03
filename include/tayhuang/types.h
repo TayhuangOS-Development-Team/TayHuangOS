@@ -41,5 +41,5 @@ typedef void *handle_t; //处理器
 #define asmv asm volatile //简写
 typedef void *addr_t; //地址
 typedef dword id_t; //编号
-typedef int service_t;
-typedef qword offset_t;
+typedef int service_t; //服务号
+typedef qword offset_t; //偏移

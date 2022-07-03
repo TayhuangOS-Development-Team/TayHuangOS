@@ -45,12 +45,12 @@ PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
 
     char bpb_filesystem[9];
 
-    memcpy(bpb_filesystem, superblock + 0x36, 8);
+    memcpy(bpb_filesystem, superblock + 0x36, 8); //
     bpb_filesystem[8] = '\0';
 
     lfree (superblock);
 
-    if (strcmp(bpb_filesystem, "fat32")) {
+    if (strcmp(bpb_filesystem, "fat32")) { //是fat32
         return FS_FAT32;
     }
 
@@ -58,8 +58,9 @@ PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
 }
 
 PUBLIC fs_context load_fs(int disk_selector, int partition_id){
-    FS_TYPES type = get_fs_type(disk_selector, partition_id);
-    if (type == FS_FAT32){
+    FS_TYPES type = get_fs_type(disk_selector, partition_id); //获取类型
+
+    if (type == FS_FAT32) {
         return load_fat32_fs(disk_selector, partition_id);
     }
     else {
@@ -68,20 +69,20 @@ PUBLIC fs_context load_fs(int disk_selector, int partition_id){
 }
 
 PUBLIC void display_fs_info(fs_context context) {
-    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) {
+    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
         display_fat32_fs_info(context);
     }
 }
 
 PUBLIC bool load_file(fs_context context, const char *name, void *dst) {
-    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) {
+    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
         return load_fat32_file(context, name, dst);
     }
     return false;
 }
 
 PUBLIC void terminate_fs(fs_context context) {
-    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) {
+    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
         terminate_fat32_fs(context);
     }
 }

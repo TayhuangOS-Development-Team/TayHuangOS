@@ -24,6 +24,7 @@
 #include <intterup/exception.h>
 #include <intterup/irq_handler.h>
 
+//初始化PIC
 PUBLIC void init_pic(void) {
     outb (M_PIC_CONTROL, 0x11);
     outb (S_PIC_CONTROL, 0x11); //ICW1
@@ -41,6 +42,7 @@ PUBLIC void init_pic(void) {
     outb (S_PIC_DATA, 0xFF);
 }
 
+//禁用/启用 IRQ
 PUBLIC void disable_irq(int irq) {
     if (irq < 8) {
         byte i = inb(M_PIC_DATA); //主片
@@ -69,6 +71,7 @@ PUBLIC void enable_irq(int irq) {
 
 #define PIC_EOI (0x20)
 
+//发送EOI
 PUBLIC void send_eoi(int irq) {
     if (irq > 8) {
         outb (S_PIC_CONTROL, PIC_EOI); //从片EOI
@@ -109,6 +112,7 @@ PRIVATE void init_idt_desc(byte vector, byte type, int_handler handler, byte pri
     IDT[vector].reserved = 0;
 }
 
+//初始化IDT
 PRIVATE void __init_descs(void) {
     //异常的IDT
     init_idt_desc(0, GATE_INTERRUPT, divide_by_zero_error, 0);

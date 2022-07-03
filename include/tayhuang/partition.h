@@ -23,11 +23,13 @@
 #define PARTITION_TABLE_OFFSET (0x01BE)
 #define PARTITION_NUMBER (4)
 
+//分区状态
 enum {
     PS_BOOTABLE = 0x80,
     PS_UNBOOTABLE = 0x00
 };
 
+//分区成员
 struct __partition_member {
     byte state;
     byte start_head;

@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong,Yoyoooo
+ * 作者: Flysong Yoyoooo
  *
  * string.h
  *
@@ -243,9 +243,9 @@ static inline char* strncat(char* dest, const char* src, int count) {
 	return dest;
 }
 
-char* ___strtok;
-
 static inline char* strtok(char* s, const char* ct) {
+	char* ___strtok;
+
 	register char* __res;
 	__asm__("testl %1,%1\n\t"
 		"jne 1f\n\t"

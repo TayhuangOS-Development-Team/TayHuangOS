@@ -20,6 +20,8 @@
 
 #include <intterup/init_int.h>
 
+//ticks
 extern volatile int ticks;
+//初始化pit
 PUBLIC bool init_pit(float frequency);
 PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler);

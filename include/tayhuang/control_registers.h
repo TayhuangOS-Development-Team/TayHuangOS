@@ -95,7 +95,7 @@ typedef struct {
     bool lmsle : 1;
     bool ffxsr : 1;
     bool tce : 1;
-    qword reserved : 48;
+    qword reserved : 16;
 } efer_t; //EFER
 
 //CR操作

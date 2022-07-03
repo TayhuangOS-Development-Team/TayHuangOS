@@ -78,6 +78,10 @@ typedef struct {
 #define FAT_BUFFER_SECTORS (4)
 #define INFO _context->infomations
 
+PRIVATE void __read_sector(FAT32_CONTEXT *context, dword lba, int num, void *dst) {
+    read_sector(context->partition.start_lba + lba, num, context->selector, dst);
+}
+
 PRIVATE dword get_fat32_entry(fs_context context, dword last) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     int num = (last / FAT32_ENTRIES_PER_SECTOR);
@@ -85,7 +89,7 @@ PRIVATE dword get_fat32_entry(fs_context context, dword last) {
     int _offset = last % FAT32_ENTRIES_PER_SECTOR;
 
     if (num >= _context->buffer_start + FAT_BUFFER_SECTORS) { //不在缓冲区里
-        read_sector(_sector, 4, _context->selector, _context->fat_buffer);
+        __read_sector(_context, _sector, 4, _context->fat_buffer);
         _context->buffer_start = num; //设置开始编号
     }
 
@@ -101,41 +105,41 @@ PRIVATE void __load_file(fs_context context, dword clus, void *dst) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     //起始簇号为2
     int sectors_per_clus = INFO.sectors_per_clus;
-    while (clus < 0x0FFFFFF0) {
+    while (clus < 0x0FFFFFF0) { //未结束
         int start_sector = _context->data_start + (clus - 2) * sectors_per_clus;
-        read_sector(start_sector, INFO.sectors_per_clus, _context->selector, dst);
+        __read_sector(_context, start_sector, INFO.sectors_per_clus, dst); //读取一个簇的数据
 
-        dst += INFO.sectors_per_clus * INFO.bytes_per_sector;
+        dst += INFO.sectors_per_clus * INFO.bytes_per_sector; //移动指针
 
-        clus = get_fat32_entry(context, clus);
+        clus = get_fat32_entry(context, clus); //下个簇
     }
 }
 
 PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id) {
-    void *boot = lmalloc(512);
+    void *superblock = lmalloc(512);
     FAT32_CONTEXT *context = lmalloc(sizeof(FAT32_CONTEXT));
-    get_partition(disk_selector, partition_id, &context->partition);
-    read_sector(context->partition.start_lba, 1, disk_selector, boot);
+    get_partition(disk_selector, partition_id, &context->partition); //获取分区信息
+    __read_sector(context, 0, 1, superblock); //读取超级块
 
     //MARK
-    context->selector = disk_selector;
-    context->magic = FAT32_CONTEXT_MAGIC;
+    context->selector = disk_selector; //所在硬盘
+    context->magic = FAT32_CONTEXT_MAGIC; //magic number
     
-    memcpy (&context->infomations, boot, sizeof(context->infomations));
+    memcpy (&context->infomations, superblock, sizeof(context->infomations)); //复制超级块
 
     //Extension
-    context->fat1_start = context->infomations.reversed_sectors + context->partition.start_lba;
-    context->data_start = context->fat1_start + context->infomations.num_fats * context->infomations.fat_sectors;
+    context->fat1_start = context->infomations.reversed_sectors; //第一个FAT表起始位置
+    context->data_start = context->fat1_start + context->infomations.num_fats * context->infomations.fat_sectors; //数据区起始位置
     
     context->root_directory = lmalloc(16 * context->infomations.bytes_per_sector); //16个扇区
     context->fat_buffer = lmalloc(FAT_BUFFER_SECTORS * context->infomations.bytes_per_sector); //4个扇区
 
-    read_sector(context->fat1_start, 4, disk_selector, context->fat_buffer);
+    __read_sector(context, context->fat1_start, 4, context->fat_buffer);
     context->buffer_start = 0;
 
     __load_file(context, context->infomations.root_directory_start_clus, context->root_directory);
 
-    lfree(boot);
+    lfree(superblock);
     return context;
 }
 
