@@ -56,7 +56,7 @@ build:
 	cd kernel ; make build
 	cd module ; make build
 
-#清理qemu-system-x86_64 -hda tayhuangBoot.img -hdc tayhuangOS.img -m 64 -serial stdio -s -S
+#清理
 .PHONY: clean
 clean:
 	cd arch/$(ARCHITECTURE)/ ; make clean
@@ -73,3 +73,13 @@ image:
 	cd kernel ; make image
 	cd module ; make image
 	sudo umount $(TAYHUANGOS_MOUNT_DIR)
+
+#debug
+.PHONY: debug
+debug:
+	qemu-system-x86_64 -hda tayhuangBoot.img -hdc tayhuangOS.img -m 64 -serial stdio -s -S
+
+#run
+.PHONY: run
+run:
+	qemu-system-x86_64 -hda tayhuangBoot.img -hdc tayhuangOS.img -m 64 -serial stdio
