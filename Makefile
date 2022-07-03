@@ -56,7 +56,7 @@ build:
 	cd kernel ; make build
 	cd module ; make build
 
-#清理
+#清理qemu-system-x86_64 -hda tayhuangBoot.img -hdc tayhuangOS.img -m 64 -serial stdio -s -S
 .PHONY: clean
 clean:
 	cd arch/$(ARCHITECTURE)/ ; make clean
