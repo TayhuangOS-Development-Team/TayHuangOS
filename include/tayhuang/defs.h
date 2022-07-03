@@ -20,6 +20,8 @@
 
 #define PUBLIC                                        //公共
 #define PRIVATE static                                //私有
+#define EXTERN extern                                 //extern
+#define VOLATILE volatile                             //volatile
 #define HIGHBYTE(x) (((x) >> 8) & 0xFF)               //高字节
 #define LOWBYTE(x) (x & 0xFF)                         //低字节
 #define HIGHHEX(x) (((x) >> 4) & 0xF)                 //高16进制位

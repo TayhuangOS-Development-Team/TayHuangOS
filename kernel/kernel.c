@@ -34,8 +34,15 @@
 #include <intterup/init_int.h>
 #include <intterup/clock/clock.h>
 
+#include <task/task_manager.h>
+
 #include <printk.h>
 #include <logging.h>
+#include <global.h>
+
+PUBLIC void *kernel_pml4 = NULL;
+PUBLIC struct boot_args args;
+PUBLIC int cur_pid = 0;
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -54,14 +61,6 @@ PRIVATE inline void set_tss(void *addr, qword base, dword limit, byte type) { //
     desc->type = type;
     desc->p = 1;
 }
-
-#define tr_idx (1)
-#define cs3_idx (3)
-#define ds3_idx (4)
-#define cs1_idx (5)
-#define ds1_idx (6)
-#define cs0_idx (7)
-#define ds0_idx (8)
 
 PRIVATE void init_gdt(void) { //初始化GDT
     GDT[0] = (struct desc_struct)GDT_ENTRY(0, 0, 0);
@@ -98,17 +97,6 @@ static inline void init_sse(void) { //SSE
     set_cr4(cr4);
 }
 
-PUBLIC void *kernel_pml4 = NULL;
-
-#define CS_USER (cs3_idx << 3 | 3)
-#define RFLAGS_USER ((1 << 9) | (3 << 12))
-#define CS_SERVICE (cs1_idx << 3 | 1)
-#define RFLAGS_SERVICE ((1 << 9) | (1 << 12))
-#define CS_KERNEL (cs0_idx << 3)
-#define RFLAGS_KERNEL (1 << 9)
-
-PRIVATE struct boot_args args;
-
 #define CLOCK_FREQUENCY (50.0f) //时钟周期
 
 #define SETUP_MOD_BASE (64 * 1024)
@@ -118,15 +106,21 @@ PRIVATE struct boot_args args;
 
 #define RESERVED_LIMIT (0x2000000)
 
+//first task-init
+PUBLIC void init(void) {
+    //do something
+    while (true);
+}
+
 //初始化
-void initialize(struct boot_args *args) {
+PUBLIC void initialize(void) {
     //初始化GDT
     init_gdt();
     
     //初始化输出
     init_serial();
 
-    init_video(args->framebuffer, args->screen_width, args->screen_height);
+    init_video(args.framebuffer, args.screen_width, args.screen_height);
 
     //初始化中断
     init_idt();
@@ -138,12 +132,12 @@ void initialize(struct boot_args *args) {
     en_int();
 
     //复制setup mod
-    memcpy (SETUP_MOD_BASE, args->setup_mod_addr, SETUP_MOD_SIZE);
+    memcpy (SETUP_MOD_BASE, args.setup_mod_addr, SETUP_MOD_SIZE);
 
     //初始化内存
     init_kheap(KHEAP_PRE_BASE, KHEAP_PRE_SIZE);
 
-    qword memsz = (((qword)args->memory_size_high) << 32) + args->memory_size;
+    qword memsz = (((qword)args.memory_size_high) << 32) + args.memory_size;
 
     init_pmm(memsz, 0x2000000);
 
@@ -152,37 +146,39 @@ void initialize(struct boot_args *args) {
     set_mapping(kernel_pml4, NULL, NULL, memsz / MEMUNIT_SZ, true, true);
     set_mapping(kernel_pml4, NULL, NULL, RESERVED_LIMIT / MEMUNIT_SZ, true, false);
     
-    if (((qword)args->framebuffer) >= memsz) {
-        set_mapping(kernel_pml4, args->framebuffer, args->framebuffer, (args->screen_width * args->screen_height * 3 * 2) / MEMUNIT_SZ, true, true);
+    if (((qword)args.framebuffer) >= memsz) {
+        set_mapping(kernel_pml4, args.framebuffer, args.framebuffer, (args.screen_width * args.screen_height * 3 * 2) / MEMUNIT_SZ, true, true);
     }
 
     __set_cr3(kernel_pml4);
 
-#ifdef VBE_ENABLE
-    for (int i = 0 ; i < 20 ; i ++) {
-        for (int j = 0 ; j < 20 ; j ++) {
-            *(char*)(args->framebuffer + (i * args->screen_width + j) * 3 + 0) = 0x00;
-            *(char*)(args->framebuffer + (i * args->screen_width + j) * 3 + 1) = 0xFF;
-            *(char*)(args->framebuffer + (i * args->screen_width + j) * 3 + 2) = 0x00;
-        }
-    }
-#endif
+
+    create_empty_task(); //创建空进程
+    cur_pid = 1;
 
     //初始化TSS
-    TSS.ist1 = 0x600000;
-    TSS.rsp0 = 0x500000;
+    TSS.ist1 = IST0_STACKTOP;
+    TSS.rsp0 = RING0_STACKTOP;
 }
 
-void entry(struct boot_args *_args) {
+PUBLIC void entry(struct boot_args *_args) {
     //Boot Arg
     if (_args->magic != BOOT_ARGS_MAGIC) {
         while (true);
     }
     memcpy(&args, _args, sizeof(struct boot_args));
 
-    initialize(&args); //初始化
+    initialize(); //初始化
 
-    linfo ("Kernel", "Hello, I'm %s!", "TayhuangOS Kernel");
+    linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
+
+    create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
+                 kernel_pml4,
+                 alloc_pid(), 1, 0
+    );
+
+    asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
+    asmv ("jmp init");
 
     while(true);
 }

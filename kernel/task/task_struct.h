@@ -21,31 +21,36 @@
 #include <tayhuang/defs.h>
 
 typedef struct {
-    b64 r15,
-        r14,
-        r13,
-        r12,
-        r11,
-        r10,
-        r9,
-        r8,
-        rdi,
-        rsi,
-        rdx,
-        rcx,
-        rbx,
-        rax,
-        gs,
-        fs,
-        es,
-        ds,
-        pgd,
-        rbp;
-    b64 rip,
-        cs,
-        rflags,
-        rsp,
-        ss;
+    struct {
+        b64 r15,
+            r14,
+            r13,
+            r12,
+            r11,
+            r10,
+            r9,
+            r8,
+            rdi,
+            rsi,
+            rdx,
+            rcx,
+            rbx,
+            rax,
+            gs,
+            fs,
+            es,
+            ds;
+    } basic;
+    struct {
+        b64 rbp;
+        b64 rsp,
+            ss;
+    } stack;
+    struct {
+        b64 rip,
+            cs,
+            rflags;
+    } program;
 } thread_info_struct;
 
 typedef struct {
@@ -57,25 +62,27 @@ typedef struct __msgpack_struct {
         qword value;
         void *address;
     };
-    int length;
     struct __msgpack_struct *next;
+    dword len;
+    dword source;
 } msgpack_struct;
 
 #define NULL_TASK (0)
 #define ANY_TASK (-1)
 
 typedef struct {
+    dword len;
+    dword source;
     void *wait_msg;
-    int wait_for;
     msgpack_struct *pack_queue_head;
     msgpack_struct *pack_queue_tail;
-} ipc_info;
+} ipc_info_struct;
 
 typedef struct __task_struct {
     thread_info_struct thread_info;
 
     mm_info_struct mm_info;
-    ipc_info ipc_info;
+    ipc_info_struct ipc_info;
 
     enum {
         READY = 0,
@@ -88,11 +95,12 @@ typedef struct __task_struct {
         EXCEPTION
     } state;
 
-    int pid;
-
     struct __task_struct *last;
     struct __task_struct *next;
+    struct __task_struct *free_next;
 
-    int count;
-    int priority;
+    dword pid : 20;
+    word count : 7;
+    byte priority : 3;
+    byte level : 2;
 } task_struct;

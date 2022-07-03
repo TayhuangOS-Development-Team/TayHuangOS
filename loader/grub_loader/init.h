@@ -26,10 +26,10 @@ typedef void(*int_handler)(void);
 #define IDT_SIZE (128)
 
 //GDT IDT表
-extern struct desc_struct GDT[GDT_SIZE];
-extern struct gdt_ptr gdtr;
-extern gate_desc IDT[IDT_SIZE];
-extern struct desc_ptr idtr;
+EXTERN PUBLIC struct desc_struct GDT[GDT_SIZE];
+EXTERN PUBLIC struct gdt_ptr gdtr;
+EXTERN PUBLIC gate_desc IDT[IDT_SIZE];
+EXTERN PUBLIC struct desc_ptr idtr;
 
 //初始化函数
 PUBLIC void init_gdt(void);

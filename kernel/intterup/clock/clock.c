@@ -25,7 +25,7 @@
 
 #define PIT_FREQUENCY (1193181.6666f)
 
-PUBLIC volatile int ticks = 0;
+PUBLIC VOLATILE int ticks = 0;
 
 //初始化PIT
 PUBLIC bool init_pit(float frequency) {

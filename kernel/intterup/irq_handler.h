@@ -22,7 +22,7 @@
 
 #include <intterup/init_int.h>
 
-extern short IRQ_FLAGS[16];
+EXTERN PUBLIC short IRQ_FLAGS[16];
 typedef short(*irq_handler)(int, struct intterup_args*, bool);
 //注册IRQ处理器
 PUBLIC void register_irq_handler(int irq, irq_handler handler);

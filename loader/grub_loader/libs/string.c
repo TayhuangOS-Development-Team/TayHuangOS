@@ -51,7 +51,7 @@ int strcmp(const char *str1, const char *str2) {
 
 int strlen(const char *str) {
     int cnt = 0x7FFFFFFF;
-    asm volatile(
+    __asm__ __volatile__ (
       "cld\n"
       "repnz\n"
       "scasb"  :

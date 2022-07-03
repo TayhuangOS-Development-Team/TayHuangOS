@@ -49,8 +49,8 @@ PUBLIC bool init_pit(float frequency) { //初始化PIT
 
 #ifdef VBE_ENABLE
 
-PRIVATE volatile int progress = -1;
-PRIVATE volatile int cnt = 0;
+PRIVATE VOLATILE int progress = -1;
+PRIVATE VOLATILE int cnt = 0;
 
 #define CLOCKS_PER_SECOND (100)
 #define ANIMATION_TIME (4)
@@ -126,7 +126,7 @@ PUBLIC void show_icon(void *framebuffer, int width, int height) {
 
     terminate_fs(ctx);
 
-    volatile int last_progress = -1;
+    VOLATILE int last_progress = -1;
     while (last_progress < 100) {
         if (last_progress < progress) {
             display_icon(icon, framebuffer, width, height);

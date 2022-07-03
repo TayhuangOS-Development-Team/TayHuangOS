@@ -18,7 +18,9 @@
 
 #pragma once
 
-extern int display_mode;
-extern int screen_width;
-extern int screen_height;
-extern void *VIDEO_MEMORY;
+#include <tayhuang/defs.h>
+
+EXTERN PUBLIC int display_mode;
+EXTERN PUBLIC int screen_width;
+EXTERN PUBLIC int screen_height;
+EXTERN PUBLIC void *VIDEO_MEMORY;

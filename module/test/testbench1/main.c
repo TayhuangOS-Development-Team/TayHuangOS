@@ -22,9 +22,9 @@
 #include <printf.h>
 #include <memory/malloc.h>
 
-extern int pos_x;
-extern int pos_y;
-extern int current_pid;
+EXTERN PUBLIC int pos_x;
+EXTERN PUBLIC int pos_y;
+EXTERN PUBLIC int current_pid;
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Testbench1");

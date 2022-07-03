@@ -30,6 +30,7 @@ VBE_MODE ?= DISABLE
 LOOPA ?= /dev/loop19
 LOOPB ?= /dev/loop20
 KERNEL_PARTITION_OFFSET ?= 1048576
+IMAGE_SECTORS ?= 262144
 
 export ARCHITECTURE ARCHDEF_C MODE VBE_MODE
 
@@ -51,7 +52,7 @@ ASM := nasm
 GAS := as
 RM := rm
 LD := ld
-IMAGEGEN := bximage
+DD := dd
 _MKFS := mkfs
 GRUB_INSTALL := grub-install
 GRUB_MODULES := normal part_msdos ext2 fat multiboot all_video
@@ -84,7 +85,7 @@ ifeq ($(FILESYSTEM), fat32)
 endif
 
 export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
-export GCC GPP ASM GAS RM MKDIR LD IMAGEGEN _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
+export GCC GPP ASM GAS RM MKDIR LD DD _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
 
 RAW_ICON := $(BINDIR)/tayicon.raw
 TAYHUANG_ICON := $(ROOTDIR)/TayhuangOS.png
@@ -116,7 +117,7 @@ setup_workspace:
 	else \
 		$(ECHO) "mount directory already created"; \
 	fi;
-	$(IMAGEGEN) < ./setup/new_system_img_input.txt
+	$(DD) if=/dev/zero of=$(TAYHUANGOS_IMG) bs=512 count=$(IMAGE_SECTORS)
 
 	$(MKDIR) -v -p $(BUILDDIR)
 	$(MKDIR) -v -p $(OBJECTSDIR)
