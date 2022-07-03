@@ -27,7 +27,7 @@
 PUBLIC int fault_num[32] = {};
 
 //通用异常处理器
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs) {
+PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!",
         "[#DB] Single step",
@@ -73,15 +73,15 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
     }
     sprintk (buffer, "Vector = %d", vector); //打印Vector号
     lerror ("Exception", buffer);
-    if (errcode < 0xFFFFFFFF) {
-        sprintk (buffer, "Error code = %d", errcode); //打印错误码
+    if (regs->code < 0xFFFFFFFF) {
+        sprintk (buffer, "Error code = %d", regs->code); //打印错误码
         lerror ("Exception", buffer);
     }
 
     lerror ("Exception", "");
     lerror ("Exception", "");
     lerror ("Exception", "Registers:");
-    sprintk (buffer, "cs: %#04X;rip: %#016X;eflags:%#04X", cs, rip, eflags); //打印寄存器
+    sprintk (buffer, "cs: %#04X;rip: %#016X;eflags:%#04X", regs->cs, regs->rip, regs->rflags); //打印寄存器
     lerror ("Exception", buffer);
 
     sprintk (buffer, "rax: %#016X;rbx: %#016X;rcx: %#016X;", regs->rax, regs->rbx, regs->rcx);

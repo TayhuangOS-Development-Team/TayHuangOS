@@ -40,9 +40,41 @@ struct intterup_args {
         es,
         ds,
         pgd,
-        rbp,
-        ist,
-        rip,
+        rbp;
+    //
+    b64 ist;
+    b64 rip,
+        cs,
+        rflags,
+        rsp,
+        ss;
+} __attribute__((packed));
+
+struct exception_args {
+    b64 r15,
+        r14,
+        r13,
+        r12,
+        r11,
+        r10,
+        r9,
+        r8,
+        rdi,
+        rsi,
+        rdx,
+        rcx,
+        rbx,
+        rax,
+        gs,
+        fs,
+        es,
+        ds,
+        pgd,
+        rbp;
+    //
+    b64 ist;
+    b32 code; 
+    b64 rip,
         cs,
         rflags,
         rsp,

@@ -18,7 +18,7 @@
 
 # 配置区
 
-include ./config.mk
+#include ./config.mk
 
 #定义区
 
