@@ -187,6 +187,8 @@ PUBLIC void entry(struct boot_args *_args) {
     add_task(current_task);
     current_task->state = RUNNING;
 
+    current_task->count = current_task->priority * 3;
+
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
     asmv ("jmp init");
 
