@@ -102,8 +102,9 @@ PUBLIC task_struct *get_level1_list(void) {
 //获取空闲进程
 PUBLIC task_struct *dequeue_level0_task(void) {
     task_struct *task = level0_list_head;
-    if (task == NULL)
+    if (task == NULL) {
         return NULL;
+    }
     level0_list_head = task->free_next;
     if (task->free_next == NULL) {
         level0_list_tail = NULL;
@@ -113,8 +114,9 @@ PUBLIC task_struct *dequeue_level0_task(void) {
 
 PUBLIC task_struct *dequeue_level1_task(void) {
     task_struct *task = level1_list_head;
-    if (task == NULL)
+    if (task == NULL) {
         return NULL;
+    }
     level1_list_head = task->free_next;
     if (task->free_next == NULL) {
         level1_list_tail = NULL;
