@@ -41,16 +41,18 @@ LIBS_C_SRC := ctype string tostring debug
 MEMORY_C_SRC := kheap pmm paging
 INTTERUP_C_SRC := clock/clock exception init_int irq_handler
 TASK_C_SRC := task_scheduler task_manager
+SYSCALL_C_SRC := syscall syscalls
 C_SRC := kernel printk logging kmod_loader \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
 	$(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
 	$(foreach src, $(INTTERUP_C_SRC), intterup/$(src)) \
-	$(foreach src, $(TASK_C_SRC), task/$(src))
+	$(foreach src, $(TASK_C_SRC), task/$(src)) \
+	$(foreach src, $(SYSCALL_C_SRC), syscall/$(src))
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry intterup/int_handlers
+ASM_SRC := entry intterup/int_handlers syscall/dosyscall
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/libs/libfifo"

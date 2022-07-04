@@ -38,6 +38,9 @@
 #include <task/task_manager.h>
 #include <task/task_scheduler.h>
 
+#include <syscall/syscall.h>
+#include <syscall/syscalls.h>
+
 #include <printk.h>
 #include <logging.h>
 #include <global.h>
@@ -136,6 +139,8 @@ PUBLIC void init(void) {
                     SETUP_SERVICE, 1, 0, current_task);
     
     current_task->state = WAITING;
+
+    moo();
 
     while (true);
 }

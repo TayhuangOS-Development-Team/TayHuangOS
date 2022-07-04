@@ -23,6 +23,7 @@
 EXTERN PUBLIC void *kernel_pml4;
 EXTERN PUBLIC struct boot_args args;
 EXTERN PUBLIC int cur_pid;
+EXTERN PUBLIC bool entered_handler;
 
 #define tr_idx (1)
 #define cs3_idx (3)
