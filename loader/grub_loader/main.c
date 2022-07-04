@@ -56,7 +56,6 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
     #define FRAMEBUFFER_WIDTH 1024
     #define FRAMEBUFFER_HEIGHT 768
     #define FRAMEBUFFER_BPP 24
-    //FIXME: Error here
     .framebuffer = {
         .type = MULTIBOOT_HEADER_TAG_FRAMEBUFFER,
         .flags = MULTIBOOT_HEADER_TAG_OPTIONAL,
@@ -76,21 +75,21 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
 
 //loader主函数
 PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
-    asmv ("finit");
-
     init_gdt();
 
+    init_idt();
+    init_pic();
+
     char buffer[256];
+
+    init_serial();
 
     sprintf (buffer, "Hello, OS World!I'm \"%s\"", "Tayhuang OS Grub Loader");
     linfo ("Loader", buffer);
     sprintf (buffer, "Loading Kernel and Setup Module Now...");
     linfo ("Loader", buffer);
 
-    init_idt();
-    init_pic();
-
-    init_serial();
+    asmv ("finit");
 
     init_lheap(0x800000);
 

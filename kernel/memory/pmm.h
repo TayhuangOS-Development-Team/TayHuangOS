@@ -30,3 +30,13 @@ PUBLIC void *alloc_pages(int order);
 //归还内存
 PUBLIC void __return_pages(void *addr, int order);
 PUBLIC void return_pages(void *addr, int pages);
+//给给定页表分配逻辑上连续的内存
+PUBLIC void alloc_vpages(void *pgd, void *addr, int pages);
+//虚拟地址memset
+PUBLIC void vmemset(void *pgd, void *addr, int val, int size);
+//虚拟地址拷贝到物理地址
+PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size);
+//物理地址拷贝到虚拟地址
+PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size);
+//虚拟地址拷贝到虚拟地址
+PUBLIC void vvmemcpy(void *dst_pgd, void *dst, void *src_pgd, void *src, int size);

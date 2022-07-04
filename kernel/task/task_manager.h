@@ -65,11 +65,11 @@ PUBLIC void enqueue_level1_task(task_struct *task);
 PUBLIC task_struct *__create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd,
-    int pid, int priority, int level
+    int pid, int priority, int level, task_struct *parent
 );
 
 PUBLIC task_struct *create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd,
-    int pid, int priority, int level
+    int pid, int priority, int level, task_struct *parent
 );

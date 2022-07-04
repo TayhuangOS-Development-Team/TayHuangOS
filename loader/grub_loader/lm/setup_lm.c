@@ -61,17 +61,13 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
                                                                                               //所以(memsz_high << 32) / MEMUNIT_SZ = mem_size << (32 - log2(MEMUNIT_SZ))
                         //最大支持8TB
     const int pte_num = page_num;
-    const int pt_num = pte_num / pte_pmu
-                        + ((pte_num  % pte_pmu) ? 1 : 0); //有余数则 + 1
+    const int pt_num = (pte_num + pte_pmu - 1) / pte_pmu; //向上取整
     const int pde_num = pt_num;
-    const int pd_num = pde_num / pde_pmu
-                        + ((pde_num  % pde_pmu) ? 1 : 0); //有余数则 + 1
+    const int pd_num = (pde_num + pde_pmu - 1) / pde_pmu;
     const int pdpte_num = pd_num;
-    const int pdpt_num = pdpte_num / pdpte_pmu
-                        + ((pdpte_num  % pdpte_pmu) ? 1 : 0); //有余数则 + 1
+    const int pdpt_num = (pdpte_num + pdpte_pmu - 1) / pdpte_pmu;
     const int pml4e_num = pdpt_num;
-    const int pml4_num = pml4e_num / pml4e_pmu
-                        + ((pml4e_num  % pml4e_pmu) ? 1 : 0); //有余数则 + 1
+    const int pml4_num = (pml4e_num + pml4e_pmu - 1) / pml4e_pmu;
     if (pml4_num != 1) { //4级分页, 支持到8TB
         lerror ("Loader", "Error!Too much memory!\n");
         return NULL;

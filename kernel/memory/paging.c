@@ -39,13 +39,13 @@ PRIVATE void *__get_free_page(void) { //获取空闲页
     return page;
 }
 
-PRIVATE bool __set_mapping(void *__pml4, void *from, void *to, bool rw, bool us) {
+PRIVATE bool __set_mapping(void *__pgd, void *from, void *to, bool rw, bool us) {
     int pml4e_idx = (((qword)from) >> 39) & 0x1FF;
     int pdpte_idx = (((qword)from) >> 30) & 0x1FF;
     int pde_idx = (((qword)from) >> 21) & 0x1FF;
     int pte_idx = (((qword)from) >> 12) & 0x1FF;
 
-    PML4E *pml4 = (PML4E*)__pml4;
+    PML4E *pml4 = (PML4E*)__pgd;
     if (pml4[pml4e_idx].p == false) { //当前PML4E未分配
         pml4[pml4e_idx].p = true;
         pml4[pml4e_idx].rw = rw;
@@ -98,9 +98,9 @@ PRIVATE bool __set_mapping(void *__pml4, void *from, void *to, bool rw, bool us)
     return true;
 }
 
-PUBLIC bool set_mapping(void *pml4, void *from, void *to, int pages, bool rw, bool us) { //设置映射
+PUBLIC bool set_mapping(void *pgd, void *from, void *to, int pages, bool rw, bool us) { //设置映射
     for (int i = 0 ; i < pages ; i ++) {
-        if (! __set_mapping(pml4, from + i * MEMUNIT_SZ, to + i * MEMUNIT_SZ, rw, us)) {
+        if (! __set_mapping(pgd, from + i * MEMUNIT_SZ, to + i * MEMUNIT_SZ, rw, us)) {
             return false;
         }
     }
@@ -108,41 +108,41 @@ PUBLIC bool set_mapping(void *pml4, void *from, void *to, int pages, bool rw, bo
 }
 
 //获取物理地址
-PUBLIC void *get_physical_address(void *__pml4, void *vaddr) {
+PUBLIC void *get_physical_address(void *__pgd, void *vaddr) {
     int pml4e_idx = (((qword)vaddr) >> 39) & 0x1FF;
     int pdpte_idx = (((qword)vaddr) >> 30) & 0x1FF;
     int pde_idx = (((qword)vaddr) >> 21) & 0x1FF;
     int pte_idx = (((qword)vaddr) >> 12) & 0x1FF;
     int offset = ((qword)vaddr) & 0xFFF;
 
-    PML4E *pml4 = __pml4;
+    PML4E *pml4 = __pgd;
     if (! pml4[pml4e_idx].p) { //不存在
-        lerror ("Paging", "Address %P doesn't exist!", vaddr);
-        lerror ("Paging", "Error In PML4 %P, Index %#03X", pml4, pml4e_idx);
+        lerror ("Paging", "Address %p doesn't exist!", vaddr);
+        lerror ("Paging", "Error In PML4 %p, Index %#03X", pml4, pml4e_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
         return NULL;
     }
 
     PDPTE *pdpt = pml4[pml4e_idx].address << 12;
     if (! pdpt[pdpte_idx].p) { //不存在
-        lerror ("Paging", "Address %P doesn't exist!", vaddr);
-        lerror ("Paging", "Error In PDPT %P, Index %#03X", pdpt, pdpte_idx);
+        lerror ("Paging", "Address %p doesn't exist!", vaddr);
+        lerror ("Paging", "Error In PDPT %p, Index %#03X", pdpt, pdpte_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
         return NULL;
     }
 
     PDE *pd = pdpt[pdpte_idx].address << 12;
     if (! pd[pde_idx].p) { //不存在
-        lerror ("Paging", "Address %P doesn't exist!", vaddr);
-        lerror ("Paging", "Error In PD %P, Index %#03X", pd, pde_idx);
+        lerror ("Paging", "Address %p doesn't exist!", vaddr);
+        lerror ("Paging", "Error In PD %p, Index %#03X", pd, pde_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
         return NULL;
     }
     
     PTE *pt = pd[pde_idx].address << 12;
     if (! pt[pte_idx].p) { //不存在
-        lerror ("Paging", "Address %P doesn't exist!", vaddr);
-        lerror ("Paging", "Error In PT %P, Index %#03X", pt, pte_idx);
+        lerror ("Paging", "Address %p doesn't exist!", vaddr);
+        lerror ("Paging", "Error In PT %p, Index %#03X", pt, pte_idx);
         //lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
         return NULL;
     }

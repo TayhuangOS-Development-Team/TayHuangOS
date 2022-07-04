@@ -37,7 +37,7 @@ PUBLIC void create_empty_task(void) {
     empty_task = __create_task(
         DS_KERNEL, NULL, NULL, empty, CS_KERNEL, RFLAGS_KERNEL,
         kernel_pml4,
-        -1, -1, -1
+        -1, -1, -1, NULL
     );
 }
 
@@ -178,7 +178,7 @@ PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
 PUBLIC task_struct *__create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd,
-    int pid, int priority, int level
+    int pid, int priority, int level, task_struct *parent
 ) {
     task_struct *task = kmalloc(sizeof(task_struct));
 
@@ -193,6 +193,9 @@ PUBLIC task_struct *__create_task(
     task->count = 0;
     task->priority = priority;
     task->level = level;
+    
+    task->parent = parent;
+    task->children = NULL;
 
     return task;
 }
@@ -200,13 +203,16 @@ PUBLIC task_struct *__create_task(
 PUBLIC task_struct *create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd,
-    int pid, int priority, int level
+    int pid, int priority, int level, task_struct *parent
 ) {
     task_struct *task = __create_task(ds, stack_top, stack_bottom, entry, cs, rflags,
                                         pgd,
-                                        pid, priority, level);
+                                        pid, priority, level, parent);
 
     add_task(task);
+
+    task->bro = parent->children;
+    parent->children = task;
 
     if (level == 0) {
         enqueue_level0_task(task);

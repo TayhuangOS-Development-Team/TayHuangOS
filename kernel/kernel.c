@@ -41,6 +41,7 @@
 #include <printk.h>
 #include <logging.h>
 #include <global.h>
+#include <kmod_loader.h>
 
 PUBLIC void *kernel_pml4 = NULL;
 PUBLIC struct boot_args args;
@@ -106,14 +107,41 @@ static inline void init_sse(void) { //SSE
 #define KHEAP_PRE_BASE (SETUP_MOD_BASE + SETUP_MOD_SIZE)
 #define KHEAP_PRE_SIZE (640 * 1024 - KHEAP_PRE_BASE)
 
+//0 ~ 32MB系统保留
 #define RESERVED_LIMIT (0x2000000)
+
+void print_mod_info(program_info *mod_info) {
+    linfo ("KMod Loader", "--------------------------------------------");
+    linfo ("KMod Loader", "Start:        %p", mod_info->start);
+    linfo ("KMod Loader", "End:          %p", mod_info->end);
+    linfo ("KMod Loader", "Entry:        %p", mod_info->entry);
+    linfo ("KMod Loader", "PGD:          %p", mod_info->pgd);
+    linfo ("KMod Loader", "Stack Bottom: %p", mod_info->stack_bottom);
+    linfo ("KMod Loader", "Stack Top:    %p", mod_info->stack_top);
+    linfo ("KMod Loader", "Heap Bottom:  %p", mod_info->heap_bottom);
+    linfo ("KMod Loader", "Heap Top:     %p", mod_info->heap_top);
+    linfo ("KMod Loader", "--------------------------------------------");
+}
 
 //first task-init
 PUBLIC void init(void) {
     //do something
-    linfo ("init", "!");
     start_schedule();
+
+    //-----------SETUP MOD-----------------
+    program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
+    print_mod_info(&setup_mod_info);
+    create_task(DS_KERNEL, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
+                    setup_mod_info.pgd,
+                    SETUP_SERVICE, 1, 0, current_task);
+    
+    current_task->state = WAITING;
+
     while (true);
+}
+
+PUBLIC void mapping_kernel(void *pgd) {
+    set_mapping(pgd, NULL, NULL, RESERVED_LIMIT / MEMUNIT_SZ, true, false);
 }
 
 //初始化
@@ -148,7 +176,7 @@ PUBLIC void initialize(void) {
     kernel_pml4 = create_pgd();
 
     set_mapping(kernel_pml4, NULL, NULL, memsz / MEMUNIT_SZ, true, true);
-    set_mapping(kernel_pml4, NULL, NULL, RESERVED_LIMIT / MEMUNIT_SZ, true, false);
+    mapping_kernel(kernel_pml4);
     
     if (((qword)args.framebuffer) >= memsz) {
         set_mapping(kernel_pml4, args.framebuffer, args.framebuffer, (args.screen_width * args.screen_height * 3 * 2) / MEMUNIT_SZ, true, true);
@@ -181,7 +209,7 @@ PUBLIC void entry(struct boot_args *_args) {
 
     current_task = __create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
                  kernel_pml4,
-                 alloc_pid(), 1, 0
+                 alloc_pid(), 1, 0, NULL
     );
 
     add_task(current_task);

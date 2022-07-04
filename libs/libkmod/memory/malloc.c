@@ -74,7 +74,7 @@ bool init_heap(void) {
 
     heap = get_start_heap(pid);
 
-    sprintf (buffer, "Heap start address = %P", heap);
+    sprintf (buffer, "Heap start address = %p", heap);
     linfo (buffer);
 
     int size = get_end_heap(pid) - heap;
@@ -109,7 +109,7 @@ void *malloc(int size) {
     chunk_struct *last = (chunk_struct*)heap;
     chunk_struct *current = last->next;
 
-    sprintf (buffer, "searching start with last = %P and current = %P", last, current);
+    sprintf (buffer, "searching start with last = %p and current = %p", last, current);
     linfo (buffer);
 
     while ((current != NULL) && (current->size < (fixed_size + sizeof(chunk_struct)))) {
@@ -117,7 +117,7 @@ void *malloc(int size) {
         current = current->next;
     }
 
-    sprintf (buffer, "searching end with last = %P and current = %P", last, current);
+    sprintf (buffer, "searching end with last = %p and current = %p", last, current);
     linfo (buffer);
 
     if (current == NULL) {
@@ -135,7 +135,7 @@ void *malloc(int size) {
         last->next = new_free_chunk;
         current->size = sizeof(chunk_struct) + fixed_size;
         
-        sprintf (buffer, "Split the chunk into (start = %P len = %d) and (start = %P len = %d)",
+        sprintf (buffer, "Split the chunk into (start = %p len = %d) and (start = %p len = %d)",
                         current, current->size, new_free_chunk, new_free_chunk->size);
         linfo (buffer);
     }
@@ -146,7 +146,7 @@ void *malloc(int size) {
     current->used = true;
     current->next = NULL;
 
-    sprintf (buffer, "Alloc chunk(start = %P, len = %d)", current, current->size);
+    sprintf (buffer, "Alloc chunk(start = %p, len = %d)", current, current->size);
     linfo (buffer);
 
     return ((void*)current) + 16;
@@ -162,14 +162,14 @@ void free(void *addr) {
         last = last->next;
     }
 
-    sprintf (buffer, "Insert chunk(%P) between chunk(%P) and chunk(%P)", current, last, last->next);
+    sprintf (buffer, "Insert chunk(%p) between chunk(%p) and chunk(%p)", current, last, last->next);
     linfo (buffer);
 
     current->next = last->next;
     last->next = current;
 
     if ((((void*)last) + last->size) == current) {
-        sprintf (buffer, "Combine chunk(%P) and chunk(%P)", last, current);
+        sprintf (buffer, "Combine chunk(%p) and chunk(%p)", last, current);
         linfo (buffer);
 
         last->size += current->size;
@@ -178,7 +178,7 @@ void free(void *addr) {
     }
 
     if ((((void*)last) + last->size) == last->next) {
-        sprintf (buffer, "Combine chunk(%P) and chunk(%P)", last, last->next);
+        sprintf (buffer, "Combine chunk(%p) and chunk(%p)", last, last->next);
         linfo (buffer);
 
         last->size += last->next->size;

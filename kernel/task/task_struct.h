@@ -98,6 +98,9 @@ typedef struct __task_struct {
     struct __task_struct *last;
     struct __task_struct *next;
     struct __task_struct *free_next;
+    struct __task_struct *parent;
+    struct __task_struct *children;
+    struct __task_struct *bro;
 
     dword pid : 20;
     word count : 7;
