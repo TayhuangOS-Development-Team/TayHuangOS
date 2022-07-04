@@ -80,15 +80,15 @@ OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
 
 $(OBJECTSDIR)/%.o : %.cpp
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.c
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.S
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(ASM) -o $@ $^
 
 .PHONY: build
@@ -105,4 +105,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(KERNEL_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(KERNEL_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

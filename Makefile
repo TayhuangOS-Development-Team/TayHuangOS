@@ -32,7 +32,15 @@ LOOPB ?= /dev/loop20
 KERNEL_PARTITION_OFFSET ?= 1048576
 IMAGE_SECTORS ?= 262144
 
-export ARCHITECTURE ARCHDEF_C MODE VBE_MODE
+CODE_VERSION  := alpha
+MAJOR_VERSION := 2
+MINOR_VERSION := 6
+PATCH_VERSION := 0
+BUILD_VERSION := 2
+
+VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
+
+export ARCHITECTURE ARCHDEF_C MODE VBE_MODE CODE_VERSION MAJOR_VERSION MINOR_VERSION PATCH_VERSION BUILD_VERSION VERSION
 
 #目录区
 
@@ -45,7 +53,7 @@ TAYHUANGOS_IMG := tayhuangOS.img
 
 #工具区
 
-MKDIR := mkdir
+MKDIR := mkdir -p -v
 GCC := gcc
 GPP := g++
 ASM := nasm
@@ -60,7 +68,7 @@ SUDO := sudo
 MOUNT := mount
 UMOUNT := umount
 ECHO := echo
-CHANGE_DIR := cd
+CD := cd
 COPY := cp
 OBJCOPY := objcopy
 FDISK := fdisk
@@ -85,7 +93,7 @@ ifeq ($(FILESYSTEM), fat32)
 endif
 
 export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
-export GCC GPP ASM GAS RM MKDIR LD DD _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CHANGE_DIR COPY OBJCOPY FDISK
+export GCC GPP ASM GAS RM MKDIR LD DD _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CD COPY OBJCOPY FDISK
 
 RAW_ICON := $(BINDIR)/tayicon.raw
 TAYHUANG_ICON := $(ROOTDIR)/TayhuangOS.png
@@ -112,7 +120,8 @@ setup_and_build: setup_workspace all
 #设置环境
 .PHONY: setup_workspace
 setup_workspace:
-	if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
+	@if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
 		$(SUDO) $(MKDIR) $(TAYHUANGOS_MOUNT_DIR); \
 	else \
 		$(ECHO) "mount directory already created"; \
@@ -143,10 +152,11 @@ setup_workspace:
 #编译
 .PHONY: build
 build:
-	$(CHANGE_DIR) libs ; $(MAKE) build
-	$(CHANGE_DIR) loader ; $(MAKE) build
-	$(CHANGE_DIR) kernel ; $(MAKE) build
-	$(CHANGE_DIR) module ; $(MAKE) build
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
+	$(CD) libs ; $(MAKE) build
+	$(CD) loader ; $(MAKE) build
+	$(CD) kernel ; $(MAKE) build
+	$(CD) module ; $(MAKE) build
 ifeq ($(VBE_MODE), ENABLE)
 	$(MAKE) $(RAW_ICON)
 endif
@@ -157,14 +167,16 @@ $(RAW_ICON): $(TAYHUANG_ICON)
 #清理
 .PHONY: clean
 clean:
-	$(CHANGE_DIR) libs ; $(MAKE) clean
-	$(CHANGE_DIR) loader ; $(MAKE) clean
-	$(CHANGE_DIR) kernel ; $(MAKE) clean
-	$(CHANGE_DIR) module ; $(MAKE) clean
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
+	$(CD) libs ; $(MAKE) clean
+	$(CD) loader ; $(MAKE) clean
+	$(CD) kernel ; $(MAKE) clean
+	$(CD) module ; $(MAKE) clean
 
 #写入映像
 .PHONY: image
 image:
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
 	$(SUDO) $(LOOP_SETUP) $(LOOPB) $(TAYHUANGOS_IMG) -o 1048576
 	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
 
@@ -173,20 +185,21 @@ ifeq ($(VBE_MODE), ENABLE)
 	$(SUDO) $(COPY) $(RAW_ICON) $(TAYHUANGOS_MOUNT_DIR)/
 endif
 
-	$(CHANGE_DIR) loader ; $(MAKE) image
-	$(CHANGE_DIR) kernel ; $(MAKE) image
-	$(CHANGE_DIR) module ; $(MAKE) image
-
+	$(CD) loader ; $(MAKE) image
+	$(CD) kernel ; $(MAKE) image
+	$(CD) module ; $(MAKE) image
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
 
 .PHONY: run
 run:
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
 	$(QEMU) $(QEMU_ARGS)
 
 .PHONY: debug
 debug:
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
 	$(QEMU) $(QEMU_DEBUG_ARGS)
 
 .PHONY: build_and_run

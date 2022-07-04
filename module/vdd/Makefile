@@ -24,13 +24,13 @@ export OBJECTSDIR VDDDIR
 #编译
 .PHONY: build
 build:
-	$(CHANGE_DIR) tty ; $(MAKE) build
+	$(CD) tty ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	$(CHANGE_DIR) tty ; $(MAKE) clean
+	$(CD) tty ; $(MAKE) clean
 
 .PHONY: image
 image:
-	$(CHANGE_DIR) tty ; $(MAKE) image
+	$(CD) tty ; $(MAKE) image

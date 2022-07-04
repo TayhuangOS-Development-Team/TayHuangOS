@@ -49,20 +49,20 @@ OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
 
 $(OBJECTSDIR)/%.o : %.cpp
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.c
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.S
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GAS) -o $@ $^
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(AR) rvs $(LIBC_OUTPUT) $^
 
 .PHONY: clean

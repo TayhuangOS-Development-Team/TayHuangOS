@@ -27,16 +27,16 @@ OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o)
 
 $(OBJECTSDIR)/%.o : %.c
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.asm
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(ASM) $^ -f elf -o $@
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) -p -v $(dir $(GRUB_LOADER_OUTPUT))
+	$(MKDIR) $(dir $(GRUB_LOADER_OUTPUT))
 	$(LD) -s -T loader.ld -o $(GRUB_LOADER_OUTPUT) $(OBJECTS)
 
 .PHONY: clean
@@ -45,4 +45,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(GRUB_LOADER_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(GRUB_LOADER_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

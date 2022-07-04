@@ -52,20 +52,20 @@ OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
 
 $(OBJECTSDIR)/%.o : %.cpp
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.c
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.S
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GAS) -o $@ $^
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) -p -v $(dir $(TTY_OUTPUT))
+	$(MKDIR) $(dir $(TTY_OUTPUT))
 	$(LD) $(LD_FLAGS) -T tty.ld -o $(TTY_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
 	$(OBJCOPY) --only-keep-debug $(TTY_OUTPUT) $(TTY_SYMBOL_OUTPUT)

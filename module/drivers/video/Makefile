@@ -56,20 +56,20 @@ OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
 
 $(OBJECTSDIR)/%.o : %.cpp
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.c
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.S
-	$(MKDIR) -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GAS) -o $@ $^
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) -p -v $(dir $(VIDEO_OUTPUT))
+	$(MKDIR) $(dir $(VIDEO_OUTPUT))
 	$(LD) $(LD_FLAGS) -T video.ld -o $(VIDEO_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
 	$(OBJCOPY) --only-keep-debug $(VIDEO_OUTPUT) $(VIDEO_SYMBOL_OUTPUT)

@@ -24,13 +24,13 @@ export OBJECTSDIR {SUBMODULE}DIR
 #编译
 .PHONY: build
 build:
-	$(CHANGE_DIR) {SUBMODULE0} ; $(MAKE) build
+	$(CD) {SUBMODULE0} ; $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	$(CHANGE_DIR) {SUBMODULE0} ; $(MAKE) clean
+	$(CD) {SUBMODULE0} ; $(MAKE) clean
 
 .PHONY: image
 image:
-	$(CHANGE_DIR) {SUBMODULE0} ; $(MAKE) image
+	$(CD) {SUBMODULE0} ; $(MAKE) image
