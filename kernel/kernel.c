@@ -139,8 +139,6 @@ PUBLIC void init(void) {
         create_task(DS_KERNEL, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
                     setup_mod_info.pgd,
                     SETUP_SERVICE, 1, 0, current_task));
-
-    moo();
     
     current_task->state = WAITING;
 

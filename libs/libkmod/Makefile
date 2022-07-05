@@ -39,7 +39,7 @@ C_SRC := init printf \
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry
+ASM_SRC := entry syscall
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
