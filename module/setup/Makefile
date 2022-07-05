@@ -32,8 +32,8 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
 FS_C_SRC := fat32 common
-C_SRC := main disk \
-	$(foreach src, $(FS_C_SRC), fs/$(src))
+C_SRC := main
+#	$(foreach src, $(FS_C_SRC), fs/$(src))
 
 CPP_SRC :=
 

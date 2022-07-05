@@ -17,54 +17,39 @@
 
 
 #include <debug/logging.h>
+#include <tayhuang/ports.h>
+#include <tayhuang/io.h>
 
-#include <tool/io.h>
+PRIVATE const char *logging_name;
 
-//SERIAL
-#define SERIAL_BASE          (0x3F8)
-#define SERIAL_SEND          (SERIAL_BASE + 0)
-#define SERIAL_KEEP          (SERIAL_BASE + 0)
-#define SERIAL_INT_VALID     (SERIAL_BASE + 1)
-#define SERIAL_INT_ID        (SERIAL_BASE + 2)
-#define SERIAL_CONTROL       (SERIAL_BASE + 3)
-#define SERIAL_MODEM_CONTROL (SERIAL_BASE + 4)
-#define SERIAL_STATUS        (SERIAL_BASE + 5)
-#define SERIAL_MODEM_STATUS  (SERIAL_BASE + 6)
+PUBLIC void set_logging_name(const char *name) {
+    logging_name = name;
+}
 
-void write_serial_char(char ch) {
+PUBLIC void write_serial_char(char ch) {
     while ((inb(SERIAL_STATUS) & 0x20) == 0);
     outb(SERIAL_SEND, ch);
 }
 
-void write_serial_str(const char *str) {
+PUBLIC void write_serial_str(const char *str) {
     while (*str != '\0') {
         write_serial_char(*str);
         str ++;
     }
 }
 
-static const char *logging_name = NULL;
-
-void set_logging_name(const char *name) {
-    logging_name = name;
-}
-
-static void _log(const char *type, const char *msg) {
-    asmv ("cli");
-    if (logging_name != NULL) {
-        write_serial_char('(');
-        write_serial_str(logging_name);
-        write_serial_char(')');
-    }
+PUBLIC void __log(const char *type, const char *msg) {
+    write_serial_char('(');
+    write_serial_str(logging_name);
+    write_serial_char(')');
     write_serial_char('[');
     write_serial_str(type);
     write_serial_char(']');
     write_serial_str(msg);
     write_serial_char('\n');
-    asmv ("sti");
 }
 
-void log(const int type, const char *msg) {
+PUBLIC void _log(const int type, const char *fmt, va_list args) {
     const char *typename;
     switch (type) {
     case INFO: typename = "INFO"; break;
@@ -75,29 +60,76 @@ void log(const int type, const char *msg) {
     case ATTENTION: typename = "ATTENTION"; break;
     default: typename = "UNKNOWN"; break;
     }
-    _log(typename, msg);
+
+    char buffer[512];
+
+    vsprintf(buffer, fmt, args);
+
+    __log(typename, buffer);
 }
 
-void linfo(const char *msg) {
-    log(INFO, msg);
+PUBLIC void log(const char *type, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    char buffer[512];
+    vsprintf(buffer, fmt, args);
+
+    __log(type, buffer);
+
+    va_end(args);
 }
 
-void lwarn(const char *msg) {
-    log(WARN, msg);
+PUBLIC void linfo(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(INFO, fmt, args);
+
+    va_end(args);
 }
 
-void lerror(const char *msg) {
-    log(ERROR, msg);
+PUBLIC void lwarn(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(WARN, fmt, args);
+
+    va_end(args);
 }
 
-void lfatal(const char *msg) {
-    log(FATAL, msg);
+PUBLIC void lerror(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(ERROR, fmt, args);
+
+    va_end(args);
 }
 
-void ltips(const char *msg) {
-    log(TIPS, msg);
+PUBLIC void lfatal(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(FATAL, fmt, args);
+
+    va_end(args);
 }
 
-void lattention(const char *msg) {
-    log(ATTENTION, msg);
+PUBLIC void ltips(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(TIPS, fmt, args);
+
+    va_end(args);
+}
+
+PUBLIC void lattention(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    _log(ATTENTION, fmt, args);
+
+    va_end(args);
 }

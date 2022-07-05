@@ -22,7 +22,6 @@
 
     .global _start
 _start: /*入口*/
-    finit
     call entry
     jmp .
 

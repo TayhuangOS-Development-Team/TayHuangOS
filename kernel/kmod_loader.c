@@ -18,17 +18,22 @@
 
 #include <kmod_loader.h>
 #include <global.h>
+#include <logging.h>
 
 #include <elf.h>
 
 #include <memory/pmm.h>
 #include <memory/paging.h>
 
+#include <tayhuang/kmod_prototypes.h>
+
 PUBLIC void load_program(void *pgd, void *addr, Elf64_Phdr *header, void **start, void **end) {
     if (header->p_type != PT_LOAD)
         return;
     int pages = (header->p_memsz + (MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
     void *start_page_addr = (header->p_vaddr + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1);
+
+    linfo ("KMod Loader", "%P %d", start_page_addr, pages);
 
     alloc_vpages(pgd, start_page_addr, pages);
 
@@ -64,10 +69,8 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
 
     Elf64_Ehdr *header = (Elf64_Ehdr*)addr;
 
-    void *pgd;
-
     infomations.entry = header->e_entry;
-    infomations.pgd = pgd = create_pgd();
+    infomations.pgd = create_pgd();
 
     infomations.start = 0xFFFFFFFFFFFFFFFF;
     infomations.end   = 0x0000000000000000;
@@ -77,7 +80,7 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
         void *end   = 0x0000000000000000;
 
         Elf64_Phdr *pro_header = (Elf64_Phdr*)(addr + header->e_phoff + i * header->e_phentsize);
-        load_program (pgd, addr, pro_header, &start, &end);
+        load_program (infomations.pgd, addr, pro_header, &start, &end);
 
         infomations.start = min(infomations.start, start);
         infomations.end   = max(infomations.end  ,   end);
@@ -86,10 +89,15 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
     infomations.stack_top   = (((qword)infomations.start) - STACK_OFFSET + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1);
     infomations.heap_bottom = (((qword)infomations.end)   + HEAP_OFFSET  + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1);
 
-    alloc_stack(pgd, infomations.stack_top  , &infomations.stack_bottom);
-    alloc_heap (pgd, infomations.heap_bottom, &infomations.heap_top    );
+    alloc_stack(infomations.pgd, infomations.stack_top, &infomations.stack_bottom);
+    alloc_heap (infomations.pgd, infomations.heap_bottom, &infomations.heap_top);
 
-    mapping_kernel(pgd);
+    mapping_kernel(infomations.pgd);
 
     return infomations;
+}
+
+PUBLIC task_struct *initialize_kmod_task(task_struct *kmod_task) {
+    //kmod_task->thread_info.basic.rax = KMOD_MAGIC;
+    return kmod_task;
 }

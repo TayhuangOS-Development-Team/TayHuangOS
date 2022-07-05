@@ -19,22 +19,24 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <stdarg.h>
 
-int get_print_color(void);
-void set_print_color(int color);
-int get_tty(void);
-void set_tty(int tty);
-void set_active_tty(int tty);
-void change_pos(int x, int y);
-int get_pos_x(void);
-int get_pos_y(void);
-int get_scroll_line(void);
-void set_scroll_line(int line);
-void scroll_screen(int lines);
-void flush_to_screen(void);
+PUBLIC int get_print_color(void);
+PUBLIC void set_print_color(int color);
+PUBLIC int get_tty(void);
+PUBLIC void set_tty(int tty);
+PUBLIC void set_active_tty(int tty);
+PUBLIC void change_pos(int x, int y);
+PUBLIC int get_pos_x(void);
+PUBLIC int get_pos_y(void);
+PUBLIC int get_scroll_line(void);
+PUBLIC void set_scroll_line(int line);
+PUBLIC void scroll_screen(int lines);
+PUBLIC void flush_to_screen(void);
 
-void clrscr(void);
-void putchar(char ch);
-void puts(const char *str);
-int printf(const char *format, ...);
-int sprintf(char *buffer, const char *format, ...);
+PUBLIC void clrscr(void);
+PUBLIC void putchar(char ch);
+PUBLIC void puts(const char *str);
+PUBLIC int vsprintf(char *buffer, const char *format, va_list args);
+PUBLIC int printf(const char *format, ...);
+PUBLIC int sprintf(char *buffer, const char *format, ...);

@@ -30,22 +30,16 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-STD_C_SRC := ctype string
-IPC_C_SRC := ipc
-DEBUG_C_SRC := logging
-TOOL_C_SRC := tostring
-MEMORY_C_SRC := malloc shared_memory
-C_SRC := printf \
-         $(foreach src, $(IPC_C_SRC), ipc/$(src)) \
-         $(foreach src, $(DEBUG_C_SRC), debug/$(src)) \
-         $(foreach src, $(TOOL_C_SRC), tool/$(src)) \
-         $(foreach src, $(STD_C_SRC), std/$(src)) \
-         $(foreach src, $(MEMORY_C_SRC), memory/$(src))
+LIBS_C_SRC := ctype string tostring
+DEBUG_C_SRC := logging debug
+C_SRC := init printf \
+         $(foreach src, $(LIBS_C_SRC), libs/$(src)) \
+         $(foreach src, $(DEBUG_C_SRC), debug/$(src))
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := ipc/ipc_func syscall/syscall_func entry
+ASM_SRC := entry
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"

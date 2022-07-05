@@ -19,10 +19,10 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <stdarg.h>
 
 PUBLIC void write_serial_char(char ch);
 PUBLIC void write_serial_str(const char *str);
-PUBLIC void set_logging_name(const char *name);
 
 enum {
     INFO = 0,
@@ -33,10 +33,13 @@ enum {
     ATTENTION
 };
 
-PUBLIC void log(const int type, const char *msg);
-PUBLIC void linfo(const char *msg);
-PUBLIC void lwarn(const char *msg);
-PUBLIC void lerror(const char *msg);
-PUBLIC void lfatal(const char *msg);
-PUBLIC void ltips(const char *msg);
-PUBLIC void lattention(const char *msg);
+PUBLIC void set_logging_name(const char *name);
+PUBLIC void __log(const char *type, const char *msg);
+PUBLIC void _log(const int type, const char *fmt, va_list args);
+PUBLIC void log(const char *type, const char *fmt, ...);
+PUBLIC void linfo(const char *fmt, ...);
+PUBLIC void lwarn(const char *fmt, ...);
+PUBLIC void lerror(const char *fmt, ...);
+PUBLIC void lfatal(const char *fmt, ...);
+PUBLIC void ltips(const char *fmt, ...);
+PUBLIC void lattention(const char *fmt, ...);

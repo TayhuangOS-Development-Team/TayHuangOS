@@ -22,10 +22,12 @@
 
 #include <stdarg.h>
 
-#include <logging.h>
+#include <printf.h>
+
+#include <debug/logging.h>
 
 void assertion_failure(const char *expression, const char *file, const char *base_file, int line) {
-    lerror("assert", "assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);
+    lerror ("assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);
 
     while (true);
     asmv ("ud2"); //不应该被执行
@@ -34,7 +36,7 @@ void assertion_failure(const char *expression, const char *file, const char *bas
 void panic_failure(const char *expression, const char *file, const char *base_file, int line) {
     dis_int(); //关中断(阻止进程切换)
 
-    lerror("panic", "panic_assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);
+    lerror("panic_assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);
 
     while (true);
     asmv ("ud2"); //不应该被执行
@@ -48,9 +50,9 @@ void panic(const char *format, ...) {
 
     static char buffer[256];
 
-    vsprintk(buffer, format, args);
+    vsprintf (buffer, format, args);
 
-    lerror("panic", "%s", buffer);
+    lerror ("%s", buffer);
 
     va_end(args);
 

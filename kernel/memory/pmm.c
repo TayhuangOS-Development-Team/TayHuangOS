@@ -107,6 +107,8 @@ PUBLIC void *alloc_pages(int order) {
     // 寻找可用页
     void *addr = __alloc_free_pages(order, &order_give);
 
+    linfo ("PMM", "alloc %P order=%d", addr, order);
+
     //返还多余页
     return_pages(addr + (MEMUNIT_SZ << order), (1 << order_give) - (1 << order));
 
@@ -157,78 +159,20 @@ PUBLIC void alloc_vpages(void *pgd, void *addr, int pages) {
 }
 
 PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
-    int cp_sz = MEMUNIT_SZ - ((qword)addr) % MEMUNIT_SZ;
-
-    //设置第一个页的后一部分
-    memset (__pa(pgd, addr), val, cp_sz);
-
-    addr += cp_sz;
-
-    int pages = (size - cp_sz) / MEMUNIT_SZ;
-
-    //设置页
-    for (int i = 0 ; i < pages ; i ++) {
-        memset (__pa(pgd, addr), val, MEMUNIT_SZ);
-        addr += MEMUNIT_SZ;
-    }
-
-    cp_sz = (size - cp_sz) % MEMUNIT_SZ;
-
-    if (cp_sz > 0) {
-        //设置后一个页的前一部分
-        memset (__pa(pgd, addr), val, size);
+    for (int i = 0 ; i < size ; i ++) {
+        *(char*)__pa(pgd, addr) = val;
     }
 }
 
 PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
-    int cp_sz = MEMUNIT_SZ - ((qword)src) % MEMUNIT_SZ;
-
-    //复制第一个页的后一部分
-    memcpy (dst, __pa(src_pgd, src), cp_sz);
-
-    dst += cp_sz;
-    src += cp_sz;
-
-    int pages = (size - cp_sz) / MEMUNIT_SZ;
-
-    //复制页
-    for (int i = 0 ; i < pages ; i ++) {
-        memcpy (dst,__pa(src_pgd, src), MEMUNIT_SZ);
-        dst += MEMUNIT_SZ;
-        src += MEMUNIT_SZ;
-    }
-
-    cp_sz = (size - cp_sz) % MEMUNIT_SZ;
-
-    if (cp_sz > 0) {
-        //复制后一个页的前一部分
-        memcpy (dst, __pa(src_pgd, src), size);
+    for (int i = 0 ; i < size ; i ++) {
+        *(char*)dst = *(char*)__pa(src_pgd, src);
     }
 }
 
 PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
-    int cp_sz = MEMUNIT_SZ - ((qword)dst) % MEMUNIT_SZ;
-
-    //复制第一个页的后一部分
-    memcpy (__pa(dst_pgd, dst), src, cp_sz);
-
-    dst += cp_sz;
-    src += cp_sz;
-
-    int pages = (size - cp_sz) / MEMUNIT_SZ;
-
-    //复制页
-    for (int i = 0 ; i < pages ; i ++) {
-        memcpy (__pa(dst_pgd, dst), src, MEMUNIT_SZ);
-        dst += MEMUNIT_SZ;
-        src += MEMUNIT_SZ;
-    }
-
-    cp_sz = (size - cp_sz) % MEMUNIT_SZ;
-
-    if (cp_sz > 0) {
-        //复制后一个页的前一部分
-        memcpy (__pa(dst_pgd, dst), src, size);
+    for (int i = 0 ; i < size ; i ++) {
+        *(char*)__pa(dst_pgd, dst) = *(char*)src;
     }
 }
 

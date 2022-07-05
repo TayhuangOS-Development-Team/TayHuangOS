@@ -18,9 +18,7 @@
 
     .code64
     .text
-    .extern kmod_main
 
     .global _start
 _start:
-    call kmod_main
     jmp .

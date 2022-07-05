@@ -92,8 +92,7 @@
 .endm
 
 .macro nonerrcode_exception vector
-    subq $8, %rsp
-    movl $0xFFFFFFFF, (%rsp)
+    pushq $0xFFFFFFFFFFFFFFFF
     int_x64_pushad
     movq $\vector, %rdi
     movq %rsp, %rsi

@@ -23,28 +23,25 @@
 #include <tayhuang/io.h>
 #include <tayhuang/services.h>
 
-#include <stdarg.h>
 #include <ctype.h>
 #include <string.h>
 
-#include <ipc/ipc.h>
+PRIVATE int print_color = 0;
+PRIVATE int tty = -1;
 
-static int print_color = 0;
-static int tty = -1;
-
-int get_print_color(void) {
+PUBLIC int get_print_color(void) {
     return print_color;
 }
 
-void set_print_color(int color) {
+PUBLIC void set_print_color(int color) {
     print_color = color;
 }
 
-int get_tty(void) {
+PUBLIC int get_tty(void) {
     return tty;
 }
 
-void set_tty(int _tty) {
+PUBLIC void set_tty(int _tty) {
     tty = _tty;
 }
 
@@ -60,63 +57,63 @@ void set_tty(int _tty) {
 #define TTY_SETSCROLLLINE (9)
 #define TTY_GETSCROLLLINE (10)
 
-void set_active_tty(int _tty) {
-    qword command[] = {TTY_SETACTIVE, _tty};
-    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+PUBLIC void set_active_tty(int _tty) {
+    //qword command[] = {TTY_SETACTIVE, _tty};
+    //send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
 }
 
-void change_pos(int x, int y) {
-    qword command[] = {TTY_SETPOS, tty, x, y};
-    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+PUBLIC void change_pos(int x, int y) {
+    //qword command[] = {TTY_SETPOS, tty, x, y};
+    //send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
 }
 
-int get_pos_x(void) {
+PUBLIC int get_pos_x(void) {
     int x = 0;
-    qword command[] = {TTY_GETPOSX, tty};
-    sendrecv(command, &x, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    //qword command[] = {TTY_GETPOSX, tty};
+    //sendrecv(command, &x, TTY_DRIVER_SERVICE, sizeof(command), 20);
     return x;
 }
 
-int get_pos_y(void) {
+PUBLIC int get_pos_y(void) {
     int y = 0;
-    qword command[] = {TTY_GETPOSY, tty};
-    sendrecv(command, &y, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    //qword command[] = {TTY_GETPOSY, tty};
+    //sendrecv(command, &y, TTY_DRIVER_SERVICE, sizeof(command), 20);
     return y;
 }
 
-int get_scroll_line(void) {
+PUBLIC int get_scroll_line(void) {
     int scroll_line = 0;
-    qword command[] = {TTY_GETSCROLLLINE, tty};
-    sendrecv(command, &scroll_line, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    //qword command[] = {TTY_GETSCROLLLINE, tty};
+    //sendrecv(command, &scroll_line, TTY_DRIVER_SERVICE, sizeof(command), 20);
     return scroll_line;
 }
 
-void set_scroll_line(int line) {
-    qword command[] = {TTY_SETSCROLLLINE, tty, line};
-    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+PUBLIC void set_scroll_line(int line) {
+    //qword command[] = {TTY_SETSCROLLLINE, tty, line};
+    //send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
 }
 
-void clrscr(void) {
-    qword command[] = {TTY_CLEAR_SCREEN, tty};
-    send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+PUBLIC void clrscr(void) {
+    //qword command[] = {TTY_CLEAR_SCREEN, tty};
+    //send_msg(command, TTY_DRIVER_SERVICE, sizeof(command), 20);
 }
 
 #define NUM_MAX_CHARACTERS (64)
 
-static qword command[NUM_MAX_CHARACTERS * 2 + 2];
-static int write_pos = 0;
+PRIVATE qword command[NUM_MAX_CHARACTERS * 2 + 2];
+PRIVATE int write_pos = 0;
 
-void flush_to_screen(void) {
+PUBLIC void flush_to_screen(void) {
     command[0] = TTY_WRITE_STR;
     command[1] = tty;
     command[2] = write_pos;
 
-    send_msg (command, TTY_DRIVER_SERVICE, sizeof(command), 20);
+    //send_msg (command, TTY_DRIVER_SERVICE, sizeof(command), 20);
 
     write_pos = 0;
 }
 
-static void __putchar(char ch) {
+PRIVATE void __putchar(char ch) {
     if (write_pos >= NUM_MAX_CHARACTERS) {
         flush_to_screen();
     }
@@ -125,18 +122,18 @@ static void __putchar(char ch) {
     write_pos ++;
 }
 
-void putchar(char ch) {
+PUBLIC void putchar(char ch) {
     __putchar(ch);
     flush_to_screen();
 }
 
-void puts(const char *str) {
+PUBLIC void puts(const char *str) {
     while (*str)
         __putchar (*(str ++));
     flush_to_screen();
 }
 
-static int _vsprintf(char *buffer, const char *format, va_list args) {
+PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
     #define FLAG_SIGN 1
     #define FLAG_LEFT_ALIGN 2
     #define FLAG_FILL_ZERO 4
@@ -412,13 +409,13 @@ static int _vsprintf(char *buffer, const char *format, va_list args) {
     #undef FLAG_UPPER
 }
 
-int printf(const char *format, ...) {
+PUBLIC int printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
 
     static char buffer[256];
 
-    int ret = _vsprintf(buffer, format, args);
+    int ret = vsprintf(buffer, format, args);
 
     puts(buffer);
 
@@ -426,11 +423,11 @@ int printf(const char *format, ...) {
     return ret;
 }
 
-int sprintf(char *buffer, const char *format, ...) {
+PUBLIC int sprintf(char *buffer, const char *format, ...) {
     va_list args;
     va_start(args, format);
 
-    int ret = _vsprintf(buffer, format, args);
+    int ret = vsprintf(buffer, format, args);
 
     va_end(args);
     return ret;

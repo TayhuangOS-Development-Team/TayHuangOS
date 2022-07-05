@@ -19,6 +19,7 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <task/task_struct.h>
 
 typedef struct {
     void *start;
@@ -32,3 +33,4 @@ typedef struct {
 } program_info;
 
 PUBLIC program_info load_kmod_from_memory(void *addr);
+PUBLIC task_struct *initialize_kmod_task(task_struct *kmod_task);

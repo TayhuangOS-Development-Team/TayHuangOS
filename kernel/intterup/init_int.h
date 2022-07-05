@@ -73,7 +73,7 @@ struct exception_args {
         rbp;
     //
     b64 ist;
-    b32 code; 
+    b64 code; 
     b64 rip,
         cs,
         rflags,

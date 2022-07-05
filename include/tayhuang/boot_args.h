@@ -33,4 +33,4 @@ struct boot_args {
     unsigned long long setup_mod_addr;
 };
 
-#define BOOT_ARGS_MAGIC (0x5A71F213) //MD5 of "BOOTARGS"(前32位)
+#define BOOT_ARGS_MAGIC (0x5A71F213) //MD5 of "BOOTARGS"(后32位)
