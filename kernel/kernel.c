@@ -134,13 +134,14 @@ PUBLIC void init(void) {
     //-----------SETUP MOD-----------------
     program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
     print_mod_info(&setup_mod_info);
+    
     create_task(DS_KERNEL, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
                     setup_mod_info.pgd,
                     SETUP_SERVICE, 1, 0, current_task);
-    
-    current_task->state = WAITING;
 
     moo();
+    
+    current_task->state = WAITING;
 
     while (true);
 }
@@ -219,8 +220,6 @@ PUBLIC void entry(struct boot_args *_args) {
 
     add_task(current_task);
     current_task->state = RUNNING;
-
-    current_task->count = current_task->priority * 3;
 
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
     asmv ("jmp init");

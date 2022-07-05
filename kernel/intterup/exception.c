@@ -15,14 +15,16 @@
  */
 
 #include <tayhuang/io.h>
+#include <tayhuang/control_registers.h>
 
 #include <intterup/exception.h>
 
+#include <task/task_scheduler.h>
+
 #include <printk.h>
 #include <logging.h>
-#include <assert.h>
 
-#include <tayhuang/control_registers.h>
+#include <assert.h>
 
 PUBLIC int fault_num[32] = {};
 
@@ -94,7 +96,7 @@ PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
     lerror ("Exception", buffer);
     sprintk (buffer, "r12: %#016X;r13: %#016X;r14: %#016X;", regs->r12, regs->r13, regs->r14);
     lerror ("Exception", buffer);
-    sprintk (buffer, "r15: %#016X;pgd: %#016X", regs->r15, regs->pgd);
+    sprintk (buffer, "r15: %#016X;pgd: %#016X;pid: %#016X;", regs->r15, regs->pgd, current_task->pid);
     lerror ("Exception", buffer);
 
     fault_num[vector] ++;

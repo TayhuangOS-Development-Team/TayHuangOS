@@ -47,7 +47,6 @@ PUBLIC void write_serial_str(const char *str) {
 }
 
 PUBLIC void __log(const char *name, const char *type, const char *msg) {
-    asmv ("cli");
     write_serial_char('(');
     write_serial_str(name);
     write_serial_char(')');
@@ -56,7 +55,6 @@ PUBLIC void __log(const char *name, const char *type, const char *msg) {
     write_serial_char(']');
     write_serial_str(msg);
     write_serial_char('\n');
-    asmv ("sti");
 }
 
 PUBLIC void _log(const char *name, const int type, const char *fmt, va_list args) {

@@ -28,7 +28,7 @@ PUBLIC void __moo(void) {
     linfo ("COW", "           / |  MOO     ||");
     linfo ("COW", "          /  |    COW   ||");
     linfo ("COW", "         *  /\\----------/\\");
-    linfo ("COW", "            ~~           ~~");
+    linfo ("COW", "            ~~          ~~");
     linfo ("COW", "Moo~Have you mooed today?Moo with me, moo~");
 }
 
