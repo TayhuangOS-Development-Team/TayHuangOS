@@ -141,9 +141,6 @@ PUBLIC void init(void) {
                     SETUP_SERVICE, 1, 0, current_task));
 
     moo();
-
-    linfo ("Init", "%p->%p", 0x0000000004000000, __pa(setup_mod_info.pgd, 0x0000000004000000));
-    linfo ("Init", "%p->%p", 0x0000000004001000, __pa(setup_mod_info.pgd, 0x0000000004001000));
     
     current_task->state = WAITING;
 

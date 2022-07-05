@@ -21,17 +21,14 @@
 #include <debug/logging.h>
 
 PUBLIC void init(void) {
-    // register int magic __asm__("rax");
-    // register void *heap_bottom __asm__("rbx");
-    // register void *heap_top __asm__("rcx");
-    // register int pid __asm__("rdx");
+    register int magic __asm__("rax");
+    register void *heap_bottom __asm__("rbx");
+    register void *heap_top __asm__("rcx");
+    register int pid __asm__("rdx");
 
-    // set_logging_name("kmod init");
-    // linfo ("%#016X", magic);
-
-    // if (magic != KMOD_MAGIC) {
+    if (magic != KMOD_MAGIC) {
         while (true);
-    // }
+    }
 
-    // asmv ("jmp kmod_main");
+    asmv ("jmp kmod_main");
 }

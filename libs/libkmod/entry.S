@@ -19,6 +19,7 @@
     .code64
     .text
 
+    .extern init
     .global _start
 _start:
-    jmp .
+    jmp init

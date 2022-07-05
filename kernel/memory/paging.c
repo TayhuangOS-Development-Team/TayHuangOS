@@ -107,8 +107,6 @@ PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw,
             return false;
         }
     }
-    // linfo ("PMM", "%p~%p->%p~%p", vaddr, vaddr + (pages * MEMUNIT_SZ) - 1, paddr - 1, paddr + (pages * MEMUNIT_SZ) - 1);
-    linfo ("PMM", "%p~%p->%p~%p", vaddr, vaddr + (pages * MEMUNIT_SZ), __pa(pgd, vaddr), __pa(pgd, vaddr + (pages * MEMUNIT_SZ) - 1) + 1);
     return true;
 }
 

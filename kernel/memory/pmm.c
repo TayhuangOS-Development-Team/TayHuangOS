@@ -107,8 +107,6 @@ PUBLIC void *alloc_pages(int order) {
     // 寻找可用页
     void *addr = __alloc_free_pages(order, &order_give);
 
-    linfo ("PMM", "alloc %P order=%d", addr, order);
-
     //返还多余页
     return_pages(addr + (MEMUNIT_SZ << order), (1 << order_give) - (1 << order));
 
@@ -161,18 +159,23 @@ PUBLIC void alloc_vpages(void *pgd, void *addr, int pages) {
 PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
     for (int i = 0 ; i < size ; i ++) {
         *(char*)__pa(pgd, addr) = val;
+        addr ++;
     }
 }
 
 PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
     for (int i = 0 ; i < size ; i ++) {
         *(char*)dst = *(char*)__pa(src_pgd, src);
+        dst ++;
+        src ++;
     }
 }
 
 PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
     for (int i = 0 ; i < size ; i ++) {
         *(char*)__pa(dst_pgd, dst) = *(char*)src;
+        dst ++;
+        src ++;
     }
 }
 
