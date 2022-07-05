@@ -128,9 +128,9 @@ setup_workspace:
 	fi;
 	$(DD) if=/dev/zero of=$(TAYHUANGOS_IMG) bs=512 count=$(IMAGE_SECTORS)
 
-	$(MKDIR) -v -p $(BUILDDIR)
-	$(MKDIR) -v -p $(OBJECTSDIR)
-	$(MKDIR) -v -p $(BINDIR)
+	$(MKDIR) $(BUILDDIR)
+	$(MKDIR) $(OBJECTSDIR)
+	$(MKDIR) $(BINDIR)
 
 	$(FDISK) $(TAYHUANGOS_IMG)
 
