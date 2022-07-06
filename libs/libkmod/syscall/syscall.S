@@ -19,7 +19,16 @@
     .global moo
     .type moo, @function
 moo: /*void moo(void)*/
-    movq $0, %rax /*sysno = 0(moo)*/
+    movq $0x00, %rax /*sysno = 0(moo)*/
+
+    int $0x40
+    ret
+
+    .global setmail_buffer
+    .type setmail_buffer, @function
+setmail_buffer: /*void setmail_buffer(void *buffer, int size)*/
+    movq $0x04, %rax
+    movq %rsi, %rcx
 
     int $0x40
     ret

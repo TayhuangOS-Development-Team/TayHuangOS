@@ -185,10 +185,9 @@ PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start
 }
 
 PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
-    ipc_info->len = 0;
-    ipc_info->source = 0;
-    ipc_info->wait_msg = NULL;
-    ipc_info->pack_queue_head = ipc_info->pack_queue_tail = NULL;
+    ipc_info->current_ptr = NULL;
+    ipc_info->mail = NULL;
+    ipc_info->mail_size = 0;
 }
 
 PUBLIC task_struct *__create_task(

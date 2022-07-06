@@ -17,3 +17,5 @@
 
 
 #pragma once
+
+PUBLIC void setmail_buffer(void *buffer, int size);

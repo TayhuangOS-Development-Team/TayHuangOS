@@ -20,7 +20,14 @@
 
 #include <tayhuang/defs.h>
 
-#define MOO_SN (0)
-
+#define MOO_SN (0x00)
 PUBLIC void __moo(void);
 PUBLIC void moo(void);
+
+#define SETMAIL_BUFFER_SN (0x04)
+PUBLIC void __setmail_buffer(void *buffer, qword size);
+PUBLIC void setmail_buffer(void *buffer, qword size);
+
+#define WAIT_IPC_SN (0x05)
+PUBLIC void __wait_ipc(int pid);
+PUBLIC void wait_ipc(int pid);

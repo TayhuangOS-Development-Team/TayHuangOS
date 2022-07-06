@@ -69,30 +69,31 @@ typedef struct __msgpack_struct {
     char body[0]; //正文内容
 } msgpack_struct;
 
+typedef struct {
+    void *mail;
+    void *current_ptr;
+    qword mail_size;
+} ipc_info_struct;
+
 #define NULL_TASK (0)
 #define ANY_TASK (-1)
 
-typedef struct {
-    dword len;
-    dword source;
-    void *mail;
-} ipc_info_struct;
-
 typedef struct __task_struct {
     thread_info_struct thread_info;
-
     mm_info_struct mm_info;
+    ipc_info_struct ipc_info;
 
     enum {
         READY = 0,
         RUNNING,
         SUBBMITED,
         WAITING,
-        WAITING_BECAUSE_SENDING,
-        WAITING_BECAUSE_RECEIVING,
+        WAITING_IPC,
         TERMINATED,
         EXCEPTION
     } state;
+
+    dword wait_pid;
 
     struct __task_struct *last;
     struct __task_struct *next;
