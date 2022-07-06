@@ -5,7 +5,7 @@ GRUB_LOADER_OUTPUT := $(BINDIR)/grubld.bin
 CFLAGS = -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
-		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 LIBS_C_SRC := ctype string tostring
 FS_C_SRC := common fat32

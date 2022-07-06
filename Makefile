@@ -100,6 +100,7 @@ RAW_ICON := $(BINDIR)/tayicon.raw
 TAYHUANG_ICON := $(ROOTDIR)/TayhuangOS.png
 TOOLS_DIR := $(ROOTDIR)/tools/
 PNG_CONV := $(TOOLS_DIR)/png_converter/converter.py
+COUNTER := $(TOOLS_DIR)/build_counter/counter.py
 
 #任务区
 
@@ -150,9 +151,14 @@ setup_workspace:
 
 	$(SUDO) $(CHMOD) +x $(PNG_CONV)
 
+.PHONY: do_count
+do_count:
+	$(COUNTER)
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
+
 #编译
 .PHONY: build
-build:
+build: do_count
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
 	$(CD) libs ; $(MAKE) build
 	$(CD) loader ; $(MAKE) build
