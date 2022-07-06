@@ -29,6 +29,7 @@ typedef struct _chunk {
     qword size : 63;
     bool used : 1;
     struct _chunk *next;
+    char addr[0]; //地址
 } chunk_struct; //16B
 //堆开头16个Byte为空闲chunk头
 
@@ -104,7 +105,7 @@ PUBLIC void *malloc(int size) {
     
     linfo ("Alloc chunk(start = %P, len = %d)", current, current->size);
 
-    return ((void*)current) + 16;
+    return &current->addr;
 }
 
 PUBLIC void free(void *addr) {

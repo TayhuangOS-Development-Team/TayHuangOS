@@ -31,6 +31,7 @@ struct __seg_info {
     bool used : 1;
     struct __seg_info *next;
     struct __seg_info *last;
+    char addr[0]; //地址
 } __attribute__((packed));
 
 typedef struct __seg_info seg_info_struct;
@@ -131,7 +132,7 @@ PUBLIC void *kmalloc(int size) {
     }
 
     //返回地址
-    return (void*)(cur_seg) + sizeof(seg_info_struct);
+    return (void*)&cur_seg->addr;
 }
 
 PUBLIC void kfree(void *ptr) {

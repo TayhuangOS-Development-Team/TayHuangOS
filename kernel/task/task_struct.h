@@ -63,13 +63,10 @@ typedef struct {
 } mm_info_struct;
 
 typedef struct __msgpack_struct {
-    union {
-        qword value;
-        void *address;
-    };
-    struct __msgpack_struct *next;
-    dword len;
+    dword length;
     dword source;
+    struct __msgpack_struct *next;
+    char body[0]; //正文内容
 } msgpack_struct;
 
 #define NULL_TASK (0)
@@ -78,16 +75,13 @@ typedef struct __msgpack_struct {
 typedef struct {
     dword len;
     dword source;
-    void *wait_msg;
-    msgpack_struct *pack_queue_head;
-    msgpack_struct *pack_queue_tail;
+    void *mail;
 } ipc_info_struct;
 
 typedef struct __task_struct {
     thread_info_struct thread_info;
 
     mm_info_struct mm_info;
-    ipc_info_struct ipc_info;
 
     enum {
         READY = 0,

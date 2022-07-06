@@ -35,8 +35,8 @@ IMAGE_SECTORS ?= 262144
 CODE_VERSION  := alpha
 MAJOR_VERSION := 2
 MINOR_VERSION := 8
-PATCH_VERSION := 1
-BUILD_VERSION := 8
+PATCH_VERSION := 2
+BUILD_VERSION := 9
 
 
 VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
@@ -155,6 +155,10 @@ setup_workspace:
 .PHONY: do_count
 do_count:
 	$(COUNTER)
+	$(ECHO) "TayhuangOS Version: $(VERSION)"
+
+.PHONY: show_version
+show_version:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
 
 #编译
