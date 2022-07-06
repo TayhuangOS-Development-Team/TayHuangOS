@@ -1,25 +1,25 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- *
+ * 
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
+ * 
  * --------------------------------------------------------------------------------
- *
- * 作者: Flysong
- *
- * entry.S
- *
- * 内核模块入口
- *
+ * 
+ * 作者: theflysong
+ * 
+ * malloc.h
+ * 
+ * 分配内存
+ * 
  */
 
 
 
-    .code64
-    .text
+#pragma once
 
-    .extern __kmod_init__
-    .global _start
-_start:
-    jmp __kmod_init__
+#include <tayhuang/defs.h>
+
+PUBLIC bool init_heap(int pid, void *heap_start, void *heap_end);
+PUBLIC void *malloc(int size);
+PUBLIC void free(void *addr);

@@ -17,12 +17,11 @@
 
 
 #include <debug/logging.h>
-#include <syscall.h>
+#include <syscall/syscall.h>
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Setup");
     linfo ("233");
 
     moo();
-    while (1);
 }

@@ -137,7 +137,7 @@ PUBLIC void init(void) {
     
     initialize_kmod_task(
         create_task(DS_KERNEL, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
-                    setup_mod_info.pgd,
+                    setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end, setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
                     SETUP_SERVICE, 1, 0, current_task));
     
     current_task->state = WAITING;
@@ -213,7 +213,7 @@ PUBLIC void entry(struct boot_args *_args) {
     linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
 
     current_task = __create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
-                 kernel_pml4,
+                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
                  alloc_pid(), 1, 0, NULL
     );
 

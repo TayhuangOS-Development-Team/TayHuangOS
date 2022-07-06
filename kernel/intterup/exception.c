@@ -65,8 +65,6 @@ PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
         "[Reserved] Reserved exception!"
     };
 
-    char buffer[128];
-
     lerror ("Exception", "-------------------------------------");
     lerror ("Exception", "Oops!There is a exception throwing!The followings are its information:"); //
     if (vector < 32) {

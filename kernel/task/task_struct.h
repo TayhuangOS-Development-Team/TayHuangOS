@@ -55,6 +55,11 @@ typedef struct {
 
 typedef struct {
     void *pgd;
+    qword code_start, code_end;
+    qword data_start, data_end;
+    qword stack_start, stack_end;
+    qword heap_start, heap_end;
+    qword rodata_start, rodata_end;
 } mm_info_struct;
 
 typedef struct __msgpack_struct {

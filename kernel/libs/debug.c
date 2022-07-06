@@ -23,6 +23,7 @@
 #include <stdarg.h>
 
 #include <logging.h>
+#include <printk.h>
 
 void assertion_failure(const char *expression, const char *file, const char *base_file, int line) {
     lerror("assert", "assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);

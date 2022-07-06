@@ -36,7 +36,7 @@ PRIVATE void empty(void) {
 PUBLIC void create_empty_task(void) {
     empty_task = __create_task(
         DS_KERNEL, NULL, NULL, empty, CS_KERNEL, RFLAGS_KERNEL,
-        kernel_pml4,
+        kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
         -1, -1, -1, NULL
     );
 }
@@ -164,8 +164,24 @@ PRIVATE void __init_thread_info(thread_info_struct *thread_info, word ds, void *
     thread_info->program.rflags = rflags;
 }
 
-PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd) {
+PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword stack_start, qword stack_end,
+        qword heap_start, qword heap_end, qword rodata_start, qword rodata_end) {
     mm_info->pgd = pgd;
+
+    mm_info->code_start = code_start;
+    mm_info->code_end = code_end;
+
+    mm_info->data_start = data_start;
+    mm_info->data_end = data_end;
+
+    mm_info->stack_start = stack_start;
+    mm_info->stack_end = stack_end;
+
+    mm_info->heap_start = heap_start;
+    mm_info->heap_end = heap_end;
+
+    mm_info->rodata_start = rodata_start;
+    mm_info->rodata_end = rodata_end;
 }
 
 PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
@@ -177,13 +193,15 @@ PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
 
 PUBLIC task_struct *__create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
-    void *pgd,
+    void *pgd, qword code_start, qword code_end, qword data_start, qword data_end,
+        qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
     int pid, int priority, int level, task_struct *parent
 ) {
     task_struct *task = kmalloc(sizeof(task_struct));
 
     __init_thread_info(&task->thread_info, ds, stack_top, stack_bottom, entry, cs, rflags);
-    __init_mm_info(&task->mm_info, pgd);
+    __init_mm_info(&task->mm_info, pgd, code_start, code_end, data_start, data_end, stack_bottom, stack_top,
+                        heap_start, heap_end, rodata_start, rodata_end);
     __init_ipc_info(&task->ipc_info);
 
     task->state = SUBBMITED;
@@ -202,11 +220,11 @@ PUBLIC task_struct *__create_task(
 
 PUBLIC task_struct *create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
-    void *pgd,
+    void *pgd, qword code_start, qword code_end, qword data_start, qword data_end,qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
     int pid, int priority, int level, task_struct *parent
 ) {
     task_struct *task = __create_task(ds, stack_top, stack_bottom, entry, cs, rflags,
-                                        pgd,
+                                        pgd, code_start, code_end, data_start, data_end, heap_start, heap_end, rodata_start, rodata_end,
                                         pid, priority, level, parent);
 
     add_task(task);

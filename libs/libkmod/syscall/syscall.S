@@ -1,25 +1,26 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- *
+ * 
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
+ * 
  * --------------------------------------------------------------------------------
- *
- * 作者: Flysong
- *
- * entry.S
- *
- * 内核模块入口
- *
+ * 
+ * 作者: theflysong
+ * 
+ * syscall.S
+ * 
+ * 系统调用
+ * 
  */
 
 
 
-    .code64
-    .text
+    .global moo
+    .type moo, @function
+moo: /*void moo(void)*/
+    movq $0, %rax /*sysno = 0(moo)*/
 
-    .extern __kmod_init__
-    .global _start
-_start:
-    jmp __kmod_init__
+    int $0x40
+    ret
+    

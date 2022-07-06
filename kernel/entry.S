@@ -22,8 +22,7 @@
 
     .global _start
 _start: /*入口*/
-    call entry
-    jmp .
+    jmp entry
 
     .global __set_cr0
     .type __set_cr0, @function

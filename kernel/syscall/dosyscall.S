@@ -46,3 +46,4 @@ dosyscall: //dosyscall(int sysno, qword mode, qword counter, qword data, void *s
     popq %rbx
 
     ret
+    

@@ -99,5 +99,8 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
 
 PUBLIC task_struct *initialize_kmod_task(task_struct *kmod_task) {
     kmod_task->thread_info.basic.rax = KMOD_MAGIC;
+    kmod_task->thread_info.basic.rbx = kmod_task->mm_info.heap_start;
+    kmod_task->thread_info.basic.rcx = kmod_task->mm_info.heap_end;
+    kmod_task->thread_info.basic.rdx = kmod_task->pid;
     return kmod_task;
 }

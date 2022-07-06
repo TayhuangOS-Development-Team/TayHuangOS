@@ -32,14 +32,16 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 
 LIBS_C_SRC := ctype string tostring
 DEBUG_C_SRC := logging debug
+MEMORY_C_SRC := malloc
 C_SRC := init printf \
          $(foreach src, $(LIBS_C_SRC), libs/$(src)) \
-         $(foreach src, $(DEBUG_C_SRC), debug/$(src))
+         $(foreach src, $(DEBUG_C_SRC), debug/$(src)) \
+         $(foreach src, $(MEMORY_C_SRC), memory/$(src))
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry syscall
+ASM_SRC := entry syscall/syscall
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"

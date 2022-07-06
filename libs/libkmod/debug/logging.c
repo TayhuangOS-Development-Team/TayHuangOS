@@ -20,6 +20,8 @@
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
 
+#include <printf.h>
+
 PRIVATE const char *logging_name;
 
 PUBLIC void set_logging_name(const char *name) {

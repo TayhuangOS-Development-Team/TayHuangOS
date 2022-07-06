@@ -8,18 +8,12 @@
  * 
  * 作者: theflysong
  * 
- * syscall.S
+ * ipc.h
  * 
- * 系统调用
+ * IPC
  * 
  */
 
 
 
-    .global moo
-    .type moo, @function
-moo: /*void moo(void)*/
-    movq $0, %rax /*sysno = 0(moo)*/
-
-    int $0x40
-    ret
+#pragma once
