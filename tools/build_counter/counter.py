@@ -17,9 +17,23 @@
 
 
 
-build_file = open("times.txt", mode='wb+')
+import pathlib
 
-build_times = int(build_file.read())
+build_times_file = "./configs/times.txt"
+
+build_times = 0
+
+if pathlib.Path(build_times_file).exists():
+    build_file = open(build_times_file, mode='r')
+
+    build_times = int(build_file.read(-1))
+
+    build_file.close()
+
+build_file = open(build_times_file, mode='w+')
+
 build_times = build_times + 1
 
-build_file.write(str(build))
+build_file.write(str(build_times))
+
+build_file.close()
