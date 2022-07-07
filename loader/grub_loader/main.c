@@ -64,7 +64,6 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
         .height = FRAMEBUFFER_HEIGHT,
         .depth = FRAMEBUFFER_BPP
     },
-
 #endif
     .end = {
         .type = MULTIBOOT_HEADER_TAG_END,
