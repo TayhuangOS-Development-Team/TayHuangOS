@@ -60,7 +60,7 @@ def stat_comment(fp):
     for i in range(level):
         print ('  ', end='')
 
-    print (fp + " code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(comment_num / (comment_num + code_num))))
+    print (fp + " code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(comment_num / (comment_num + code_num) * 100)) + "%")
     return code_num, comment_num
 
 def stat(look_dir):
@@ -83,7 +83,7 @@ def stat(look_dir):
 
     for i in range(level):
         print (' ', end='')
-    print (look_dir + " code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(comment_num / (comment_num + code_num))))
+    print (look_dir + " code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(comment_num / (comment_num + code_num) * 100)) + "%")
     return code_num, comment_num
 
     
