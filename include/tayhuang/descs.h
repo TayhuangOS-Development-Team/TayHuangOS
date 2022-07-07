@@ -1,5 +1,7 @@
+/* SPDX-License-Identifier: GPL-2.0 */
+/* Written 2000 by Andi Kleen */
+
 /* 
- * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------Reference from linux----------------------------------
  *
  * descs.h

@@ -123,7 +123,7 @@ setup_and_build: setup_workspace all
 .PHONY: setup_workspace
 setup_workspace:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
-	@if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
+	if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
 		$(SUDO) $(MKDIR) $(TAYHUANGOS_MOUNT_DIR); \
 	else \
 		$(ECHO) "mount directory already created"; \
