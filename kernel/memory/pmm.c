@@ -31,18 +31,21 @@
 typedef struct __free_area {
     void *address;
     struct __free_area *next;
-} free_area_struct; //16B
+} free_area_struct;
 
-#define MAX_ORDER (9) //最多一次性2^9个页面 2MB
+//最多一次性2^9个页面 2MB
+#define MAX_ORDER (9) 
 
 //编号为i的列表里的内存其大小为2^i个内存页
 free_area_struct *list_head[MAX_ORDER + 1]; 
 free_area_struct *list_tail[MAX_ORDER + 1];
 
-PRIVATE void add_free_area(int order, void *address) { //增加空闲区域
+//增加空闲区域
+PRIVATE void add_free_area(int order, void *address) { 
     free_area_struct *head = list_head[order];
     
-    if (head == NULL) { //头为空
+    //头为空
+    if (head == NULL) { 
         head = kmalloc(sizeof(free_area_struct));
         head->address = address;
         head->next = NULL;
@@ -157,6 +160,7 @@ PUBLIC void alloc_vpages(void *pgd, void *addr, int pages) {
 }
 
 PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
+    //利用for逐字节设置
     for (int i = 0 ; i < size ; i ++) {
         *(char*)__pa(pgd, addr) = val;
         addr ++;
@@ -164,6 +168,7 @@ PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
 }
 
 PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
+    //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
         *(char*)dst = *(char*)__pa(src_pgd, src);
         dst ++;
@@ -172,6 +177,7 @@ PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
 }
 
 PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
+    //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
         *(char*)__pa(dst_pgd, dst) = *(char*)src;
         dst ++;
@@ -180,5 +186,10 @@ PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
 }
 
 PUBLIC void vvmemcpy(void *dst_pgd, void *dst, void *src_pgd, void *src, int size) {
-    //TODO: realize vvmemcpy
+    //利用for逐字节复制
+    for (int i = 0 ; i < size ; i ++) {
+        *(char*)__pa(dst_pgd, dst) = *(char*)__pa(src_pgd, src);
+        dst ++;
+        src ++;
+    }
 }

@@ -31,7 +31,8 @@ struct __seg_info {
     bool used : 1;
     struct __seg_info *next;
     struct __seg_info *last;
-    char addr[0]; //地址
+    //地址
+    char addr[0]; 
 } __attribute__((packed));
 
 typedef struct __seg_info seg_info_struct;
@@ -91,7 +92,9 @@ PUBLIC void *kmalloc(int size) {
         linfo ("KHeap", "Ask pmm for more memories!");
 
         int order_give = 0;
-        void *addr = __alloc_free_pages(ALLOC_PAGE_ORDER, &order_give); //因为在给pmm归还内存时pmm会用到这些内存 所以要先分配
+        //因为在给pmm归还内存时pmm会用到这些内存 所以要先分配
+        void *addr = __alloc_free_pages(ALLOC_PAGE_ORDER, &order_give); 
+        
         seg_info_struct *seg = (seg_info_struct*)addr;
         seg->size = (MEMUNIT_SZ << ALLOC_PAGE_ORDER);
         seg->used = false;
@@ -100,9 +103,11 @@ PUBLIC void *kmalloc(int size) {
         seg->last = cur_seg;
         cur_seg->next = seg;
 
-        cur_seg = do_combine(seg); //新内存加入堆中
+        //新内存加入堆中
+        cur_seg = do_combine(seg); 
 
-        return_pages(((void*)seg) + (MEMUNIT_SZ << ALLOC_PAGE_ORDER), (1 << order_give) - (1 << ALLOC_PAGE_ORDER)); //返还多余内存
+        //返还多余内存
+        return_pages(((void*)seg) + (MEMUNIT_SZ << ALLOC_PAGE_ORDER), (1 << order_give) - (1 << ALLOC_PAGE_ORDER)); 
 
         return kmalloc(size);
     }
@@ -110,7 +115,8 @@ PUBLIC void *kmalloc(int size) {
     if ((cur_seg->size - fixed_size) >= MIN_SEG_SIZE) {
         //进行分割
         seg_info_struct *new_seg = (seg_info_struct*)(((void*)cur_seg) + fixed_size);
-        new_seg->size = cur_seg->size - fixed_size; //新段大小
+        //新段大小
+        new_seg->size = cur_seg->size - fixed_size; 
         //插入
         new_seg->next = cur_seg->next;
 
@@ -132,12 +138,13 @@ PUBLIC void *kmalloc(int size) {
     }
 
     //返回地址
-    return (void*)&cur_seg->addr;
+    return (void*)cur_seg->addr;
 }
 
 PUBLIC void kfree(void *ptr) {
     seg_info_struct *seg = (seg_info_struct*)(ptr - sizeof(seg_info_struct));
-    seg->used = false; //设置可用
+    //设置可用
+    seg->used = false; 
 
     //合并
     do_combine(seg);

@@ -20,6 +20,7 @@
 
 #include <tayhuang/defs.h>
 
+//中断参数
 struct intterup_args {
     b64 r15,
         r14,
@@ -41,7 +42,6 @@ struct intterup_args {
         ds,
         pgd,
         rbp;
-    //
     b64 ist;
     b64 rip,
         cs,
@@ -50,6 +50,7 @@ struct intterup_args {
         ss;
 } __attribute__((packed));
 
+//异常参数
 struct exception_args {
     b64 r15,
         r14,
@@ -71,7 +72,6 @@ struct exception_args {
         ds,
         pgd,
         rbp;
-    //
     b64 ist;
     b64 code; 
     b64 rip,

@@ -75,13 +75,13 @@ PRIVATE void down_task(struct intterup_args *regs) {
 
     if (current_task->state == RUNNING) {
         current_task->state = READY;
-    }
 
-    if (current_task->level == 0) {
-        enqueue_level0_task(current_task);
-    }
-    else if (current_task->level == 1) {
-        enqueue_level1_task(current_task);
+        if (current_task->level == 0) {
+            enqueue_level0_task(current_task);
+        }
+        else if (current_task->level == 1) {
+            enqueue_level1_task(current_task);
+        }
     }
 }
 

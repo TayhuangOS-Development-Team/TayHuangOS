@@ -24,10 +24,14 @@
 PUBLIC void __moo(void);
 PUBLIC void moo(void);
 
+#define SENDMSG_SN (0x01)
+PUBLIC bool __sendmsg(void *src, qword size, int dst);
+PUBLIC bool sendmsg(void *src, qword size, int dst);
+
+#define WAIT_IPC_SN (0x02)
+PUBLIC void __wait_ipc(int pid);
+PUBLIC void wait_ipc(int pid);
+
 #define SETMAIL_BUFFER_SN (0x04)
 PUBLIC void __setmail_buffer(void *buffer, qword size);
 PUBLIC void setmail_buffer(void *buffer, qword size);
-
-#define WAIT_IPC_SN (0x05)
-PUBLIC void __wait_ipc(int pid);
-PUBLIC void wait_ipc(int pid);

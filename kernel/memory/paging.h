@@ -20,8 +20,11 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void *create_pgd(void); //创建页表
-PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us); //设置映射
-PUBLIC void *get_physical_address(void *__pgd, void *vaddr); //获取物理地址
+//创建页表
+PUBLIC void *create_pgd(void); 
+//设置映射
+PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us); 
+//获取物理地址
+PUBLIC void *get_physical_address(void *__pgd, void *vaddr); 
 
 #define __pa(pgd, vaddr) (get_physical_address(pgd, vaddr))

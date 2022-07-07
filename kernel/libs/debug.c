@@ -29,20 +29,24 @@ void assertion_failure(const char *expression, const char *file, const char *bas
     lerror("assert", "assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);
 
     while (true);
-    asmv ("ud2"); //不应该被执行
+    //不应该被执行
+    asmv ("ud2"); 
 }
 
 void panic_failure(const char *expression, const char *file, const char *base_file, int line) {
-    dis_int(); //关中断(阻止进程切换)
+    //关中断(阻止进程切换)
+    dis_int();
 
     lerror("panic", "panic_assert(%s) failed; file:%s ; base file: %s ; line: %d\n", expression, file, base_file, line);
 
     while (true);
-    asmv ("ud2"); //不应该被执行
+    //不应该被执行
+    asmv ("ud2");
 }
 
 void panic(const char *format, ...) {
-    dis_int(); //关中断(阻止进程切换)
+    //关中断(阻止进程切换)
+    dis_int(); 
 
     va_list args;
     va_start(args, format);
@@ -56,5 +60,6 @@ void panic(const char *format, ...) {
     va_end(args);
 
     while (true);
-    asmv ("ud2"); //不应该被执行
+    //不应该被执行
+    asmv ("ud2");
 }

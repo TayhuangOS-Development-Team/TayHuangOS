@@ -22,6 +22,7 @@
 int strcmp(const char *str1, const char *str2) {
     int len1 = strlen(str1);
     int len2 = strlen(str2);
+    //长度不等
     if (len1 != len2) {
         if (len1 < len2) {
             return -1;
@@ -31,8 +32,9 @@ int strcmp(const char *str1, const char *str2) {
         }
     }
     int res = 0;
-    while (*str1) {
+    while (*str1 != '\0') {
         res = (*str1) - (*str2);
+        //字符不等
         if (res != 0) {
             break;
         }
@@ -40,12 +42,14 @@ int strcmp(const char *str1, const char *str2) {
         str2 ++;
     }
 
+    //前者小于后者
     if (res < 0) {
         return -1;
     }
     else if (res > 0) {
         return 1;
     }
+    //二者相等
     return 0;
 }
 

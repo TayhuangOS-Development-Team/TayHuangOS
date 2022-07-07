@@ -34,9 +34,9 @@ IMAGE_SECTORS ?= 262144
 
 CODE_VERSION  := alpha
 MAJOR_VERSION := 2
-MINOR_VERSION := 9
-PATCH_VERSION := 1
-BUILD_VERSION := 16
+MINOR_VERSION := 10
+PATCH_VERSION := 0
+BUILD_VERSION := 20
 
 
 VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
@@ -101,6 +101,7 @@ TAYHUANG_ICON := $(ROOTDIR)/TayhuangOS.png
 TOOLS_DIR := $(ROOTDIR)/tools/
 PNG_CONV := $(TOOLS_DIR)/png_converter/converter.py
 COUNTER := $(TOOLS_DIR)/build_counter/counter.py
+COMMENTS_STAT := $(TOOLS_DIR)/comments_stat/stat.py
 
 #任务区
 
@@ -151,6 +152,7 @@ setup_workspace:
 
 	$(SUDO) $(CHMOD) +x $(PNG_CONV)
 	$(SUDO) $(CHMOD) +x $(COUNTER)
+	$(SUDO) $(CHMOD) +x $(COMMENTS_STAT)
 
 .PHONY: do_count
 do_count:
@@ -160,6 +162,10 @@ do_count:
 .PHONY: show_version
 show_version:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
+
+.PHONY: stat_code_density
+stat_code_density:
+	$(COMMENTS_STAT)
 
 #编译
 .PHONY: build

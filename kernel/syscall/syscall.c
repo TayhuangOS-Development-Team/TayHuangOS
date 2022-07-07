@@ -19,6 +19,8 @@
 #include <syscall/syscall.h>
 #include <syscall/syscalls.h>
 
+#include <tayhuang/control_registers.h>
+
 #include <task/task_scheduler.h>
 
 #include <logging.h>
@@ -27,11 +29,13 @@
 PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,
     qword arg1, qword arg2, qword arg3, qword arg4, qword arg5, qword arg6, qword arg7, qword arg8)
 {
+    __set_cr3(kernel_pml4);
     switch (sysno)
     {
     case MOO_SN: __moo(); break;
-    case SETMAIL_BUFFER_SN: __setmail_buffer(dst, counter); break;
+    case SENDMSG_SN: __sendmsg(src, counter, data); break;
     case WAIT_IPC_SN: __wait_ipc(data); break;
+    case SETMAIL_BUFFER_SN: __setmail_buffer(dst, counter); break;
     default: break;
     }
     return 0;

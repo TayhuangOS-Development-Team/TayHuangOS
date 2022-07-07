@@ -63,16 +63,19 @@ typedef struct {
 } mm_info_struct;
 
 typedef struct __msgpack_struct {
-    dword length;
-    dword source;
+    qword length : 44;
+    dword source : 20;
     struct __msgpack_struct *next;
     char body[0]; //正文内容
 } msgpack_struct;
 
 typedef struct {
     void *mail;
-    void *current_ptr;
+    msgpack_struct *lastest_msg;
+    void *current_write_ptr;
+    void *current_read_ptr;
     qword mail_size;
+    qword used_size;
 } ipc_info_struct;
 
 #define NULL_TASK (0)

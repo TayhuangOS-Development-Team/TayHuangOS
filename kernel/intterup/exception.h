@@ -22,8 +22,9 @@
 
 #include <intterup/init_int.h>
 
-//异常
+//通用异常处理器
 PUBLIC void general_exception_handler(int vector, struct exception_args *regs);
+//各类异常
 PUBLIC void divide_by_zero_error(void);
 PUBLIC void single_step_debug(void);
 PUBLIC void non_maskable_interrup(void);

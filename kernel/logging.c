@@ -28,8 +28,8 @@ PUBLIC void init_serial(void) {
     outb(SERIAL_INT_VALID, 0x00); //设置比特波除数(高)
     outb(SERIAL_CONTROL, 0x03); //无奇偶性 1停止位
     outb(SERIAL_INT_ID, 0xC7); //FIFO(size = 14)
-    outb(SERIAL_MODEM_CONTROL, 0x0B); //
-    outb(SERIAL_MODEM_CONTROL, 0x1E); //
+    outb(SERIAL_MODEM_CONTROL, 0x0B);
+    outb(SERIAL_MODEM_CONTROL, 0x1E);
     outb(SERIAL_SEND, 0xAE);
     outb(SERIAL_MODEM_CONTROL, 0x0F);
 }

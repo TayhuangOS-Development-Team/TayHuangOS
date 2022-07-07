@@ -23,6 +23,7 @@
 
 #include <printk.h>
 #include <logging.h>
+#include <global.h>
 
 #include <assert.h>
 
@@ -30,6 +31,8 @@ PUBLIC int fault_num[32] = {};
 
 //通用异常处理器
 PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
+    __set_cr3(kernel_pml4);
+
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!",
         "[#DB] Single step",
@@ -66,19 +69,23 @@ PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
     };
 
     lerror ("Exception", "-------------------------------------");
-    lerror ("Exception", "Oops!There is a exception throwing!The followings are its information:"); //
+    lerror ("Exception", "Oops!There is a exception throwing!The followings are its information:");
+    //打印信息
     if (vector < 32) {
-        lerror ("Exception", "Message: %s", exception_msg[vector]); //打印信息
+        lerror ("Exception", "Message: %s", exception_msg[vector]); 
     }
-    lerror ("Exception", "Vector = %d", vector); //打印Vector号
+    //打印Vector号
+    lerror ("Exception", "Vector = %d", vector); 
     if (regs->code < 0xFFFFFFFFFFFFFFFF) {
-        lerror ("Exception", "Error code = %d", regs->code); //打印错误码
+        //打印错误码
+        lerror ("Exception", "Error code = %d", regs->code); 
     }
 
     lerror ("Exception", "");
     lerror ("Exception", "");
     lerror ("Exception", "Registers:");\
-    lerror ("Exception", "cs:  %#016X;rip: %#016X;rflags:%#016X;", regs->cs, regs->rip, regs->rflags); //打印寄存器
+    //打印寄存器
+    lerror ("Exception", "cs:  %#016X;rip: %#016X;rflags:%#016X;", regs->cs, regs->rip, regs->rflags); 
     lerror ("Exception", "rax: %#016X;rbx: %#016X;rcx:   %#016X;", regs->rax, regs->rbx, regs->rcx);
     lerror ("Exception", "rdx: %#016X;rsi: %#016X;rdi:   %#016X;", regs->rdx, regs->rsi, regs->rdi);
     lerror ("Exception", "rsp: %#016X;rbp: %#016X;r8 :   %#016X;", regs->rsp, regs->rbp, regs->r8);
@@ -89,6 +96,7 @@ PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
 
     fault_num[vector] ++;
 
+    //错误次数过多
     if (fault_num[vector] >= 32) {
         lfatal ("Exception", "TOO MUCH FAULT!");
         panic ("TOO MUCH FAULT!VECTOR = %d", vector);

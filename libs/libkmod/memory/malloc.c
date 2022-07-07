@@ -105,7 +105,7 @@ PUBLIC void *malloc(int size) {
     
     linfo ("Alloc chunk(start = %P, len = %d)", current, current->size);
 
-    return &current->addr;
+    return current->addr;
 }
 
 PUBLIC void free(void *addr) {
