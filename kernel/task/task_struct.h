@@ -19,6 +19,7 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <tayhuang/msgpack.h>
 
 typedef struct {
     struct {
@@ -62,18 +63,13 @@ typedef struct {
     qword rodata_start, rodata_end;
 } mm_info_struct;
 
-typedef struct __msgpack_struct {
-    qword length : 44;
-    dword source : 20;
-    struct __msgpack_struct *next;
-    char body[0]; //正文内容
-} msgpack_struct;
+
 
 typedef struct {
     void *mail;
     msgpack_struct *lastest_msg;
-    void *current_write_ptr;
-    void *current_read_ptr;
+    void *write_ptr;
+    void *read_ptr;
     qword mail_size;
     qword used_size;
 } ipc_info_struct;

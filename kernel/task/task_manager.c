@@ -139,6 +139,7 @@ PUBLIC void enqueue_level0_task(task_struct *task) {
     level0_list_tail = task;
 }
 
+//FIXME: bugs here
 PUBLIC void enqueue_level1_task(task_struct *task) {
     if (level1_list_tail == NULL) {
         level1_list_tail = level1_list_head = task;
@@ -185,8 +186,8 @@ PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start
 }
 
 PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
-    ipc_info->current_write_ptr = NULL;
-    ipc_info->current_read_ptr = NULL;
+    ipc_info->write_ptr = NULL;
+    ipc_info->read_ptr = NULL;
     ipc_info->lastest_msg = NULL;
     ipc_info->mail = NULL;
     ipc_info->mail_size = 0;
