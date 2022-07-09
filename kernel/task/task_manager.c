@@ -138,7 +138,7 @@ PUBLIC bool has_level1_task(void) {
 PUBLIC void enqueue_level0_task(task_struct *task) {
     if (level0_list_tail == NULL) {
         level0_list_tail = level0_list_head = task;
-        task->next = NULL;
+        task->free_next = NULL;
         return;
     }
     level0_list_tail->free_next = task;
@@ -150,7 +150,7 @@ PUBLIC void enqueue_level0_task(task_struct *task) {
 PUBLIC void enqueue_level1_task(task_struct *task) {
     if (level1_list_tail == NULL) {
         level1_list_tail = level1_list_head = task;
-        task->next = NULL;
+        task->free_next = NULL;
         return;
     }
     level1_list_tail->free_next = task;

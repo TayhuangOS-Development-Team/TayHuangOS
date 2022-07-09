@@ -34,11 +34,8 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
     {
     case MOO_SN: __moo(); break;
     case SENDMSG_SN: return __sendmsg(src, counter, data);
-    case WAIT_IPC_SN: __wait_ipc(data); break;
-    case GET_READ_PTR_SN: return (qword)__get_read_ptr();
-    case SET_READ_PTR_SN: __set_read_ptr(src); break;
-    case GET_USED_SIZE_SN: return __get_used_size(); break;
-    case SET_USED_SIZE_SN: __set_used_size(counter); break;
+    case WAIT_IPC_SN: __wait_ipc(); break;
+    case RECV_MSG_SN: return __recv_msg(dst);
     case SETMAIL_BUFFER_SN: __setmail_buffer(dst, counter); break;
     default: break;
     }

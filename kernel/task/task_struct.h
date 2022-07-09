@@ -92,8 +92,6 @@ typedef struct __task_struct {
         EXCEPTION
     } state;
 
-    dword wait_pid;
-
     struct __task_struct *last;
     struct __task_struct *next;
     struct __task_struct *free_next;
