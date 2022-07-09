@@ -33,10 +33,10 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
     switch (sysno)
     {
     case MOO_SN: __moo(); break;
-    case SENDMSG_SN: return __sendmsg(src, counter, data);
-    case WAIT_IPC_SN: __wait_ipc(); break;
+    case SEND_MSG_SN: return __send_msg(src, counter, data);
+    case CHECK_IPC_SN: __check_ipc(); break;
     case RECV_MSG_SN: return __recv_msg(dst);
-    case SETMAIL_BUFFER_SN: __setmail_buffer(dst, counter); break;
+    case SET_MAILBUFFER_SN: __set_mailbuffer(dst, counter); break;
     default: break;
     }
     return 0;

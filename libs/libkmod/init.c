@@ -42,7 +42,7 @@ PUBLIC void __kmod_init__(void) {
     init_heap(pid, heap_start, heap_end);
 
     void *mail_buffer = malloc(MAIL_SIZE);
-    setmail_buffer(mail_buffer, MAIL_SIZE);
+    set_mailbuffer(mail_buffer, MAIL_SIZE);
 
     kmod_main();
 

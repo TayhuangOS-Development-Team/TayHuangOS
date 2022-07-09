@@ -55,13 +55,13 @@ ASMFLAGS :=
 ASM_SRC := entry intterup/int_handlers syscall/dosyscall
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/libs/libfifo"
+C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/libs/libfifo"
+CPP_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
-LIBRARIES := -lfifo
+LIBRARIES :=
 
 ifeq ($(MODE), debug)
 	LD_FLAGS += -g

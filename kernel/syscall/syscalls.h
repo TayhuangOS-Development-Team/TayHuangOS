@@ -24,18 +24,18 @@
 PUBLIC void __moo(void);
 PUBLIC void moo(void);
 
-#define SENDMSG_SN (0x01)
-PUBLIC bool __sendmsg(void *src, qword size, int dst);
-PUBLIC bool sendmsg(void *src, qword size, int dst);
+#define SEND_MSG_SN (0x01)
+PUBLIC bool __send_msg(void *src, qword size, int dst);
+PUBLIC bool send_msg(void *src, qword size, int dst);
 
-#define WAIT_IPC_SN (0x02)
-PUBLIC void __wait_ipc(void);
-PUBLIC void wait_ipc(void);
+#define CHECK_IPC_SN (0x02)
+PUBLIC void __check_ipc(void);
+PUBLIC void check_ipc(void);
 
 #define RECV_MSG_SN (0x04)
 PUBLIC int __recv_msg(void *dst);
 PUBLIC int recv_msg(void *dst);
 
-#define SETMAIL_BUFFER_SN (0x07)
-PUBLIC void __setmail_buffer(void *buffer, qword size);
-PUBLIC void setmail_buffer(void *buffer, qword size);
+#define SET_MAILBUFFER_SN (0x07)
+PUBLIC void __set_mailbuffer(void *buffer, qword size);
+PUBLIC void set_mailbuffer(void *buffer, qword size);

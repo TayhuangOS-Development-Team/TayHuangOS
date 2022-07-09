@@ -20,6 +20,8 @@
 
 #define API_PID(x) (0x10000 + (x))
 
+//init()
+#define INIT_SERVICE (1)
 //setup.mod 辅助内核初始化
 #define SETUP_SERVICE API_PID(0)
 //void mm() 内存管理模块

@@ -131,48 +131,29 @@ PRIVATE VOLATILE bool i2_ready = false;
 
 //first task-init
 PUBLIC void init(void) {
+    void *mail = kmalloc(8192);
+    set_mailbuffer(mail, 8192);
+
     //do something
     start_schedule();
     
-    linfo ("Init", "hi");
+    linfo ("Init", "Hi!I'm Init!");
 
     //-----------SETUP MOD-----------------
-    // program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
-    // print_mod_info(&setup_mod_info);
+    program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
+    print_mod_info(&setup_mod_info);
     
-    // initialize_kmod_task(
-    //     create_task(DS_KERNEL, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
-    //                 setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end, setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
-    //                 SETUP_SERVICE, 1, 0, current_task));
-    
-    void *mail = kmalloc(8192);
-    setmail_buffer(mail, 8192);
+    initialize_kmod_task(
+        create_task(DS_KERNEL, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
+                    setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end, setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
+                    SETUP_SERVICE, 1, 0, current_task));
 
-    wait_ipc();
+    check_ipc();
 
-    char buffer[256] = {};
-    assert(recv_msg(buffer) != -1);
+    char buffer[256];
+    recv_msg(buffer);
+
     linfo ("Init", "%s", buffer);
-
-    assert(sendmsg ("Hello, Init2", 13, 2));
-    wait_ipc();
-
-    while (true);
-}
-
-PUBLIC void init2(void) {
-    linfo ("Init2", "hi");
-
-    void *mail = kmalloc(8192);
-    setmail_buffer(mail, 8192);
-
-    assert(sendmsg ("Hello Init!", 12, 1));
-    wait_ipc();
-
-    char buffer[256] = {};
-    assert(recv_msg(buffer));
-    linfo ("Init2", "%s", buffer);
-
     while (true);
 }
 
@@ -245,17 +226,11 @@ PUBLIC void entry(struct boot_args *_args) {
 
     current_task = __create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
                  kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
-                 1, 1, 0, NULL
+                 INIT_SERVICE, 1, 0, NULL
     );
 
     add_task(current_task);
     current_task->state = RUNNING;
-    current_task->count = 3;
-    
-    create_task(DS_KERNEL, RING0_STACKTOP2, RING0_STACKBOTTOM2, init2, CS_KERNEL, RFLAGS_KERNEL,
-                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
-                 2, 1, 0, current_task
-    );
 
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
     asmv ("jmp init");

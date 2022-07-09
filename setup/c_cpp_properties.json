@@ -47,7 +47,6 @@
                 "${workspaceFolder}/include/",
                 "${workspaceFolder}/include/std/",
                 "${workspaceFolder}/libs/libkmod/",
-                "${workspaceFolder}/libs/libfifo/",
                 "${workspaceFolder}/module/**"
             ],
             "defines": [

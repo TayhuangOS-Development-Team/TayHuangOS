@@ -46,7 +46,7 @@ PUBLIC void moo(void) {
 
 //-------------------
 
-PUBLIC bool __sendmsg(void *src, qword size, int dst) {
+PUBLIC bool __send_msg(void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
     if ((target == NULL) || 
@@ -79,13 +79,13 @@ PUBLIC bool __sendmsg(void *src, qword size, int dst) {
     return true;
 }
 
-PUBLIC bool sendmsg(void *src, qword size, int dst) {
-    return dosyscall(SENDMSG_SN, 0, size, dst, src, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC bool send_msg(void *src, qword size, int dst) {
+    return dosyscall(SEND_MSG_SN, 0, size, dst, src, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 //-------------------
 
-PUBLIC void __wait_ipc(void) {
+PUBLIC void __check_ipc(void) {
     if (current_task->ipc_info.used_size > 0) {
         return;
     }
@@ -93,8 +93,8 @@ PUBLIC void __wait_ipc(void) {
     current_task->state = WAITING_IPC;
 }
 
-PUBLIC void wait_ipc(void) {
-    dosyscall(WAIT_IPC_SN, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC void check_ipc(void) {
+    dosyscall(CHECK_IPC_SN, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 //-------------------
@@ -122,7 +122,7 @@ PUBLIC int recv_msg(void *dst) {
 
 //-------------------
 
-PUBLIC void __setmail_buffer(void *buffer, qword size) {
+PUBLIC void __set_mailbuffer(void *buffer, qword size) {
     //设置指针
     current_task->ipc_info.read_ptr = current_task->ipc_info.write_ptr = current_task->ipc_info.mail = buffer;
     //设置邮箱大小
@@ -131,6 +131,6 @@ PUBLIC void __setmail_buffer(void *buffer, qword size) {
     current_task->ipc_info.used_size = 0;
 }
 
-PUBLIC void setmail_buffer(void *buffer, qword size) {
-    dosyscall(SETMAIL_BUFFER_SN, 0, size, 0, NULL, buffer, 0, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC void set_mailbuffer(void *buffer, qword size) {
+    dosyscall(SET_MAILBUFFER_SN, 0, size, 0, NULL, buffer, 0, 0, 0, 0, 0, 0, 0, 0);
 }
