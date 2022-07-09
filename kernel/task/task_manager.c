@@ -107,6 +107,7 @@ PUBLIC task_struct *dequeue_level0_task(void) {
     if (level0_list_head == NULL) {
         level0_list_tail = NULL;
     }
+    task->free_next = NULL;
 
     return task;
 }
@@ -118,6 +119,7 @@ PUBLIC task_struct *dequeue_level1_task(void) {
     if (level1_list_head == NULL) {
         level1_list_tail = NULL;
     }
+    task->free_next = NULL;
 
     return task;
 }
@@ -125,6 +127,11 @@ PUBLIC task_struct *dequeue_level1_task(void) {
 //level0是否有task
 PUBLIC bool has_level0_task(void) {
     return level0_list_head != NULL;
+}
+
+//level1是否有task
+PUBLIC bool has_level1_task(void) {
+    return level1_list_head != NULL;
 }
 
 //加入空闲进程

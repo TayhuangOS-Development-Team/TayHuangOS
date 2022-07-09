@@ -34,7 +34,10 @@ PUBLIC task_struct *get_next_run_task(void) {
     if (has_level0_task()) {
         return dequeue_level0_task();
     }
-    return dequeue_level1_task();
+    if (has_level1_task()) {
+        return dequeue_level1_task();
+    }
+    return get_empty_task();
 }
 
 PUBLIC bool should_switch(void) {

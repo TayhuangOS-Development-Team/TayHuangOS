@@ -102,7 +102,7 @@ PUBLIC bool __sendmsg(void *src, qword size, int dst) {
     //复制正文
     vvmemcpy(target->mm_info.pgd, pack->body, current_task->mm_info.pgd, src, size);
 
-    if (target->wait_pid == ANY_TASK || target->wait_pid == current_task->pid) {
+    if ((target->wait_pid == ANY_TASK) || (target->wait_pid == current_task->pid)) {
         //唤醒目标
         target->wait_pid = NULL_TASK;
         target->state = READY;

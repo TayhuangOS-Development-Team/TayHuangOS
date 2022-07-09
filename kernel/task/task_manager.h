@@ -57,6 +57,8 @@ PUBLIC task_struct *dequeue_level1_task(void);
 
 //level0是否有task
 PUBLIC bool has_level0_task(void);
+//level1是否有task
+PUBLIC bool has_level1_task(void);
 
 //加入空闲进程
 PUBLIC void enqueue_level0_task(task_struct *task);

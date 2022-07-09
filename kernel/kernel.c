@@ -246,7 +246,7 @@ PUBLIC void entry(struct boot_args *_args) {
                  1, 1, 1, NULL
     );
     
-    create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init2, CS_KERNEL, RFLAGS_KERNEL,
+    create_task(DS_KERNEL, RING0_STACKTOP2, RING0_STACKBOTTOM2, init2, CS_KERNEL, RFLAGS_KERNEL,
                  kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
                  2, 1, 1, current_task
     );
