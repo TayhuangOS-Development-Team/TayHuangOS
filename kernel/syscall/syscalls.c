@@ -187,6 +187,16 @@ PUBLIC qword get_used_size(void) {
 
 //-------------------
 
+PUBLIC void __set_used_size(qword used_size) {
+    current_task->ipc_info.used_size = used_size;
+}
+
+PUBLIC void set_used_size(qword used_size) {
+    dosyscall(SET_USED_SIZE_SN, 0, used_size, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+//-------------------
+
 PUBLIC void __setmail_buffer(void *buffer, qword size) {
     //设置指针
     current_task->ipc_info.read_ptr = current_task->ipc_info.write_ptr = current_task->ipc_info.mail = buffer;
@@ -201,14 +211,31 @@ PUBLIC void setmail_buffer(void *buffer, qword size) {
 }
 
 PUBLIC bool recvmsg(void *dst, int src) {
-    //TODO
-    if (get_used_size() != 0)
-        return false;
-    msgpack_struct *pack = get_read_ptr(); 
+    msgpack_struct *last = NULL;
+    for (msgpack_struct *pack = __get_read_ptr() ; pack != NULL ; last = pack, pack = pack->next) {
+        //是等待的进程
+        if (pack->source == src) {
+            if (last != NULL) {
+                last->next = pack->next;
+                set_read_ptr(pack->next == NULL ? (((void*)pack) + pack->length + sizeof(msgpack_struct)) : pack->next);
+            }
+            memcpy(dst, pack->body, pack->length);
+            return true;
+        }
+    }
     return false;
 }
 
-PUBLIC bool recvanymsg(void *dst) {
-    //TODO
+PUBLIC int recvanymsg(void *dst) {
+    if (get_used_size() != 0)
+        return false;
+    void *ptr = get_read_ptr(); 
+
+    msgpack_struct *pack = (msgpack_struct*)ptr;
+
+    set_used_size(get_used_size() - pack->length + sizeof(msgpack_struct));
+    set_read_ptr(pack->next == NULL ? (ptr + pack->length + sizeof(msgpack_struct)) : pack->next);
+
+    memcpy(dst, pack->body, pack->length);
     return false;
 }

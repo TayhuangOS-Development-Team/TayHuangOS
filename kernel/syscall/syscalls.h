@@ -44,9 +44,13 @@ PUBLIC void set_read_ptr(void *read_ptr);
 PUBLIC qword __get_used_size(void);
 PUBLIC qword get_used_size(void);
 
-#define SETMAIL_BUFFER_SN (0x06)
+#define SET_USED_SIZE_SN (0x06)
+PUBLIC void __set_used_size(qword used_size);
+PUBLIC void set_used_size(qword used_size);
+
+#define SETMAIL_BUFFER_SN (0x07)
 PUBLIC void __setmail_buffer(void *buffer, qword size);
 PUBLIC void setmail_buffer(void *buffer, qword size);
 
 PUBLIC bool recvmsg(void *dst, int src);
-PUBLIC bool recvanymsg(void *dst);
+PUBLIC int recvanymsg(void *dst);

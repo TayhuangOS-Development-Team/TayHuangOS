@@ -168,9 +168,9 @@ PUBLIC void init2(void) {
 
     wait_ipc(1);
     linfo ("init2", "hi2");
-    //char buffer[64] = {};
-    //recvmsg(buffer, 1);
-    //linfo ("init2", "%s", buffer);
+    char buffer[64] = {};
+    recvmsg(buffer, 1);
+    linfo ("init2", "%s", buffer);
     while (true);
 }
 
