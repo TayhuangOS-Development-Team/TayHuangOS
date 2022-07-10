@@ -155,6 +155,7 @@ PUBLIC void init(void) {
     recv_msg(buffer);
 
     linfo ("Init", "%s", buffer);
+    check_ipc();
     while (true);
 }
 
@@ -211,7 +212,10 @@ PUBLIC void initialize(void) {
 
     //初始化中断
     register_irq_handler(0, clock_int_handler);
-    enable_irq(0);
+
+    for (int i = 1 ; i < 16 ; i ++) {
+        register_irq_handler(i, normal_irq_handler);
+    }
 }
 
 PUBLIC void entry(struct boot_args *_args) {
@@ -234,6 +238,11 @@ PUBLIC void entry(struct boot_args *_args) {
     current_task->state = RUNNING;
 
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
+
+    for (int i = 0 ; i < 16 ; i ++) {
+        enable_irq(i);
+    }
+    
     asmv ("jmp init");
 
     while (true);

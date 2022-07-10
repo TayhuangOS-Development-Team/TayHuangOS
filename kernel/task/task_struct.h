@@ -98,7 +98,7 @@ typedef struct __task_struct {
     struct __task_struct *children;
     struct __task_struct *bro;
 
-    dword pid : 20;
+    int pid : 20;
     word count : 7;
     byte priority : 3;
     byte level : 2;

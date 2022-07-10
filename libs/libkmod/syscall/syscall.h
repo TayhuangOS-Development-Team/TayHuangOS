@@ -21,3 +21,4 @@
 #include <tayhuang/defs.h>
 
 PUBLIC void moo(void);
+PUBLIC void reg_irq(int irq);

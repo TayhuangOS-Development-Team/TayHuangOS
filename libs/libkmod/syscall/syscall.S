@@ -44,8 +44,8 @@ check_ipc: /*void check_ipc(void)*/
 
     .global set_allow
     .type set_allow, @function
-set_allow: /*void set_allow(void)*/
-    movq $0x02, %rax
+set_allow: /*void set_allow(int pid)*/
+    movq $0x03, %rax
     movq %rdi, %rdx
 
     int $0x40
@@ -64,6 +64,15 @@ recv_msg: /*int recv_msg(void *msg)*/
 set_mailbuffer: /*void set_mailbuffer(void *buffer, int size)*/
     movq $0x07, %rax
     movq %rsi, %rcx
+
+    int $0x40
+    ret
+
+    .global reg_irq
+    .type reg_irq, @function
+reg_irq: /*void reg_irq(int irq)*/
+    movq $0x0A, %rax
+    movq %rdi, %rdx
 
     int $0x40
     ret

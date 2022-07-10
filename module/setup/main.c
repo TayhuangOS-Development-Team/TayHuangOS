@@ -30,8 +30,14 @@ PUBLIC void kmod_main(void) {
     linfo ("233");
 
     moo();
-    send_msg("Hi!I'm setup", 13, INIT_SERVICE);
+    //send_msg("Hi!I'm setup", 13, INIT_SERVICE);
 
-    set_allow(-1);
+    reg_irq(1);
+
+    set_allow(-2);
     check_ipc();
+
+    linfo ("!");
+
+    while (true);
 }

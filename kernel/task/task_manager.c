@@ -17,9 +17,14 @@
 
 
 #include <task/task_manager.h>
+
 #include <memory/kheap.h>
+
 #include <string.h>
+
 #include <tayhuang/io.h>
+
+#include <global.h>
 
 PRIVATE task_struct *empty_task = NULL;
 
@@ -35,7 +40,7 @@ PRIVATE void empty(void) {
 //设置空进程
 PUBLIC void create_empty_task(void) {
     empty_task = __create_task(
-        DS_KERNEL, NULL, NULL, empty, CS_KERNEL, RFLAGS_KERNEL,
+        DS_KERNEL, RING0_STACKTOP3, RING0_STACKBOTTOM3, empty, CS_KERNEL, RFLAGS_KERNEL,
         kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
         -1, -1, -1, NULL
     );

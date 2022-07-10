@@ -22,13 +22,10 @@
 #include <tayhuang/control_registers.h>
 #include <global.h>
 
-PUBLIC short IRQ_FLAGS[16];
-
 PRIVATE irq_handler IRQ_HANDLERS[16] = {};
 
 //注册IRQ处理器
 PUBLIC void register_irq_handler(int irq, irq_handler handler) {
-    IRQ_FLAGS[irq] = 0;
     IRQ_HANDLERS[irq] = handler;
 }
 
@@ -50,7 +47,7 @@ PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
     send_eoi(irq);
 
     if (IRQ_HANDLERS[irq] != NULL) {
-        IRQ_FLAGS[irq] = IRQ_HANDLERS[irq](irq, args, flag);
+        IRQ_HANDLERS[irq](irq, args, flag);
     }
 
     //启用同类中断接收

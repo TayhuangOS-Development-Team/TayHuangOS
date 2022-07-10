@@ -23,6 +23,8 @@
 
 #include <task/task_scheduler.h>
 
+#include <logging.h>
+
 #include <string.h>
 
 #define PIT_FREQUENCY (1193181.6666f)
@@ -52,18 +54,20 @@ PUBLIC bool init_pit(float frequency) {
     return true;
 }
 
+EXTERN PUBLIC bool do_schedule;
+
 //时钟中断
-PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { 
+PUBLIC void clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { 
     //增加滴答计数
     ticks ++;
 
-    //在系统调用（中断）结束时调用
-    after_syscall(regs);
+    if (do_schedule) {
+        //在系统调用（中断）结束时调用
+        after_syscall(regs);
 
-    //是level1则减少时间片计数
-    if (current_task->level == 1) {
-        current_task->count --;
+        //是level1则减少时间片计数
+        if (current_task->level == 1) {
+            current_task->count --;
+        }
     }
-
-    return 0;
 }

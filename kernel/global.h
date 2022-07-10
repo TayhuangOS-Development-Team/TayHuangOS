@@ -49,5 +49,7 @@ EXTERN PUBLIC bool entered_handler;
 #define RING0_STACKBOTTOM   (0x1480000)
 #define RING0_STACKTOP2     (0x1480000)
 #define RING0_STACKBOTTOM2  (0x1440000)
+#define RING0_STACKTOP3     (0x1440000)
+#define RING0_STACKBOTTOM3  (0x1400000)
 
 PUBLIC void mapping_kernel(void *pgd);

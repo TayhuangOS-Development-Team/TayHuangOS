@@ -150,12 +150,33 @@ PUBLIC void set_mailbuffer(void *buffer, qword size) {
 
 //--------------------
 
+PRIVATE int IRQ_HANDLE_TASKS[16] = {};
+
+PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) {
+    if (IRQ_HANDLE_TASKS[irq] == 0) {
+        return;
+    }
+    dummy_send_msg(&irq, sizeof(int), IRQ_HANDLE_TASKS[irq]);
+}
+
+//--------------------
+
+PUBLIC void __reg_irq(int irq) {
+    IRQ_HANDLE_TASKS[irq] = current_task->pid;
+}
+
+PUBLIC void reg_irq(int irq) {
+    dosyscall(REG_IRQ_SN, 0, 0, irq, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0);
+}
+
+//--------------------
+
 PUBLIC bool dummy_send_msg(void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
     if ((target == NULL) || 
         ((target->ipc_info.used_size + size + sizeof(msgpack_struct)) > target->ipc_info.mail_size) ||
-        ((target->ipc_info.allow_pid != current_task->pid) && (target->ipc_info.allow_pid >= 0)))
+        ((target->ipc_info.allow_pid != DUMMY_TASK) && (target->ipc_info.allow_pid >= 0)))
     {
         return false;
     }
