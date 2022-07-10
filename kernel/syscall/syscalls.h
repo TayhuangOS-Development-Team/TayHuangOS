@@ -32,6 +32,10 @@ PUBLIC bool send_msg(void *src, qword size, int dst);
 PUBLIC void __check_ipc(void);
 PUBLIC void check_ipc(void);
 
+#define SET_ALLOW_SN (0x03)
+PUBLIC void __set_allow(int pid);
+PUBLIC void set_allow(int pid);
+
 #define RECV_MSG_SN (0x04)
 PUBLIC int __recv_msg(void *dst);
 PUBLIC int recv_msg(void *dst);
@@ -39,3 +43,5 @@ PUBLIC int recv_msg(void *dst);
 #define SET_MAILBUFFER_SN (0x07)
 PUBLIC void __set_mailbuffer(void *buffer, qword size);
 PUBLIC void set_mailbuffer(void *buffer, qword size);
+
+PUBLIC bool dummy_send_msg(void *src, qword size, int dst);

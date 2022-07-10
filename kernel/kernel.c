@@ -148,6 +148,7 @@ PUBLIC void init(void) {
                     setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end, setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
                     SETUP_SERVICE, 1, 0, current_task));
 
+    set_allow(-1);
     check_ipc();
 
     char buffer[256];

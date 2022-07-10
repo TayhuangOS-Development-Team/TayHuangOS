@@ -199,6 +199,7 @@ PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
     ipc_info->mail = NULL;
     ipc_info->mail_size = 0;
     ipc_info->used_size = 0;
+    ipc_info->allow_pid = NULL_TASK;
 }
 
 PUBLIC task_struct *__create_task(

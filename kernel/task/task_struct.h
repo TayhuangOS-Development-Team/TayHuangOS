@@ -63,7 +63,9 @@ typedef struct {
     qword rodata_start, rodata_end;
 } mm_info_struct;
 
-
+#define NULL_TASK (0)
+#define ANY_TASK (-1)
+#define DUMMY_TASK (-2)
 
 typedef struct {
     void *mail;
@@ -72,10 +74,8 @@ typedef struct {
     void *read_ptr;
     qword mail_size;
     qword used_size;
+    int allow_pid;
 } ipc_info_struct;
-
-#define NULL_TASK (0)
-#define ANY_TASK (-1)
 
 typedef struct __task_struct {
     thread_info_struct thread_info;
@@ -87,7 +87,6 @@ typedef struct __task_struct {
         RUNNING,
         SUBBMITED,
         WAITING,
-        WAITING_IPC,
         TERMINATED,
         EXCEPTION
     } state;

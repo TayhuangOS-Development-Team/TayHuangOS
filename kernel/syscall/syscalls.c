@@ -50,7 +50,8 @@ PUBLIC bool __send_msg(void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
     if ((target == NULL) || 
-        ((target->ipc_info.used_size + size + sizeof(msgpack_struct)) > target->ipc_info.mail_size))
+        ((target->ipc_info.used_size + size + sizeof(msgpack_struct)) > target->ipc_info.mail_size) ||
+        ((target->ipc_info.allow_pid != current_task->pid) && (target->ipc_info.allow_pid >= 0)))
     {
         return false;
     }
@@ -60,13 +61,13 @@ PUBLIC bool __send_msg(void *src, qword size, int dst) {
 
     target->ipc_info.write_ptr = addr + sizeof(msgpack_struct) + size;
     pack->length = size;
-    pack->source = target->pid;
+    pack->source = current_task->pid;
 
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
 
     vvmemcpy(target->mm_info.pgd, pack->body, current_task->mm_info.pgd, src, size);
 
-    if (target->state == WAITING_IPC) {
+    if (target->state == WAITING && target->ipc_info.allow_pid != DUMMY_TASK) {
         target->state = READY;
 
         if (target->level == 0) {
@@ -86,11 +87,13 @@ PUBLIC bool send_msg(void *src, qword size, int dst) {
 //-------------------
 
 PUBLIC void __check_ipc(void) {
-    if (current_task->ipc_info.used_size > 0) {
-        return;
+    if (current_task->ipc_info.allow_pid != DUMMY_TASK) {
+        if (current_task->ipc_info.used_size > 0) {
+            return;
+        }
     }
 
-    current_task->state = WAITING_IPC;
+    current_task->state = WAITING;
 }
 
 PUBLIC void check_ipc(void) {
@@ -98,6 +101,16 @@ PUBLIC void check_ipc(void) {
 }
 
 //-------------------
+
+PUBLIC void __set_allow(int pid) {
+    current_task->ipc_info.allow_pid = pid;
+}
+
+PUBLIC void set_allow(int pid) {
+    dosyscall(SET_ALLOW_SN, 0, 0, pid, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+//------------------
 
 PUBLIC int __recv_msg(void *dst) {
     if (current_task->ipc_info.used_size <= 0) {
@@ -133,4 +146,40 @@ PUBLIC void __set_mailbuffer(void *buffer, qword size) {
 
 PUBLIC void set_mailbuffer(void *buffer, qword size) {
     dosyscall(SET_MAILBUFFER_SN, 0, size, 0, NULL, buffer, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+//--------------------
+
+PUBLIC bool dummy_send_msg(void *src, qword size, int dst) {
+    task_struct *target = get_task_by_pid(dst);
+
+    if ((target == NULL) || 
+        ((target->ipc_info.used_size + size + sizeof(msgpack_struct)) > target->ipc_info.mail_size) ||
+        ((target->ipc_info.allow_pid != current_task->pid) && (target->ipc_info.allow_pid >= 0)))
+    {
+        return false;
+    }
+
+    void *addr = target->ipc_info.write_ptr;
+    msgpack_struct *pack = (msgpack_struct*)addr;
+
+    target->ipc_info.write_ptr = addr + sizeof(msgpack_struct) + size;
+    pack->length = size;
+    pack->source = DUMMY_TASK;
+
+    target->ipc_info.used_size += sizeof(msgpack_struct) + size;
+
+    pvmemcpy(target->mm_info.pgd, pack->body, src, size);
+
+    if (target->state == WAITING) {
+        target->state = READY;
+
+        if (target->level == 0) {
+            enqueue_level0_task(target);
+        }
+        else {
+            enqueue_level1_task(target);
+        }
+    }
+    return true;
 }

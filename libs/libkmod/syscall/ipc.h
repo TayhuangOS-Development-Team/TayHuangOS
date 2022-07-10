@@ -22,5 +22,6 @@
 
 PUBLIC bool send_msg(void *msg, qword size, int dst);
 PUBLIC void check_ipc(void);
+PUBLIC void set_allow(int pid);
 PUBLIC int recv_msg(void *msg);
 PUBLIC void set_mailbuffer(void *buffer, int size);

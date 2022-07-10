@@ -32,5 +32,6 @@ PUBLIC void kmod_main(void) {
     moo();
     send_msg("Hi!I'm setup", 13, INIT_SERVICE);
 
+    set_allow(-1);
     check_ipc();
 }

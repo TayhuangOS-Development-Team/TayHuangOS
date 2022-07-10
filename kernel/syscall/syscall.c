@@ -35,6 +35,7 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
     case MOO_SN: __moo(); break;
     case SEND_MSG_SN: return __send_msg(src, counter, data);
     case CHECK_IPC_SN: __check_ipc(); break;
+    case SET_ALLOW_SN: __set_allow(data); break;
     case RECV_MSG_SN: return __recv_msg(dst);
     case SET_MAILBUFFER_SN: __set_mailbuffer(dst, counter); break;
     default: break;

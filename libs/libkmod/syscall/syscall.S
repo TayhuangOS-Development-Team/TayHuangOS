@@ -42,6 +42,15 @@ check_ipc: /*void check_ipc(void)*/
     int $0x40
     ret
 
+    .global set_allow
+    .type set_allow, @function
+set_allow: /*void set_allow(void)*/
+    movq $0x02, %rax
+    movq %rdi, %rdx
+
+    int $0x40
+    ret
+
     .global recv_msg
     .type recv_msg, @function
 recv_msg: /*int recv_msg(void *msg)*/
