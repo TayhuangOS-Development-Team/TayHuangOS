@@ -50,4 +50,5 @@ PUBLIC void __reg_irq(int irq);
 PUBLIC void reg_irq(int irq);
 
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags);
+//dummy进程发送消息
 PUBLIC bool dummy_send_msg(void *src, qword size, int dst);

@@ -59,12 +59,14 @@ PRIVATE void *increase_ptr(task_struct *target, void *ptr) {
 
 PRIVATE void write_to_buffer(task_struct *target, msgpack_struct *pack, void *src_pgd, void *src) {
     void *addr = pack;
+    //写pack头
     for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
         *(byte*)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte*)addr;
         addr ++;
         target->ipc_info.write_ptr = increase_ptr(target, target->ipc_info.write_ptr);
     }
 
+    //写主体
     for (int i = 0 ; i < pack->length ; i ++) {
         *(byte*)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte*)(__pa(src_pgd, src));
         src ++;
@@ -74,12 +76,14 @@ PRIVATE void write_to_buffer(task_struct *target, msgpack_struct *pack, void *sr
 
 PRIVATE void read_from_buffer(msgpack_struct *pack, void *dst) {
     void *addr = pack;
+    //写pack头
     for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
         *(byte*)addr = *(byte*)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
         addr ++;
         current_task->ipc_info.read_ptr = increase_ptr(current_task, current_task->ipc_info.read_ptr);
     }
 
+    //写主体
     for (int i = 0 ; i < pack->length ; i ++) {
         *(byte*)(__pa(current_task->mm_info.pgd, dst)) = *(byte*)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
         dst ++;
@@ -101,10 +105,13 @@ PUBLIC bool __send_msg(void *src, qword size, int dst) {
     pack.length = size;
     pack.source = current_task->pid;
 
+    //增加已使用大小
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
 
+    //写到buffer里
     write_to_buffer(target, &pack, current_task->mm_info.pgd, src);
 
+    //唤醒
     if (target->state == WAITING && target->ipc_info.allow_pid != DUMMY_TASK) {
         target->state = READY;
 
@@ -154,8 +161,11 @@ PUBLIC int __recv_msg(void *dst) {
     }
 
     msgpack_struct pack;
+    //读取
     read_from_buffer(&pack, dst);
     
+    //减少已使用大小
+    assert(current_task->ipc_info.used_size >= (pack.length + sizeof(msgpack_struct)));
     current_task->ipc_info.used_size -= (pack.length + sizeof(msgpack_struct));
 
     return pack.source;
@@ -218,10 +228,13 @@ PUBLIC bool dummy_send_msg(void *src, qword size, int dst) {
     pack.length = size;
     pack.source = DUMMY_TASK;
 
+    //增加已使用大小
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
 
+    //写到buffer里
     write_to_buffer(target, &pack, kernel_pml4, src);
 
+    //唤醒
     if (target->state == WAITING) {
         target->state = READY;
 
