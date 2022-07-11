@@ -31,16 +31,28 @@
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Setup");
-    linfo ("233");
 
     reg_irq(14);
     reg_irq(15);
 
-    void *boot = malloc(512);
-    partition_info partition;
-    get_partition(DISK_SEL_IDE0_MASTER, 0, &partition);
-    
-    linfo ("%d:%s", partition.start_lba, partition.state == PS_BOOTABLE ? "true" : "false");
+    char name[256];
+    void *buffer;
+
+    bool status = true;
+    send_msg(status, sizeof(bool), INIT_SERVICE);
+
+    while (true) {
+        set_allow(INIT_SERVICE);
+
+        check_ipc();
+        assert(recv_msg(name) != -1);
+        check_ipc();
+        assert(recv_msg(&buffer) != -1);
+
+        linfo ("%s:%p", name, buffer);
+
+        send_msg(&status, sizeof(bool), INIT_SERVICE);
+    }
 
     while (true);
 }

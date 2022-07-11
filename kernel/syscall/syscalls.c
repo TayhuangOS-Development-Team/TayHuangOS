@@ -66,6 +66,7 @@ PUBLIC bool __send_msg(void *src, qword size, int dst) {
     pack->source = current_task->pid;
 
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
+    linfo ("IPC-Send", "%d:%d", target->pid, target->ipc_info.used_size);
 
     vvmemcpy(target->mm_info.pgd, pack->body, current_task->mm_info.pgd, src, size);
 
@@ -154,7 +155,6 @@ PRIVATE int IRQ_HANDLE_TASKS[16] = {};
 
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) {
     linfo ("IRQ", "Received irq %d", irq);
-    putchar ('*');
     if (IRQ_HANDLE_TASKS[irq] == 0) {
         return;
     }
@@ -164,7 +164,6 @@ PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) 
 //--------------------
 
 PUBLIC void __reg_irq(int irq) {
-    linfo ("IRQ", "IRQ %d handler = %d", irq, current_task->pid);
     IRQ_HANDLE_TASKS[irq] = current_task->pid;
 }
 

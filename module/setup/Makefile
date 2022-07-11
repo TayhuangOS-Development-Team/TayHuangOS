@@ -31,7 +31,9 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-C_SRC := main disk
+FS_C_SRC := common fat32
+C_SRC := main disk \
+	$(foreach src, $(FS_C_SRC), fs/$(src))
 
 CPP_SRC :=
 
@@ -50,6 +52,12 @@ LIBRARIES := -lkmod
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
+
+ifeq ($(MODE), debug)
+	C_DEFS += -D_DEBUG
+else
+	CPP_DEFS += -D_DEBUG
+endif
 
 $(OBJECTSDIR)/%.o : %.cpp
 	$(MKDIR) $(dir $@)

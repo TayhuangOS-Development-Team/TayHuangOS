@@ -148,14 +148,22 @@ PUBLIC void init(void) {
                     setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end, setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
                     SETUP_SERVICE, 1, 0, current_task));
 
-    set_allow(-1);
-
+    set_allow(SETUP_SERVICE);
+    
     check_ipc();
+    bool status;
+    recv_msg(&status);
 
-    char buffer[256];
-    recv_msg(buffer);
+    if (! status) {
+        lerror ("Init", "Failed to initialize setup mod!");
+        while (1);
+    }
 
-    linfo ("Init", "%s", buffer);
+    #define VIDEO_DRIVER_SIZE (64 * 1024)
+    void *video_driver_addr = kmalloc(VIDEO_DRIVER_SERVICE);
+    send_msg("video.mod", 11, SETUP_SERVICE);
+    send_msg(&video_driver_addr, sizeof(video_driver_addr), SETUP_SERVICE);
+
     check_ipc();
     while (true);
 }

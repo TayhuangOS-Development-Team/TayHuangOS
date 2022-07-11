@@ -41,6 +41,12 @@ ASM_SRC :=
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(MODULEDIR)/video" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
+ifeq ($(MODE), debug)
+	C_DEFS += -D_DEBUG
+else
+	CPP_DEFS += -D_DEBUG
+endif
+
 CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(MODULEDIR)/video" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 

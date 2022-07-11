@@ -49,6 +49,12 @@ C_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/in
 CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
+ifeq ($(MODE), debug)
+	C_DEFS += -D_DEBUG
+else
+	CPP_DEFS += -D_DEBUG
+endif
+
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
