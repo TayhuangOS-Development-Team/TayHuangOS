@@ -48,6 +48,8 @@ PUBLIC void moo(void) {
 
 //-------------------
 
+
+//FIXME: 改为环形队列
 PUBLIC bool __send_msg(void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
@@ -66,7 +68,6 @@ PUBLIC bool __send_msg(void *src, qword size, int dst) {
     pack->source = current_task->pid;
 
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
-    linfo ("IPC-Send", "%d:%d", target->pid, target->ipc_info.used_size);
 
     vvmemcpy(target->mm_info.pgd, pack->body, current_task->mm_info.pgd, src, size);
 
