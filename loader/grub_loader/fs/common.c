@@ -37,7 +37,7 @@ typedef enum {
 } FS_TYPES;
 
 PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
-    partition_member partition;
+    partition_info partition;
     get_partition(disk_selector, partition_id, &partition); //获取分区
 
     void *superblock = lmalloc(512);

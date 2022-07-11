@@ -34,9 +34,9 @@ IMAGE_SECTORS ?= 262144
 
 CODE_VERSION  := alpha
 MAJOR_VERSION := 2
-MINOR_VERSION := 14
-PATCH_VERSION := 2
-BUILD_VERSION := 167
+MINOR_VERSION := 15
+PATCH_VERSION := 3
+BUILD_VERSION := 194
 
 
 VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
@@ -171,10 +171,10 @@ stat_code_density:
 .PHONY: build
 build: do_count
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
-	$(CD) libs ; $(MAKE) build
-	$(CD) loader ; $(MAKE) build
-	$(CD) kernel ; $(MAKE) build
-	$(CD) module ; $(MAKE) build
+	$(CD) libs && $(MAKE) build
+	$(CD) loader && $(MAKE) build
+	$(CD) kernel && $(MAKE) build
+	$(CD) module && $(MAKE) build
 ifeq ($(VBE_MODE), ENABLE)
 	$(MAKE) $(RAW_ICON)
 endif
@@ -186,10 +186,10 @@ $(RAW_ICON): $(TAYHUANG_ICON)
 .PHONY: clean
 clean:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
-	$(CD) libs ; $(MAKE) clean
-	$(CD) loader ; $(MAKE) clean
-	$(CD) kernel ; $(MAKE) clean
-	$(CD) module ; $(MAKE) clean
+	$(CD) libs && $(MAKE) clean
+	$(CD) loader && $(MAKE) clean
+	$(CD) kernel && $(MAKE) clean
+	$(CD) module && $(MAKE) clean
 
 #写入映像
 .PHONY: image
@@ -203,9 +203,9 @@ ifeq ($(VBE_MODE), ENABLE)
 	$(SUDO) $(COPY) $(RAW_ICON) $(TAYHUANGOS_MOUNT_DIR)/
 endif
 
-	$(CD) loader ; $(MAKE) image
-	$(CD) kernel ; $(MAKE) image
-	$(CD) module ; $(MAKE) image
+	$(CD) loader && $(MAKE) image
+	$(CD) kernel && $(MAKE) image
+	$(CD) module && $(MAKE) image
 
 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
 	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)

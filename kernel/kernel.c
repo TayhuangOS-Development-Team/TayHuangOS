@@ -149,6 +149,7 @@ PUBLIC void init(void) {
                     SETUP_SERVICE, 1, 0, current_task));
 
     set_allow(-1);
+
     check_ipc();
 
     char buffer[256];
@@ -179,8 +180,6 @@ PUBLIC void initialize(void) {
 
     init_sse();
     init_pit(CLOCK_FREQUENCY);
-
-    en_int();
 
     //复制setup mod
     memcpy (SETUP_MOD_BASE, args.setup_mod_addr, SETUP_MOD_SIZE);
@@ -216,6 +215,12 @@ PUBLIC void initialize(void) {
     for (int i = 1 ; i < 16 ; i ++) {
         register_irq_handler(i, normal_irq_handler);
     }
+
+    for (int i = 0 ; i < 16 ; i ++) {
+        enable_irq(i);
+    }
+
+    en_int();
 }
 
 PUBLIC void entry(struct boot_args *_args) {
@@ -231,18 +236,12 @@ PUBLIC void entry(struct boot_args *_args) {
 
     current_task = __create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
                  kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
-                 INIT_SERVICE, 1, 0, NULL
-    );
+                 INIT_SERVICE, 1, 0, NULL);
 
     add_task(current_task);
     current_task->state = RUNNING;
 
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
-
-    for (int i = 0 ; i < 16 ; i ++) {
-        enable_irq(i);
-    }
-    
     asmv ("jmp init");
 
     while (true);

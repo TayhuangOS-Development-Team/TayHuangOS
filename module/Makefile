@@ -24,22 +24,16 @@ export OBJECTSDIR MODULEDIR
 #编译
 .PHONY: build
 build:
-#	$(CD) drivers ; $(MAKE) build
-	$(CD) setup ; $(MAKE) build
-#	$(CD) test ; $(MAKE) build
-#	$(CD) vdd ; $(MAKE) build
+	$(CD) driver && $(MAKE) build
+	$(CD) setup && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-#	$(CD) drivers ; $(MAKE) clean
-	$(CD) setup ; $(MAKE) clean
-#	$(CD) test ; $(MAKE) clean
-#	$(CD) vdd ; $(MAKE) clean
+	$(CD) driver && $(MAKE) clean
+	$(CD) setup && $(MAKE) clean
 
 .PHONY: image
 image:
-#	$(CD) drivers ; $(MAKE) image
-	$(CD) setup ; $(MAKE) image
-#	$(CD) test ; $(MAKE) image
-#	$(CD) vdd ; $(MAKE) image
+	$(CD) driver && $(MAKE) image
+	$(CD) setup && $(MAKE) image

@@ -60,7 +60,7 @@ typedef struct {
     // 
     dword magic; //0x93186A8E (MD5 of "File Allocation Table 32"的前32位)
     int selector; //Selector of Context
-    partition_member partition;
+    partition_info partition;
     struct fat32_info_struct infomations;
     //Extension
     dword fat1_start; //fat1起始

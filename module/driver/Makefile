@@ -16,21 +16,21 @@
 
 
 
-OBJECTSDIR := $(OBJECTSDIR)/loader/
-BINDIR := $(BINDIR)/loader/
-LOADERDIR := $(ROOTDIR)/loader/
-export OBJECTSDIR LOADERDIR
+OBJECTSDIR := $(OBJECTSDIR)/module/
+BINDIR := $(BINDIR)/module/
+DRIVERDIR := $(MODULEDIR)/driver/
+export OBJECTSDIR BINDIR MODULEDIR DRIVERDIR
 
 #编译
 .PHONY: build
 build:
-	$(CD) grub_loader && $(MAKE) build
+	$(CD) video && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	$(CD) grub_loader && $(MAKE) clean
+	$(CD) video && $(MAKE) clean
 
 .PHONY: image
 image:
-	$(CD) grub_loader && $(MAKE) image
+	$(CD) video && $(MAKE) image

@@ -22,11 +22,11 @@ export OBJECTSDIR
 #编译
 .PHONY: build
 build:
-	$(CD) libc ; $(MAKE) build
-	$(CD) libkmod ; $(MAKE) build
+	$(CD) libc && $(MAKE) build
+	$(CD) libkmod && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	$(CD) libc ; $(MAKE) clean
-	$(CD) libkmod ; $(MAKE) clean
+	$(CD) libc && $(MAKE) clean
+	$(CD) libkmod && $(MAKE) clean

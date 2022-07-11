@@ -16,10 +16,10 @@
 
 
 
-OBJECTSDIR := $(OBJECTSDIR)/setup/
+OBJECTSDIR := $(OBJECTSDIR)/video/
 
-SETUP_OUTPUT := $(BINDIR)/setup.mod
-SETUP_SYMBOL_OUTPUT := $(BINDIR)/setup.sym
+VIDEO_OUTPUT := $(BINDIR)/video.mod
+VIDEO_SYMBOL_OUTPUT := $(BINDIR)/video.sym
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -31,7 +31,7 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-C_SRC := main disk
+C_SRC := main
 
 CPP_SRC :=
 
@@ -39,10 +39,10 @@ ASMFLAGS :=
 ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+C_INCLUDE := -I"$(MODULEDIR)/video" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+CPP_INCLUDE := -I"$(MODULEDIR)/video" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
 LIBRARIES := -lkmod
@@ -65,17 +65,17 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) $(dir $(SETUP_OUTPUT))
-	$(LD) $(LD_FLAGS) -T setup.ld -o $(SETUP_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
+	$(MKDIR) $(dir $(VIDEO_OUTPUT))
+	$(LD) $(LD_FLAGS) -T video.ld -o $(VIDEO_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
-	$(OBJCOPY) --only-keep-debug $(SETUP_OUTPUT) $(SETUP_SYMBOL_OUTPUT)
-	$(OBJCOPY) --strip-debug $(SETUP_OUTPUT)
+	$(OBJCOPY) --only-keep-debug $(VIDEO_OUTPUT) $(VIDEO_SYMBOL_OUTPUT)
+	$(OBJCOPY) --strip-debug $(VIDEO_OUTPUT)
 endif
 
 .PHONY: clean
 clean:
-	$(RM) $(SETUP_OUTPUT) $(OBJECTS)
+	$(RM) $(VIDEO_OUTPUT) $(OBJECTS)
 
 .PHONY: image
 image:
-	$(SUDO) $(COPY) $(SETUP_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(VIDEO_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

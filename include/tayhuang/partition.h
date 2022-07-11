@@ -30,7 +30,7 @@ enum {
 };
 
 //分区成员
-struct __partition_member {
+struct __partition_info {
     byte state;
     byte start_head;
     byte start_sector;
@@ -43,4 +43,4 @@ struct __partition_member {
     dword sector_number;
 } __attribute__((packed));
 
-typedef struct __partition_member partition_member; 
+typedef struct __partition_info partition_info; 

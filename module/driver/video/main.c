@@ -10,7 +10,7 @@
  *
  * main.c
  *
- * setup主函数
+ * video主函数
  *
  */
 
@@ -23,24 +23,11 @@
 #include <syscall/syscall.h>
 #include <syscall/ipc.h>
 
-#include <memory/malloc.h>
-
 #include <tayhuang/services.h>
 
-#include <disk.h>
-
 PUBLIC void kmod_main(void) {
-    set_logging_name("Setup");
+    set_logging_name("Video");
     linfo ("233");
-
-    reg_irq(14);
-    reg_irq(15);
-
-    void *boot = malloc(512);
-    partition_info partition;
-    get_partition(DISK_SEL_IDE0_MASTER, 0, &partition);
-    
-    linfo ("%d:%s", partition.start_lba, partition.state == PS_BOOTABLE ? "true" : "false");
 
     while (true);
 }

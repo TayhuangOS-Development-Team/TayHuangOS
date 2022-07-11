@@ -29,6 +29,8 @@
 
 #include <string.h>
 
+#include <printk.h>
+
 PUBLIC void __moo(void) {
     linfo ("COW", "                       (__)");
     linfo ("COW", "                       (oo)");
@@ -87,10 +89,8 @@ PUBLIC bool send_msg(void *src, qword size, int dst) {
 //-------------------
 
 PUBLIC void __check_ipc(void) {
-    if (current_task->ipc_info.allow_pid != DUMMY_TASK) {
-        if (current_task->ipc_info.used_size > 0) {
-            return;
-        }
+    if (current_task->ipc_info.used_size > 0) {
+        return;
     }
 
     current_task->state = WAITING;
@@ -153,6 +153,8 @@ PUBLIC void set_mailbuffer(void *buffer, qword size) {
 PRIVATE int IRQ_HANDLE_TASKS[16] = {};
 
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) {
+    linfo ("IRQ", "Received irq %d", irq);
+    putchar ('*');
     if (IRQ_HANDLE_TASKS[irq] == 0) {
         return;
     }
@@ -162,6 +164,7 @@ PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) 
 //--------------------
 
 PUBLIC void __reg_irq(int irq) {
+    linfo ("IRQ", "IRQ %d handler = %d", irq, current_task->pid);
     IRQ_HANDLE_TASKS[irq] = current_task->pid;
 }
 
