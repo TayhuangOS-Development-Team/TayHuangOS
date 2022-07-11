@@ -51,7 +51,7 @@ PUBLIC void kmod_main(void) {
 
         linfo ("%s:%p", name, buffer);
 
-        send_msg(&status, sizeof(bool), INIT_SERVICE);
+        assert(send_msg(&status, sizeof(bool), INIT_SERVICE));
     }
 
     while (true);

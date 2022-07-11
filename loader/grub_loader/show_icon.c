@@ -70,9 +70,9 @@ PUBLIC void clock_irq_handler(int irq) {
 PRIVATE void clear_screen(void *framebuffer, int width, int height) {
     for (int i = 0 ; i < height ; i ++) {
         for (int j = 0 ; j < width ; j ++) {
-            *(char*)(framebuffer + (i * width + j) * 3 + 0) = 0xFF;
-            *(char*)(framebuffer + (i * width + j) * 3 + 1) = 0xFF;
-            *(char*)(framebuffer + (i * width + j) * 3 + 2) = 0xFF;
+            *(byte*)(framebuffer + (i * width + j) * 3 + 0) = 0xFF;
+            *(byte*)(framebuffer + (i * width + j) * 3 + 1) = 0xFF;
+            *(byte*)(framebuffer + (i * width + j) * 3 + 2) = 0xFF;
         }
     }
 }
@@ -99,9 +99,9 @@ PRIVATE void display_icon(void *icon, void *framebuffer, int width, int height) 
             dword g = __g * progress / 100 + gray * (100 - progress) / 100;
             dword b = __b * progress / 100 + gray * (100 - progress) / 100;
 
-            *(char*)(framebuffer + ((i + offset_y) * width + j + offset_x) * 3 + 0) = b;
-            *(char*)(framebuffer + ((i + offset_y) * width + j + offset_x) * 3 + 1) = g;
-            *(char*)(framebuffer + ((i + offset_y) * width + j + offset_x) * 3 + 2) = r;
+            *(byte*)(framebuffer + ((i + offset_y) * width + j + offset_x) * 3 + 0) = b;
+            *(byte*)(framebuffer + ((i + offset_y) * width + j + offset_x) * 3 + 1) = g;
+            *(byte*)(framebuffer + ((i + offset_y) * width + j + offset_x) * 3 + 2) = r;
         }
     }
 

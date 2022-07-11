@@ -23,5 +23,4 @@
 typedef struct __msgpack_struct {
     qword length : 44;
     dword source : 20;
-    char body[0]; //正文内容
 } msgpack_struct;

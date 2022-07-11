@@ -161,8 +161,8 @@ PUBLIC void init(void) {
 
     #define VIDEO_DRIVER_SIZE (64 * 1024)
     void *video_driver_addr = kmalloc(VIDEO_DRIVER_SERVICE);
-    send_msg("video.mod", 11, SETUP_SERVICE);
-    send_msg(&video_driver_addr, sizeof(video_driver_addr), SETUP_SERVICE);
+    assert(send_msg("video.mod", 11, SETUP_SERVICE));
+    assert(send_msg(&video_driver_addr, sizeof(video_driver_addr), SETUP_SERVICE));
 
     check_ipc();
     while (true);

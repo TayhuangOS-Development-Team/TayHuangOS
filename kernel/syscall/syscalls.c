@@ -23,13 +23,13 @@
 #include <task/task_manager.h>
 
 #include <logging.h>
+#include <printk.h>
 
 #include <memory/pmm.h>
 #include <memory/paging.h>
 
 #include <string.h>
-
-#include <printk.h>
+#include <assert.h>
 
 PUBLIC void __moo(void) {
     linfo ("COW", "                       (__)");
@@ -48,8 +48,45 @@ PUBLIC void moo(void) {
 
 //-------------------
 
+PRIVATE void *increase_ptr(task_struct *target, void *ptr) {
+    ptr ++;
+    //回到开头
+    if ((target->ipc_info.mail + target->ipc_info.mail_size) <= ptr) {
+        ptr = target->ipc_info.mail;
+    }
+    return ptr;
+}
 
-//FIXME: 改为环形队列
+PRIVATE void write_to_buffer(task_struct *target, msgpack_struct *pack, void *src_pgd, void *src) {
+    void *addr = pack;
+    for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
+        *(byte*)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte*)addr;
+        addr ++;
+        target->ipc_info.write_ptr = increase_ptr(target, target->ipc_info.write_ptr);
+    }
+
+    for (int i = 0 ; i < pack->length ; i ++) {
+        *(byte*)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte*)(__pa(src_pgd, src));
+        src ++;
+        target->ipc_info.write_ptr = increase_ptr(target, target->ipc_info.write_ptr);
+    }
+}
+
+PRIVATE void read_from_buffer(msgpack_struct *pack, void *dst) {
+    void *addr = pack;
+    for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
+        *(byte*)addr = *(byte*)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
+        addr ++;
+        current_task->ipc_info.read_ptr = increase_ptr(current_task, current_task->ipc_info.read_ptr);
+    }
+
+    for (int i = 0 ; i < pack->length ; i ++) {
+        *(byte*)(__pa(current_task->mm_info.pgd, dst)) = *(byte*)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
+        dst ++;
+        current_task->ipc_info.read_ptr = increase_ptr(current_task, current_task->ipc_info.read_ptr);
+    }
+}
+
 PUBLIC bool __send_msg(void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
@@ -60,16 +97,13 @@ PUBLIC bool __send_msg(void *src, qword size, int dst) {
         return false;
     }
 
-    void *addr = target->ipc_info.write_ptr;
-    msgpack_struct *pack = (msgpack_struct*)addr;
-
-    target->ipc_info.write_ptr = addr + sizeof(msgpack_struct) + size;
-    pack->length = size;
-    pack->source = current_task->pid;
+    msgpack_struct pack;
+    pack.length = size;
+    pack.source = current_task->pid;
 
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
 
-    vvmemcpy(target->mm_info.pgd, pack->body, current_task->mm_info.pgd, src, size);
+    write_to_buffer(target, &pack, current_task->mm_info.pgd, src);
 
     if (target->state == WAITING && target->ipc_info.allow_pid != DUMMY_TASK) {
         target->state = READY;
@@ -119,16 +153,12 @@ PUBLIC int __recv_msg(void *dst) {
         return -1;
     }
 
-    void *addr = current_task->ipc_info.read_ptr;
-    msgpack_struct *pack = (msgpack_struct*)addr;
-
-    current_task->ipc_info.read_ptr = addr + sizeof(msgpack_struct) + pack->length;
+    msgpack_struct pack;
+    read_from_buffer(&pack, dst);
     
-    current_task->ipc_info.used_size -= (sizeof(msgpack_struct) + pack->length);
+    current_task->ipc_info.used_size -= (pack.length + sizeof(msgpack_struct));
 
-    vvmemcpy(current_task->mm_info.pgd, dst, current_task->mm_info.pgd, pack->body, pack->length);
-
-    return pack->source;
+    return pack.source;
 }
 
 PUBLIC int recv_msg(void *dst) {
@@ -184,16 +214,13 @@ PUBLIC bool dummy_send_msg(void *src, qword size, int dst) {
         return false;
     }
 
-    void *addr = target->ipc_info.write_ptr;
-    msgpack_struct *pack = (msgpack_struct*)addr;
-
-    target->ipc_info.write_ptr = addr + sizeof(msgpack_struct) + size;
-    pack->length = size;
-    pack->source = DUMMY_TASK;
+    msgpack_struct pack;
+    pack.length = size;
+    pack.source = DUMMY_TASK;
 
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
 
-    pvmemcpy(target->mm_info.pgd, pack->body, src, size);
+    write_to_buffer(target, &pack, kernel_pml4, src);
 
     if (target->state == WAITING) {
         target->state = READY;

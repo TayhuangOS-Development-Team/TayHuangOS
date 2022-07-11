@@ -162,7 +162,7 @@ PUBLIC void alloc_vpages(void *pgd, void *addr, int pages) {
 PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
     //利用for逐字节设置
     for (int i = 0 ; i < size ; i ++) {
-        *(char*)__pa(pgd, addr) = val;
+        *(byte*)__pa(pgd, addr) = val;
         addr ++;
     }
 }
@@ -170,7 +170,7 @@ PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
 PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
     //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
-        *(char*)dst = *(char*)__pa(src_pgd, src);
+        *(byte*)dst = *(byte*)__pa(src_pgd, src);
         dst ++;
         src ++;
     }
@@ -179,7 +179,7 @@ PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
 PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
     //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
-        *(char*)__pa(dst_pgd, dst) = *(char*)src;
+        *(byte*)__pa(dst_pgd, dst) = *(byte*)src;
         dst ++;
         src ++;
     }
@@ -188,7 +188,7 @@ PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
 PUBLIC void vvmemcpy(void *dst_pgd, void *dst, void *src_pgd, void *src, int size) {
     //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
-        *(char*)__pa(dst_pgd, dst) = *(char*)__pa(src_pgd, src);
+        *(byte*)__pa(dst_pgd, dst) = *(byte*)__pa(src_pgd, src);
         dst ++;
         src ++;
     }
