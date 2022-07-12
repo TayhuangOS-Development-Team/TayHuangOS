@@ -22,12 +22,12 @@ LIBKMOD_OUTPUT := $(BINDIR)/libkmod.a
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 LIBS_C_SRC := ctype string tostring
@@ -73,7 +73,7 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) $(dir $@)
+	$(MKDIR) $(dir $(LIBKMOD_OUTPUT))
 	$(AR) rvs $(LIBKMOD_OUTPUT) $^
 
 .PHONY: clean

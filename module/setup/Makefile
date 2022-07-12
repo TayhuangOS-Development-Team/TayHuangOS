@@ -23,12 +23,12 @@ SETUP_SYMBOL_OUTPUT := $(BINDIR)/setup.sym
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
 FS_C_SRC := common fat32

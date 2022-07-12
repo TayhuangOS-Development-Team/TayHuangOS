@@ -22,12 +22,12 @@ LIBC_OUTPUT := $(BINDIR)/libc.a
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 MISC_C_SRC := timer
@@ -62,7 +62,7 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) $(dir $@)
+	$(MKDIR) $(dir $(LIBC_OUTPUT))
 	$(AR) rvs $(LIBC_OUTPUT) $^
 
 .PHONY: clean
