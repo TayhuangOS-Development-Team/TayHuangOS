@@ -60,7 +60,7 @@ C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/k
 CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
-LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
+LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
 LIBRARIES :=
 
 ifeq ($(MODE), debug)

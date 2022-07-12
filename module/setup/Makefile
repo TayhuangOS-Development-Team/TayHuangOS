@@ -46,7 +46,7 @@ C_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/in
 CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
-LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
+LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
 LIBRARIES := -lkmod
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \

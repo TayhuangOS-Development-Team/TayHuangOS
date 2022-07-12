@@ -26,6 +26,9 @@ C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include" -I"$(LOADERDIR)/
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o)
 
+LD_FLAGS := -s -z max-page-size=0x100
+LIBRARIES :=
+
 $(OBJECTSDIR)/%.o : %.c
 	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
@@ -37,7 +40,7 @@ $(OBJECTSDIR)/%.o : %.asm
 .PHONY: build
 build: $(OBJECTS)
 	$(MKDIR) $(dir $(GRUB_LOADER_OUTPUT))
-	$(LD) -s -T loader.ld -o $(GRUB_LOADER_OUTPUT) $(OBJECTS)
+	$(LD) $(LD_FLAGS) -T loader.ld -o $(GRUB_LOADER_OUTPUT) $(OBJECTS)
 
 .PHONY: clean
 clean:
