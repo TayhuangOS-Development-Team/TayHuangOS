@@ -31,12 +31,11 @@ typedef enum {
     FS_EXT2
 } FS_TYPES;
 
-PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
-    partition_info partition;
-    get_partition(disk_selector, partition_id, &partition); //获取分区
+PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id, partition_info *partition) {
+    get_partition(disk_selector, partition_id, partition); //获取分区
 
     void *superblock = malloc(512);
-    read_sector(partition.start_lba, 1,  disk_selector, superblock); //读取超级块
+    read_sector(partition->start_lba, 1,  disk_selector, superblock); //读取超级块
 
     char bpb_filesystem[9];
 
@@ -53,9 +52,10 @@ PRIVATE FS_TYPES get_fs_type(int disk_selector, int partition_id) {
 }
 
 PUBLIC fs_context load_fs(int disk_selector, int partition_id){
-    FS_TYPES type = get_fs_type(disk_selector, partition_id);
+    partition_info partition;
+    FS_TYPES type = get_fs_type(disk_selector, partition_id, &partition);
     if (type == FS_FAT32) {
-        return load_fat32_fs(disk_selector, partition_id);
+        return load_fat32_fs(disk_selector, &partition);
     }
     else {
         return NULL;
@@ -68,9 +68,9 @@ PUBLIC void display_fs_info(fs_context context) {
     }
 }
 
-PUBLIC bool load_file(fs_context context, const char *name, void *dst, bool show_progress) {
+PUBLIC bool load_file(fs_context context, const char *name, void *dst) {
     if (*((dword*)context) == FAT32_CONTEXT_MAGIC) {
-        return load_fat32_file(context, name, dst, show_progress);
+        return load_fat32_file(context, name, dst);
     }
     return false;
 }

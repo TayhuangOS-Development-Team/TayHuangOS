@@ -28,6 +28,7 @@
 #include <tayhuang/services.h>
 
 #include <disk.h>
+#include <fs/common.h>
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Setup");
@@ -49,7 +50,13 @@ PUBLIC void kmod_main(void) {
         check_ipc();
         assert(recv_msg(&buffer) != -1);
 
+        fs_context context = load_fs(DISK_SEL_IDE0_MASTER, 0);
+
         linfo ("%s:%p", name, buffer);
+
+        //load_file(context, name, buffer);
+
+        //terminate_fs (context);
 
         assert(send_msg(&status, sizeof(bool), INIT_SERVICE));
     }
