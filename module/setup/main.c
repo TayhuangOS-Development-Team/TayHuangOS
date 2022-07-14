@@ -54,9 +54,9 @@ PUBLIC void kmod_main(void) {
 
         linfo ("%s:%p", name, buffer);
 
-        //load_file(context, name, buffer);
+        load_file(context, name, buffer);
 
-        //terminate_fs (context);
+        terminate_fs (context);
 
         assert(send_msg(&status, sizeof(bool), INIT_SERVICE));
     }

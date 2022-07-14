@@ -63,7 +63,11 @@ PUBLIC bool init_heap(int pid, void *heap_start, void *heap_end) {
 }
 
 PUBLIC void *malloc(int size) {
-    int fixed_size = ((size / HEAPUNIT_SZ) + ((size % HEAPUNIT_SZ) != 0)) * HEAPUNIT_SZ;
+    if (size == 0) {
+        return NULL;
+    }
+
+    int fixed_size = (size + sizeof(chunk_struct) + (HEAPUNIT_SZ - 1)) & ~(HEAPUNIT_SZ - 1);
 
     linfo ("require size = %d ; fixed size = %d", size, fixed_size);
 
@@ -72,7 +76,7 @@ PUBLIC void *malloc(int size) {
 
     linfo ("searching start with last = %P and current = %P", last, current);
 
-    while ((current != NULL) && (current->size < (fixed_size + sizeof(chunk_struct)))) {
+    while ((current != NULL) && (current->size < fixed_size)) {
         last = current;
         current = current->next;
     }
@@ -85,14 +89,18 @@ PUBLIC void *malloc(int size) {
         return NULL;
     }
 
-    if ((current->size > HEAPDIV_MIN_SZ) && 
-        ((current->size - 2 * sizeof(chunk_struct) - fixed_size) >= HEAPUNIT_SZ)) {
+    int remain_size = current->size - fixed_size;
+
+    if ((current->size > HEAPDIV_MIN_SZ) && (remain_size >= HEAPUNIT_SZ)) {
         chunk_struct *new_free_chunk = (chunk_struct*)(((void*)current) + sizeof(chunk_struct) + fixed_size);
-        new_free_chunk->size = current->size - sizeof(chunk_struct) - fixed_size;
+
+        new_free_chunk->size = current->size - fixed_size;
         new_free_chunk->next = current->next;
         new_free_chunk->used = false;
+
         last->next = new_free_chunk;
-        current->size = sizeof(chunk_struct) + fixed_size;
+        current->size = fixed_size;
+
         linfo ( "Split the chunk into (start = %P len = %d) and (start = %P len = %d)",
                         current, current->size, new_free_chunk, new_free_chunk->size);
     }
