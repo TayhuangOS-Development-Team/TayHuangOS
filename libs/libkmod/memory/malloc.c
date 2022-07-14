@@ -94,9 +94,6 @@ PUBLIC void *malloc(int size) {
 
         last->next = new_free_chunk;
         current->size = fixed_size;
-
-        linfo ( "Split the chunk into (start = %P len = %d) and (start = %P len = %d)",
-                        current, current->size, new_free_chunk, new_free_chunk->size);
     }
     else {
         last->next = current->next;
@@ -104,8 +101,6 @@ PUBLIC void *malloc(int size) {
         
     current->used = true;
     current->next = NULL;
-    
-    linfo ("Alloc chunk(start = %P, len = %d)", current, current->size);
 
     return current->addr;
 }

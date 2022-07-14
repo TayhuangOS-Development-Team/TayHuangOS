@@ -129,6 +129,30 @@ void print_mod_info(program_info *mod_info) {
 PRIVATE VOLATILE bool i1_ready = false;
 PRIVATE VOLATILE bool i2_ready = false;
 
+program_info load_mod_by_setup(const char *name) {
+    #define MOD_SIZE (64 * 1024)
+    void *mod_addr = kmalloc(MOD_SIZE);
+    assert(send_msg("video.mod", 11, SETUP_SERVICE));
+    assert(send_msg(&mod_addr, sizeof(mod_addr), SETUP_SERVICE));
+
+    check_ipc();
+    bool status;
+    recv_msg(&status);
+
+    if (! status) {
+        lerror ("Init", "Failed to load %s!", name);
+        while (1);
+    }
+
+    program_info mod_info = load_kmod_from_memory(mod_addr);
+
+    kfree(mod_addr);
+
+    print_mod_info(&mod_info);
+
+    return mod_info;
+}
+
 //first task-init
 PUBLIC void init(void) {
     void *mail = kmalloc(8192);
@@ -139,7 +163,7 @@ PUBLIC void init(void) {
     
     linfo ("Init", "Hi!I'm Init!");
 
-    //-----------SETUP MOD-----------------
+    //---------------------SETUP-------------------------
     program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
     print_mod_info(&setup_mod_info);
     
@@ -155,16 +179,29 @@ PUBLIC void init(void) {
     recv_msg(&status);
 
     if (! status) {
-        lerror ("Init", "Failed to initialize setup mod!");
+        lerror ("Init", "Failed to initialize setup module!");
         while (1);
     }
 
-    #define VIDEO_DRIVER_SIZE (64 * 1024)
-    void *video_driver_addr = kmalloc(VIDEO_DRIVER_SERVICE);
-    assert(send_msg("video.mod", 11, SETUP_SERVICE));
-    assert(send_msg(&video_driver_addr, sizeof(video_driver_addr), SETUP_SERVICE));
+    //---------------------VIDEO-------------------------
+    program_info video_mod_info = load_mod_by_setup("video.mod");
+    initialize_kmod_task(
+        create_task(DS_KERNEL, video_mod_info.stack_top, video_mod_info.stack_bottom, video_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
+                    video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end, video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
+                    VIDEO_DRIVER_SERVICE, 1, 0, current_task));
 
+    set_allow(VIDEO_DRIVER_SERVICE);
+    
     check_ipc();
+    recv_msg(&status);
+
+    if (! status) {
+        lerror ("Init", "Failed to initialize video driver!");
+        while (1);
+    }
+
+    linfo ("Init", "Init End");
+    
     while (true);
 }
 

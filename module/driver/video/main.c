@@ -29,5 +29,10 @@ PUBLIC void kmod_main(void) {
     set_logging_name("Video");
     linfo ("233");
 
+    bool status = true;
+    send_msg(status, sizeof(bool), INIT_SERVICE);
+    
+    check_ipc();
+
     while (true);
 }

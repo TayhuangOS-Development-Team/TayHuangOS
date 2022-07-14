@@ -56,20 +56,28 @@ PUBLIC void init_kheap(void *prepare_base, int prepare_size) {
 
 PRIVATE seg_info_struct *do_combine(seg_info_struct *seg) {
     if ((seg->next != NULL) && (! seg->next->used)) {
-        seg->size += seg->next->size;
-        seg->next = seg->next->next;
-        if (seg->next != NULL) {
-            seg->next->last = seg;
+        void *last_addr = seg;
+        void *next_addr = seg->next;
+        if (last_addr + seg->size == next_addr) {
+            seg->size += seg->next->size;
+            seg->next = seg->next->next;
+            if (seg->next != NULL) {
+                seg->next->last = seg;
+            }
         }
     }
 
     if ((seg->last != NULL) && (! seg->last->used)) {
-        seg->last->size += seg->size;
-        seg->last->next = seg->next;
-        if (seg->next != NULL) {
-            seg->next->last = seg->last;
+        void *last_addr = seg->last;
+        void *next_addr = seg;
+        if (last_addr + seg->last->size == next_addr) {
+            seg->last->size += seg->size;
+            seg->last->next = seg->next;
+            if (seg->next != NULL) {
+                seg->next->last = seg->last;
+            }
+            return seg->last;
         }
-        return seg->last;
     }
 
     return seg;
