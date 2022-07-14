@@ -195,7 +195,6 @@ PUBLIC void set_mailbuffer(void *buffer, qword size) {
 PRIVATE int IRQ_HANDLE_TASKS[16] = {};
 
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) {
-    linfo ("IRQ", "Received irq %d", irq);
     if (IRQ_HANDLE_TASKS[irq] == 0) {
         return;
     }

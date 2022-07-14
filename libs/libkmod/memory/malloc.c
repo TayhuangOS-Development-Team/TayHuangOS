@@ -69,19 +69,13 @@ PUBLIC void *malloc(int size) {
 
     int fixed_size = (size + sizeof(chunk_struct) + (HEAPUNIT_SZ - 1)) & ~(HEAPUNIT_SZ - 1);
 
-    linfo ("require size = %d ; fixed size = %d", size, fixed_size);
-
     chunk_struct *last = (chunk_struct*)heap;
     chunk_struct *current = last->next;
-
-    linfo ("searching start with last = %P and current = %P", last, current);
 
     while ((current != NULL) && (current->size < fixed_size)) {
         last = current;
         current = current->next;
     }
-
-    linfo ("searching end with last = %P and current = %P", last, current);
 
     if (current == NULL) {
         //TODO: extended the heap!
@@ -124,22 +118,16 @@ PUBLIC void free(void *addr) {
         last = last->next;
     }
 
-    linfo ("Insert chunk(%P) between chunk(%P) and chunk(%P)", current, last, last->next);
-
     current->next = last->next;
     last->next = current;
 
     if ((((void*)last) + last->size) == current) {
-        linfo ("Combine chunk(%P) and chunk(%P)", last, current);
-
         last->size += current->size;
         last->next = current->next;
         current = last;
     }
 
     if ((((void*)last) + last->size) == last->next) {
-        linfo ("Combine chunk(%P) and chunk(%P)", last, last->next);
-
         last->size += last->next->size;
         last->next = last->next->next;
     }
