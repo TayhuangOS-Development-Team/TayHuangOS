@@ -1,17 +1,17 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- *
+ * 
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
+ * 
  * --------------------------------------------------------------------------------
- *
- * 作者: Flysong
- *
+ * 
+ * 作者: theflysong
+ * 
  * syscall.h
- *
+ * 
  * 系统调用
- *
+ * 
  */
 
 
@@ -29,19 +29,3 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
 
 PUBLIC qword dosyscall(int sysno, qword mode, qword counter, qword data, void *src, void *dst,
     qword arg1, qword arg2, qword arg3, qword arg4, qword arg5, qword arg6, qword arg7, qword arg8);
-
-PUBLIC bool send_msg(const void *msg, int dest, int len, int tickout);
-PUBLIC bool receive_msg(const void *msg, int source);
-PUBLIC int receive_any_msg(const void *msg);
-PUBLIC int get_ticks(void);
-PUBLIC bool sleep(void);
-PUBLIC bool exit(void);
-PUBLIC bool wakeup(int pid);
-PUBLIC bool fatal(void);
-PUBLIC int eggs(void);
-PUBLIC bool signal(int pid, int signal);
-PUBLIC void wait_irq(int irq);
-PUBLIC int receive_any_msg_and_wait(const void *msg);
-
-PUBLIC bool sendrecv(void *msg, void *ret, int dest, int len, int tickout);
-PUBLIC short wakeup_irq_handler(int irq, struct intterup_args *regs, bool entered_handler);

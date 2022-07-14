@@ -16,19 +16,18 @@
 
 
 
-#include "shared_memory.h"
-#include "pmm.h"
-#include "paging.h"
-#include <process/task_manager.h>
+#include <memory/shared_memory.h>
+#include <memory/pmm.h>
+#include <memory/paging.h>
+#include <task/task_manager.h>
 
 PUBLIC bool shm_mapping(void *mem, int pages, int src_pid, int target_pid) {
-    void *target_pgd = find_task(target_pid)->mm_info->pgd;
-    void *source_pgd = find_task(src_pid)->mm_info->pgd;
+    void *target_pgd = get_task_by_pid(target_pid)->mm_info.pgd;
+    void *source_pgd = get_task_by_pid(src_pid)->mm_info.pgd;
 
-    set_pml4(target_pgd);
-
-    for (int i = 0 ; i < pages ; i ++)
-        set_mapping(mem + i * MEMUNIT_SZ, __pa(source_pgd, mem + i * MEMUNIT_SZ), 1, true, false);
+    for (int i = 0 ; i < pages ; i ++) {
+        set_mapping(target_pgd, mem + i * MEMUNIT_SZ, __pa(source_pgd, mem + i * MEMUNIT_SZ), 1, true, false);
+    }
 
     return true;
 }

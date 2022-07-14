@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * ports.h
  *
@@ -123,3 +123,6 @@
 #define CRTC_START_ADDR_L (0x0D)
 #define CRTC_CURSOR_LOCATION_H (0x0E)
 #define CRTC_CURSOR_LOCATION_L (0x0F)
+
+//Delay Port
+#define DELAY_PORT (0x80)

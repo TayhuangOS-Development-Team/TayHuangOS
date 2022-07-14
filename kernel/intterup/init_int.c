@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * init_int.c
  *
@@ -20,35 +20,44 @@
 #include <tayhuang/io.h>
 #include <tayhuang/descs.h>
 
-#include "init_int.h"
-#include "exception.h"
-#include "irq_handler.h"
+#include <intterup/init_int.h>
+#include <intterup/exception.h>
+#include <intterup/irq_handler.h>
 
+//初始化PIC
 PUBLIC void init_pic(void) {
+    //ICW1
     outb (M_PIC_CONTROL, 0x11);
-    outb (S_PIC_CONTROL, 0x11); //ICW1
+    outb (S_PIC_CONTROL, 0x11);
 
+    //ICW2
     outb (M_PIC_DATA, INT_VECTOR_IRQ0);
-    outb (S_PIC_DATA, INT_VECTOR_IRQ8); //ICW2
+    outb (S_PIC_DATA, INT_VECTOR_IRQ8); 
 
+    //ICW3
     outb (M_PIC_DATA, 0x4);
-    outb (S_PIC_DATA, 0x2); //ICW3
+    outb (S_PIC_DATA, 0x2); 
 
+    //ICW4
     outb (M_PIC_DATA, 0x1);
-    outb (S_PIC_DATA, 0x1); //ICW4
+    outb (S_PIC_DATA, 0x1); 
 
-    outb (M_PIC_DATA, 0xFF); //OCW1
+    //OCW1
+    outb (M_PIC_DATA, 0xFF); 
     outb (S_PIC_DATA, 0xFF);
 }
 
+//禁用/启用 IRQ
 PUBLIC void disable_irq(int irq) {
     if (irq < 8) {
-        byte i = inb(M_PIC_DATA); //主片
+        //主片
+        byte i = inb(M_PIC_DATA); 
         i |= (1 << irq);
         outb(M_PIC_DATA, i);
     }
     else {
-        byte i = inb(S_PIC_DATA); //从片
+        //从片
+        byte i = inb(S_PIC_DATA); 
         i |= (1 << (irq - 8));
         outb(S_PIC_DATA, i);
     }
@@ -56,12 +65,14 @@ PUBLIC void disable_irq(int irq) {
 
 PUBLIC void enable_irq(int irq) {
     if (irq < 8) {
-        byte i = inb(M_PIC_DATA); //主片
+        //主片
+        byte i = inb(M_PIC_DATA); 
         i &= ~(1 << irq);
         outb(M_PIC_DATA, i);
     }
     else {
-        byte i = inb(S_PIC_DATA); //从片
+        //从片
+        byte i = inb(S_PIC_DATA); 
         i &= ~(1 << (irq - 8));
         outb(S_PIC_DATA, i);
     }
@@ -69,46 +80,69 @@ PUBLIC void enable_irq(int irq) {
 
 #define PIC_EOI (0x20)
 
+//发送EOI
 PUBLIC void send_eoi(int irq) {
     if (irq > 8) {
-        outb (S_PIC_CONTROL, PIC_EOI); //从片EOI
+        //从片EOI
+        outb (S_PIC_CONTROL, PIC_EOI); 
     }
-    outb (M_PIC_CONTROL, PIC_EOI); //主片EOI
+    //主片EOI
+    outb (M_PIC_CONTROL, PIC_EOI); 
 }
 
 #define IDT_SIZE (128)
 
+//IDT与IDTR
 PRIVATE gate_desc IDT[IDT_SIZE];
 PRIVATE struct desc_ptr IDTR;
 
+//初始化一个IDT描述符
 PRIVATE void init_idt_desc_ist(byte vector, byte type, int_handler handler, byte privilege, byte ist) {
     qword base = (qword)handler;
-    IDT[vector].offset_low = base & 0xFFFF; //偏移
-    IDT[vector].segment = rdcs(); //段
+    //偏移
+    IDT[vector].offset_low = base & 0xFFFF; 
+    //段
+    IDT[vector].segment = rdcs(); 
+    //栈
     IDT[vector].bits.ist = ist;
     IDT[vector].bits.zero = 0;
-    IDT[vector].bits.type = type; //类型
-    IDT[vector].bits.dpl = privilege; //权限
-    IDT[vector].bits.p = 1; //存在
-    IDT[vector].offset_middle = base >> 16; //偏移
+    //类型
+    IDT[vector].bits.type = type; 
+    //权限
+    IDT[vector].bits.dpl = privilege; 
+    //存在
+    IDT[vector].bits.p = 1; 
+    //偏移
+    IDT[vector].offset_middle = base >> 16; 
+    //偏移
     IDT[vector].offset_high = base >> 32;
     IDT[vector].reserved = 0;
 }
 
-PRIVATE void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) { //初始化一个IDT描述符
+//初始化一个IDT描述符
+PRIVATE void init_idt_desc(byte vector, byte type, int_handler handler, byte privilege) {
     qword base = (qword)handler;
-    IDT[vector].offset_low = base & 0xFFFF; //偏移
-    IDT[vector].segment = rdcs(); //段
+    //偏移
+    IDT[vector].offset_low = base & 0xFFFF; 
+    //段
+    IDT[vector].segment = rdcs(); 
+    //栈
     IDT[vector].bits.ist = 0;
     IDT[vector].bits.zero = 0;
-    IDT[vector].bits.type = type; //类型
-    IDT[vector].bits.dpl = privilege; //权限
-    IDT[vector].bits.p = 1; //存在
-    IDT[vector].offset_middle = base >> 16; //偏移
+    //类型
+    IDT[vector].bits.type = type; 
+    //权限
+    IDT[vector].bits.dpl = privilege; 
+    //存在
+    IDT[vector].bits.p = 1; 
+    //偏移
+    IDT[vector].offset_middle = base >> 16;
+    //偏移
     IDT[vector].offset_high = base >> 32;
     IDT[vector].reserved = 0;
 }
 
+//初始化IDT
 PRIVATE void __init_descs(void) {
     //异常的IDT
     init_idt_desc(0, GATE_INTERRUPT, divide_by_zero_error, 0);

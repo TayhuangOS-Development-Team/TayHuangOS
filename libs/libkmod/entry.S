@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * entry.S
  *
@@ -18,9 +18,8 @@
 
     .code64
     .text
-    .extern kmod_main
 
+    .extern __kmod_init__
     .global _start
 _start:
-    call kmod_main
-    jmp .
+    jmp __kmod_init__

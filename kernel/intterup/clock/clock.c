@@ -6,7 +6,7 @@
  * 
  * --------------------------------------------------------------------------------
  * 
- * 作者: Flysong
+ * 作者: theflysong
  * 
  * clock.c
  * 
@@ -16,24 +16,58 @@
 
 
 
-#include "clock.h"
+#include <tayhuang/io.h>
+#include <tayhuang/ports.h>
 
-#include <syscall/syscall.h>
-#include <process/task_manager.h>
+#include <intterup/clock/clock.h>
+
+#include <task/task_scheduler.h>
+
+#include <logging.h>
 
 #include <string.h>
 
-PUBLIC void after_syscall(struct intterup_args *regs);
+#define PIT_FREQUENCY (1193181.6666f)
 
-PUBLIC volatile int ticks = 0;
+PUBLIC VOLATILE int ticks = 0;
 
-PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { //时钟中断
+//初始化PIT
+PUBLIC bool init_pit(float frequency) {
+    //频率过高
+    if (frequency > PIT_FREQUENCY) {
+        return false;
+    }
+
+    int count = (int)(PIT_FREQUENCY / frequency);
+    if ((PIT_FREQUENCY - count * frequency) > (frequency / 2))
+        count ++;
+
+    //频率过低
+    if (count >= 65535) {
+        return false; 
+    }
+
+    //设置频率
+    outb(PIT_CHANNEL0, (byte)count); 
+    outb(PIT_CHANNEL0, (byte)(count >> 8));
+
+    return true;
+}
+
+EXTERN PUBLIC bool do_schedule;
+
+//时钟中断
+PUBLIC void clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler) { 
+    //增加滴答计数
     ticks ++;
 
-    if (! entered_handler)
+    if (do_schedule) {
+        //在系统调用（中断）结束时调用
         after_syscall(regs);
 
-    current_task->counter --;
-
-    return 0;
+        //是level1则减少时间片计数
+        if (current_task->level == 1) {
+            current_task->count --;
+        }
+    }
 }

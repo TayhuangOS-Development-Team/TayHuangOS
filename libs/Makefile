@@ -1,16 +1,32 @@
+#
+# SPDX-License-Identifier: GPL-3.0-only
+# -------------------------------*-TayhuangOS-*-----------------------------------
+# 
+#    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+# 
+# --------------------------------------------------------------------------------
+# 
+# 作者: theflysong
+# 
+# Makefile
+# 
+# Makefile
+# 
+#
+
+
+
 OBJECTSDIR := $(OBJECTSDIR)/libs/
 export OBJECTSDIR
 
 #编译
 .PHONY: build
 build:
-	cd libc ; make build
-	cd libkmod ; make build
-	cd libfifo ; make build
+	$(CD) libc && $(MAKE) build
+	$(CD) libkmod && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	cd libc ; make clean
-	cd libkmod ; make clean
-	cd libfifo ; make clean
+	$(CD) libc && $(MAKE) clean
+	$(CD) libkmod && $(MAKE) clean

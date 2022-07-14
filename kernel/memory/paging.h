@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * paging.h
  *
@@ -20,12 +20,11 @@
 
 #include <tayhuang/defs.h>
 
-extern PUBLIC void *kernel_pml4;
+//创建页表
+PUBLIC void *create_pgd(void); 
+//设置映射
+PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us); 
+//获取物理地址
+PUBLIC void *get_physical_address(void *__pgd, void *vaddr); 
 
-PUBLIC void set_pml4(void *pml4);
-PUBLIC void *get_pml4(void);
-PUBLIC void *create_pgd(void);
-PUBLIC bool set_mapping(void *from, void *to, int pages, bool rw, bool us);
-PUBLIC void *get_physical_address(void *__pml4, void *vaddr);
-
-#define __pa(p, v) (get_physical_address(p, v))
+#define __pa(pgd, vaddr) (get_physical_address(pgd, vaddr))

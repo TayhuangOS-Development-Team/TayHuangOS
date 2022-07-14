@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * irq_handler.h
  *
@@ -20,14 +20,17 @@
 
 #include <tayhuang/defs.h>
 
-#include "init_int.h"
+#include <intterup/init_int.h>
 
-extern short IRQ_FLAGS[16];
-typedef short(*irq_handler)(int, struct intterup_args*, bool);
+typedef void(*irq_handler)(int, struct intterup_args*, bool);
+//注册IRQ处理器
 PUBLIC void register_irq_handler(int irq, irq_handler handler);
+//通用IRQ处理器
 PUBLIC void general_irq_handler(int irq, struct intterup_args *args);
+//系统调用处理器
 PUBLIC void syscall_int_handler(struct intterup_args *regs);
 
+//IRQ处理器
 void irq0_handler(void);
 void irq1_handler(void);
 void irq2_handler(void);
@@ -44,4 +47,6 @@ void irq12_handler(void);
 void irq13_handler(void);
 void irq14_handler(void);
 void irq15_handler(void);
+
+//系统调用处理器
 void syscall_handler(void);

@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * types.h
  *
@@ -17,6 +17,8 @@
 
 
 #pragma once
+
+#include <stddef.h>
 
 typedef unsigned char bool; //布尔
 typedef unsigned char byte; //字节
@@ -35,10 +37,9 @@ typedef b64 reg64_t; //64位寄存器
 typedef void *handle_t; //处理器
 #define true (1) //真
 #define false (0) //假
-#define NULL (0) //空地址
 
 #define asmv asm volatile //简写
 typedef void *addr_t; //地址
 typedef dword id_t; //编号
-typedef int service_t;
-typedef qword offset_t;
+typedef int service_t; //服务号
+typedef qword offset_t; //偏移

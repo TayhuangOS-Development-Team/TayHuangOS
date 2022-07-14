@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * exception.c
  *
@@ -15,23 +15,24 @@
  */
 
 #include <tayhuang/io.h>
-
-#include "exception.h"
-
-#include <display/printk.h>
-#include <debug/logging.h>
-#include <assert.h>
-
-#include <memory/paging.h>
-
-#include <process/task_manager.h>
 #include <tayhuang/control_registers.h>
+
+#include <intterup/exception.h>
+
+#include <task/task_scheduler.h>
+
+#include <printk.h>
+#include <logging.h>
+#include <global.h>
+
+#include <assert.h>
 
 PUBLIC int fault_num[32] = {};
 
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs) {
+//通用异常处理器
+PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
     __set_cr3(kernel_pml4);
-    
+
     const char *exception_msg[] = { //异常信息
         "[#DE] Devide by 0 error!",
         "[#DB] Single step",
@@ -67,42 +68,35 @@ PUBLIC void general_exception_handler(int vector, int errcode, long long cs, lon
         "[Reserved] Reserved exception!"
     };
 
-    char buffer[128];
-
     lerror ("Exception", "-------------------------------------");
-    lerror ("Exception", "Oops!There is a exception throwing!The followings are its information:"); //
+    lerror ("Exception", "Oops!There is a exception throwing!The followings are its information:");
+    //打印信息
     if (vector < 32) {
-        sprintk (buffer, "Message: %s", exception_msg[vector]); //打印信息
-        lerror ("Exception", buffer);
+        lerror ("Exception", "Message: %s", exception_msg[vector]); 
     }
-    sprintk (buffer, "Vector = %d", vector); //打印Vector号
-    lerror ("Exception", buffer);
-    if (errcode < 0xFFFFFFFF) {
-        sprintk (buffer, "Error code = %d", errcode); //打印错误码
-        lerror ("Exception", buffer);
+    //打印Vector号
+    lerror ("Exception", "Vector = %d", vector); 
+    if (regs->code < 0xFFFFFFFFFFFFFFFF) {
+        //打印错误码
+        lerror ("Exception", "Error code = %d", regs->code); 
     }
 
     lerror ("Exception", "");
     lerror ("Exception", "");
-    lerror ("Exception", "Registers:");
-    sprintk (buffer, "cs: %#04X;rip: %#016X;eflags:%#04X", cs, rip, eflags); //打印寄存器
-    lerror ("Exception", buffer);
-
-    sprintk (buffer, "rax: %#016X;rbx: %#016X;rcx: %#016X;", regs->rax, regs->rbx, regs->rcx);
-    lerror ("Exception", buffer);
-    sprintk (buffer, "rdx: %#016X;rsi: %#016X;rdi: %#016X;", regs->rdx, regs->rsi, regs->rdi);
-    lerror ("Exception", buffer);
-    sprintk (buffer, "rsp: %#016X;rbp: %#016X;r8 : %#016X;", regs->rsp, regs->rbp, regs->r8);
-    lerror ("Exception", buffer);
-    sprintk (buffer, "r9 : %#016X;r10: %#016X;r11: %#016X;", regs->r9, regs->r10, regs->r11);
-    lerror ("Exception", buffer);
-    sprintk (buffer, "r12: %#016X;r13: %#016X;r14: %#016X;", regs->r12, regs->r13, regs->r14);
-    lerror ("Exception", buffer);
-    sprintk (buffer, "r15: %#016X;pgd: %#016X;pid: %d;", regs->r15, regs->pgd, current_task->pid);
-    lerror ("Exception", buffer);
+    lerror ("Exception", "Registers:");\
+    //打印寄存器
+    lerror ("Exception", "cs:  %#016X;rip: %#016X;rflags:%#016X;", regs->cs, regs->rip, regs->rflags); 
+    lerror ("Exception", "rax: %#016X;rbx: %#016X;rcx:   %#016X;", regs->rax, regs->rbx, regs->rcx);
+    lerror ("Exception", "rdx: %#016X;rsi: %#016X;rdi:   %#016X;", regs->rdx, regs->rsi, regs->rdi);
+    lerror ("Exception", "rsp: %#016X;rbp: %#016X;r8 :   %#016X;", regs->rsp, regs->rbp, regs->r8);
+    lerror ("Exception", "r9 : %#016X;r10: %#016X;r11:   %#016X;", regs->r9, regs->r10, regs->r11);
+    lerror ("Exception", "r12: %#016X;r13: %#016X;r14:   %#016X;", regs->r12, regs->r13, regs->r14);
+    lerror ("Exception", "r15: %#016X;pgd: %#016X;pid:   %#016X;", regs->r15, regs->pgd, current_task->pid);
+    lerror ("Exception", "cr0: %#016X;cr2: %#016X;cr4:   %#016X;", __get_cr0(), __get_cr2(), __get_cr4());
 
     fault_num[vector] ++;
 
+    //错误次数过多
     if (fault_num[vector] >= 32) {
         lfatal ("Exception", "TOO MUCH FAULT!");
         panic ("TOO MUCH FAULT!VECTOR = %d", vector);

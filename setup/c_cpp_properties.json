@@ -11,17 +11,42 @@
                 "_UNICODE",
                 "ARCH_x86_64"
             ],
-            "compilerPath": "{YOUR COMPILER}",
+            "compilerPath": "{YOUR_COMPILER}",
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
-            "intelliSenseMode": "{YOUR MODE}"
+            "intelliSenseMode": "{YOUR_MODE}",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Loader",
+            "includePath": [
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/loader/grub_loader/"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64",
+                "VBE_ENABLE"
+            ],
+            "compilerPath": "{YOUR_COMPILER}",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "{YOUR_MODE}",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
         },
         {
             "name": "Module",
             "includePath": [
-                "${workspaceFolder}/include/**",
-                "${workspaceFolder}/libs/libkmod/**",
-                "${workspaceFolder}/libs/libfifo/**",
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/libs/libkmod/",
                 "${workspaceFolder}/module/**"
             ],
             "defines": [
@@ -30,17 +55,21 @@
                 "_UNICODE",
                 "ARCH_x86_64"
             ],
-            "compilerPath": "{YOUR COMPILER}",
+            "compilerPath": "{YOUR_COMPILER}",
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
-            "intelliSenseMode": "{YOUR MODE}"
+            "intelliSenseMode": "{YOUR_MODE}",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
         },
         {
             "name": "Kernel",
             "includePath": [
-                "${workspaceFolder}/include/**",
-                "${workspaceFolder}/kernel/**",
-                "${workspaceFolder}/libs/libfifo/**"
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/kernel/",
+                "${workspaceFolder}/libs/libfifo/"
             ],
             "defines": [
                 "_DEBUG",
@@ -48,10 +77,13 @@
                 "_UNICODE",
                 "ARCH_x86_64"
             ],
-            "compilerPath": "{YOUR COMPILER}",
+            "compilerPath": "{YOUR_COMPILER}",
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
-            "intelliSenseMode": "{YOUR MODE}"
+            "intelliSenseMode": "{YOUR_MODE}",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
         }
     ],
     "version": 4

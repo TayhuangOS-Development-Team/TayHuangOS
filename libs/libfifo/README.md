@@ -1,3 +1,0 @@
-# Libfifo
-
-FIFO Helper Library

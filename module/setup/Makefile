@@ -1,27 +1,39 @@
+#
+# SPDX-License-Identifier: GPL-3.0-only
+# -------------------------------*-TayhuangOS-*-----------------------------------
+# 
+#    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+# 
+# --------------------------------------------------------------------------------
+# 
+# 作者: theflysong
+# 
+# Makefile
+# 
+# Makefile
+# 
+#
+
+
+
 OBJECTSDIR := $(OBJECTSDIR)/setup/
 
 SETUP_OUTPUT := $(BINDIR)/setup.mod
 SETUP_SYMBOL_OUTPUT := $(BINDIR)/setup.sym
-ASM := as
-RM := rm
-GCC := gcc
-GPP := g++
-LD := ld
-OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
+		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
+		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-FS_C_SRC := fs/fat32
+FS_C_SRC := common fat32
 C_SRC := main disk \
-	$(FS_C_SRC)
+	$(foreach src, $(FS_C_SRC), fs/$(src))
 
 CPP_SRC :=
 
@@ -34,28 +46,34 @@ C_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/in
 CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
-LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
-LIBRARIES := -lkmod 
+LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
+LIBRARIES := -lkmod
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
 
+ifeq ($(MODE), debug)
+	C_DEFS += -D_DEBUG
+else
+	CPP_DEFS += -D_DEBUG
+endif
+
 $(OBJECTSDIR)/%.o : %.cpp
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.c
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.S
-	mkdir -p -v $(dir $@)
-	$(ASM) -o $@ $^
+	$(MKDIR) $(dir $@)
+	$(GAS) -o $@ $^
 
 .PHONY: build
 build: $(OBJECTS)
-	mkdir -p -v $(dir $(SETUP_OUTPUT))
+	$(MKDIR) $(dir $(SETUP_OUTPUT))
 	$(LD) $(LD_FLAGS) -T setup.ld -o $(SETUP_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
 	$(OBJCOPY) --only-keep-debug $(SETUP_OUTPUT) $(SETUP_SYMBOL_OUTPUT)
@@ -68,4 +86,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(SETUP_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(SETUP_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

@@ -6,7 +6,7 @@
  * 
  * --------------------------------------------------------------------------------
  * 
- * 作者: Flysong
+ * 作者: theflysong
  * 
  * clock.h
  * 
@@ -20,5 +20,8 @@
 
 #include <intterup/init_int.h>
 
-extern volatile int ticks;
-PUBLIC short clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler);
+//ticks
+EXTERN PUBLIC VOLATILE int ticks;
+//初始化pit
+PUBLIC bool init_pit(float frequency);
+PUBLIC void clock_int_handler(int irq, struct intterup_args *regs, bool entered_handler);

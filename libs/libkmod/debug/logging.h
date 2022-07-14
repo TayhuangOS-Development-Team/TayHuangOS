@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * logging.h
  *
@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include <tayhuang/types.h>
+#include <tayhuang/defs.h>
+#include <stdarg.h>
 
-void write_serial_char(char ch);
-void write_serial_str(const char *str);
-void set_logging_name(const char *name);
+PUBLIC void write_serial_char(char ch);
+PUBLIC void write_serial_str(const char *str);
 
 enum {
     INFO = 0,
@@ -33,10 +33,13 @@ enum {
     ATTENTION
 };
 
-void log(const int type, const char *msg);
-void linfo(const char *msg);
-void lwarn(const char *msg);
-void lerror(const char *msg);
-void lfatal(const char *msg);
-void ltips(const char *msg);
-void lattention(const char *msg);
+PUBLIC void set_logging_name(const char *name);
+PUBLIC void __log(const char *type, const char *msg);
+PUBLIC void _log(const int type, const char *fmt, va_list args);
+PUBLIC void log(const char *type, const char *fmt, ...);
+PUBLIC void linfo(const char *fmt, ...);
+PUBLIC void lwarn(const char *fmt, ...);
+PUBLIC void lerror(const char *fmt, ...);
+PUBLIC void lfatal(const char *fmt, ...);
+PUBLIC void ltips(const char *fmt, ...);
+PUBLIC void lattention(const char *fmt, ...);

@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * defs.h
  *
@@ -20,6 +20,8 @@
 
 #define PUBLIC                                        //公共
 #define PRIVATE static                                //私有
+#define EXTERN extern                                 //extern
+#define VOLATILE volatile                             //volatile
 #define HIGHBYTE(x) (((x) >> 8) & 0xFF)               //高字节
 #define LOWBYTE(x) (x & 0xFF)                         //低字节
 #define HIGHHEX(x) (((x) >> 4) & 0xF)                 //高16进制位
@@ -37,31 +39,53 @@
 #define en_int() asmv("sti")
 #define dis_int() asmv("cli")
 
-static inline dword leading_zeros(dword x)
-{
-    if (x == 0)
+//32位数x的前导0个数
+static inline dword leading_zeros(dword x) {
+    if (x == 0) {
         return 32;
+    }
     int n = 1;
-    if (x >> 16 == 0)
-    {
+    if (x >> 16 == 0) {
         n += 16;
         x <<= 16;
     }
-    if (x >> 24 == 0)
-    {
+
+    if (x >> 24 == 0) {
         n += 8;
         x <<= 8;
     }
-    if (x >> 28 == 0)
-    {
+
+    if (x >> 28 == 0) {
         n += 4;
         x <<= 4;
     }
-    if (x >> 30 == 0)
-    {
+
+    if (x >> 30 == 0) {
         n += 2;
         x <<= 2;
     }
+
     n -= x >> 31;
     return n;
+}
+
+//取log2 x近似值
+static inline int simple_log2(qword x) {
+    int l = 0, r = 64;
+    int mid = (l + r) >> 1;
+
+    while (l <= r) {
+        if ((1 << mid) > x) {
+            r = mid;
+        }
+        else if ((1 << mid) < x) {
+            l = mid;
+        }
+        else {
+            break;
+        }
+        mid = (l + r) >> 1;
+    }
+
+    return mid;
 }

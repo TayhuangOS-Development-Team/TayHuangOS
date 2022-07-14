@@ -1,145 +1,194 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- *
+ * 
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
+ * 
  * --------------------------------------------------------------------------------
- *
- * 作者: Flysong
- *
+ * 
+ * 作者: theflysong
+ * 
  * pmm.c
- *
- * 物理内存管理器
- *
+ * 
+ * 物理内存管理
+ * 
  */
 
 
 
-#include "pmm.h"
-#include <kheap.h>
+#include <tayhuang/defs.h>
 #include <tayhuang/paging.h>
-#include <debug/logging.h>
+#include <tayhuang/partition.h>
+
+#include <memory/pmm.h>
+#include <memory/kheap.h>
+#include <memory/paging.h>
+
 #include <string.h>
 
-PRIVATE byte *pmpage_bitmap;
-PRIVATE qword pmpage_bitmap_size = 0;
-PRIVATE qword pmpage_num = 0;
+#include <logging.h>
 
-PUBLIC void init_pmm(qword pmemsz) { //初始化PMM
-    pmpage_num = pmemsz / MEMUNIT_SZ + ((pmemsz % MEMUNIT_SZ) != 0);
-    pmpage_bitmap_size = pmpage_num / 8 + ((pmpage_num % 8) != 0);
-    pmpage_bitmap = kmalloc (pmpage_bitmap_size);
-    memset(pmpage_bitmap, 0, pmpage_bitmap_size);
+typedef struct __free_area {
+    void *address;
+    struct __free_area *next;
+} free_area_struct;
+
+//最多一次性2^9个页面 2MB
+#define MAX_ORDER (9) 
+
+//编号为i的列表里的内存其大小为2^i个内存页
+free_area_struct *list_head[MAX_ORDER + 1]; 
+free_area_struct *list_tail[MAX_ORDER + 1];
+
+//增加空闲区域
+PRIVATE void add_free_area(int order, void *address) { 
+    free_area_struct *head = list_head[order];
+    
+    //头为空
+    if (head == NULL) { 
+        head = kmalloc(sizeof(free_area_struct));
+        head->address = address;
+        head->next = NULL;
+        list_tail[order] = list_head[order] = head;
+        return;
+    }
+
+    //加到队尾
+    free_area_struct *tail = list_tail[order];
+    list_tail[order] = kmalloc(sizeof(free_area_struct));
+    tail->next = list_tail[order];
+    list_tail[order]->address = address;
+    list_tail[order]->next = NULL;
 }
 
-PUBLIC void *lookup_free_page(void){ //寻找空闲页
-    for (int i = 0 ; i < pmpage_bitmap_size ; i ++) {
-        if (pmpage_bitmap[i] != 0xFF) { //没有全被用
-            for (int j = 0 ; j < 8 ; j ++) {
-                if ((i * 8 + j) > pmpage_num) {
-                    return NULL;
-                }
-                if ((pmpage_bitmap[i] & (1 << j)) == 0) {
-                    return (i * 8 + j) * MEMUNIT_SZ;
-                }
-            }
+//初始化pmm
+PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
+    qword pages = ((memsize + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
+    linfo ("PMM", "memsize = %#016X, %#016X pages in total", memsize, pages);
+    qword reserved_pages = ((((qword)reserved_limit) + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
+    pages -= reserved_pages;
+
+    void *start = reserved_limit;
+
+    //用二进制拆分添加页面
+    for (int i = 0 ; i < MAX_ORDER ; i ++) {
+        if ((pages & 1) != 0) {
+            add_free_area(i, start);
+            start += MEMUNIT_SZ << 1;
+        }
+        pages >>= 1;
+    }
+
+    for (int i = 0 ; i < pages ; i ++) {
+        add_free_area(MAX_ORDER, start);
+        start += MEMUNIT_SZ << MAX_ORDER;
+    }
+
+    linfo ("PMM", "%#016X pages added", pages - reserved_pages);
+}
+
+//分配空闲内存 最低2^order个内存页
+PUBLIC void *__alloc_free_pages(int order, int *order_give) {
+    for (int i = order ; i <= MAX_ORDER ; i ++) {
+        free_area_struct *head = list_head[i];
+
+        //可用
+        if (head != NULL) {
+            list_head[i] = head->next;
+            if (head->next == NULL)
+                list_tail[i] = NULL;
+            *order_give = i;
+            return head->address;
         }
     }
     return NULL;
 }
 
-PUBLIC void mark_used(void *page){ //标记为被使用过
-    qword _page = (qword)page;
-    pmpage_bitmap[(_page / MEMUNIT_SZ / 8)] |= (1 << ((_page / MEMUNIT_SZ) % 8));
+PUBLIC void *alloc_pages(int order) {
+    int order_give = 0;
+    // 寻找可用页
+    void *addr = __alloc_free_pages(order, &order_give);
+
+    //返还多余页
+    return_pages(addr + (MEMUNIT_SZ << order), (1 << order_give) - (1 << order));
+
+    return addr;
 }
 
-PUBLIC void mark_unused(void *page) { //标记为未被使用
-    qword _page = (qword)page;
-    pmpage_bitmap[(_page / MEMUNIT_SZ / 8)] &= ~(1 << ((_page / MEMUNIT_SZ) % 8));
+//归还内存
+PUBLIC void __return_pages(void *addr, int order) {
+    add_free_area(order, addr);
 }
 
-PUBLIC void *find_freepages(int max, int *found) {
-    //can be improved
-    int i, j;
-    bool flag = false;
-    for (i = 0 ; i < pmpage_bitmap_size ; i ++) {
-        if (pmpage_bitmap[i] == 0xFF)
-            continue;
-        for (j = 0 ; j < 8 ; j ++) {
-            if ((i * 8 + j) > pmpage_num) {
-                lwarn ("PMM", "No more free memories!");
-                *found = 0;
-                return NULL;
-            }
-            if ((pmpage_bitmap[i] & (1 << j)) == 0) {
-                flag = true;
-                break;
-            }
+PUBLIC void return_pages(void *addr, int pages) {
+    void *start = addr;
+
+    //用二进制拆分归还页面
+    for (int i = 0 ; i < MAX_ORDER ; i ++) {
+        if ((pages & 1) != 0) {
+            __return_pages(start, i);
+            start += MEMUNIT_SZ << i;
         }
-        if (flag)
-            break;
+        pages >>= 1;
     }
-    if (! flag) {
-        lwarn ("PMM", "No more free memories!");
-        *found = 0;
-        return NULL;
+
+    for (int i = 0 ; i < pages ; i ++) {
+        __return_pages(start, MAX_ORDER);
+        start += MEMUNIT_SZ << MAX_ORDER;
     }
-    flag = false;
-    int sum = 0;
-    void *start = (i * 8 + j) * MEMUNIT_SZ;
-    for (; i < pmpage_bitmap_size ; i ++) {
-        for (; j < pmpage_bitmap_size ; j ++) {
-            if ((pmpage_bitmap[i] & (1 << j)) == 0) {
-                sum ++;
-                if (sum >= max) {
-                    flag = true;
-                    break;
-                }
-            }
-            else {
-                flag = true;
-                break;
-            }
-        }
-        if (flag)
-            break;
-        j = 0;
-    }
-    *found = sum;
-    return start;
 }
 
-PUBLIC void *find_continuous_freepages(int num) {
-    //can be improved
-    int sum = 0;
-    bool flag = false;
-    for (int i = 0 ; i < pmpage_bitmap_size ; i ++) {
-        if (pmpage_bitmap[i] == 0xFF)
-            continue;
-        for (int j = 0 ; j < 8 ; j ++) {
-            if ((i * 8 + j) > pmpage_num) {
-                lwarn ("PMM", "No more free memories!");
-                return NULL;
-            }
-            else if (flag) {
-                if ((pmpage_bitmap[i] & (1 << j)) == 0) {
-                    sum ++;
-                }
-                else {
-                    flag = false;
-                }
-                if (sum >= num) {
-                    return (i * 8 + j - num) * MEMUNIT_SZ;
-                }
-            }
-            else {
-                if ((pmpage_bitmap[i] & (1 << j)) == 0) {
-                    sum = 0;
-                    flag = true;
-                }
-            }
+//给给定页表分配逻辑上连续的内存
+PUBLIC void alloc_vpages(void *pgd, void *addr, int pages) {
+    //用二进制拆分分配页面
+    void *vaddr = addr;
+    for (int i = 0 ; i < MAX_ORDER ; i ++) {
+        if ((pages & 1) != 0) {
+            void *paddr = alloc_pages(i);
+            set_mapping(pgd, vaddr, paddr, 1 << i, true, true);
+            vaddr += (MEMUNIT_SZ << i);
         }
+        pages >>= 1;
     }
-    return NULL;
+    
+    for (int i = 0 ; i < pages ; i ++) {
+        void *paddr = alloc_pages(MAX_ORDER);
+        set_mapping(pgd, vaddr, paddr, 1 << MAX_ORDER, true, true);
+        vaddr += (MEMUNIT_SZ << MAX_ORDER);
+    }
+}
+
+PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
+    //利用for逐字节设置
+    for (int i = 0 ; i < size ; i ++) {
+        *(byte*)__pa(pgd, addr) = val;
+        addr ++;
+    }
+}
+
+PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
+    //利用for逐字节复制
+    for (int i = 0 ; i < size ; i ++) {
+        *(byte*)dst = *(byte*)__pa(src_pgd, src);
+        dst ++;
+        src ++;
+    }
+}
+
+PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
+    //利用for逐字节复制
+    for (int i = 0 ; i < size ; i ++) {
+        *(byte*)__pa(dst_pgd, dst) = *(byte*)src;
+        dst ++;
+        src ++;
+    }
+}
+
+PUBLIC void vvmemcpy(void *dst_pgd, void *dst, void *src_pgd, void *src, int size) {
+    //利用for逐字节复制
+    for (int i = 0 ; i < size ; i ++) {
+        *(byte*)__pa(dst_pgd, dst) = *(byte*)__pa(src_pgd, src);
+        dst ++;
+        src ++;
+    }
 }

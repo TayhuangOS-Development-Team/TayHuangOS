@@ -1,5 +1,7 @@
 *.log
 .vscode/
+config.mk
+!setup/config.mk
 bios/
 build/
 bochsrc.bxrc

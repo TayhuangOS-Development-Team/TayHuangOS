@@ -1,5 +1,7 @@
+/* SPDX-License-Identifier: GPL-2.0 */
+/* Written 2000 by Andi Kleen */
+
 /* 
- * SPDX-License-Identifier: GPL-3.0-only
  * -------------------------------Reference from linux----------------------------------
  *
  * descs.h
@@ -48,6 +50,8 @@ struct gdt_ptr {
 	b32 ptr;
 } __attribute__((packed));//引用自linux
 
+#ifndef LOADER32BIT
+
 struct tss_struct {
 	b16	limit0;
 	b16	base0;
@@ -57,11 +61,24 @@ struct tss_struct {
 	b16	limit1 : 4, zero0 : 3;
 	bool g : 1;
 	b16 base2 : 8;
-#ifdef ARCH_x86_64
 	b32	base3;
 	b32	zero1;
-#endif
 } __attribute__((packed));//引用自linux
+
+#else
+
+struct tss_struct {
+	b16	limit0;
+	b16	base0;
+
+	b16	base1 : 8, type : 5, dpl : 2;
+	bool p : 1;
+	b16	limit1 : 4, zero0 : 3;
+	bool g : 1;
+	b16 base2 : 8;
+} __attribute__((packed));//引用自linux
+
+#endif
 
 typedef struct tss_struct tss_desc;
 
@@ -80,16 +97,27 @@ struct idt_data {
 	const void	*addr;
 };//引用自linux
 
+#ifndef LOADER32BIT
+
 struct _gate_struct {
 	b16		offset_low;
 	b16		segment;
 	struct idt_bits	bits;
 	b16		offset_middle;
-#ifdef ARCH_x86_64
     b32		offset_high;
 	b32		reserved;
-#endif
 } __attribute__((packed));//引用自linux
+
+#else
+
+struct _gate_struct {
+	b16		offset_low;
+	b16		segment;
+	struct idt_bits	bits;
+	b16		offset_middle;
+} __attribute__((packed));//引用自linux
+
+#endif
 
 typedef struct _gate_struct gate_desc;
 

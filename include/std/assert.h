@@ -6,7 +6,7 @@
  * 
  * --------------------------------------------------------------------------------
  * 
- * 作者: Flysong
+ * 作者: theflysong
  * 
  * assert.h
  * 
@@ -28,6 +28,6 @@ void panic(const char *format, ...);
     #define panic_assert(expression) if (! (expression)) \
         panic_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
 #else
-    #define assert(expression)
-    #define panic_assert(expression)
+    #define assert(expression) expression;
+    #define panic_assert(expression) expression;
 #endif

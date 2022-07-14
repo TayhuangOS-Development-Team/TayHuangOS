@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * entry.S
  *
@@ -22,10 +22,7 @@
 
     .global _start
 _start: /*入口*/
-    finit
-    call entry
-    xorq %rax, %rax
-    jmp .
+    jmp entry
 
     .global __set_cr0
     .type __set_cr0, @function

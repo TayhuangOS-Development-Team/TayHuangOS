@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * exception.h
  *
@@ -20,10 +20,11 @@
 
 #include <tayhuang/defs.h>
 
-#include "init_int.h"
+#include <intterup/init_int.h>
 
-//异常
-PUBLIC void general_exception_handler(int vector, int errcode, long long cs, long long rip, word eflags, struct intterup_args *regs);
+//通用异常处理器
+PUBLIC void general_exception_handler(int vector, struct exception_args *regs);
+//各类异常
 PUBLIC void divide_by_zero_error(void);
 PUBLIC void single_step_debug(void);
 PUBLIC void non_maskable_interrup(void);

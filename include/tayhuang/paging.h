@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * paging.h
  *
@@ -24,6 +24,7 @@
 
 #define CALC_M(x) min(54, max((sizeof(dword) * 8 - leading_zeros(x - 1)), 32)) //根据内存大小计算M的值
 
+//页项结构
 typedef struct {
     bool p : 1;
     bool rw : 1;

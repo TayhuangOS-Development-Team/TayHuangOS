@@ -6,11 +6,11 @@
  * 
  * --------------------------------------------------------------------------------
  * 
- * 作者: Flysong
+ * 作者: theflysong
  * 
  * malloc.h
  * 
- * malloc函数
+ * 分配内存
  * 
  */
 
@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <tayhuang/types.h>
+#include <tayhuang/defs.h>
 
-bool init_heap(void);
-void *malloc(int size);
-void free(void *addr);
+PUBLIC bool init_heap(int pid, void *heap_start, void *heap_end);
+PUBLIC void *malloc(int size);
+PUBLIC void free(void *addr);

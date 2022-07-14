@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * main.c
  *
@@ -16,52 +16,50 @@
 
 
 
-#include <syscall/syscall.h>
 #include <debug/logging.h>
-#include <ipc/ipc.h>
-#include <tool/tostring.h>
-#include <disk.h>
-#include <fs/fat32.h>
-#include <printf.h>
 
-void kmod_main(void) {
+#include <assert.h>
+
+#include <syscall/syscall.h>
+#include <syscall/ipc.h>
+
+#include <memory/malloc.h>
+
+#include <tayhuang/services.h>
+
+#include <disk.h>
+#include <fs/common.h>
+
+PUBLIC void kmod_main(void) {
     set_logging_name("Setup");
 
-    char buffer[256] = {};
+    reg_irq(14);
+    reg_irq(15);
 
-    char mod_name[64] = {};
+    char name[256];
+    void *buffer;
 
-    int kernel = 0;
-    recv_any_msg_and_wait(&kernel); //获取内核进程pid
-
-
-    sprintf (buffer, "Kernel PID: %d", kernel);
-    linfo (buffer);
-
-    char context[8192];
-    get_context(DISK_SEL_IDE1_MASTER, (void**)context); //获取文件系统上下文
+    bool status = true;
+    send_msg(status, sizeof(bool), INIT_SERVICE);
 
     while (true) {
-        recv_msg (mod_name, kernel); //获取模块名
+        set_allow(INIT_SERVICE);
 
-        sprintf (buffer, "Module Name: %s", mod_name);
-        linfo (buffer);
+        check_ipc();
+        assert(recv_msg(name) != -1);
+        check_ipc();
+        assert(recv_msg(&buffer) != -1);
 
-        void *mod_addr;
-        recv_msg (&mod_addr, kernel); //获取加载地址
+        fs_context context = load_fs(DISK_SEL_IDE0_MASTER, 0);
 
-        sprintf (buffer, "Module Load Address: %P", mod_addr);
-        linfo (buffer);
+        linfo ("%s:%p", name, buffer);
 
-        bool status = false;
-        int times = 5;
-        while (times --) {
-            status = loadfile(context, mod_name, mod_addr); //加载文件
-            if (status) break;
-        }
+        load_file(context, name, buffer);
 
-        send_msg (&status, kernel, 1, 20); //通知内核
+        terminate_fs (context);
+
+        assert(send_msg(&status, sizeof(bool), INIT_SERVICE));
     }
 
-    while (1);
+    while (true);
 }

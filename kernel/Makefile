@@ -1,3 +1,21 @@
+#
+# SPDX-License-Identifier: GPL-3.0-only
+# -------------------------------*-TayhuangOS-*-----------------------------------
+# 
+#    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+# 
+# --------------------------------------------------------------------------------
+# 
+# 作者: theflysong
+# 
+# Makefile
+# 
+# Makefile
+# 
+#
+
+
+
 OBJECTSDIR := $(OBJECTSDIR)/kernel/
 
 KERNEL_OUTPUT := $(BINDIR)/kernel.bin
@@ -11,37 +29,25 @@ OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
+		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
 CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+ 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
+		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-STD_C_SRC := std/ctype std/string std/math
-MEMORY_C_SRC := memory/paging memory/pmm memory/shared_memory memory/mm_malloc \
-		memory/mm memory/fifo_pool
-DISPLAY_C_SRC := display/printk display/video
-TOOL_C_SRC := tool/tostring tool/debug
-INTTERUP_C_SRC := intterup/init_int intterup/irq_handler intterup/exception \
-        intterup/clock/clock
-INIT_C_SRC := init/init_clock
-PROCESS_C_SRC := process/vmareas process/task_manager
-SYSCALL_C_SRC := syscall/syscall
-DEBUG_C_SRC := debug/logging
-KMOD_C_SRC := kmod/kmod_loader
-C_SRC := kernel kheap \
-		$(STD_C_SRC) \
-		$(MEMORY_C_SRC) \
-		$(DISPLAY_C_SRC) \
-		$(TOOL_C_SRC) \
-		$(INTTERUP_C_SRC) \
-		$(INIT_C_SRC) \
-		$(PROCESS_C_SRC) \
-		$(SYSCALL_C_SRC) \
-		$(DEBUG_C_SRC) \
-		$(KMOD_C_SRC)
+LIBS_C_SRC := ctype string tostring debug
+MEMORY_C_SRC := kheap pmm paging
+INTTERUP_C_SRC := clock/clock exception init_int irq_handler
+TASK_C_SRC := task_scheduler task_manager
+SYSCALL_C_SRC := syscall syscalls
+C_SRC := kernel printk logging kmod_loader \
+	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
+	$(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
+	$(foreach src, $(INTTERUP_C_SRC), intterup/$(src)) \
+	$(foreach src, $(TASK_C_SRC), task/$(src)) \
+	$(foreach src, $(SYSCALL_C_SRC), syscall/$(src))
 
 CPP_SRC :=
 
@@ -49,13 +55,13 @@ ASMFLAGS :=
 ASM_SRC := entry intterup/int_handlers syscall/dosyscall
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/libs/libfifo"
+C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/" -I"$(ROOTDIR)/libs/libfifo"
+CPP_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
 
-LD_FLAGS := -static -L"$(BUILDDIR)/bin/" 
-LIBRARIES := -lfifo
+LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
+LIBRARIES :=
 
 ifeq ($(MODE), debug)
 	LD_FLAGS += -g
@@ -65,24 +71,29 @@ else
 	CPP_DEFS += -D_DEBUG
 endif
 
+ifeq ($(VBE_MODE), ENABLE)
+	C_DEFS += -DVBE_ENABLE
+endif
+
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
 		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
 
 $(OBJECTSDIR)/%.o : %.cpp
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.c
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.S
-	mkdir -p -v $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(ASM) -o $@ $^
 
 .PHONY: build
 build: $(OBJECTS)
+	$(MKDIR) $(dir $(KERNEL_OUTPUT))
 	$(LD) $(LD_FLAGS) -T kernel.ld -o $(KERNEL_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
 	$(OBJCOPY) --only-keep-debug $(KERNEL_OUTPUT) $(KERNEL_SYMBOL_OUTPUT)
@@ -95,4 +106,4 @@ clean:
 
 .PHONY: image
 image:
-	sudo cp $(KERNEL_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(KERNEL_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

@@ -6,11 +6,11 @@
  * 
  * --------------------------------------------------------------------------------
  * 
- * 作者: Flysong
+ * 作者: theflysong
  * 
  * syscall.h
  * 
- * INT型系统调用
+ * 系统调用
  * 
  */
 
@@ -18,11 +18,7 @@
 
 #pragma once
 
-int get_ticks(void);
-int sleep(void);
-int exit(void);
-int wakeup(int pid);
-int fatal(void);
-int eggs(void);
-int signal(int pid, int signal);
-void wait_irq(int irq);
+#include <tayhuang/defs.h>
+
+PUBLIC void moo(void);
+PUBLIC void reg_irq(int irq);

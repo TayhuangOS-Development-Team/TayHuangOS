@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * irq_handler.c
  *
@@ -16,55 +16,44 @@
 
 
 
-#include "irq_handler.h"
-#include "init_int.h"
-#include <syscall/syscall.h>
+#include <intterup/irq_handler.h>
+#include <intterup/init_int.h>
 
-#include <memory/paging.h>
 #include <tayhuang/control_registers.h>
-
-PUBLIC short IRQ_FLAGS[16];
+#include <global.h>
 
 PRIVATE irq_handler IRQ_HANDLERS[16] = {};
 
+//注册IRQ处理器
 PUBLIC void register_irq_handler(int irq, irq_handler handler) {
-    IRQ_FLAGS[irq] = 0;
     IRQ_HANDLERS[irq] = handler;
 }
 
-PRIVATE bool entered_handler = false;
+PUBLIC bool entered_handler = false;
 
+//通用IRQ处理器
 PUBLIC void general_irq_handler(int irq, struct intterup_args *args) {
     __set_cr3(kernel_pml4);
+
     bool flag = entered_handler;
-    if (! flag)
+    if (! flag) {
         entered_handler = true;
+    }
 
-    disable_irq(irq); //禁止同类中断接收
+    //禁用同类中断接收
+    disable_irq(irq); 
 
-    send_eoi(irq); //发送EOI
+    //发送EOI
+    send_eoi(irq);
 
-    if (IRQ_HANDLERS[irq] != NULL)
-        IRQ_FLAGS[irq] = IRQ_HANDLERS[irq](irq, args, flag);
+    if (IRQ_HANDLERS[irq] != NULL) {
+        IRQ_HANDLERS[irq](irq, args, flag);
+    }
 
-    enable_irq(irq); //同意同类中断接收
-
-    if (! flag)
-        entered_handler = false;
-}
-
-void after_syscall(struct intterup_args *regs);
-PUBLIC void syscall_int_handler(struct intterup_args *regs) {
-    __set_cr3(kernel_pml4);
-    bool flag = entered_handler;
-    if (! flag)
-        entered_handler = true;
-
-    regs->rax = syscall(regs->rax, regs->rbx, regs->rcx, regs->rdx, (void*)regs->rsi, (void*)regs->rdi,
-     regs->r8, regs->r9, regs->r10, regs->r11, regs->r12, regs->r13, regs->r14, regs->r15);
+    //启用同类中断接收
+    enable_irq(irq); 
 
     if (! flag) {
-        after_syscall(regs);
         entered_handler = false;
     }
 }

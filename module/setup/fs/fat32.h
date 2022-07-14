@@ -18,8 +18,12 @@
 
 #pragma once
 
-#include <tayhuang/types.h>
+#include <tayhuang/defs.h>
+#include <fs/common.h>
+#include <tayhuang/partition.h>
 
-void get_context(int selector, void **__context);
-void print_fs_info(void *context);
-bool loadfile(void *context, const char *name, void *dst);
+#define FAT32_CONTEXT_MAGIC (0x93186A8E)
+PUBLIC fs_context load_fat32_fs(int disk_selector, partition_info *info);
+PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst);
+PUBLIC void terminate_fat32_fs(fs_context context);
+PUBLIC void display_fat32_fs_info(fs_context context);

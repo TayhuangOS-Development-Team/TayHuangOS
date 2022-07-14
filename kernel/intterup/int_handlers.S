@@ -6,7 +6,7 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: Flysong
+ * 作者: theflysong
  *
  * int_handlers.S
  *
@@ -92,26 +92,17 @@
 .endm
 
 .macro nonerrcode_exception vector
-    subq $8, %rsp
-    movl $0xFFFFFFFF, (%rsp)
+    pushq $0xFFFFFFFFFFFFFFFF
     int_x64_pushad
     movq $\vector, %rdi
-    movq 160(%rsp), %rsi
-    movq 168(%rsp), %rcx
-    movq 176(%rsp), %rdx
-    movzx 184(%rsp), %r8
-    movq %rsp, %r9
+    movq %rsp, %rsi
     jmp _exception
 .endm
 
 .macro errcode_exception vector
     int_x64_pushad
     movq $\vector, %rdi
-    movq 160(%rsp), %rsi
-    movq 168(%rsp), %rcx
-    movq 176(%rsp), %rdx
-    movzx 184(%rsp), %r8
-    movq %rsp, %r9
+    movq %rsp, %rsi
     jmp _exception
 .endm
 
