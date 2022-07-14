@@ -30,6 +30,7 @@
 #include <memory/kheap.h>
 #include <memory/pmm.h>
 #include <memory/paging.h>
+#include <memory/shared_memory.h>
 
 #include <intterup/init_int.h>
 #include <intterup/irq_handler.h>
@@ -168,7 +169,7 @@ PUBLIC void init(void) {
     print_mod_info(&setup_mod_info);
     
     initialize_kmod_task(
-        create_task(DS_KERNEL, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
+        create_task(DS_SERVICE, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
                     setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end, setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
                     SETUP_SERVICE, 1, 0, current_task));
 
@@ -186,10 +187,12 @@ PUBLIC void init(void) {
     //---------------------VIDEO-------------------------
     program_info video_mod_info = load_mod_by_setup("video.mod");
     initialize_kmod_task(
-        create_task(DS_KERNEL, video_mod_info.stack_top, video_mod_info.stack_bottom, video_mod_info.entry, CS_KERNEL, RFLAGS_KERNEL,
+        create_task(DS_SERVICE, video_mod_info.stack_top, video_mod_info.stack_bottom, video_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
                     video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end, video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
                     VIDEO_DRIVER_SERVICE, 1, 0, current_task));
-
+    
+    //TODO: 更改loader以获取framebuffer的bpp
+    set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
     set_allow(VIDEO_DRIVER_SERVICE);
     
     check_ipc();
@@ -279,7 +282,7 @@ PUBLIC void entry(struct boot_args *_args) {
 
     linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
 
-    current_task = __create_task(DS_KERNEL, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_KERNEL, RFLAGS_KERNEL,
+    current_task = __create_task(DS_SERVICE, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_SERVICE, RFLAGS_SERVICE,
                  kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
                  INIT_SERVICE, 1, 0, NULL);
 

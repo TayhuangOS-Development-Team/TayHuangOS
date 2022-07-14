@@ -96,7 +96,7 @@ PUBLIC bool __send_msg(void *src, qword size, int dst) {
 
     if ((target == NULL) || 
         ((target->ipc_info.used_size + size + sizeof(msgpack_struct)) > target->ipc_info.mail_size) ||
-        ((target->ipc_info.allow_pid != current_task->pid) && (target->ipc_info.allow_pid >= 0)))
+        ((target->ipc_info.allow_pid != current_task->pid) && (target->ipc_info.allow_pid != -1)))
     {
         return false;
     }
