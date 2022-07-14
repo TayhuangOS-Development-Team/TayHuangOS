@@ -85,7 +85,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 如果成功启动就可以了
 
-## 我不会配置镜像分区与启动分区的这么做
+## "我不会配置镜像分区与启动分区的"这么做
 
 在出现`命令(输入 m 获取帮助)：`后依次输入
 
