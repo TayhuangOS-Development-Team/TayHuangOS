@@ -23,23 +23,34 @@
 #include <syscall/syscall.h>
 #include <syscall/ipc.h>
 
-#include <tayhuang/services.h>
-#include <tayhuang/video_info.h>
+#include <memory/malloc.h>
 
-PRIVATE video_info_struct VIDEO_INFO;
+#include <tayhuang/services.h>
+
+#include <global.h>
+
+PUBLIC video_info_struct video_info;
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Video");
     linfo ("233");
 
     check_ipc();
-    recv_msg(&VIDEO_INFO);
+    recv_msg(&video_info);
 
-    *(word*)(VIDEO_INFO.framebuffer + 0) = 0x0C56;
-    *(word*)(VIDEO_INFO.framebuffer + 2) = 0x0C49;
-    *(word*)(VIDEO_INFO.framebuffer + 4) = 0x0C44;
-    *(word*)(VIDEO_INFO.framebuffer + 6) = 0x0C45;
-    *(word*)(VIDEO_INFO.framebuffer + 8) = 0x0C4F;
+    void *buffer = malloc(512);
+
+    while (true) {
+        set_allow(ANY_TASK);
+
+        check_ipc();
+        recv_msg(buffer);
+        
+        void *buf = buffer;
+        int cmdid = ARG_READ(buf, int);
+
+        text_execute(cmdid, buf);
+    }
 
     while (true);
 }

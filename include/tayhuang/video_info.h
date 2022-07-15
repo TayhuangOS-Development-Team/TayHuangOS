@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <tayhuang/defs.h>
+
 typedef struct {
     void *framebuffer;
     int width;

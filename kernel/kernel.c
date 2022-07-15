@@ -209,6 +209,26 @@ PUBLIC void init(void) {
     video_info.width = args.screen_width;
     video_info.is_graphic_mode = args.is_graphic_mode;
     send_msg(&video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
+
+
+#define TEXT_WRITE_CHAR (0)
+#define TEXT_WRITE_STRING (1)
+
+#define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
+#define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
+
+    void *buffer = kmalloc(256);
+
+    void *buf = buffer;
+    ARG_WRITE(buf, int, TEXT_WRITE_CHAR);
+    ARG_WRITE(buf, int, 0);
+    ARG_WRITE(buf, int, 0);
+    ARG_WRITE(buf, byte, 0x0C);
+    ARG_WRITE(buf, byte, 'A');
+
+    send_msg(buffer, 14, VIDEO_DRIVER_SERVICE);
+    kfree(buffer);
+
     check_ipc();
 
     linfo ("Init", "Init End");
