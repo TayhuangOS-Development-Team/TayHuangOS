@@ -22,6 +22,8 @@
 
 #define TEXT_WRITE_CHAR (0)
 #define TEXT_WRITE_STRING (1)
+#define CREATE_FRAMEBUFFER (2)
+#define UPDATE_FRAMEBUFFER (3)
 
 #define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
 #define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
