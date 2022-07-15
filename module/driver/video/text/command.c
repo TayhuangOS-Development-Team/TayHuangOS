@@ -34,9 +34,24 @@ void text_execute(int cmdid, void *args) {
         byte ch = ARG_READ(args, byte);
 
         color &= 0xFF;
-        linfo ("%d %d %d %c", column, line, color, ch);
+        ch &= 0xFF;
 
         write_char(column, line, color, ch);
+        break;
+    }
+    case TEXT_WRITE_STRING: {
+        int column = ARG_READ(args, int);
+        int line = ARG_READ(args, int);
+        byte color = ARG_READ(args, byte);
+        int num = ARG_READ(args, int);
+
+        color &= 0xFF;
+
+        for (int i = 0 ; i < num ; i ++) {
+            byte ch = ARG_READ(args, byte);
+            ch &= 0xFF;
+            write_char(column + i, line, color, ch);
+        }
         break;
     }
     default: {

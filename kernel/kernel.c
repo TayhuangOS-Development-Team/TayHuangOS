@@ -220,13 +220,26 @@ PUBLIC void init(void) {
     void *buffer = kmalloc(256);
 
     void *buf = buffer;
-    ARG_WRITE(buf, int, TEXT_WRITE_CHAR);
+    ARG_WRITE(buf, int, TEXT_WRITE_STRING);
     ARG_WRITE(buf, int, 0);
     ARG_WRITE(buf, int, 0);
     ARG_WRITE(buf, byte, 0x0C);
-    ARG_WRITE(buf, byte, 'A');
+    ARG_WRITE(buf, int, 13);
+    ARG_WRITE(buf, byte, 'H');
+    ARG_WRITE(buf, byte, 'E');
+    ARG_WRITE(buf, byte, 'L');
+    ARG_WRITE(buf, byte, 'L');
+    ARG_WRITE(buf, byte, 'O');
+    ARG_WRITE(buf, byte, ',');
+    ARG_WRITE(buf, byte, ' ');
+    ARG_WRITE(buf, byte, 'W');
+    ARG_WRITE(buf, byte, 'O');
+    ARG_WRITE(buf, byte, 'R');
+    ARG_WRITE(buf, byte, 'L');
+    ARG_WRITE(buf, byte, 'D');
+    ARG_WRITE(buf, byte, '!');
 
-    send_msg(buffer, 14, VIDEO_DRIVER_SERVICE);
+    send_msg(buffer, buf - buffer, VIDEO_DRIVER_SERVICE);
     kfree(buffer);
 
     check_ipc();

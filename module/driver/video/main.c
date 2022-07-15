@@ -33,8 +33,6 @@ PUBLIC video_info_struct video_info;
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Video");
-    linfo ("233");
-
     check_ipc();
     recv_msg(&video_info);
 
