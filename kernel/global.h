@@ -52,4 +52,7 @@ EXTERN PUBLIC bool entered_handler;
 #define IST0_STACKTOP       (0x1400000)
 #define IST0_STACKBOTTOM    (0x13C0000)
 
+#define DEFAULT_SHM_START   (0x100000000)
+#define DEFAULT_SHM_END     (0x200000000)
+
 PUBLIC void mapping_kernel(void *pgd);

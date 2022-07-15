@@ -113,7 +113,6 @@ PRIVATE void __load_file(fs_context context, dword clus, void *dst) {
 PUBLIC fs_context load_fat32_fs(int disk_selector, partition_info *info) {
     FAT32_CONTEXT *context = malloc(sizeof(FAT32_CONTEXT));
 
-    //FIXME: BUGS HERE
     void *superblock = malloc(512);
     memcpy(&context->partition, info, sizeof(partition_info));
     read_sector(context->partition.start_lba, 1, disk_selector, superblock);

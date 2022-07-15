@@ -171,7 +171,9 @@ PUBLIC void init(void) {
     
     initialize_kmod_task(
         create_task(DS_SERVICE, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end, setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
+                    setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end,
+                     setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
                     SETUP_SERVICE, 1, 0, current_task));
 
     set_allow(SETUP_SERVICE);
@@ -189,7 +191,9 @@ PUBLIC void init(void) {
     program_info video_mod_info = load_mod_by_setup("video.mod");
     initialize_kmod_task(
         create_task(DS_SERVICE, video_mod_info.stack_top, video_mod_info.stack_bottom, video_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end, video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
+                    video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end,
+                     video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
                     VIDEO_DRIVER_SERVICE, 1, 0, current_task));
     
     //TODO: 更改loader以获取framebuffer的bpp
@@ -324,7 +328,7 @@ PUBLIC void entry(struct boot_args *_args) {
     linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
 
     current_task = __create_task(DS_SERVICE, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_SERVICE, RFLAGS_SERVICE,
-                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0,
+                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                  INIT_SERVICE, 1, 0, NULL);
 
     add_task(current_task);
