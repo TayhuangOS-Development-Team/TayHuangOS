@@ -39,8 +39,7 @@ PUBLIC void kmod_main(void) {
     char name[256];
     void *buffer;
 
-    bool status = true;
-    send_msg(status, sizeof(bool), INIT_SERVICE);
+    fs_context context = NULL;
 
     while (true) {
         set_allow(INIT_SERVICE);
@@ -50,16 +49,18 @@ PUBLIC void kmod_main(void) {
         check_ipc();
         assert(recv_msg(&buffer) != -1);
 
-        fs_context context = load_fs(DISK_SEL_IDE0_MASTER, 0);
+        if (context == NULL) {
+            context =  load_fs(DISK_SEL_IDE0_MASTER, 0);
+        }
 
         linfo ("%s:%p", name, buffer);
 
-        load_file(context, name, buffer);
-
-        terminate_fs (context);
+        bool status = load_file(context, name, buffer);
 
         assert(send_msg(&status, sizeof(bool), INIT_SERVICE));
     }
+
+    terminate_fs (context);
 
     while (true);
 }

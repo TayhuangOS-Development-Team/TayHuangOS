@@ -23,6 +23,7 @@
 #include <tayhuang/io.h>
 #include <tayhuang/services.h>
 #include <tayhuang/control_registers.h>
+#include <tayhuang/video_info.h>
 
 #include <string.h>
 #include <assert.h>
@@ -197,11 +198,51 @@ PUBLIC void init(void) {
     
     check_ipc();
     recv_msg(&status);
-
     if (! status) {
         lerror ("Init", "Failed to initialize video driver!");
         while (1);
     }
+
+    video_info_struct video_info;
+    video_info.framebuffer = args.framebuffer;
+    video_info.height = args.screen_height;
+    video_info.width = args.screen_width;
+    video_info.is_graphic_mode = args.is_graphic_mode;
+    send_msg(&video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
+
+
+#define TEXT_WRITE_CHAR (0)
+#define TEXT_WRITE_STRING (1)
+
+#define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
+#define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
+
+    void *buffer = kmalloc(256);
+
+    void *buf = buffer;
+    ARG_WRITE(buf, int, TEXT_WRITE_STRING);
+    ARG_WRITE(buf, int, 0);
+    ARG_WRITE(buf, int, 0);
+    ARG_WRITE(buf, byte, 0x0C);
+    ARG_WRITE(buf, int, 13);
+    ARG_WRITE(buf, byte, 'H');
+    ARG_WRITE(buf, byte, 'E');
+    ARG_WRITE(buf, byte, 'L');
+    ARG_WRITE(buf, byte, 'L');
+    ARG_WRITE(buf, byte, 'O');
+    ARG_WRITE(buf, byte, ',');
+    ARG_WRITE(buf, byte, ' ');
+    ARG_WRITE(buf, byte, 'W');
+    ARG_WRITE(buf, byte, 'O');
+    ARG_WRITE(buf, byte, 'R');
+    ARG_WRITE(buf, byte, 'L');
+    ARG_WRITE(buf, byte, 'D');
+    ARG_WRITE(buf, byte, '!');
+
+    send_msg(buffer, buf - buffer, VIDEO_DRIVER_SERVICE);
+    kfree(buffer);
+
+    check_ipc();
 
     linfo ("Init", "Init End");
     

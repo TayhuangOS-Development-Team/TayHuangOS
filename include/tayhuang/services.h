@@ -38,3 +38,10 @@
 #define DISK_DRIVER_SERVICE API_PID(6)
 //vfs.mod 文件系统虚拟设备驱动
 #define VFS_DRIVER_SERVICE API_PID(7)
+
+//空进程
+#define NULL_TASK (0)
+//任意进程
+#define ANY_TASK (-1)
+//假进程
+#define DUMMY_TASK (-2)
