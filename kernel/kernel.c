@@ -23,6 +23,7 @@
 #include <tayhuang/io.h>
 #include <tayhuang/services.h>
 #include <tayhuang/control_registers.h>
+#include <tayhuang/video_info.h>
 
 #include <string.h>
 #include <assert.h>
@@ -197,11 +198,18 @@ PUBLIC void init(void) {
     
     check_ipc();
     recv_msg(&status);
-
     if (! status) {
         lerror ("Init", "Failed to initialize video driver!");
         while (1);
     }
+
+    video_info_struct video_info;
+    video_info.framebuffer = args.framebuffer;
+    video_info.height = args.screen_height;
+    video_info.width = args.screen_width;
+    video_info.is_graphic_mode = args.is_graphic_mode;
+    send_msg(&video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
+    check_ipc();
 
     linfo ("Init", "Init End");
     

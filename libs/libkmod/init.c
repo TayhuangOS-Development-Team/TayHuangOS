@@ -18,6 +18,7 @@
 
 #include <tayhuang/defs.h>
 #include <tayhuang/kmod_prototypes.h>
+#include <tayhuang/services.h>
 
 #include <debug/logging.h>
 
@@ -43,6 +44,13 @@ PUBLIC void __kmod_init__(void) {
 
     void *mail_buffer = malloc(MAIL_SIZE);
     set_mailbuffer(mail_buffer, MAIL_SIZE);
+
+    set_allow(ANY_TASK);
+
+    bool status = true;
+    send_msg(status, sizeof(bool), INIT_SERVICE);
+    
+    check_ipc();
 
     kmod_main();
 

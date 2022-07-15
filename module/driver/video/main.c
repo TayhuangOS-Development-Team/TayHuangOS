@@ -24,21 +24,22 @@
 #include <syscall/ipc.h>
 
 #include <tayhuang/services.h>
+#include <tayhuang/video_info.h>
+
+PRIVATE video_info_struct VIDEO_INFO;
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Video");
     linfo ("233");
 
-    bool status = true;
-    send_msg(status, sizeof(bool), INIT_SERVICE);
-
-    *(word*)(0xB8000) = 0x0C56;
-    *(word*)(0xB8002) = 0x0C49;
-    *(word*)(0xB8004) = 0x0C44;
-    *(word*)(0xB8006) = 0x0C45;
-    *(word*)(0xB8008) = 0x0C4F;
-    
     check_ipc();
+    recv_msg(&VIDEO_INFO);
+
+    *(word*)(VIDEO_INFO.framebuffer + 0) = 0x0C56;
+    *(word*)(VIDEO_INFO.framebuffer + 2) = 0x0C49;
+    *(word*)(VIDEO_INFO.framebuffer + 4) = 0x0C44;
+    *(word*)(VIDEO_INFO.framebuffer + 6) = 0x0C45;
+    *(word*)(VIDEO_INFO.framebuffer + 8) = 0x0C4F;
 
     while (true);
 }
