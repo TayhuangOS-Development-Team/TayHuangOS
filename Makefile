@@ -83,7 +83,8 @@ ifeq ($(ARCHITECTURE), x86_64)
 endif
 
 QEMU_ARGS ?=
-QEMU_ARGS += -hda tayhuangOS.img \
+QEMU_ARGS += --enable-kvm \
+             -hda tayhuangOS.img \
              -m 256m \
 			 -serial stdio \
 			 -rtc base=localtime \
