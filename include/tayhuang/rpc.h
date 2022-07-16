@@ -36,4 +36,4 @@ typedef void *rpc_proccess;
 
 PUBLIC void rpc_register_process_controller(rpc_proccess_controller);
 PUBLIC void rpc_register(rpc_func func, rpc_proccess process, int return_size, int args_size); //当args_size = -1时, 不对参数大小进行检验
-PUBLIC rpc_args_struct rpc_call(rpc_func func, rpc_args_struct args);
+PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args);
