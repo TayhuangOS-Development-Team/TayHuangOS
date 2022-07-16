@@ -66,6 +66,7 @@ PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
     qword pages = ((memsize + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
     linfo ("PMM", "memsize = %#016X, %#016X pages in total", memsize, pages);
     qword reserved_pages = ((((qword)reserved_limit) + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
+    linfo ("PMM", "%#016X pages added", pages - reserved_pages);
     pages -= reserved_pages;
 
     void *start = reserved_limit;
@@ -83,8 +84,6 @@ PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
         add_free_area(MAX_ORDER, start);
         start += MEMUNIT_SZ << MAX_ORDER;
     }
-
-    linfo ("PMM", "%#016X pages added", pages - reserved_pages);
 }
 
 //分配空闲内存 最低2^order个内存页
