@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: GPL-3.0-only
+ * SPDX-License-Identifier: LGPL-2.1-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  * 
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -8,16 +8,12 @@
  * 
  * 作者: theflysong
  * 
- * mm.h
+ * rpc.c
  * 
- * MM进程
+ * 远程过程调用
  * 
  */
 
 
 
-#pragma once
-
-#include <tayhuang/defs.h>
-
-PUBLIC void mm(void);
+#include <syscall/rpc.h>

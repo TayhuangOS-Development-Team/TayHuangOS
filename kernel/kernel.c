@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: GPL-3.0-only
+ * SPDX-License-Identifier: LGPL-2.1-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -136,6 +136,7 @@ program_info load_mod_by_setup(const char *name) {
     void *mod_addr = kmalloc(MOD_SIZE);
     assert(send_msg("video.mod", 11, SETUP_SERVICE));
     assert(send_msg(&mod_addr, sizeof(mod_addr), SETUP_SERVICE));
+    set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
 
     check_ipc();
     bool status;
@@ -214,7 +215,6 @@ PUBLIC void init(void) {
     video_info.is_graphic_mode = args.is_graphic_mode;
     send_msg(&video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
 
-
 #define TEXT_WRITE_CHAR (0)
 #define TEXT_WRITE_STRING (1)
 
@@ -280,7 +280,7 @@ PUBLIC void initialize(void) {
     //初始化内存
     init_kheap(KHEAP_PRE_BASE, KHEAP_PRE_SIZE);
 
-    qword memsz = (((qword)args.memory_size_high) << 32) + args.memory_size;
+    qword memsz = args.memory_size;
 
     init_pmm(memsz, 0x2000000);
 

@@ -8,25 +8,13 @@
  * 
  * 作者: theflysong
  * 
- * info_parser.h
+ * rpc.c
  * 
- * 解析multiboot2参数
+ * 远程过程调用
  * 
  */
 
 
 
-#pragma once
+#include <tayhuang/rpc.h>
 
-#include <tayhuang/defs.h>
-#include <libs/multiboot2.h>
-
-typedef struct {
-    qword memsz;
-    bool is_graphic;
-    int screen_width;
-    int screen_height;
-    void *framebuffer;
-} parse_result_struct;
-
-PUBLIC void parse_args(struct multiboot_tag *tag, parse_result_struct *result);

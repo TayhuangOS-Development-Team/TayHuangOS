@@ -1,5 +1,5 @@
 /* 
- * SPDX-License-Identifier: GPL-3.0-only
+ * SPDX-License-Identifier: LGPL-2.1-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -22,6 +22,6 @@
 
 #define PAGE_ADDRESS (0x3000000)
 PUBLIC void setup_longmode(void *pml4);
-PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit);
+PUBLIC void *setup_paging(qword memsz, void** limit);
 
-PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool is_graphic, int screen_width, int screen_height, void *framebuffer);
+PUBLIC void goto_longmode(word selector64, qword memsz, bool is_graphic, int screen_width, int screen_height, void *framebuffer);

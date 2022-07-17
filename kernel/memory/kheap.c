@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: GPL-3.0-only
+ * SPDX-License-Identifier: LGPL-2.1-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
  *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -95,7 +95,7 @@ PUBLIC void *kmalloc(int size) {
         cur_seg = cur_seg->next;
     }
 
-    if (cur_seg->size < fixed_size || cur_seg->used) {
+    if ((cur_seg->size < fixed_size) || (cur_seg->used)) {
         //ask pmm for more memories
         linfo ("KHeap", "Ask pmm for more memories!");
 

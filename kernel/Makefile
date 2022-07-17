@@ -1,5 +1,5 @@
 #
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: LGPL-2.1-only
 # -------------------------------*-TayhuangOS-*-----------------------------------
 # 
 #    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -20,12 +20,6 @@ OBJECTSDIR := $(OBJECTSDIR)/kernel/
 
 KERNEL_OUTPUT := $(BINDIR)/kernel.bin
 KERNEL_SYMBOL_OUTPUT := $(BINDIR)/kernel.sym
-ASM := as
-RM := rm
-GCC := gcc
-GPP := g++
-LD := ld
-OBJCOPY := objcopy
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -41,7 +35,7 @@ LIBS_C_SRC := ctype string tostring debug
 MEMORY_C_SRC := kheap pmm paging
 INTTERUP_C_SRC := clock/clock exception init_int irq_handler
 TASK_C_SRC := task_scheduler task_manager
-SYSCALL_C_SRC := syscall syscalls
+SYSCALL_C_SRC := syscall syscalls rpc sys_task
 C_SRC := kernel printk logging kmod_loader \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
 	$(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
@@ -89,7 +83,7 @@ $(OBJECTSDIR)/%.o : %.c
 
 $(OBJECTSDIR)/%.o : %.S
 	$(MKDIR) $(dir $@)
-	$(ASM) -o $@ $^
+	$(GAS) -o $@ $^
 
 .PHONY: build
 build: $(OBJECTS)

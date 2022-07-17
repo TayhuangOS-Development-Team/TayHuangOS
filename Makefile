@@ -1,5 +1,5 @@
 #
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: LGPL-2.1-only
 # -------------------------------*-TayhuangOS-*-----------------------------------
 # 
 #    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
@@ -37,8 +37,8 @@ COMPILER_PREFIX := $(ARCHITECTURE)-$(PROGRAM_FORMAT)
 CODE_VERSION  := alpha
 MAJOR_VERSION := 2
 MINOR_VERSION := 22
-PATCH_VERSION := 1
-BUILD_VERSION := 333
+PATCH_VERSION := 2
+BUILD_VERSION := 405
 
 VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
 
@@ -83,8 +83,9 @@ ifeq ($(ARCHITECTURE), x86_64)
 endif
 
 QEMU_ARGS ?=
-QEMU_ARGS += -hda tayhuangOS.img \
-             -m 256m \
+QEMU_ARGS += -m size=256m,maxmem=256m \
+			 --enable-kvm \
+             -hda tayhuangOS.img \
 			 -serial stdio \
 			 -rtc base=localtime \
 			 -name "TayhuangOS"

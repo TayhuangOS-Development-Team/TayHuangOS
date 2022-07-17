@@ -8,9 +8,9 @@
  * 
  * 作者: theflysong
  * 
- * command.h
+ * rpc.h
  * 
- * 通用部分
+ * 远程过程调用
  * 
  */
 
@@ -18,16 +18,19 @@
 
 #pragma once
 
-#include <tayhuang/video_info.h>
+#include <tayhuang/defs.h>
 
-#define TEXT_WRITE_CHAR (0)
-#define TEXT_WRITE_STRING (1)
-#define CREATE_FRAMEBUFFER (2)
-#define UPDATE_FRAMEBUFFER (3)
+typedef int rpc_func;
+
+typedef struct {
+    void *data;
+    int size;
+} rpc_args_struct;
+
+typedef rpc_args_struct(*rpc_proccess_wrapper)(rpc_func, rpc_args_struct);
 
 #define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
 #define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
 
-void text_execute(int cmdid, void *args);
-
-EXTERN PUBLIC video_info_struct video_info;
+PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, int return_size, int args_size); //当args_size = -1时, 不对参数大小进行检验
+PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args);
