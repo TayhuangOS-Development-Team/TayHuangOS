@@ -95,7 +95,7 @@ PUBLIC void *kmalloc(int size) {
         cur_seg = cur_seg->next;
     }
 
-    if (cur_seg->size < fixed_size || cur_seg->used) {
+    if ((cur_seg->size < fixed_size) || (cur_seg->used)) {
         //ask pmm for more memories
         linfo ("KHeap", "Ask pmm for more memories!");
 

@@ -8,16 +8,16 @@
  * 
  * 作者: theflysong
  * 
- * mm.h
+ * sys_task.c
  * 
- * MM进程
+ * 系统调用进程
  * 
  */
 
 
 
-#pragma once
+#include <syscall/sys_task.h>
 
-#include <tayhuang/defs.h>
-
-PUBLIC void mm(void);
+PUBLIC void sys_task(void) {
+    while (true);
+}

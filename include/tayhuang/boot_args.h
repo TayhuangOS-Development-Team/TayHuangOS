@@ -24,8 +24,7 @@ struct boot_args {
     int screen_width; //屏幕宽
     int screen_height; //屏幕高
     unsigned long long framebuffer; //屏幕显存
-    unsigned int memory_size; //内存大小
-    unsigned int memory_size_high; //内存大小(大)
+    unsigned long long memory_size; //内存大小
     unsigned long long kernel_start;
     unsigned long long kernel_limit;
     unsigned long long page_start;

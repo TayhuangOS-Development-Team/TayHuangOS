@@ -8,16 +8,12 @@
  * 
  * 作者: theflysong
  * 
- * mm.c
+ * rpc.c
  * 
- * MM进程
+ * 远程过程调用
  * 
  */
 
 
 
-#include <memory/mm.h>
-
-PUBLIC void mm(void) {
-    while (true);
-}
+#include <syscall/rpc.h>

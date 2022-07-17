@@ -106,7 +106,10 @@ PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
     show_icon(framebuffer, width, height);
 #endif
 
-    goto_longmode(7 << 3, result.memsz, result.memsz_high, result.is_graphic, width, height, framebuffer);
+    sprintf (buffer, "memory size=%#08X%08X", (dword)(result.memsz >> 32), (dword)result.memsz);
+    linfo ("Loader", buffer);
+
+    goto_longmode(7 << 3, result.memsz, result.is_graphic, width, height, framebuffer);
 }
 
 //loader入口点

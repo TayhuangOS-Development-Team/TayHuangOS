@@ -49,17 +49,13 @@ PUBLIC void setup_longmode(void *pml4) {
     set_cr0(cr0);
 }
 
-PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
+PUBLIC void *setup_paging(qword memsz, void** limit) {
     const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
     const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
     const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
     const int pml4e_pmu = (MEMUNIT_SZ / sizeof(PML4E)); //PML4E Per MEMUNIT
 
-    const int page_num = memsz / MEMUNIT_SZ
-                        + ((memsz % MEMUNIT_SZ) ? 1 : 0) //有余数则 + 1
-                        + ((memsz_high) << (32 - sizeof(dword) + leading_zeros(MEMUNIT_SZ))); //memsz_high = mem_size >> 32
-                                                                                              //所以(memsz_high << 32) / MEMUNIT_SZ = mem_size << (32 - log2(MEMUNIT_SZ))
-                        //最大支持8TB
+    const int page_num = (memsz + MEMUNIT_SZ - 1) / MEMUNIT_SZ; //有余数则 + 1
     const int pte_num = page_num;
     const int pt_num = (pte_num + pte_pmu - 1) / pte_pmu; //向上取整
     const int pde_num = pt_num;
@@ -173,7 +169,7 @@ PUBLIC void *setup_paging(dword memsz, dword memsz_high, void** limit) {
 
 PRIVATE void init_boot_args(struct boot_args *args, void *setup_mod, void *page_start, void *page_limit,
                             void *kernel_start, void *kernel_limit, bool is_graphic, int screen_width,
-                            int screen_height, void *framebuffer, dword memsz, dword memsz_high) {
+                            int screen_height, void *framebuffer, qword memsz) {
     memset(args, 0, sizeof(struct boot_args));
 
     args->magic = BOOT_ARGS_MAGIC; //魔数
@@ -184,8 +180,7 @@ PRIVATE void init_boot_args(struct boot_args *args, void *setup_mod, void *page_
     args->framebuffer = framebuffer; //视频
     args->framebuffer &= 0xFFFFFFFF;
 
-    args->memory_size = memsz;
-    args->memory_size_high = memsz_high; //内存
+    args->memory_size = memsz & 0xFFFFFFFF;
 
     args->kernel_start = kernel_start;
     args->kernel_limit = kernel_limit;
@@ -195,7 +190,7 @@ PRIVATE void init_boot_args(struct boot_args *args, void *setup_mod, void *page_
     args->setup_mod_addr = setup_mod;
 }
 
-PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool is_graphic, int screen_width, int screen_height, void *framebuffer) {
+PUBLIC void goto_longmode(word selector64, qword memsz, bool is_graphic, int screen_width, int screen_height, void *framebuffer) {
     load_result_struct result;
     load_kernel(&result); //加载内核
 
@@ -209,7 +204,7 @@ PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool i
     linfo ("Loader", buffer);
 
     void *page_limit;
-    void *page_start = setup_paging(memsz, memsz_high, &page_limit); //设置分页
+    void *page_start = setup_paging(memsz, &page_limit); //设置分页
 
     if (page_start == NULL) {
         lerror ("Loader", "Error!Could setup paging!");
@@ -218,7 +213,7 @@ PUBLIC void goto_longmode(word selector64, dword memsz, dword memsz_high, bool i
 
     static struct boot_args _args;
     init_boot_args(&_args, result.setup_mod, page_start, page_limit, result.kernel_start, result.kernel_limit,
-                   is_graphic, screen_width, screen_height, framebuffer, memsz, memsz_high); //初始化引导参数
+                   is_graphic, screen_width, screen_height, framebuffer, memsz); //初始化引导参数
 
     for (int i = 0 ; i < 16 ; i ++)
         disable_irq(i); //禁用所有IRQ
