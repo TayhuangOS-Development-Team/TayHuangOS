@@ -20,7 +20,19 @@
 
 #include <tayhuang/defs.h>
 
-typedef struct __msgpack_struct {
-    qword length : 44;
+typedef struct {
+    qword length : 38;
+    byte message_no : 6; 
     dword source : 20;
 } msgpack_struct;
+
+#define MSG_NORMAL_IPC (0x00)
+#define MSG_RPC_CALL   (0x01)
+#define MSG_RPC_RESULT (0x02)
+#define MSG_IRQ_WAKE   (0x03)
+
+typedef struct {
+    qword reserved : 38;
+    byte message_no : 6; 
+    dword source : 20;
+} recvmsg_result_struct;

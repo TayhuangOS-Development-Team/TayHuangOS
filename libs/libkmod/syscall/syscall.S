@@ -26,10 +26,11 @@ moo: /*void moo(void)*/
 
     .global send_msg
     .type send_msg, @function
-send_msg: /*bool send_msg(void *msg, qword size, int dst)*/
+send_msg: /*bool send_msg(int msgno, void *msg, qword size, int dst)*/
     movq $0x01, %rax
-    movq %rsi, %rcx
-    movq %rdi, %rsi
+    xchgq %rdx, %rcx
+    /*movq %rsi, %rsi*/
+    movq %rdi, %r8
 
     int $0x40
     ret
@@ -53,8 +54,9 @@ set_allow: /*void set_allow(int pid)*/
 
     .global recv_msg
     .type recv_msg, @function
-recv_msg: /*int recv_msg(void *msg)*/
+recv_msg: /*recvmsg_result_struct recv_msg(void *msg)*/
     movq $0x04, %rax
+    /*movq %rdi, %rdi*/
 
     int $0x40
     ret
@@ -64,6 +66,7 @@ recv_msg: /*int recv_msg(void *msg)*/
 set_mailbuffer: /*void set_mailbuffer(void *buffer, int size)*/
     movq $0x07, %rax
     movq %rsi, %rcx
+    /*movq %rdi, %rdi*/
 
     int $0x40
     ret

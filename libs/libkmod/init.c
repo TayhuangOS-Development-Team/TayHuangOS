@@ -19,8 +19,11 @@
 #include <tayhuang/defs.h>
 #include <tayhuang/kmod_prototypes.h>
 #include <tayhuang/services.h>
+#include <tayhuang/msgpack.h>
 
 #include <debug/logging.h>
+
+#include <assert.h>
 
 #include <memory/malloc.h>
 
@@ -48,7 +51,7 @@ PUBLIC void __kmod_init__(void) {
     set_allow(ANY_TASK);
 
     bool status = true;
-    send_msg(status, sizeof(bool), INIT_SERVICE);
+    assert(send_msg(MSG_NORMAL_IPC, status, sizeof(bool), INIT_SERVICE));
     
     check_ipc();
 

@@ -19,6 +19,8 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <tayhuang/msgpack.h>
+
 #include <intterup/irq_handler.h>
 
 #define MOO_SN (0x00)
@@ -26,8 +28,8 @@ PUBLIC void __moo(void);
 PUBLIC void moo(void);
 
 #define SEND_MSG_SN (0x01)
-PUBLIC bool __send_msg(void *src, qword size, int dst);
-PUBLIC bool send_msg(void *src, qword size, int dst);
+PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst);
+PUBLIC bool send_msg(int msgno, void *src, qword size, int dst);
 
 #define CHECK_IPC_SN (0x02)
 PUBLIC void __check_ipc(void);
@@ -38,8 +40,8 @@ PUBLIC void __set_allow(int pid);
 PUBLIC void set_allow(int pid);
 
 #define RECV_MSG_SN (0x04)
-PUBLIC int __recv_msg(void *dst);
-PUBLIC int recv_msg(void *dst);
+PUBLIC recvmsg_result_struct __recv_msg(void *dst);
+PUBLIC recvmsg_result_struct recv_msg(void *dst);
 
 #define SET_MAILBUFFER_SN (0x07)
 PUBLIC void __set_mailbuffer(void *buffer, qword size);

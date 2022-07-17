@@ -19,9 +19,10 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <tayhuang/msgpack.h>
 
-PUBLIC bool send_msg(void *msg, qword size, int dst);
+PUBLIC bool send_msg(int msgno, void *msg, qword size, int dst);
 PUBLIC void check_ipc(void);
 PUBLIC void set_allow(int pid);
-PUBLIC int recv_msg(void *msg);
+PUBLIC recvmsg_result_struct recv_msg(void *msg);
 PUBLIC void set_mailbuffer(void *buffer, int size);
