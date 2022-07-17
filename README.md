@@ -60,7 +60,7 @@ QQ号: 2715626245
 
 # 设置工作环境的方法
 
-首先确定你在Ubuntu系统下 之后下载开发工具包(找我要)
+在 https://github.com/383494/TayHuangOS_tools 中下载开发工具包
 
 再在工具包目录下输入source ./setup.sh
 
