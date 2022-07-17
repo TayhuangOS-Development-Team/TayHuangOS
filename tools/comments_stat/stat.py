@@ -23,6 +23,11 @@ look_dirs = ['./kernel/', './libs/', './loader/', './module/']
     
 level = 0
 
+def calc_density(code, comment):
+    if code + comment == 0:
+        return 1
+    return comment / (code + comment)
+
 def stat_comment(fp):
     global level
     file_names = fp.rsplit('.', maxsplit = 1)
@@ -60,13 +65,16 @@ def stat_comment(fp):
     for i in range(level):
         print ('  ', end='')
 
-    print ("(" + fp + "): code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(comment_num / (comment_num + code_num) * 100)) + "%")
+    print ("(" + fp + "): code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(calc_density(code_num, comment_num) * 100)) + "%")
     return code_num, comment_num
 
 def stat(look_dir):
     global level
     comment_num = 0
     code_num = 0
+    for i in range(level):
+        print (' ', end='')
+    print ("{")
     for root, dirs, files in os.walk(look_dir):
         for f in files:
             level = level + 1
@@ -74,16 +82,12 @@ def stat(look_dir):
             level = level - 1
             code_num += fcode
             comment_num += fcomment
-        for d in dirs:
-            level = level + 1
-            dcode, dcomment = stat(os.path.join(root, d))
-            level = level - 1
-            code_num += dcode
-            comment_num += dcomment
-
     for i in range(level):
         print (' ', end='')
-    print ("(" + look_dir + "): code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(comment_num / (comment_num + code_num) * 100)) + "%")
+    print ("}")
+    for i in range(level):
+        print (' ', end='')
+    print ("(" + look_dir + "): code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(calc_density(code_num, comment_num) * 100)) + "%")
     return code_num, comment_num
 
 
@@ -92,7 +96,9 @@ comment_num = 0
 code_num = 0
 level = level + 1
 for look_dir in look_dirs:
+    print ("{")
     dcode, dcomment = stat(look_dir)
     code_num += dcode
     comment_num += dcomment
-print ("(./):" + " code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(comment_num / (comment_num + code_num) * 100)) + "%")
+    print ("}")
+print ("(./):" + " code=" + str(code_num) + " comment=" + str(comment_num) + " comment density=" + (str(calc_density(code_num, comment_num) * 100)) + "%")

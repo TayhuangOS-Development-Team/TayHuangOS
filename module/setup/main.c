@@ -26,6 +26,7 @@
 #include <memory/malloc.h>
 
 #include <tayhuang/services.h>
+#include <tayhuang/msgpack.h>
 
 #include <disk.h>
 #include <fs/common.h>
@@ -57,7 +58,7 @@ PUBLIC void kmod_main(void) {
 
         bool status = load_file(context, name, buffer);
 
-        assert(send_msg(&status, sizeof(bool), INIT_SERVICE));
+        assert(send_msg(MSG_NORMAL_IPC, &status, sizeof(bool), INIT_SERVICE));
     }
 
     terminate_fs (context);

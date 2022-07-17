@@ -134,8 +134,8 @@ PRIVATE VOLATILE bool i2_ready = false;
 program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
-    assert(send_msg("video.mod", 11, SETUP_SERVICE));
-    assert(send_msg(&mod_addr, sizeof(mod_addr), SETUP_SERVICE));
+    assert(send_msg(MSG_NORMAL_IPC, "video.mod", 11, SETUP_SERVICE));
+    assert(send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE));
     set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
 
     check_ipc();
@@ -213,7 +213,7 @@ PUBLIC void init(void) {
     video_info.height = args.screen_height;
     video_info.width = args.screen_width;
     video_info.is_graphic_mode = args.is_graphic_mode;
-    send_msg(&video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
+    send_msg(MSG_NORMAL_IPC, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
 
 #define TEXT_WRITE_CHAR (0)
 #define TEXT_WRITE_STRING (1)
@@ -243,7 +243,7 @@ PUBLIC void init(void) {
     ARG_WRITE(buf, byte, 'D');
     ARG_WRITE(buf, byte, '!');
 
-    send_msg(buffer, buf - buffer, VIDEO_DRIVER_SERVICE);
+    send_msg(MSG_NORMAL_IPC, buffer, buf - buffer, VIDEO_DRIVER_SERVICE);
     kfree(buffer);
 
     check_ipc();
