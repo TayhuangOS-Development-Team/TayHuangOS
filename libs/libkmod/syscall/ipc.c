@@ -17,6 +17,7 @@
 
 
 #include <syscall/ipc.h>
+#include <syscall/rpc.h>
 
 #include <memory/malloc.h>
 
@@ -51,9 +52,11 @@ PUBLIC void message_loop(void) {
             break;
         }
         case MSG_RPC_CALL: {
+            deal_rpc_request(result.source, msg);
             break;
         }
         case MSG_RPC_RESULT: {
+            rpc_tail(result.source, msg);
             break;
         }
         }

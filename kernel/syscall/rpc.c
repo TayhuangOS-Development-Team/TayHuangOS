@@ -57,9 +57,11 @@ PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
     new_node->func_no = func_no;
     new_node->info = info;
     new_node->next = head_node;
+
+    head_node = new_node;
 }
 
-PUBLIC void deal_rpc_request(void *msg, int caller) {
+PUBLIC void deal_rpc_request(int caller, void *msg) {
     rpc_func func_no = ARG_READ(msg, rpc_func);
 
     proccess_info *info = list_find_proccess(func_no);
