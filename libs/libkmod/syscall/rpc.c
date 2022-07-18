@@ -28,6 +28,8 @@
 
 #include <tayhuang/msgpack.h>
 
+#include <task/task.h>
+
 typedef struct  {
     rpc_func func_no;
     rpc_proccess_wrapper proccess;
@@ -83,11 +85,17 @@ PUBLIC void deal_rpc_request(void *msg, int caller) {
     rpc_args_struct args = {.data = (qword)msg, .size = args_size};
     rpc_args_struct result = info->proccess(caller, func_no, args);
 
+    void *return_data = malloc(sizeof(rpc_func) + result.size);
+    void *_data = return_data;
+    ARG_WRITE(_data, rpc_func, func_no);
+    memcpy(_data, (void*)result.data, result.size);
+
     if (info->return_size == result.size) {
-        send_msg(MSG_RPC_RESULT, (void*)result.data, result.size, caller);
+        send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
     }
 
     free((void*)result.data);
+    free(return_data);
 }
 
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size) {
@@ -99,23 +107,15 @@ PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size r
     add_proccess(func, info);
 }
 
-PUBLIC rpc_args_struct rpc_mid(int service, rpc_func func, void *retaddr, void *stack_addr) {
-    linfo ("%p:%p:%p", retaddr, stack_addr, *(qword*)stack_addr);
-    asmv ("movq %0, %%rsp" : : "g"(stack_addr));
-    asmv ("movq %0, 64(%%rsp)" : : "g"(retaddr));
-    asmv ("pop %rbx");
-    asmv ("pop %rbp");
-    asmv ("pop %rdi");
-    asmv ("pop %rsi");
-    asmv ("pop %r12");
-    asmv ("pop %r13");
-    asmv ("pop %r14");
-    asmv ("pop %r15");
-    asmv ("ret");
-    return (rpc_args_struct){.data = (qword)NULL, .size = 0};
+PRIVATE task_info_struct wait_result_task;
+
+PUBLIC void rpc_mid(int service, rpc_func func, void *retaddr, stack_struct *stack_addr) {
+    wait_result_task.rsp = stack_addr;
+
+    message_loop();
 }
 
-PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr, void *stack_addr) {
+PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr, stack_struct *stack_addr) {
     rpc_mid(service, func, retaddr, stack_addr);
     //TODO: 完成 rpc_call
     return (rpc_args_struct){.data = (qword)NULL, .size = 0};

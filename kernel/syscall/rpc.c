@@ -84,7 +84,17 @@ PUBLIC void deal_rpc_request(void *msg, int caller) {
         send_msg(MSG_RPC_RESULT, (void*)result.data, result.size, caller);
     }
 
+    void *return_data = kmalloc(sizeof(rpc_func) + result.size);
+    void *_data = return_data;
+    ARG_WRITE(_data, rpc_func, func_no);
+    memcpy(_data, (void*)result.data, result.size);
+
+    if (info->return_size == result.size) {
+        send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
+    }
+
     kfree((void*)result.data);
+    kfree(return_data);
 }
 
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size) {
@@ -118,7 +128,10 @@ PUBLIC rpc_args_struct rpc_direct_call(int service, rpc_func func, rpc_args_stru
     send_msg(MSG_RPC_CALL, data, size, service);
     kfree (data);
     check_ipc();
-    recv_msg(result);
+    void *__result = kmalloc(return_size + sizeof(rpc_func));
+    recv_msg(__result);
+    memcpy(result, __result + sizeof(rpc_func), return_size);
+    kfree(__result);
 
     return (rpc_args_struct){.data = (qword)result, .size = return_size};
 }

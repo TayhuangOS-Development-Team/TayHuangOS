@@ -32,28 +32,24 @@
 
 PUBLIC video_info_struct video_info;
 
+PUBLIC void normal_ipc_handler(int caller, void *msg) {
+    void *buf = msg;
+    int cmdid = ARG_READ(buf, int);
+
+    text_execute(cmdid, buf);
+
+    set_allow(ANY_TASK);
+}
+
 PUBLIC void kmod_main(void) {
     set_logging_name("Video");
     check_ipc();
     recv_msg(&video_info);
-
-    void *buffer = malloc(512);
     
-    linfo ("!");
+    register_normal_ipc_handler(normal_ipc_handler);
+    set_allow(ANY_TASK);
+
     rpc_call(0, 0, (rpc_args_struct){}, 0, NULL);
-    linfo ("!");
-
-    while (true) {
-        set_allow(ANY_TASK);
-
-        check_ipc();
-        recv_msg(buffer);
-        
-        void *buf = buffer;
-        int cmdid = ARG_READ(buf, int);
-
-        text_execute(cmdid, buf);
-    }
 
     while (true);
 }
