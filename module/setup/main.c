@@ -46,12 +46,12 @@ PUBLIC void kmod_main(void) {
         set_allow(INIT_SERVICE);
 
         check_ipc();
-        assert(recv_msg(name) != -1);
+        assert(recv_msg(name).source != -1);
         check_ipc();
-        assert(recv_msg(&buffer) != -1);
+        assert(recv_msg(&buffer).source != -1);
 
         if (context == NULL) {
-            context =  load_fs(DISK_SEL_IDE0_MASTER, 0);
+            context = load_fs(DISK_SEL_IDE0_MASTER, 0);
         }
 
         linfo ("%s:%p", name, buffer);

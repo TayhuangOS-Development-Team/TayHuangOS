@@ -36,4 +36,7 @@ typedef rpc_args_struct(*rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);
 PUBLIC rpc_args_struct rpc_tail(int service, void *msg);
 PUBLIC void deal_rpc_request(int caller, void *msg);
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size); //当args_size = -1时, 不对参数大小进行检验
-PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result);
+PUBLIC rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result);
+PUBLIC void *rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size);
+
+#define remote_call(ret_type, service, func, args) (*(ret_type*)rpc_call(service, func, args, sizeof(ret_type)))
