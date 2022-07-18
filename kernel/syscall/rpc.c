@@ -57,9 +57,11 @@ PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
     new_node->func_no = func_no;
     new_node->info = info;
     new_node->next = head_node;
+
+    head_node = new_node;
 }
 
-PUBLIC void deal_rpc_request(void *msg, int caller) {
+PUBLIC void deal_rpc_request(int caller, void *msg) {
     rpc_func func_no = ARG_READ(msg, rpc_func);
 
     proccess_info *info = list_find_proccess(func_no);
@@ -77,14 +79,24 @@ PUBLIC void deal_rpc_request(void *msg, int caller) {
         return;
     }
 
-    rpc_args_struct args = {.data = msg, .size = args_size};
+    rpc_args_struct args = {.data = (qword)msg, .size = args_size};
     rpc_args_struct result = info->proccess(caller, func_no, args);
 
     if (info->return_size == result.size) {
-        send_msg(MSG_RPC_RESULT, result.data, result.size, caller);
+        send_msg(MSG_RPC_RESULT, (void*)result.data, result.size, caller);
     }
 
-    kfree(result.data);
+    void *return_data = kmalloc(sizeof(rpc_func) + result.size);
+    void *_data = return_data;
+    ARG_WRITE(_data, rpc_func, func_no);
+    memcpy(_data, (void*)result.data, result.size);
+
+    if (info->return_size == result.size) {
+        send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
+    }
+
+    kfree((void*)result.data);
+    kfree(return_data);
 }
 
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size) {
@@ -102,7 +114,7 @@ PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args
 
     // __rpc_call(service, func, args, return_size);
     // rpc_call_mid(); //作用: 保存当前函数的返回指针 并进入消息循环 直至接收到返回值消息
-    return (rpc_args_struct){.data = NULL, .size = 0};
+    return (rpc_args_struct){.data = (qword)NULL, .size = 0};
 }
 
 PUBLIC rpc_args_struct rpc_direct_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result) {
@@ -118,7 +130,10 @@ PUBLIC rpc_args_struct rpc_direct_call(int service, rpc_func func, rpc_args_stru
     send_msg(MSG_RPC_CALL, data, size, service);
     kfree (data);
     check_ipc();
-    recv_msg(result);
+    void *__result = kmalloc(return_size + sizeof(rpc_func));
+    recv_msg(__result);
+    memcpy(result, __result + sizeof(rpc_func), return_size);
+    kfree(__result);
 
-    return (rpc_args_struct){.data = result, .size = return_size};
+    return (rpc_args_struct){.data = (qword)result, .size = return_size};
 }

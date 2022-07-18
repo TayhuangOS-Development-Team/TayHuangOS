@@ -41,6 +41,7 @@
 #include <task/task_scheduler.h>
 
 #include <syscall/syscall.h>
+#include <syscall/rpc.h>
 #include <syscall/syscalls.h>
 
 #include <printk.h>
@@ -245,6 +246,16 @@ PUBLIC void init(void) {
 
     send_msg(MSG_NORMAL_IPC, buffer, buf - buffer, VIDEO_DRIVER_SERVICE);
     kfree(buffer);
+    
+    buffer = kmalloc(256);
+    buf = buffer;
+    ARG_WRITE(buf, int, 0);
+    ARG_WRITE(buf, int, 1);
+    ARG_WRITE(buf, byte, 0x0C);
+    ARG_WRITE(buf, byte, '!');
+    
+    void *res = kmalloc(1);
+    rpc_direct_call(VIDEO_DRIVER_SERVICE, 0, (rpc_args_struct){.data = buffer, .size = sizeof(int) * 2 + sizeof(byte) * 2}, 1, res);
 
     check_ipc();
 
