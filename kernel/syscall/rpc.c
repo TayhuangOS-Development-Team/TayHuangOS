@@ -77,14 +77,14 @@ PUBLIC void deal_rpc_request(void *msg, int caller) {
         return;
     }
 
-    rpc_args_struct args = {.data = msg, .size = args_size};
+    rpc_args_struct args = {.data = (qword)msg, .size = args_size};
     rpc_args_struct result = info->proccess(caller, func_no, args);
 
     if (info->return_size == result.size) {
-        send_msg(MSG_RPC_RESULT, result.data, result.size, caller);
+        send_msg(MSG_RPC_RESULT, (void*)result.data, result.size, caller);
     }
 
-    kfree(result.data);
+    kfree((void*)result.data);
 }
 
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size) {
@@ -102,7 +102,7 @@ PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args
 
     // __rpc_call(service, func, args, return_size);
     // rpc_call_mid(); //作用: 保存当前函数的返回指针 并进入消息循环 直至接收到返回值消息
-    return (rpc_args_struct){.data = NULL, .size = 0};
+    return (rpc_args_struct){.data = (qword)NULL, .size = 0};
 }
 
 PUBLIC rpc_args_struct rpc_direct_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result) {
@@ -120,5 +120,5 @@ PUBLIC rpc_args_struct rpc_direct_call(int service, rpc_func func, rpc_args_stru
     check_ipc();
     recv_msg(result);
 
-    return (rpc_args_struct){.data = result, .size = return_size};
+    return (rpc_args_struct){.data = (qword)result, .size = return_size};
 }

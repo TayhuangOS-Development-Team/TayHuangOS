@@ -33,11 +33,12 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 LIBS_C_SRC := ctype string tostring
 DEBUG_C_SRC := logging debug
 MEMORY_C_SRC := malloc
-SYSCALL_C_SRC := rpc
+SYSCALL_C_SRC := rpc ipc
 C_SRC := init printf \
          $(foreach src, $(LIBS_C_SRC), libs/$(src)) \
          $(foreach src, $(DEBUG_C_SRC), debug/$(src)) \
-         $(foreach src, $(MEMORY_C_SRC), memory/$(src))
+         $(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
+         $(foreach src, $(SYSCALL_C_SRC), syscall/$(src))
 
 CPP_SRC :=
 

@@ -17,13 +17,16 @@
 
 
 #include <syscall/rpc.h>
-#include <syscall/syscalls.h>
+#include <syscall/ipc.h>
+#include <syscall/syscall.h>
 
-#include <memory/kheap.h>
+#include <memory/malloc.h>
 
-#include <logging.h>
+#include <debug/logging.h>
 
 #include <string.h>
+
+#include <tayhuang/msgpack.h>
 
 typedef struct  {
     rpc_func func_no;
@@ -52,7 +55,7 @@ PRIVATE proccess_info *list_find_proccess(rpc_func func_no) {
 }
 
 PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
-    proccess_node *new_node = (proccess_node*)(kmalloc(sizeof(proccess_node)));
+    proccess_node *new_node = (proccess_node*)(malloc(sizeof(proccess_node)));
 
     new_node->func_no = func_no;
     new_node->info = info;
@@ -77,18 +80,18 @@ PUBLIC void deal_rpc_request(void *msg, int caller) {
         return;
     }
 
-    rpc_args_struct args = {.data = msg, .size = args_size};
+    rpc_args_struct args = {.data = (qword)msg, .size = args_size};
     rpc_args_struct result = info->proccess(caller, func_no, args);
 
     if (info->return_size == result.size) {
-        send_msg(MSG_RPC_RESULT, result.data, result.size, caller);
+        send_msg(MSG_RPC_RESULT, (void*)result.data, result.size, caller);
     }
 
-    kfree(result.data);
+    free((void*)result.data);
 }
 
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size) {
-    proccess_info *info = (proccess_info*)(kmalloc(sizeof(proccess_info)));
+    proccess_info *info = (proccess_info*)(malloc(sizeof(proccess_info)));
     info->func_no = func;
     info->proccess = process;
     info->return_size = return_size;
@@ -96,7 +99,12 @@ PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size r
     add_proccess(func, info);
 }
 
-PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result) {
+PUBLIC void rpc_mid(rpc_func func, void *retaddr) {
+}
+
+PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr) {
+    linfo ("%p", retaddr);
+    while (true);
     //TODO: 完成 rpc_call
-    return (rpc_args_struct){.data = NULL, .size = 0};
+    return (rpc_args_struct){.data = (qword)NULL, .size = 0};
 }

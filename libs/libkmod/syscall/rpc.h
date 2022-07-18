@@ -24,8 +24,8 @@ typedef qword rpc_func;
 typedef dword rpc_size;
 
 typedef struct {
-    void *data;
-    int size;
+    qword data : 44;
+    int size : 20;
 } rpc_args_struct;
 
 typedef rpc_args_struct(*rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);

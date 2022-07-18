@@ -22,6 +22,7 @@
 
 #include <syscall/syscall.h>
 #include <syscall/ipc.h>
+#include <syscall/rpc.h>
 
 #include <memory/malloc.h>
 
@@ -37,6 +38,8 @@ PUBLIC void kmod_main(void) {
     recv_msg(&video_info);
 
     void *buffer = malloc(512);
+    
+    rpc_call(0, 0, (rpc_args_struct){}, 0, NULL);
 
     while (true) {
         set_allow(ANY_TASK);
