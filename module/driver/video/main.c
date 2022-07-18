@@ -72,7 +72,7 @@ PUBLIC void kmod_main(void) {
     rpc_register(0, wrapper_write_char, sizeof(bool), sizeof(int) * 2 + sizeof(byte) * 2);
     set_allow(ANY_TASK);
 
-    rpc_call(0, 0, (rpc_args_struct){}, 0, NULL);
+    message_loop();
 
     while (true);
 }

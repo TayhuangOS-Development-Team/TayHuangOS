@@ -81,9 +81,9 @@ reg_irq: /*void reg_irq(int irq)*/
     ret
     
     .extern __rpc_call__ /*rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr, void *stackaddr)*/
-    .global rpc_call
-    .type rpc_call, @function
-rpc_call: /*rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result)*/
+    .global __rpc_call
+    .type __rpc_call, @function
+__rpc_call: /*rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result)*/
     movq (%rsp), %r9 /*retaddr*/
     pushq %r15
     pushq %r14

@@ -25,6 +25,7 @@
 #include <debug/logging.h>
 
 #include <string.h>
+#include <stdarg.h>
 
 #include <tayhuang/msgpack.h>
 
@@ -62,7 +63,7 @@ PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
     new_node->func_no = func_no;
     new_node->info = info;
     new_node->next = head_node;
-    
+
     head_node = new_node;
 }
 
@@ -151,6 +152,24 @@ PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct 
     }
     entered = true;
     rpc_mid(service, func, retaddr, stack_addr);
-    //TODO: 完成 rpc_call
     return (rpc_args_struct){.data = (qword)NULL, .size = 0};
+}
+
+PUBLIC void *rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size) {
+    static void *result = NULL;
+    static int result_sz = 0;
+
+    if (result == NULL) {
+        result = malloc(return_size);
+        result_sz = return_size;
+    }
+
+    if (return_size > result_sz) {
+        free(result);
+        result = malloc(return_size);
+        result_sz = return_size;
+    }
+
+    __rpc_call(service, func, args, return_size, result);
+    return result;
 }
