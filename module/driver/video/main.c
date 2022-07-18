@@ -39,7 +39,9 @@ PUBLIC void kmod_main(void) {
 
     void *buffer = malloc(512);
     
+    linfo ("!");
     rpc_call(0, 0, (rpc_args_struct){}, 0, NULL);
+    linfo ("!");
 
     while (true) {
         set_allow(ANY_TASK);

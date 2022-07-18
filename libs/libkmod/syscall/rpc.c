@@ -99,12 +99,24 @@ PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size r
     add_proccess(func, info);
 }
 
-PUBLIC void rpc_mid(rpc_func func, void *retaddr) {
+PUBLIC rpc_args_struct rpc_mid(int service, rpc_func func, void *retaddr, void *stack_addr) {
+    linfo ("%p:%p:%p", retaddr, stack_addr, *(qword*)stack_addr);
+    asmv ("movq %0, %%rsp" : : "g"(stack_addr));
+    asmv ("movq %0, 64(%%rsp)" : : "g"(retaddr));
+    asmv ("pop %rbx");
+    asmv ("pop %rbp");
+    asmv ("pop %rdi");
+    asmv ("pop %rsi");
+    asmv ("pop %r12");
+    asmv ("pop %r13");
+    asmv ("pop %r14");
+    asmv ("pop %r15");
+    asmv ("ret");
+    return (rpc_args_struct){.data = (qword)NULL, .size = 0};
 }
 
-PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr) {
-    linfo ("%p", retaddr);
-    while (true);
+PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr, void *stack_addr) {
+    rpc_mid(service, func, retaddr, stack_addr);
     //TODO: 完成 rpc_call
     return (rpc_args_struct){.data = (qword)NULL, .size = 0};
 }
