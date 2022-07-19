@@ -66,23 +66,26 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
 
     proccess_info *info = list_find_proccess(func_no);
     if (info == NULL) {
+        lerror ("Sys task", "Invalid rpc request: invalid function no %d", func_no);
         return;
     }
 
     rpc_size args_size = ARG_READ(msg, rpc_size);
-    if (args_size != info->args_size) {
+    if (args_size != info->args_size && info->args_size != -1) {
+        lerror ("Sys task", "Invalid rpc request: invalid args size %d, should be %d", args_size, info->args_size);
         return;
     }
 
     rpc_size return_size = ARG_READ(msg, rpc_size);
-    if (return_size != info->return_size) {
+    if (return_size != info->return_size && info->return_size != -1) {
+        lerror ("Sys task", "Invalid rpc request: invalid return size %d, should be %d", return_size, info->return_size);
         return;
     }
 
     rpc_args_struct args = {.data = (qword)msg, .size = args_size};
     rpc_args_struct result = info->proccess(caller, func_no, args);
 
-    if (info->return_size == result.size) {
+    if (info->return_size == result.size || info->return_size == -1) {
         send_msg(MSG_RPC_RESULT, (void*)result.data, result.size, caller);
     }
 
