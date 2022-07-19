@@ -188,7 +188,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
             }
 
-            //是否左对其
+            //是否左对齐
             if (*format == '*') {
                 width = va_arg(args, int);
                 if (width < 0) {
