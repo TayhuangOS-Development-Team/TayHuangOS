@@ -325,24 +325,12 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
                 break;
             }
             case PRINT_TY_OCT: { //八进制
-                if (qualifier != QUAL_LONGLONG) {
-                    unsigned int val = va_arg(args, unsigned int);
-                    uitoa(val, _buffer, 8);
-                }
-                else {
-                    unsigned long long val = va_arg(args, unsigned long long);
-                    ulltoa(val, _buffer, 8);
-                }
+                unsigned int val = va_arg(args, unsigned int);
+                uitoa(val, _buffer, 8);
             }
             case PRINT_TY_HEX: { //十六进制
-                if (qualifier != QUAL_LONGLONG) {
-                    unsigned int val = va_arg(args, unsigned int);
-                    uitoa(val, _buffer, 16);
-                }
-                else {
-                    unsigned long long val = va_arg(args, unsigned long long);
-                    ulltoa(val, _buffer, 16);
-                }
+                unsigned long long val = va_arg(args, unsigned long long);
+                ulltoa(val, _buffer, 16);
                 if (flag & FLAG_UPPER) {
                     for (int i = 0 ; i < strlen(_buffer) ; i ++) {
                         if (islower(_buffer[i])) {

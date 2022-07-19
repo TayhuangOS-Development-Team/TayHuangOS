@@ -76,6 +76,7 @@ PRIVATE rpc_args_struct wrapper_create_share_memory(int caller, rpc_func func_no
     void **dst = (void**)kmalloc(sizeof(void*));
     *dst = create_share_memory(pages, caller);
 
+
     return (rpc_args_struct){.data = dst, .size = sizeof(void*)};
 }
 

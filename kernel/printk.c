@@ -139,14 +139,17 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
 
     #define PRINT_TY_INT 0
     #define PRINT_TY_UNSIGNED 1
-    #define PRINT_TY_OCT 2
-    #define PRINT_TY_HEX 3
-    #define PRINT_TY_CHAR 4
-    #define PRINT_TY_STRING 5
+    #define PRINT_TY_FLOAT 2
+    #define PRINT_TY_EXPONENT 3
+    #define PRINT_TY_OCT 4
+    #define PRINT_TY_HEX 5
+    #define PRINT_TY_CHAR 6
+    #define PRINT_TY_STRING 7
 
     #define QUAL_SHORT 0
     #define QUAL_NORMAL 1
     #define QUAL_LONG 2
+    #define QUAL_LONGLONG 3
 
     char *original = buffer;
 
@@ -225,6 +228,11 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
             case 'h': qualifier = QUAL_SHORT; format ++; break;
             }
 
+            //位长设置(lld)
+            switch (*format) {
+            case 'l': case 'L': qualifier = QUAL_LONGLONG; format ++; break;
+            }
+
             //输出类型
             switch (*format) {
             case 'd': print_type = PRINT_TY_INT; break;
@@ -232,8 +240,11 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
             case 'o': print_type = PRINT_TY_OCT; break;
             case 'X': flag |= FLAG_UPPER;
             case 'x': print_type = PRINT_TY_HEX; break;
+            case 'f': print_type = PRINT_TY_FLOAT; break;
             case 'c': print_type = PRINT_TY_CHAR; break;
             case 's': print_type = PRINT_TY_STRING; break;
+            case 'E': flag |= FLAG_UPPER;
+            case 'e': print_type = PRINT_TY_EXPONENT; break;
             case 'P': flag |= FLAG_UPPER;
             case 'p': flag |= FLAG_FILL_ZERO; flag |= FLAG_PREFIX; width = 16; print_type = PRINT_TY_HEX; break;
             default: print_type = -1; break;
@@ -254,10 +265,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
             //根据输出类型输出
             switch (print_type) {
             case PRINT_TY_INT: { //整形
-                if (qualifier == QUAL_LONG ||
-                    qualifier == QUAL_NORMAL ||
-                    qualifier == QUAL_SHORT) {
-
+                if (qualifier != QUAL_LONGLONG) { 
                     int val = va_arg(args, int);
                     if (val < 0) {
                         has_sign = true;
@@ -265,41 +273,56 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                     }
                     itoa(val, _buffer, 10);
                 }
+                else { //long long
+                    long long val = va_arg(args, long long);
+                    if (val < 0) {
+                        has_sign = true;
+                        val = -val;
+                    }
+                    lltoa(val, _buffer, 10);
+                }
                 break;
             }
             case PRINT_TY_UNSIGNED: { //无符号整形
-                if (qualifier == QUAL_LONG ||
-                    qualifier == QUAL_NORMAL ||
-                    qualifier == QUAL_SHORT) {
-
+                if (qualifier != QUAL_LONGLONG) {
                     unsigned int val = va_arg(args, unsigned int);
                     uitoa(val, _buffer, 10);
                 }
-                break;
-            }
-            case PRINT_TY_OCT: { //八进制
-                if (qualifier == QUAL_LONG ||
-                    qualifier == QUAL_NORMAL ||
-                    qualifier == QUAL_SHORT) {
-
-                    unsigned int val = va_arg(args, unsigned int);
-                    uitoa(val, _buffer, 8);
+                else { //long long
+                    unsigned long long val = va_arg(args, unsigned long long);
+                    ulltoa(val, _buffer, 10);
                 }
                 break;
             }
+            case PRINT_TY_FLOAT: { //浮点数
+                double val = va_arg(args, double);
+                if (val < 0) {
+                    has_sign = true;
+                    val = -val;
+                }
+                dtoa(val, _buffer, precision);
+                break;
+            }
+            case PRINT_TY_EXPONENT: { //浮点数(科学计数法)
+                double val = va_arg(args, double);
+                if (val < 0) {
+                    has_sign = true;
+                    val = -val;
+                }
+                dtoea(val, _buffer, flag & FLAG_UPPER);
+                break;
+            }
+            case PRINT_TY_OCT: { //八进制
+                unsigned int val = va_arg(args, unsigned int);
+                uitoa(val, _buffer, 8);
+            }
             case PRINT_TY_HEX: { //十六进制
-                if (qualifier == QUAL_LONG ||
-                    qualifier == QUAL_NORMAL ||
-                    qualifier == QUAL_SHORT) {
-
-                    unsigned int val = va_arg(args, unsigned int);
-                    uitoa(val, _buffer, 16);
-                    
-                    if (flag & FLAG_UPPER) {
-                        for (int i = 0 ; i < strlen(_buffer) ; i ++) {
-                            if (islower(_buffer[i])) {
-                                _buffer[i] = toupper(_buffer[i]);
-                            }
+                unsigned long long val = va_arg(args, unsigned long long);
+                ulltoa(val, _buffer, 16);
+                if (flag & FLAG_UPPER) {
+                    for (int i = 0 ; i < strlen(_buffer) ; i ++) {
+                        if (islower(_buffer[i])) {
+                            _buffer[i] = toupper(_buffer[i]);
                         }
                     }
                 }
@@ -379,10 +402,6 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
     #undef FLAG_FILL_ZERO
     #undef FLAG_PREFIX
     #undef FLAG_UPPER
-    
-    #undef QUAL_SHORT
-    #undef QUAL_NORMAL
-    #undef QUAL_LONG
 }
 
 //输出内容到buffer中
