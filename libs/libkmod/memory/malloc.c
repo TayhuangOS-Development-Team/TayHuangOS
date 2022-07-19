@@ -49,10 +49,12 @@ PUBLIC bool init_heap(int pid, void *heap_start, void *heap_end) {
     chunk_struct *list_start = (chunk_struct*)heap;
     chunk_struct *whole_heap = (chunk_struct*)(heap + + sizeof(chunk_struct));
 
+    //空闲链表头
     list_start->size = -1;
     list_start->used = false;
     list_start->next = whole_heap;
 
+    //整个堆
     whole_heap->size = size - + sizeof(chunk_struct);
     whole_heap->used = false;
     whole_heap->next = NULL;
@@ -85,6 +87,7 @@ PUBLIC void *malloc(int size) {
 
     int remain_size = current->size - fixed_size;
 
+    //分割
     if ((current->size > HEAPDIV_MIN_SZ) && (remain_size >= HEAPUNIT_SZ)) {
         chunk_struct *new_free_chunk = (chunk_struct*)(((void*)current) + sizeof(chunk_struct) + fixed_size);
 
@@ -116,12 +119,14 @@ PUBLIC void free(void *addr) {
     current->next = last->next;
     last->next = current;
 
+    //可以合并
     if ((((void*)last) + last->size) == current) {
         last->size += current->size;
         last->next = current->next;
         current = last;
     }
 
+    //可以合并
     if ((((void*)last) + last->size) == last->next) {
         last->size += last->next->size;
         last->next = last->next->next;
