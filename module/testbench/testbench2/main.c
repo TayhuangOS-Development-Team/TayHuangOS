@@ -42,15 +42,22 @@ PUBLIC void kmod_main(void) {
     void *buffer = malloc(256);
     void *buf = buffer;
 
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, byte, 0x0C);
-    ARG_WRITE(buf, int, 2);
-    ARG_WRITE(buf, byte, 'A');
-    ARG_WRITE(buf, byte, 'B');
+    ARG_WRITE(buf, int, 1);
 
-    bool status = remote_call(bool, VIDEO_DRIVER_SERVICE, 1, ((rpc_args_struct){.data = buffer, .size = sizeof(int) * 3 + sizeof(byte) * 3}));
-    linfo ("%d",status);
+    void *addr = remote_call(void*, SYSTASK_SERVICE, 1, ((rpc_args_struct){.data = buffer, .size = sizeof(int)}));
+    *(qword*)(addr) = 8;
+
+    buf = buffer;
+    ARG_WRITE(buf, void*, addr);
+    ARG_WRITE(buf, int, 1);
+    ARG_WRITE(buf, int, 2);
+    void *new_addr = remote_call(void*, SYSTASK_SERVICE, 0, ((rpc_args_struct){.data = buffer, .size = sizeof(void*) + sizeof(int) * 2}));
+
+    linfo ("%p", new_addr);
+
+    send_msg(MSG_NORMAL_IPC, &new_addr, sizeof(void*), 2);
+
+    free(buffer);
 
     message_loop();
 
