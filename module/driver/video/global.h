@@ -28,6 +28,6 @@
 #define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
 #define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
 
-void text_execute(int cmdid, void *args);
+PUBLIC void text_register_rpc_functions(void);
 
 EXTERN PUBLIC video_info_struct video_info;

@@ -219,43 +219,18 @@ PUBLIC void init(void) {
 #define TEXT_WRITE_CHAR (0)
 #define TEXT_WRITE_STRING (1)
 
-#define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
-#define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
-
     void *buffer = kmalloc(256);
-
     void *buf = buffer;
-    ARG_WRITE(buf, int, TEXT_WRITE_STRING);
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, byte, 0x0C);
-    ARG_WRITE(buf, int, 13);
-    ARG_WRITE(buf, byte, 'H');
-    ARG_WRITE(buf, byte, 'E');
-    ARG_WRITE(buf, byte, 'L');
-    ARG_WRITE(buf, byte, 'L');
-    ARG_WRITE(buf, byte, 'O');
-    ARG_WRITE(buf, byte, ',');
-    ARG_WRITE(buf, byte, ' ');
-    ARG_WRITE(buf, byte, 'W');
-    ARG_WRITE(buf, byte, 'O');
-    ARG_WRITE(buf, byte, 'R');
-    ARG_WRITE(buf, byte, 'L');
-    ARG_WRITE(buf, byte, 'D');
-    ARG_WRITE(buf, byte, '!');
 
-    send_msg(MSG_NORMAL_IPC, buffer, buf - buffer, VIDEO_DRIVER_SERVICE);
-    kfree(buffer);
-    
-    buffer = kmalloc(256);
-    buf = buffer;
     ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, int, 1);
+    ARG_WRITE(buf, int, 0);
     ARG_WRITE(buf, byte, 0x0C);
-    ARG_WRITE(buf, byte, '!');
+    ARG_WRITE(buf, int, 2);
+    ARG_WRITE(buf, byte, 'A');
+    ARG_WRITE(buf, byte, 'B');
     
     void *res = kmalloc(1);
-    rpc_direct_call(VIDEO_DRIVER_SERVICE, 0, (rpc_args_struct){.data = buffer, .size = sizeof(int) * 2 + sizeof(byte) * 2}, 1, res);
+    rpc_direct_call(VIDEO_DRIVER_SERVICE, TEXT_WRITE_STRING, (rpc_args_struct){.data = buffer, .size = sizeof(int) * 3 + sizeof(byte) * 3}, 1, res);
 
     check_ipc();
 

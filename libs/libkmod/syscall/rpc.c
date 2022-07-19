@@ -77,13 +77,13 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     }
 
     rpc_size args_size = ARG_READ(msg, rpc_size);
-    if (args_size != info->args_size) {
+    if (args_size != info->args_size && info->args_size != -1) {
         lerror ("Invalid rpc request: invalid args size %d, should be %d", args_size, info->args_size);
         return;
     }
 
     rpc_size return_size = ARG_READ(msg, rpc_size);
-    if (return_size != info->return_size) {
+    if (return_size != info->return_size && info->return_size != -1) {
         lerror ("Invalid rpc request: invalid return size %d, should be %d", return_size, info->return_size);
         return;
     }
@@ -96,7 +96,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     ARG_WRITE(_data, rpc_func, func_no);
     memcpy(_data, (void*)result.data, result.size);
 
-    if (info->return_size == result.size) {
+    if (info->return_size == result.size || info->return_size == -1) {
         send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
     }
 
