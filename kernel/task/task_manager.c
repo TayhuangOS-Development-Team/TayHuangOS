@@ -197,6 +197,8 @@ PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start
 
     mm_info->shm_start = shm_start;
     mm_info->shm_end = shm_end;
+
+    mm_info->shm_ptr = shm_start;
 }
 
 PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {

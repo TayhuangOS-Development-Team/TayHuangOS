@@ -142,6 +142,7 @@ PUBLIC rpc_args_struct rpc_tail(int service, void *msg) {
 PUBLIC void rpc_mid(int service, rpc_func func, void *retaddr, stack_struct *stack_addr) {
     wait_result_task.rsp = stack_addr;
 
+    asmv ("subq $0x200, %rsp");
     message_loop();
 }
 

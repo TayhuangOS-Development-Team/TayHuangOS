@@ -62,6 +62,7 @@ typedef struct {
     qword heap_start, heap_end;
     qword rodata_start, rodata_end;
     qword shm_start, shm_end;
+    qword shm_ptr;
 } mm_info_struct;
 
 #define NULL_TASK (0)
