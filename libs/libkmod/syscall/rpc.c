@@ -119,6 +119,7 @@ PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size r
 PRIVATE rpc_func wait_func = 0;
 PRIVATE int wait_service = 0;
 PRIVATE rpc_size wait_size = 0;
+PRIVATE void *wait_result = NULL;
 PRIVATE task_info_struct wait_result_task;
 
 PRIVATE bool entered = false;
@@ -138,7 +139,8 @@ PUBLIC rpc_args_struct rpc_tail(int service, void *msg) {
     }
 
     entered = false;
-    rpc_args_struct args = (rpc_args_struct){.data = msg, .size = wait_size};
+    memcpy(wait_result, msg, wait_size);
+    rpc_args_struct args = (rpc_args_struct){.data = wait_result, .size = wait_size};
     asmv ("movq %0, %%rax" : : "g"(args));
     asmv ("movq %0, %%rsp" : : "g"(wait_result_task.rsp));
     asmv ("pop %rbx");
@@ -153,12 +155,13 @@ PUBLIC rpc_args_struct rpc_tail(int service, void *msg) {
     return (rpc_args_struct){.data = NULL, .size = 0};
 }
 
-PUBLIC void rpc_mid(int service, rpc_func func, rpc_size return_size, void *retaddr, stack_struct *stack_addr) {
+PUBLIC void rpc_mid(int service, rpc_func func, rpc_size return_size, void *result, void *retaddr, stack_struct *stack_addr) {
     wait_result_task.rsp = stack_addr;
 
     wait_func = func;
     wait_service = service;
     wait_size = return_size;
+    wait_result = result;
 
     asmv ("subq $0x200, %rsp");
     message_loop();
@@ -183,7 +186,7 @@ PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct 
     free (data);
 
     linfo ("RPC: Wait for RPC Result");
-    rpc_mid(service, func, return_size, retaddr, stack_addr);
+    rpc_mid(service, func, return_size, result, retaddr, stack_addr);
     return (rpc_args_struct){.data = (qword)NULL, .size = 0};
 }
 
