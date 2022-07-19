@@ -64,6 +64,7 @@ PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
 PUBLIC void deal_rpc_request(int caller, void *msg) {
     rpc_func func_no = ARG_READ(msg, rpc_func);
 
+    //判断是否是正确的RPC请求
     proccess_info *info = list_find_proccess(func_no);
     if (info == NULL) {
         lerror ("Sys task", "Invalid rpc request: invalid function no %d", func_no);
@@ -85,17 +86,18 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     rpc_args_struct args = {.data = (qword)msg, .size = args_size};
     rpc_args_struct result = info->proccess(caller, func_no, args);
 
-    if (info->return_size == result.size || info->return_size == -1) {
-        send_msg(MSG_RPC_RESULT, (void*)result.data, result.size, caller);
-    }
-
+    //设置返回数据
     void *return_data = kmalloc(sizeof(rpc_func) + result.size);
     void *_data = return_data;
     ARG_WRITE(_data, rpc_func, func_no);
     memcpy(_data, (void*)result.data, result.size);
 
-    if (info->return_size == result.size) {
+    //判断返回值是否正确
+    if (info->return_size == result.size || info->return_size == -1) {
         send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
+    }
+    else {
+        lerror ("Sys task", "RPC: Return size not match!Get %d, Expect %d", result.size, info->return_size);
     }
 
     kfree((void*)result.data);
@@ -108,7 +110,7 @@ PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size r
     info->proccess = process;
     info->return_size = return_size;
     info->args_size = args_size;
-    add_proccess(func, info);
+    add_proccess(func, info); //添加到链表
 }
 
 PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result) {
@@ -124,19 +126,20 @@ PUBLIC rpc_args_struct rpc_direct_call(int service, rpc_func func, rpc_args_stru
     lwarn ("RPC", "RPC Call shouldn't be called by sys_task");
 
     rpc_size size = sizeof(rpc_func) + sizeof(rpc_size) * 2 + args.size;
-    void *data = kmalloc(size);
+    void *data = kmalloc(size); //设置请求数据
     void *_data = data;
     ARG_WRITE(_data, rpc_func, func);
     ARG_WRITE(_data, rpc_size, args.size);
     ARG_WRITE(_data, rpc_size, return_size);
     memcpy(_data, args.data, args.size);
-    send_msg(MSG_RPC_CALL, data, size, service);
+    send_msg(MSG_RPC_CALL, data, size, service); //发送
+
     kfree (data);
-    check_ipc();
+    check_ipc(); //等待IPC
     void *__result = kmalloc(return_size + sizeof(rpc_func));
-    recv_msg(__result);
-    memcpy(result, __result + sizeof(rpc_func), return_size);
+    recv_msg(__result); //获取消息
+    memcpy(result, __result + sizeof(rpc_func), return_size); //复制
     kfree(__result);
 
-    return (rpc_args_struct){.data = (qword)result, .size = return_size};
+    return (rpc_args_struct){.data = (qword)result, .size = return_size}; //返回
 }

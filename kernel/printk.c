@@ -55,31 +55,34 @@ PRIVATE int print_color = 0x0F;
 PRIVATE short print_x = 0;
 PRIVATE short print_y = 0;
 
+//获得输出颜色
 PUBLIC int get_print_color(void) {
     return print_color;
 }
 
+//设置输出颜色
 PUBLIC void set_print_color(int color) {
     print_color = color;
 }
 
 PUBLIC void putchar(char ch) {
-    if (ch == '\r' || ch == '\n') { //特殊字符
+    //特殊字符
+    if (ch == '\r' || ch == '\n') { //换行
         print_x = 0;
         print_y ++;
     }
-    else if (ch == '\t') {
+    else if (ch == '\t') { //缩进
         print_x += 4;
     }
-    else if (ch == '\v') {
+    else if (ch == '\v') { //下一行(x不变)
         print_y ++;
     }
-    else if (ch == '\b') {
+    else if (ch == '\b') { //退格
         if (print_x > 0) {
             write_char(' ', print_color, -- print_x, print_y);
         }
     }
-    else if(ch == '\f') {
+    else if(ch == '\f') { //换页
         clrscr();
         print_x = 0;
         print_y = 0;
@@ -94,7 +97,7 @@ PUBLIC void putchar(char ch) {
 }
 
 PUBLIC void puts(const char *str) { // 打印字符串
-    while (*str != '\0') {
+    while (*str != '\0') { //没遇到\0就不停止
         putchar(*str);
         str ++;
     }
@@ -105,6 +108,7 @@ PUBLIC void change_pos(int x, int y) { //改变输出位置
     print_y = y;
 }
 
+//获得输出位置
 PUBLIC int get_pos_x(void) {
     return print_x;
 }
@@ -120,6 +124,7 @@ PUBLIC void clrscr(void) {
             write_char(' ', print_color, i, j);
         }
     }
+    //重置输出位置
     print_x = 0;
     print_y = 0;
 }
