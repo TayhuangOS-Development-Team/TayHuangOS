@@ -24,6 +24,7 @@
 PUBLIC void *create_pgd(void); 
 //设置映射
 PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us); 
+PUBLIC bool set_mappingvv(void *src_pgd, void *src_addr, void *dst_pgd, void *dst_addr, int pages, bool rw, bool us); 
 //获取物理地址
 PUBLIC void *get_physical_address(void *__pgd, void *vaddr); 
 

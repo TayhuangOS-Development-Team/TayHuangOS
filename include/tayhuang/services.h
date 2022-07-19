@@ -24,10 +24,10 @@
 #define INIT_SERVICE (1)
 //setup.mod 辅助内核初始化
 #define SETUP_SERVICE API_PID(0)
-//void mm() 内存管理模块
-#define MM_SERVICE API_PID(1)
-//void taskman() 任务管理模块
-#define TASKMAN_SERVICE API_PID(2)
+//void sys_task() 系统调用模块
+#define SYSTASK_SERVICE API_PID(1)
+//保留
+#define RESERVED0_SERVICE API_PID(2)
 //video.mod 视频驱动
 #define VIDEO_DRIVER_SERVICE API_PID(3)
 //tty.mod tty虚拟设备驱动

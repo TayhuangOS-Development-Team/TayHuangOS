@@ -27,6 +27,7 @@ PRIVATE void *video_address = NULL;
 PRIVATE int screen_width = 0;
 PRIVATE int screen_height = 0;
 
+//初始化视频信息
 PUBLIC void init_video(void *video_addr, int width, int height) {
     video_address = video_addr;
     screen_width = width;
@@ -49,6 +50,7 @@ PUBLIC void write_str(const char *str, int color, int posx, int posy) {
     }
 }
 
+//变量定义
 PRIVATE int print_color = 0x0F;
 PRIVATE short print_x = 0;
 PRIVATE short print_y = 0;
@@ -144,6 +146,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
     char *original = buffer;
 
     while (*format) {
+        //不是格式符
         if (*format != '%') {
             *buffer = *format;
             buffer ++;
@@ -164,6 +167,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
             byte print_type = PRINT_TY_INT;
             byte qualifier = QUAL_NORMAL;
 
+            //设置标志位
             while (true) {
                 bool _break = false;
                 switch (*format) {
@@ -179,6 +183,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
             }
 
+            //是否左对其
             if (*format == '*') {
                 width = va_arg(args, int);
                 if (width < 0) {
@@ -194,6 +199,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
             }
 
+            //精度
             if (*format == '.') {
                 format ++;
                 if (*format == '*') {
@@ -208,11 +214,13 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
             }
 
+            //位长设置
             switch (*format) {
             case 'l': case 'L': qualifier = QUAL_LONG; format ++; break;
             case 'h': qualifier = QUAL_SHORT; format ++; break;
             }
 
+            //输出类型
             switch (*format) {
             case 'd': print_type = PRINT_TY_INT; break;
             case 'u': print_type = PRINT_TY_UNSIGNED; break;
@@ -226,6 +234,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
             default: print_type = -1; break;
             }
 
+            //没有输出类型
             if (print_type == -1) {
                 return -1;
             }
@@ -237,8 +246,9 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
 
             char _buffer[120] = {};
 
+            //根据输出类型输出
             switch (print_type) {
-            case PRINT_TY_INT: {
+            case PRINT_TY_INT: { //整形
                 if (qualifier == QUAL_LONG ||
                     qualifier == QUAL_NORMAL ||
                     qualifier == QUAL_SHORT) {
@@ -252,7 +262,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
                 break;
             }
-            case PRINT_TY_UNSIGNED: {
+            case PRINT_TY_UNSIGNED: { //无符号整形
                 if (qualifier == QUAL_LONG ||
                     qualifier == QUAL_NORMAL ||
                     qualifier == QUAL_SHORT) {
@@ -262,7 +272,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
                 break;
             }
-            case PRINT_TY_OCT: {
+            case PRINT_TY_OCT: { //八进制
                 if (qualifier == QUAL_LONG ||
                     qualifier == QUAL_NORMAL ||
                     qualifier == QUAL_SHORT) {
@@ -272,7 +282,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
                 break;
             }
-            case PRINT_TY_HEX: {
+            case PRINT_TY_HEX: { //十六进制
                 if (qualifier == QUAL_LONG ||
                     qualifier == QUAL_NORMAL ||
                     qualifier == QUAL_SHORT) {
@@ -290,14 +300,14 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
                 break;
             }
-            case PRINT_TY_CHAR: {
+            case PRINT_TY_CHAR: { //字符
                 char ch = (char)va_arg(args, unsigned int);
                 *buffer = ch;
                 buffer ++;
                 offset ++;
                 break;
             }
-            case PRINT_TY_STRING: {
+            case PRINT_TY_STRING: { //字符串
                 char *str = va_arg(args, char*);
                 strcpy(buffer, str);
                 buffer += strlen(str);
@@ -306,7 +316,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
             }
             }
 
-            if (flag & FLAG_SIGN) {
+            if (flag & FLAG_SIGN) { //符号
                 if (! has_sign) {
                     *buffer = '+';
                     buffer ++;
@@ -321,7 +331,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
             }
 
 
-            if (flag & FLAG_PREFIX) {
+            if (flag & FLAG_PREFIX) { //前缀
                 if (print_type == PRINT_TY_OCT) {
                     *buffer = '0';
                     buffer ++;
@@ -334,7 +344,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 }
             }
 
-            for (int i = strlen(_buffer) + offset ; i < width ; i ++) {
+            for (int i = strlen(_buffer) + offset ; i < width ; i ++) { //前导0
                 *buffer = flag & FLAG_FILL_ZERO ? '0' : ' ';
                 buffer ++;
             }
@@ -344,9 +354,11 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
         }
     }
 
+    //结束符
     *buffer = '\0';
 
-    return buffer - original;
+    //返回输出的字符的长度(不包括\0)
+    return buffer - original - 1;
 
     #undef PRINT_TY_INT
     #undef PRINT_TY_UNSIGNED

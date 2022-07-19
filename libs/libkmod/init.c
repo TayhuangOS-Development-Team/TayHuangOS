@@ -52,8 +52,6 @@ PUBLIC void __kmod_init__(void) {
 
     bool status = true;
     assert(send_msg(MSG_NORMAL_IPC, status, sizeof(bool), INIT_SERVICE));
-    
-    check_ipc();
 
     kmod_main();
 

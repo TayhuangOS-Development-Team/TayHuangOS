@@ -10,7 +10,7 @@
  *
  * main.c
  *
- * video主函数
+ * testbench1主函数
  *
  */
 
@@ -27,23 +27,30 @@
 #include <syscall/ipc.h>
 #include <syscall/rpc.h>
 
-#include <global.h>
-
-PUBLIC video_info_struct video_info;
-
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 }
 
 PUBLIC void kmod_main(void) {
-    set_logging_name("Video");
-    
-    check_ipc();
-    recv_msg(&video_info);
+    set_logging_name("Testbench2");
+
+    linfo ("Hi!I'm testbench2!");
     
     register_normal_ipc_handler(normal_ipc_handler);
-    text_register_rpc_functions();
     set_allow(ANY_TASK);
+
+    void *buffer = malloc(256);
+    void *buf = buffer;
+
+    ARG_WRITE(buf, int, 0);
+    ARG_WRITE(buf, int, 0);
+    ARG_WRITE(buf, byte, 0x0C);
+    ARG_WRITE(buf, int, 2);
+    ARG_WRITE(buf, byte, 'A');
+    ARG_WRITE(buf, byte, 'B');
+
+    bool status = remote_call(bool, VIDEO_DRIVER_SERVICE, 1, ((rpc_args_struct){.data = buffer, .size = sizeof(int) * 3 + sizeof(byte) * 3}));
+    linfo ("%d",status);
 
     message_loop();
 

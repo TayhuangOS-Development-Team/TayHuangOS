@@ -35,7 +35,7 @@
 
 #include <intterup/init_int.h>
 #include <intterup/irq_handler.h>
-#include <intterup/clock/clock.h>
+#include <intterup/clock.h>
 
 #include <task/task_manager.h>
 #include <task/task_scheduler.h>
@@ -43,6 +43,7 @@
 #include <syscall/syscall.h>
 #include <syscall/rpc.h>
 #include <syscall/syscalls.h>
+#include <syscall/sys_task.h>
 
 #include <printk.h>
 #include <logging.h>
@@ -51,7 +52,7 @@
 
 PUBLIC void *kernel_pml4 = NULL;
 PUBLIC struct boot_args args;
-PUBLIC int cur_pid = 0;
+PUBLIC int cur_pid = 2;
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -135,12 +136,14 @@ PRIVATE VOLATILE bool i2_ready = false;
 program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
-    assert(send_msg(MSG_NORMAL_IPC, "video.mod", 11, SETUP_SERVICE));
+    assert(send_msg(MSG_NORMAL_IPC, (void*)name, strlen(name) + 1, SETUP_SERVICE));
     assert(send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE));
     set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
 
-    check_ipc();
     bool status;
+
+    set_allow(SETUP_SERVICE);
+    check_ipc();
     recv_msg(&status);
 
     if (! status) {
@@ -167,6 +170,22 @@ PUBLIC void init(void) {
     
     linfo ("Init", "Hi!I'm Init!");
 
+    //-------------------SYS TASK------------------------
+
+    create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
+                kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                SYSTASK_SERVICE, 1, 0, current_task);
+
+    bool status;
+    
+    set_allow(SYSTASK_SERVICE);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize sys_task()!");
+        while (1);
+    }
+
     //---------------------SETUP-------------------------
     program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
     print_mod_info(&setup_mod_info);
@@ -179,11 +198,8 @@ PUBLIC void init(void) {
                     SETUP_SERVICE, 1, 0, current_task));
 
     set_allow(SETUP_SERVICE);
-    
     check_ipc();
-    bool status;
     recv_msg(&status);
-
     if (! status) {
         lerror ("Init", "Failed to initialize setup module!");
         while (1);
@@ -200,8 +216,8 @@ PUBLIC void init(void) {
     
     //TODO: 更改loader以获取framebuffer的bpp
     set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
+
     set_allow(VIDEO_DRIVER_SERVICE);
-    
     check_ipc();
     recv_msg(&status);
     if (! status) {
@@ -216,21 +232,38 @@ PUBLIC void init(void) {
     video_info.is_graphic_mode = args.is_graphic_mode;
     send_msg(MSG_NORMAL_IPC, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
 
-#define TEXT_WRITE_CHAR (0)
-#define TEXT_WRITE_STRING (1)
+    //-------------------TESTBENCH-----------------------
+    program_info tb1_mod_info = load_mod_by_setup("tb1.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, tb1_mod_info.stack_top, tb1_mod_info.stack_bottom, tb1_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    tb1_mod_info.pgd, tb1_mod_info.start, tb1_mod_info.end, tb1_mod_info.start, tb1_mod_info.end,
+                     tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    alloc_pid(), 1, 1, current_task));
 
-    void *buffer = kmalloc(256);
-    void *buf = buffer;
+    set_allow(ANY_TASK);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize testbench 1!");
+        while (1);
+    }
 
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, byte, 0x0C);
-    ARG_WRITE(buf, int, 2);
-    ARG_WRITE(buf, byte, 'A');
-    ARG_WRITE(buf, byte, 'B');
-    
-    void *res = kmalloc(1);
-    rpc_direct_call(VIDEO_DRIVER_SERVICE, TEXT_WRITE_STRING, (rpc_args_struct){.data = buffer, .size = sizeof(int) * 3 + sizeof(byte) * 3}, 1, res);
+    program_info tb2_mod_info = load_mod_by_setup("tb2.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, tb2_mod_info.stack_top, tb2_mod_info.stack_bottom, tb2_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    tb2_mod_info.pgd, tb2_mod_info.start, tb2_mod_info.end, tb2_mod_info.start, tb2_mod_info.end,
+                     tb2_mod_info.heap_bottom, tb2_mod_info.heap_top,tb2_mod_info.start, tb2_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    alloc_pid(), 1, 1, current_task));
+
+    set_allow(ANY_TASK);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize testbench 2!");
+        while (1);
+    }
 
     check_ipc();
 
@@ -282,7 +315,7 @@ PUBLIC void initialize(void) {
     __set_cr3(kernel_pml4);
 
     create_empty_task(); //创建空进程
-    cur_pid = 1;
+    cur_pid = 2;
 
     //初始化TSS
     TSS.ist1 = IST0_STACKTOP;

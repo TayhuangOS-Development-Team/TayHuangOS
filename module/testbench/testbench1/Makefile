@@ -16,10 +16,10 @@
 
 
 
-OBJECTSDIR := $(OBJECTSDIR)/kernel/
+OBJECTSDIR := $(OBJECTSDIR)/testbench1/
 
-KERNEL_OUTPUT := $(BINDIR)/kernel.bin
-KERNEL_SYMBOL_OUTPUT := $(BINDIR)/kernel.sym
+VIDEO_OUTPUT := $(BINDIR)/tb1.mod
+VIDEO_SYMBOL_OUTPUT := $(BINDIR)/tb1.sym
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -29,45 +29,29 @@ CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmod
 CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-LIBS_C_SRC := ctype string tostring debug
-MEMORY_C_SRC := kheap pmm paging
-INTTERUP_C_SRC := clock exception init_int irq_handler
-TASK_C_SRC := task_scheduler task_manager
-SYSCALL_C_SRC := syscall syscalls rpc sys_task
-C_SRC := kernel printk logging kmod_loader \
-	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
-	$(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
-	$(foreach src, $(INTTERUP_C_SRC), intterup/$(src)) \
-	$(foreach src, $(TASK_C_SRC), task/$(src)) \
-	$(foreach src, $(SYSCALL_C_SRC), syscall/$(src))
+C_SRC := main
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry intterup/int_handlers syscall/dosyscall
+ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
-
-CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"
-
-LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
-LIBRARIES :=
+C_INCLUDE := -I"$(TESTBENCHDIR)/testbench1" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 ifeq ($(MODE), debug)
-	LD_FLAGS += -g
 	C_DEFS += -D_DEBUG
 else
-	LD_FLAGS += -s
 	CPP_DEFS += -D_DEBUG
 endif
 
-ifeq ($(VBE_MODE), ENABLE)
-	C_DEFS += -DVBE_ENABLE
-endif
+CPP_DEFS := $(ARCHDEF_C)
+CPP_INCLUDE := -I"$(TESTBENCHDIR)/testbench1" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+
+LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
+LIBRARIES := -lkmod
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
@@ -87,17 +71,17 @@ $(OBJECTSDIR)/%.o : %.S
 
 .PHONY: build
 build: $(OBJECTS)
-	$(MKDIR) $(dir $(KERNEL_OUTPUT))
-	$(LD) $(LD_FLAGS) -T kernel.ld -o $(KERNEL_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
+	$(MKDIR) $(dir $(VIDEO_OUTPUT))
+	$(LD) $(LD_FLAGS) -T testbench1.ld -o $(VIDEO_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
 ifeq ($(MODE), debug)
-	$(OBJCOPY) --only-keep-debug $(KERNEL_OUTPUT) $(KERNEL_SYMBOL_OUTPUT)
-	$(OBJCOPY) --strip-debug $(KERNEL_OUTPUT)
+	$(OBJCOPY) --only-keep-debug $(VIDEO_OUTPUT) $(VIDEO_SYMBOL_OUTPUT)
+	$(OBJCOPY) --strip-debug $(VIDEO_OUTPUT)
 endif
 
 .PHONY: clean
 clean:
-	$(RM) $(KERNEL_OUTPUT) $(OBJECTS)
+	$(RM) $(VIDEO_OUTPUT) $(OBJECTS)
 
 .PHONY: image
 image:
-	$(SUDO) $(COPY) $(KERNEL_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(SUDO) $(COPY) $(VIDEO_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)

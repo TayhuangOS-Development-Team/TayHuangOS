@@ -21,10 +21,14 @@
 #include <tayhuang/defs.h>
 #include <stdarg.h>
 
+//初始化串口
 PUBLIC void init_serial(void);
+
+//输出字符(串)
 PUBLIC void write_serial_char(char ch);
 PUBLIC void write_serial_str(const char *str);
 
+//日志类型
 enum {
     INFO = 0,
     WARN,
@@ -34,6 +38,7 @@ enum {
     ATTENTION
 };
 
+//打印日志
 PUBLIC void __log(const char *name, const char *type, const char *msg);
 PUBLIC void _log(const char *name, const int type, const char *fmt, va_list args);
 PUBLIC void log(const char *name, const char *type, const char *fmt, ...);

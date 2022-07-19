@@ -108,9 +108,21 @@ PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool 
 }
 
 //设置映射
-PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us) { 
+PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us) {
+    vaddr = (void*)((qword)(vaddr) & ~(MEMUNIT_SZ - 1));
     for (int i = 0 ; i < pages ; i ++) {
         if (! __set_mapping(pgd, vaddr + (i * MEMUNIT_SZ), paddr + (i * MEMUNIT_SZ), rw, us)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+PUBLIC bool set_mappingvv(void *src_pgd, void *src_addr, void *dst_pgd, void *dst_addr, int pages, bool rw, bool us) {
+    src_addr = (void*)((qword)(src_addr) & ~(MEMUNIT_SZ - 1));
+    dst_addr = (void*)((qword)(dst_addr) & ~(MEMUNIT_SZ - 1));
+    for (int i = 0 ; i < pages ; i ++) {
+        if (! __set_mapping(dst_pgd, dst_addr + (i * MEMUNIT_SZ), __pa(src_pgd, src_addr + (i * MEMUNIT_SZ)), rw, us)) {
             return false;
         }
     }

@@ -32,7 +32,7 @@ typedef struct {
 #define MSG_IRQ_WAKE   (0x03)
 
 typedef struct {
-    qword reserved : 38;
     byte message_no : 6; 
     dword source : 20;
+    qword reserved : 38;
 } recvmsg_result_struct;

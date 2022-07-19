@@ -10,7 +10,7 @@
  *
  * main.c
  *
- * video主函数
+ * testbench1主函数
  *
  */
 
@@ -27,22 +27,16 @@
 #include <syscall/ipc.h>
 #include <syscall/rpc.h>
 
-#include <global.h>
-
-PUBLIC video_info_struct video_info;
-
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 }
 
 PUBLIC void kmod_main(void) {
-    set_logging_name("Video");
-    
-    check_ipc();
-    recv_msg(&video_info);
+    set_logging_name("Testbench1");
+
+    linfo ("Hi!I'm testbench1!");
     
     register_normal_ipc_handler(normal_ipc_handler);
-    text_register_rpc_functions();
     set_allow(ANY_TASK);
 
     message_loop();

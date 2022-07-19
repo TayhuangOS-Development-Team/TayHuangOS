@@ -19,7 +19,7 @@
 #include <tayhuang/io.h>
 #include <tayhuang/ports.h>
 
-#include <intterup/clock/clock.h>
+#include <intterup/clock.h>
 
 #include <task/task_scheduler.h>
 
