@@ -23,10 +23,12 @@
 
 #include <intterup/irq_handler.h>
 
+//超级牛力
 #define MOO_SN (0x00)
 PUBLIC void __moo(void);
 PUBLIC void moo(void);
 
+//IPC相关
 #define SEND_MSG_SN (0x01)
 PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst);
 PUBLIC bool send_msg(int msgno, void *src, qword size, int dst);
@@ -47,10 +49,13 @@ PUBLIC recvmsg_result_struct recv_msg(void *dst);
 PUBLIC void __set_mailbuffer(void *buffer, qword size);
 PUBLIC void set_mailbuffer(void *buffer, qword size);
 
+//其他
 #define REG_IRQ_SN (0x0A)
 PUBLIC void __reg_irq(int irq);
 PUBLIC void reg_irq(int irq);
 
+//IRQ处理器
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags);
+
 //dummy进程发送消息
 PUBLIC bool dummy_send_msg(void *src, qword size, int dst);

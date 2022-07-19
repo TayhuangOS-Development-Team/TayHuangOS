@@ -21,9 +21,11 @@
 #include <tayhuang/defs.h>
 #include <stdarg.h>
 
+//输出字符(串)
 PUBLIC void write_serial_char(char ch);
 PUBLIC void write_serial_str(const char *str);
 
+//日志类型
 enum {
     INFO = 0,
     WARN,
@@ -33,7 +35,10 @@ enum {
     ATTENTION
 };
 
+//设置日志名称
 PUBLIC void set_logging_name(const char *name);
+
+//打印日志
 PUBLIC void __log(const char *type, const char *msg);
 PUBLIC void _log(const int type, const char *fmt, va_list args);
 PUBLIC void log(const char *type, const char *fmt, ...);

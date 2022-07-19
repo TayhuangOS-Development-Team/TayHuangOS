@@ -20,6 +20,7 @@
 
 #include <tayhuang/defs.h>
 
+//类型定义
 typedef qword rpc_func;
 typedef dword rpc_size;
 
@@ -33,6 +34,7 @@ typedef rpc_args_struct(*rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);
 #define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
 #define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
 
+//处理RPC请求
 PUBLIC void deal_rpc_request(int caller, void *msg);
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size); //当args_size = -1时, 不对参数大小进行检验
 PUBLIC rpc_args_struct rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result);

@@ -18,28 +18,37 @@
 
 #include <tool/tostring.h>
 
+//位
 static const char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
+//整数转字符串
 char *itoa(int val, char *buffer, int base) {
     char *save = buffer;
+    //0
     if (val == 0) {
         *buffer = '0';
         buffer ++;
         *buffer = '\0';
         return save;
     }
+    //负数
     if (val < 0) {
         *buffer = '-';
         buffer ++;
         val = -val;
     }
+
     char _buffer[12];
     int cnt = 0;
+    
+    //大于0
     while (val > 0) {
         _buffer[cnt] = digits[val % base];
         cnt ++;
         val /= base;
     }
+
+    //倒序
     for (int i = cnt - 1; i >=  0 ; i --) {
         *buffer = _buffer[i];
         buffer ++;
@@ -49,19 +58,25 @@ char *itoa(int val, char *buffer, int base) {
 
 char *uitoa(unsigned int val, char *buffer, int base) {
     char *save = buffer;
+    //0
     if (val == 0) {
         *buffer = '0';
         buffer ++;
         *buffer = '\0';
         return save;
     }
+
     char _buffer[12];
     int cnt = 0;
+
+    //大于0
     while (val > 0) {
         _buffer[cnt] = digits[val % base];
         cnt ++;
         val /= base;
     }
+
+    //倒序
     for (int i = cnt - 1; i >=  0 ; i --) {
         *buffer = _buffer[i];
         buffer ++;
@@ -71,12 +86,14 @@ char *uitoa(unsigned int val, char *buffer, int base) {
 
 char *lltoa(long long val, char *buffer, int base) {
     char *save = buffer;
+    //0
     if (val == 0) {
         *buffer = '0';
         buffer ++;
         *buffer = '\0';
         return save;
     }
+    //负数
     if (val < 0) {
         *buffer = '-';
         buffer ++;
@@ -84,11 +101,15 @@ char *lltoa(long long val, char *buffer, int base) {
     }
     char _buffer[23];
     int cnt = 0;
+
+    //大于0
     while (val > 0) {
         _buffer[cnt] = digits[val % base];
         cnt ++;
         val /= base;
     }
+
+    //倒序
     for (int i = cnt - 1; i >=  0 ; i --) {
         *buffer = _buffer[i];
         buffer ++;
@@ -98,6 +119,7 @@ char *lltoa(long long val, char *buffer, int base) {
 
 char *ulltoa(unsigned long long val, char *buffer, int base) {
     char *save = buffer;
+    //0
     if (val == 0) {
         *buffer = '0';
         buffer ++;
@@ -106,11 +128,15 @@ char *ulltoa(unsigned long long val, char *buffer, int base) {
     }
     char _buffer[23];
     int cnt = 0;
+
+    //大于0
     while (val > 0) {
         _buffer[cnt] = digits[val % base];
         cnt ++;
         val /= base;
     }
+
+    //倒序
     for (int i = cnt - 1; i >=  0 ; i --) {
         *buffer = _buffer[i];
         buffer ++;

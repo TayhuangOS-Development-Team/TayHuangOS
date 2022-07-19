@@ -21,6 +21,7 @@
 #include <tayhuang/defs.h>
 #include <task/task_struct.h>
 
+//程序信息
 typedef struct {
     void *start;
     void *end;
@@ -32,5 +33,7 @@ typedef struct {
     void *heap_top;
 } program_info;
 
+//从内存中加载kmod
 PUBLIC program_info load_kmod_from_memory(void *addr);
+//初始化kmod进程
 PUBLIC task_struct *initialize_kmod_task(task_struct *kmod_task);

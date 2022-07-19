@@ -20,4 +20,10 @@
 
 #include <tayhuang/defs.h>
 
+//共享内存
+#define SHARE_MEMORY_FN (0)
+//创建共享内存
+#define CREATE_SHARE_MEMORY_FN (1)
+
+//系统调用进程
 PUBLIC void sys_task(void);
