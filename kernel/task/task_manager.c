@@ -89,7 +89,7 @@ PUBLIC void remove_task(task_struct *task) {
     kfree(task);
 }
 
-
+//链表头/尾
 PRIVATE task_struct *level0_list_head = NULL;
 PRIVATE task_struct *level0_list_tail = NULL;
 PRIVATE task_struct *level1_list_head = NULL;
@@ -162,6 +162,7 @@ PUBLIC void enqueue_level1_task(task_struct *task) {
     level1_list_tail = task;
 }
 
+//初始化thread_info
 PRIVATE void __init_thread_info(thread_info_struct *thread_info, word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags) {
     memset (thread_info, 0, sizeof(thread_info_struct));
 
@@ -176,6 +177,7 @@ PRIVATE void __init_thread_info(thread_info_struct *thread_info, word ds, void *
     thread_info->program.rflags = rflags;
 }
 
+//初始化mm_info
 PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword stack_start, qword stack_end,
         qword heap_start, qword heap_end, qword rodata_start, qword rodata_end, qword shm_start, qword shm_end) {
     mm_info->pgd = pgd;
@@ -201,6 +203,7 @@ PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start
     mm_info->shm_ptr = shm_start;
 }
 
+//初始化ipc_info
 PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
     ipc_info->write_ptr = NULL;
     ipc_info->read_ptr = NULL;
@@ -211,6 +214,7 @@ PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
     ipc_info->allow_pid = NULL_TASK;
 }
 
+//创建进程(low level)
 PUBLIC task_struct *__create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
@@ -224,7 +228,7 @@ PUBLIC task_struct *__create_task(
                         heap_start, heap_end, rodata_start, rodata_end, shm_start, shm_end);
     __init_ipc_info(&task->ipc_info);
 
-    task->state = SUBBMITED;
+    task->state = SUBBMITED; //提交态
     task->last = task->next = task->free_next = NULL;
     
     task->pid = pid;
@@ -238,6 +242,7 @@ PUBLIC task_struct *__create_task(
     return task;
 }
 
+//创建进程
 PUBLIC task_struct *create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
@@ -249,11 +254,13 @@ PUBLIC task_struct *create_task(
                                          shm_start, shm_end,
                                         pid, priority, level, parent);
 
+    //加入队列
     add_task(task);
 
     task->bro = parent->children;
     parent->children = task;
 
+    //加入空闲队列
     if (level == 0) {
         enqueue_level0_task(task);
     }

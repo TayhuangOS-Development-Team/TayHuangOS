@@ -16,6 +16,8 @@
 
 
 
+/*FIXME: 重构*/
+
 .global send_msg
 .type send_msg, @function
 .global recv_msg

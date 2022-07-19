@@ -42,14 +42,18 @@ PUBLIC void __kmod_init__(void) {
         while (true);
     }
 
+    //设置日志名
     set_logging_name("KMod Init");
+    //初始化堆
     init_heap(pid, heap_start, heap_end);
 
+    //分配邮箱缓冲区
     void *mail_buffer = malloc(MAIL_SIZE);
     set_mailbuffer(mail_buffer, MAIL_SIZE);
 
     set_allow(ANY_TASK);
 
+    //通知init该模块已初始化完成
     bool status = true;
     assert(send_msg(MSG_NORMAL_IPC, status, sizeof(bool), INIT_SERVICE));
 

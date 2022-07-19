@@ -55,6 +55,7 @@ int strcmp(const char *str1, const char *str2) {
 
 int strlen(const char *str) {
     int cnt = 0x7FFFFFFF;
+    //使用字符串扫描指令
     __asm__ __volatile__ (
       "cld\n"
       "repnz\n"
@@ -65,9 +66,8 @@ int strlen(const char *str) {
 
 char *strcpy(void *dst, const char *src) {
     char *r = dst;
-    while(*src != '\0') {
+    do {
         *(r ++) = *(src ++);
-    }
-    *r = '\0';
+    } while (*src != '\0'); //遇到\0结束(复制后)
     return dst;
 }

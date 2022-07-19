@@ -20,4 +20,6 @@
 
 #include <tayhuang/defs.h>
 
+//映射内存
+//将src进程从mem开始的pages个页映射到target进程
 PUBLIC bool shm_mapping(void *mem, int pages, int src_pid, int target_pid);

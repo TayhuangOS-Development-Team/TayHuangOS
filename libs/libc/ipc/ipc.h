@@ -18,6 +18,9 @@
 
 #pragma once
 
+//FIXME: 重构
+
+//IPC相关函数
 int send_msg(void *msg, int dest, int len, int tickout);
 int recv_msg(void *msg, int source);
 int recv_any_msg(void *msg);

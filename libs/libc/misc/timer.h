@@ -18,4 +18,6 @@
 
 #pragma once
 
+//获取滴答计数
+//TODO: 实现此函数
 int get_ticks(void);

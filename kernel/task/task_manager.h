@@ -33,6 +33,7 @@ static inline bool is_empty(task_struct *task) {
     return task->pid == EMPTY_TASK_PID;
 }
 
+//分配pid
 static inline int alloc_pid(void) {
     return cur_pid ++;
 }
@@ -64,6 +65,7 @@ PUBLIC bool has_level1_task(void);
 PUBLIC void enqueue_level0_task(task_struct *task);
 PUBLIC void enqueue_level1_task(task_struct *task);
 
+//创建进程(low level)
 PUBLIC task_struct *__create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
@@ -71,6 +73,7 @@ PUBLIC task_struct *__create_task(
     int pid, int priority, int level, task_struct *parent
 );
 
+//创建进程
 PUBLIC task_struct *create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
