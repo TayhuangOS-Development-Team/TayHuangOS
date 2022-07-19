@@ -32,12 +32,6 @@ PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 }
 
-PRIVATE void __write_char(int column, int line, byte color, byte ch) {
-    *(byte*)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 0) = ch;
-    *(byte*)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 1) = color;
-}
-
-
 PUBLIC void kmod_main(void) {
     set_logging_name("Video");
     check_ipc();
