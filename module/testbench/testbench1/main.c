@@ -35,8 +35,6 @@ PUBLIC void kmod_main(void) {
     set_logging_name("Testbench1");
 
     linfo ("Hi!I'm testbench1!");
-
-    check_ipc();
     
     register_normal_ipc_handler(normal_ipc_handler);
     set_allow(ANY_TASK);

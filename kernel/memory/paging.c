@@ -126,6 +126,7 @@ PUBLIC bool set_mappingvv(void *src_pgd, void *src_addr, void *dst_pgd, void *ds
             return false;
         }
     }
+    return true;
 }
 
 //获取物理地址

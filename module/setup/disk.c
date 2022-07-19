@@ -76,8 +76,9 @@ PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     outb (IDE0_LBA_HIGH, 0);
     outb (IDE0_COMMAND, ATA_IDENTIFY);
 
-    check_ipc();
     int irq;
+
+    check_ipc();
     recv_msg(&irq);
     if (irq != 14) {
         lerror ("wrong irq!");
@@ -103,8 +104,9 @@ PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
     outb (IDE1_LBA_HIGH, 0);
     outb (IDE1_COMMAND, ATA_IDENTIFY);
     
-    check_ipc();
     int irq;
+
+    check_ipc();
     recv_msg(&irq);
     if (irq != 15) {
         lerror ("wrong irq!");
@@ -139,8 +141,9 @@ PRIVATE void read_ide0_sector(dword lba, bool slave, void *dst) { //读IDE0的�
     outb (IDE0_LBA_HIGH, (lba >> 16) & 0xFF);
     outb (IDE0_COMMAND, ATA_READ);
 
-    check_ipc();
     int irq;
+
+    check_ipc();
     recv_msg(&irq);
     if (irq != 14) {
         lerror ("wrong irq!");
@@ -167,8 +170,9 @@ PRIVATE void read_ide1_sector(dword lba, bool slave, void *dst) { //读IDE1的�
     outb (IDE1_LBA_HIGH, (lba >> 16) & 0xFF);
     outb (IDE1_COMMAND, ATA_READ);
 
-    check_ipc();
     int irq;
+    
+    check_ipc();
     recv_msg(&irq);
     if (irq != 15) {
         lerror ("wrong irq!");

@@ -27,6 +27,10 @@
 #include <task/task_manager.h>
 
 #include <tayhuang/paging.h>
+#include <tayhuang/services.h>
+
+#include <assert.h>
+#include <logging.h>
 
 #define MSG_LENGTH (2048)
 
@@ -45,10 +49,10 @@ PRIVATE void *share_memory(void *addr, int pages, int source_pid, int target_pid
     return mapping_ptr;
 }
 
-PRIVATE rpc_args_struct wrapper_share_memory(int caller, void *msg) {
-    void *addr = ARG_READ(msg, void*);
-    int pages = ARG_READ(msg, int);
-    int target = ARG_READ(msg, int);
+PRIVATE rpc_args_struct wrapper_share_memory(int caller, rpc_func func_no, rpc_args_struct args) {
+    void *addr = ARG_READ(args.data, void*);
+    int pages = ARG_READ(args.data, int);
+    int target = ARG_READ(args.data, int);
     
     void **dst = (void**)kmalloc(sizeof(void*));
     *dst = share_memory(addr, pages, caller, target);
@@ -67,8 +71,8 @@ PRIVATE void *create_share_memory(int pages, int source_pid) {
     return mapping_ptr;
 }
 
-PRIVATE rpc_args_struct wrapper_create_share_memory(int caller, void *msg) {
-    int pages = ARG_READ(msg, int);
+PRIVATE rpc_args_struct wrapper_create_share_memory(int caller, rpc_func func_no, rpc_args_struct args) {
+    int pages = ARG_READ(args.data, int);
     
     void **dst = (void**)kmalloc(sizeof(void*));
     *dst = create_share_memory(pages, caller);
@@ -77,9 +81,17 @@ PRIVATE rpc_args_struct wrapper_create_share_memory(int caller, void *msg) {
 }
 
 PUBLIC void sys_task(void) {
+    void *mail = kmalloc(8192);
+    set_mailbuffer(mail, 8192);
+
     void *msg = kmalloc(MSG_LENGTH);
     rpc_register(SHARE_MEMORY_FN, wrapper_share_memory, sizeof(void*), sizeof(void*) + sizeof(int) * 2);
     rpc_register(CREATE_SHARE_MEMORY_FN, wrapper_create_share_memory, sizeof(void*), sizeof(int));
+
+    set_allow(ANY_TASK);
+
+    bool status = true;
+    assert(send_msg(MSG_NORMAL_IPC, status, sizeof(bool), INIT_SERVICE));
 
     while (true) {
         check_ipc();

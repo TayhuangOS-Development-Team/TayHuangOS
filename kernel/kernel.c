@@ -43,6 +43,7 @@
 #include <syscall/syscall.h>
 #include <syscall/rpc.h>
 #include <syscall/syscalls.h>
+#include <syscall/sys_task.h>
 
 #include <printk.h>
 #include <logging.h>
@@ -139,9 +140,10 @@ program_info load_mod_by_setup(const char *name) {
     assert(send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE));
     set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
 
+    bool status;
+
     set_allow(SETUP_SERVICE);
     check_ipc();
-    bool status;
     recv_msg(&status);
 
     if (! status) {
@@ -168,6 +170,22 @@ PUBLIC void init(void) {
     
     linfo ("Init", "Hi!I'm Init!");
 
+    //-------------------SYS TASK------------------------
+
+    create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
+                kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                SYSTASK_SERVICE, 1, 0, current_task);
+
+    bool status;
+    
+    set_allow(SYSTASK_SERVICE);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize sys_task()!");
+        while (1);
+    }
+
     //---------------------SETUP-------------------------
     program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
     print_mod_info(&setup_mod_info);
@@ -180,7 +198,6 @@ PUBLIC void init(void) {
                     SETUP_SERVICE, 1, 0, current_task));
 
     set_allow(SETUP_SERVICE);
-    bool status;
     check_ipc();
     recv_msg(&status);
     if (! status) {

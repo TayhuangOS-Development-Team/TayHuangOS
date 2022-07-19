@@ -48,15 +48,15 @@ PUBLIC void message_loop(void) {
             }
             break;
         }
-        case MSG_IRQ_WAKE: {
-            break;
-        }
         case MSG_RPC_CALL: {
             deal_rpc_request(result.source, msg);
             break;
         }
         case MSG_RPC_RESULT: {
             rpc_tail(result.source, msg);
+            break;
+        }
+        case MSG_IRQ_WAKE: {
             break;
         }
         }

@@ -169,7 +169,8 @@ PUBLIC recvmsg_result_struct __recv_msg(void *dst) {
     assert(current_task->ipc_info.used_size >= (pack.length + sizeof(msgpack_struct)));
     current_task->ipc_info.used_size -= (pack.length + sizeof(msgpack_struct));
 
-    return (recvmsg_result_struct){.source = pack.source, .message_no = pack.message_no};
+    recvmsg_result_struct result = (recvmsg_result_struct){.source = pack.source, .message_no = pack.message_no};
+    return result;
 }
 
 PUBLIC recvmsg_result_struct recv_msg(void *dst) {
