@@ -135,10 +135,11 @@ PRIVATE VOLATILE bool i2_ready = false;
 program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
-    assert(send_msg(MSG_NORMAL_IPC, "video.mod", 11, SETUP_SERVICE));
+    assert(send_msg(MSG_NORMAL_IPC, (void*)name, strlen(name) + 1, SETUP_SERVICE));
     assert(send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE));
     set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
 
+    set_allow(SETUP_SERVICE);
     check_ipc();
     bool status;
     recv_msg(&status);
@@ -216,21 +217,14 @@ PUBLIC void init(void) {
     video_info.is_graphic_mode = args.is_graphic_mode;
     send_msg(MSG_NORMAL_IPC, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
 
-#define TEXT_WRITE_CHAR (0)
-#define TEXT_WRITE_STRING (1)
-
-    void *buffer = kmalloc(256);
-    void *buf = buffer;
-
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, int, 0);
-    ARG_WRITE(buf, byte, 0x0C);
-    ARG_WRITE(buf, int, 2);
-    ARG_WRITE(buf, byte, 'A');
-    ARG_WRITE(buf, byte, 'B');
-    
-    void *res = kmalloc(1);
-    rpc_direct_call(VIDEO_DRIVER_SERVICE, TEXT_WRITE_STRING, (rpc_args_struct){.data = buffer, .size = sizeof(int) * 3 + sizeof(byte) * 3}, 1, res);
+    //-------------------TESTBENCH-----------------------
+    program_info tb1_mod_info = load_mod_by_setup("tb1.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, tb1_mod_info.stack_top, tb1_mod_info.stack_bottom, tb1_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    tb1_mod_info.pgd, tb1_mod_info.start, tb1_mod_info.end, tb1_mod_info.start, tb1_mod_info.end,
+                     tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    alloc_pid(), 1, 1, current_task));
 
     check_ipc();
 

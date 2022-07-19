@@ -18,25 +18,19 @@
 
 OBJECTSDIR := $(OBJECTSDIR)/module/
 BINDIR := $(BINDIR)/module/
-MODULEDIR := $(ROOTDIR)/module/
-export OBJECTSDIR MODULEDIR
+TESTBENCHDIR := $(MODULEDIR)/testbench/
+export OBJECTSDIR BINDIR TESTBENCHDIR
 
 #编译
 .PHONY: build
 build:
-	$(CD) driver && $(MAKE) build
-	$(CD) setup && $(MAKE) build
-	$(CD) testbench && $(MAKE) build
+	$(CD) testbench1 && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	$(CD) driver && $(MAKE) clean
-	$(CD) setup && $(MAKE) clean
-	$(CD) testbench && $(MAKE) clean
+	$(CD) testbench1 && $(MAKE) clean
 
 .PHONY: image
 image:
-	$(CD) driver && $(MAKE) image
-	$(CD) setup && $(MAKE) image
-	$(CD) testbench && $(MAKE) image
+	$(CD) testbench1 && $(MAKE) image
