@@ -44,6 +44,9 @@ PUBLIC bool should_switch(void) {
     if (! do_schedule) {
         return false;
     }
+    if (current_task->pid == -1) {
+        return true;
+    }
     if (current_task->level == 0) {
         if (current_task->state == RUNNING) {
             return false;

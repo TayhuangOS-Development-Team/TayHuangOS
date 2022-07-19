@@ -25,12 +25,15 @@ export OBJECTSDIR BINDIR TESTBENCHDIR
 .PHONY: build
 build:
 	$(CD) testbench1 && $(MAKE) build
+	$(CD) testbench2 && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
 	$(CD) testbench1 && $(MAKE) clean
+	$(CD) testbench2 && $(MAKE) clean
 
 .PHONY: image
 image:
 	$(CD) testbench1 && $(MAKE) image
+	$(CD) testbench2 && $(MAKE) image

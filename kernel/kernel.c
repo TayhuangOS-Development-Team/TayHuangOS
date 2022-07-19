@@ -35,7 +35,7 @@
 
 #include <intterup/init_int.h>
 #include <intterup/irq_handler.h>
-#include <intterup/clock/clock.h>
+#include <intterup/clock.h>
 
 #include <task/task_manager.h>
 #include <task/task_scheduler.h>
@@ -51,7 +51,7 @@
 
 PUBLIC void *kernel_pml4 = NULL;
 PUBLIC struct boot_args args;
-PUBLIC int cur_pid = 0;
+PUBLIC int cur_pid = 2;
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -180,11 +180,9 @@ PUBLIC void init(void) {
                     SETUP_SERVICE, 1, 0, current_task));
 
     set_allow(SETUP_SERVICE);
-    
-    check_ipc();
     bool status;
+    check_ipc();
     recv_msg(&status);
-
     if (! status) {
         lerror ("Init", "Failed to initialize setup module!");
         while (1);
@@ -201,8 +199,8 @@ PUBLIC void init(void) {
     
     //TODO: 更改loader以获取framebuffer的bpp
     set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
+
     set_allow(VIDEO_DRIVER_SERVICE);
-    
     check_ipc();
     recv_msg(&status);
     if (! status) {
@@ -225,6 +223,30 @@ PUBLIC void init(void) {
                      tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
                     alloc_pid(), 1, 1, current_task));
+
+    set_allow(ANY_TASK);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize testbench 1!");
+        while (1);
+    }
+
+    program_info tb2_mod_info = load_mod_by_setup("tb2.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, tb2_mod_info.stack_top, tb2_mod_info.stack_bottom, tb2_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    tb2_mod_info.pgd, tb2_mod_info.start, tb2_mod_info.end, tb2_mod_info.start, tb2_mod_info.end,
+                     tb2_mod_info.heap_bottom, tb2_mod_info.heap_top,tb2_mod_info.start, tb2_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    alloc_pid(), 1, 1, current_task));
+
+    set_allow(ANY_TASK);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize testbench 2!");
+        while (1);
+    }
 
     check_ipc();
 
@@ -276,7 +298,7 @@ PUBLIC void initialize(void) {
     __set_cr3(kernel_pml4);
 
     create_empty_task(); //创建空进程
-    cur_pid = 1;
+    cur_pid = 2;
 
     //初始化TSS
     TSS.ist1 = IST0_STACKTOP;
