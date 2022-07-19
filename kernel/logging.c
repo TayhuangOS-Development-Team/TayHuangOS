@@ -35,30 +35,36 @@ PUBLIC void init_serial(void) {
 }
 
 PUBLIC void write_serial_char(char ch) {
-    while ((inb(SERIAL_STATUS) & 0x20) == 0);
-    outb(SERIAL_SEND, ch);
+    while ((inb(SERIAL_STATUS) & 0x20) == 0); //可以使用
+    outb(SERIAL_SEND, ch); //输出一个字符
 }
 
 PUBLIC void write_serial_str(const char *str) {
-    while (*str != '\0') {
+    while (*str != '\0') { //不遇到\0就不停下
         write_serial_char(*str);
         str ++;
     }
 }
 
 PUBLIC void __log(const char *name, const char *type, const char *msg) {
+    //打印名字
     write_serial_char('(');
     write_serial_str(name);
     write_serial_char(')');
+    //打印类型
     write_serial_char('[');
     write_serial_str(type);
     write_serial_char(']');
+    //输出消息
     write_serial_str(msg);
+    //换行
     write_serial_char('\n');
 }
 
 PUBLIC void _log(const char *name, const int type, const char *fmt, va_list args) {
     const char *typename;
+    
+    //根据类型获取类型名
     switch (type) {
     case INFO: typename = "INFO"; break;
     case WARN: typename = "WARN"; break;
@@ -71,8 +77,10 @@ PUBLIC void _log(const char *name, const int type, const char *fmt, va_list args
 
     char buffer[512];
 
+    //输出到buffer里
     vsprintk(buffer, fmt, args);
 
+    //输出到串口
     __log(name, typename, buffer);
 }
 
@@ -80,14 +88,17 @@ PUBLIC void log(const char *name, const char *type, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
+    //输出到buffer里
     char buffer[512];
     vsprintk(buffer, fmt, args);
 
+    //输出到串口
     __log(name, type, buffer);
 
     va_end(args);
 }
 
+//信息
 PUBLIC void linfo(const char *name, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -97,6 +108,7 @@ PUBLIC void linfo(const char *name, const char *fmt, ...) {
     va_end(args);
 }
 
+//警告
 PUBLIC void lwarn(const char *name, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -106,6 +118,7 @@ PUBLIC void lwarn(const char *name, const char *fmt, ...) {
     va_end(args);
 }
 
+//错误
 PUBLIC void lerror(const char *name, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -115,6 +128,7 @@ PUBLIC void lerror(const char *name, const char *fmt, ...) {
     va_end(args);
 }
 
+//致命错误
 PUBLIC void lfatal(const char *name, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -124,6 +138,7 @@ PUBLIC void lfatal(const char *name, const char *fmt, ...) {
     va_end(args);
 }
 
+//提示
 PUBLIC void ltips(const char *name, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -133,6 +148,7 @@ PUBLIC void ltips(const char *name, const char *fmt, ...) {
     va_end(args);
 }
 
+//注意
 PUBLIC void lattention(const char *name, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
