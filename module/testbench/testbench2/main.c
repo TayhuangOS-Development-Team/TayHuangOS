@@ -27,6 +27,8 @@
 #include <syscall/ipc.h>
 #include <syscall/rpc.h>
 
+#include <memory/sharemem.h>
+
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 }
@@ -39,25 +41,14 @@ PUBLIC void kmod_main(void) {
     register_normal_ipc_handler(normal_ipc_handler);
     set_allow(ANY_TASK);
 
-    void *buffer = malloc(256);
-    void *buf = buffer;
-
-    ARG_WRITE(buf, int, 1);
-
-    void *addr = remote_call(void*, SYSTASK_SERVICE, 1, ((rpc_args_struct){.data = buffer, .size = sizeof(int)}));
+    void *addr = create_share_memory(1);
     *(qword*)(addr) = 8;
 
-    buf = buffer;
-    ARG_WRITE(buf, void*, addr);
-    ARG_WRITE(buf, int, 1);
-    ARG_WRITE(buf, int, 2);
-    void *new_addr = remote_call(void*, SYSTASK_SERVICE, 0, ((rpc_args_struct){.data = buffer, .size = sizeof(void*) + sizeof(int) * 2}));
+    void *new_addr = share_memory(addr, 1, 2);
 
     linfo ("%p", new_addr);
 
     send_msg(MSG_NORMAL_IPC, &new_addr, sizeof(void*), 2);
-
-    free(buffer);
 
     message_loop();
 
