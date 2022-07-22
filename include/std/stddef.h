@@ -6,14 +6,13 @@
  *
  * --------------------------------------------------------------------------------
  *
- * 作者: theflysong
+ * 作者: theflysong 383494
  *
  * stddef.h
  *
  * 标准库 stddef.h 头文件
  *
  */
-
 
 
 #pragma once
@@ -29,11 +28,17 @@ typedef __SIZE_TYPE__ size_t;
 #ifndef __PTRDIFF_TYPE__
 
 #ifndef LOADER32BIT
-#define __PTRDIFF_TYPE__ unsigned long long
+#define __PTRDIFF_TYPE__ signed long long
 #else
-#define __PTRDIFF_TYPE__ unsigned int
+#define __PTRDIFF_TYPE__ signed int
 #endif
 
 #endif
 
 typedef __PTRDIFF_TYPE__ ptrdiff_t;
+
+#ifndef offsetof
+#define offsetof(type, member) ((size_t)&(((type *)0)->member))
+#endif
+
+typedef int wchar_t;
