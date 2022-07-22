@@ -34,11 +34,13 @@ LIBS_C_SRC := ctype string tostring
 DEBUG_C_SRC := logging debug
 MEMORY_C_SRC := malloc
 SYSCALL_C_SRC := rpc ipc
+EXPORT_C_SRC := __sys_task_fn
 C_SRC := init printf \
          $(foreach src, $(LIBS_C_SRC), libs/$(src)) \
          $(foreach src, $(DEBUG_C_SRC), debug/$(src)) \
          $(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
-         $(foreach src, $(SYSCALL_C_SRC), syscall/$(src))
+         $(foreach src, $(SYSCALL_C_SRC), syscall/$(src)) \
+         $(foreach src, $(EXPORT_C_SRC), export/$(src)) \
 
 CPP_SRC :=
 
