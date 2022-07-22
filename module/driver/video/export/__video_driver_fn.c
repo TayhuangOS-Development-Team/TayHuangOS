@@ -8,18 +8,16 @@
  * 
  * 作者: theflysong
  * 
- * command.h
+ * __video_driver_fn.c
  * 
- * 通用部分
+ * video_driver 函数功能
  * 
  */
 
 
 
-#pragma once
+#include <export/__video_driver_fn.h>
 
-#include <tayhuang/video_info.h>
+#include <tayhuang/services.h>
 
-PUBLIC void text_register_rpc_functions(void);
-
-EXTERN PUBLIC video_info_struct video_info;
+#include <syscall/rpc.h>

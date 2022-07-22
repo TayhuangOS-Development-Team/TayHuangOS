@@ -17,6 +17,7 @@
 
 
 #include <global.h>
+#include <export/__video_driver_fn.h>
 
 #include <debug/logging.h>
 
@@ -42,10 +43,10 @@ PRIVATE rpc_args_struct wrapper_write_char(int caller, rpc_func func_no, rpc_arg
 
     write_char(column, line, color, ch);
 
-    bool *result = malloc(sizeof(bool));
+    bool *result = malloc(sizeof(TEXT_WRITE_CHAR_RETURN_TYPE));
     *result = true;
 
-    return (rpc_args_struct){.data = result, .size = sizeof(bool)};
+    return (rpc_args_struct){.data = result, .size = sizeof(TEXT_WRITE_CHAR_RETURN_TYPE)};
 }
 
 PRIVATE rpc_args_struct wrapper_write_string(int caller, rpc_func func_no, rpc_args_struct args) {
@@ -62,13 +63,13 @@ PRIVATE rpc_args_struct wrapper_write_string(int caller, rpc_func func_no, rpc_a
         write_char(column + i, line, color, ch);
     }
 
-    bool *result = malloc(sizeof(bool));
+    bool *result = malloc(sizeof(TEXT_WRITE_STRING_RETURN_TYPE));
     *result = true;
 
-    return (rpc_args_struct){.data = result, .size = sizeof(bool)};
+    return (rpc_args_struct){.data = result, .size = sizeof(TEXT_WRITE_STRING_RETURN_TYPE)};
 }
 
 PUBLIC void text_register_rpc_functions(void) {
-    rpc_register(TEXT_WRITE_CHAR, wrapper_write_char, sizeof(bool), sizeof(int) * 2 + sizeof(byte) * 2);
-    rpc_register(TEXT_WRITE_STRING, wrapper_write_string, sizeof(bool), -1);
+    rpc_register(TEXT_WRITE_CHAR_FN, wrapper_write_char, sizeof(TEXT_WRITE_CHAR_RETURN_TYPE), TEXT_WRITE_CHAR_ARGS_SIZE);
+    rpc_register(TEXT_WRITE_STRING_FN, wrapper_write_string, sizeof(TEXT_WRITE_STRING_RETURN_TYPE), TEXT_WRITE_STRING_ARGS_SIZE);
 }
