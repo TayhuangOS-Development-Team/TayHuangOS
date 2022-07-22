@@ -8,9 +8,9 @@
  * 
  * 作者: theflysong
  * 
- * sys_task.h
+ * sharemem.h
  * 
- * 系统调用进程
+ * 共享内存
  * 
  */
 
@@ -19,6 +19,4 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-
-//系统调用进程
-PUBLIC void sys_task(void);
+#include <export/__sys_task_fn.h>
