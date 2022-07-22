@@ -23,22 +23,21 @@
 #定义区
 
 ARCHITECTURE ?= x86_64
+BOOT_TYPE := BIOS		#可选：BIOS UEFI
 ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
 FILESYSTEM ?= fat32
 MODE ?= debug
 VBE_MODE ?= DISABLE
-LOOPA ?= /dev/loop19
-LOOPB ?= /dev/loop20
 KERNEL_PARTITION_OFFSET ?= 1048576
 IMAGE_SECTORS ?= 262144
 PROGRAM_FORMAT ?= elf
 COMPILER_PREFIX := $(ARCHITECTURE)-$(PROGRAM_FORMAT)
-
+# 这里本来有LOOPA和LOOPB，但依赖于get_loop.sh，故放在工具区
 CODE_VERSION  := alpha
 MAJOR_VERSION := 2
 MINOR_VERSION := 25
 PATCH_VERSION := 7
-BUILD_VERSION := 602
+BUILD_VERSION := 613
 
 VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
 
@@ -105,8 +104,14 @@ TOOLS_DIR := $(ROOTDIR)/tools/
 PNG_CONV := $(TOOLS_DIR)/png_converter/converter.py
 COUNTER := $(TOOLS_DIR)/build_counter/counter.py
 COMMENTS_STAT := $(TOOLS_DIR)/comments_stat/stat.py
+GET_LOOP := $(TOOLS_DIR)/get_loop_devices/get_loop.sh
 
-#任务区
+# 本来应该放在定义区，但依赖于get_loop.sh
+LOOPA ?= $(shell $(GET_LOOP) 0)
+LOOPB ?= $(shell $(GET_LOOP) $(LOOPA))
+
+# 任务区
+# 下划线结尾的任务不应直接调用
 
 #编译并写入映像
 .PHONY: all
@@ -139,23 +144,29 @@ setup_workspace:
 	$(MKDIR) $(BINDIR)
 
 	$(FDISK) $(TAYHUANGOS_IMG)
+	-$(MAKE) setup_workspace_losetup_
 
-	$(SUDO) $(LOOP_SETUP) $(LOOPA) $(TAYHUANGOS_IMG)
-	$(SUDO) $(LOOP_SETUP) $(LOOPB) $(TAYHUANGOS_IMG) -o $(KERNEL_PARTITION_OFFSET)
-
-	$(SUDO) $(MKFS) $(LOOPB)
-	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
-
-	$(SUDO) $(GRUB_INSTALL) --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="$(GRUB_MODULES)" $(LOOPA)
-
-	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
-
+	-$(SUDO) $(LOOP_SETUP) -d $(LOOPB)	#losetup LOOPA失败不会影响LOOPB
 	$(SUDO) $(LOOP_SETUP) -d $(LOOPA)
-	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
 
 	$(SUDO) $(CHMOD) +x $(PNG_CONV)
 	$(SUDO) $(CHMOD) +x $(COUNTER)
 	$(SUDO) $(CHMOD) +x $(COMMENTS_STAT)
+
+.PHONY: setup_workspace_losetup_
+setup_workspace_losetup_:
+	$(SUDO) $(LOOP_SETUP) $(LOOPA) $(TAYHUANGOS_IMG)
+	$(SUDO) $(LOOP_SETUP) $(LOOPB) $(TAYHUANGOS_IMG) -o $(KERNEL_PARTITION_OFFSET)
+	
+	$(SUDO) $(MKFS) $(LOOPB)
+	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
+
+	#TODO:添加UEFI支持
+	-$(SUDO) $(GRUB_INSTALL) --target=i386-pc --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="$(GRUB_MODULES)" $(LOOPA)
+
+	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
+
+
 
 .PHONY: do_count
 do_count:
@@ -198,9 +209,14 @@ clean:
 .PHONY: image
 image:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
+	-$(MAKE) image_losetup_
+	-$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
+	-$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
+
+.PHONY: image_losetup_
+image_losetup_:
 	$(SUDO) $(LOOP_SETUP) $(LOOPB) $(TAYHUANGOS_IMG) -o 1048576
 	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
-
 	$(SUDO) $(COPY) ./configs/grub.cfg $(TAYHUANGOS_MOUNT_DIR)/boot/grub
 ifeq ($(VBE_MODE), ENABLE)
 	$(SUDO) $(COPY) $(RAW_ICON) $(TAYHUANGOS_MOUNT_DIR)/
@@ -209,9 +225,6 @@ endif
 	$(CD) loader && $(MAKE) image
 	$(CD) kernel && $(MAKE) image
 	$(CD) module && $(MAKE) image
-
-	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
-	$(SUDO) $(LOOP_SETUP) -d $(LOOPB)
 
 .PHONY: run
 run:
