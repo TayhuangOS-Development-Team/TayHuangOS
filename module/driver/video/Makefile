@@ -31,9 +31,7 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-TEXT_C_SRC := command
-C_SRC := main \
-	$(foreach src, $(TEXT_C_SRC), text/$(src))
+C_SRC := main text framebuffers
 
 CPP_SRC :=
 
