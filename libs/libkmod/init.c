@@ -55,9 +55,8 @@ PUBLIC void __kmod_init__(void) {
 
     //通知init该模块已初始化完成
     bool status = true;
-    int send_ret = send_msg(MSG_NORMAL_IPC, status, sizeof(bool), INIT_SERVICE);
+    bool send_ret = send_msg(MSG_NORMAL_IPC, &status, sizeof(bool), INIT_SERVICE);
     assert(send_ret);
-
 
     kmod_main();
 
