@@ -6,7 +6,7 @@
 # 
 # --------------------------------------------------------------------------------
 # 
-# 作者: theflysong
+# 作者: theflysong 383494
 # 
 # Makefile
 # 
@@ -37,7 +37,7 @@ CODE_VERSION  := alpha
 MAJOR_VERSION := 2
 MINOR_VERSION := 25
 PATCH_VERSION := 8
-BUILD_VERSION := 1
+BUILD_VERSION := 2
 
 VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
 
@@ -200,10 +200,10 @@ $(RAW_ICON): $(TAYHUANG_ICON)
 .PHONY: clean
 clean:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
-	$(CD) libs && $(MAKE) clean
-	$(CD) loader && $(MAKE) clean
-	$(CD) kernel && $(MAKE) clean
-	$(CD) module && $(MAKE) clean
+	-$(CD) libs && $(MAKE) clean
+	-$(CD) loader && $(MAKE) clean
+	-$(CD) kernel && $(MAKE) clean
+	-$(CD) module && $(MAKE) clean
 
 #写入映像
 .PHONY: image

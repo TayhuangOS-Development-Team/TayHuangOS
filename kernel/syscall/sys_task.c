@@ -94,7 +94,8 @@ PUBLIC void sys_task(void) {
 
     //初始化完成
     bool status = true;
-    assert(send_msg(MSG_NORMAL_IPC, status, sizeof(bool), INIT_SERVICE));
+    int send_ret = send_msg(MSG_NORMAL_IPC, status, sizeof(bool), INIT_SERVICE);
+    assert(send_ret);
 
     while (true) {
         //接收消息
