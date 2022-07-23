@@ -24,7 +24,7 @@ void panic(const char *format, ...);
 
 #ifdef NDEBUG
     #define assert(expression) ((void)0)
-    #define panic_assert(expression) (expression)
+    #define panic_assert(expression) ((void)0)
 #else
     #define assert(expression) if (! (expression)) \
         assertion_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
