@@ -32,10 +32,12 @@
 #include <assert.h>
 #include <logging.h>
 
+#include <export/__sys_task_fn.h>
+
 #define MSG_LENGTH (2048)
 
 //共享内存
-PRIVATE void *share_memory(void *addr, int pages, int source_pid, int target_pid) {
+PRIVATE SHARE_MEMORY_RETURN_TYPE __share_memory(void *addr, int pages, int source_pid, int target_pid) {
     task_struct *source_task = get_task_by_pid(source_pid);
     task_struct *target_task = get_task_by_pid(target_pid);
 
@@ -52,14 +54,14 @@ PRIVATE rpc_args_struct wrapper_share_memory(int caller, rpc_func func_no, rpc_a
     int pages = ARG_READ(args.data, int);
     int target = ARG_READ(args.data, int);
     
-    void **dst = (void**)kmalloc(sizeof(void*));
-    *dst = share_memory(addr, pages, caller, target);
+    void **dst = (SHARE_MEMORY_RETURN_TYPE*)kmalloc(sizeof(SHARE_MEMORY_RETURN_TYPE));
+    *dst = __share_memory(addr, pages, caller, target);
 
-    return (rpc_args_struct){.data = dst, .size = sizeof(void*)};
+    return (rpc_args_struct){.data = dst, .size = sizeof(SHARE_MEMORY_RETURN_TYPE)};
 }
 
 //创建共享内存
-PRIVATE void *create_share_memory(int pages, int source_pid) {
+PRIVATE CREATE_SHARE_MEMORY_RETURN_TYPE __create_share_memory(int pages, int source_pid) {
     task_struct *source_task = get_task_by_pid(source_pid);
 
     void *mapping_ptr = source_task->mm_info.shm_ptr; //获取指针
@@ -73,11 +75,10 @@ PRIVATE void *create_share_memory(int pages, int source_pid) {
 PRIVATE rpc_args_struct wrapper_create_share_memory(int caller, rpc_func func_no, rpc_args_struct args) {
     int pages = ARG_READ(args.data, int);
     
-    void **dst = (void**)kmalloc(sizeof(void*));
-    *dst = create_share_memory(pages, caller);
+    void **dst = (CREATE_SHARE_MEMORY_RETURN_TYPE*)kmalloc(sizeof(CREATE_SHARE_MEMORY_RETURN_TYPE));
+    *dst = __create_share_memory(pages, caller);
 
-
-    return (rpc_args_struct){.data = dst, .size = sizeof(void*)};
+    return (rpc_args_struct){.data = dst, .size = sizeof(CREATE_SHARE_MEMORY_RETURN_TYPE)};
 }
 
 PUBLIC void sys_task(void) {
@@ -85,8 +86,8 @@ PUBLIC void sys_task(void) {
     set_mailbuffer(mail, 8192); //初始化邮箱
 
     //注册rpc函数
-    rpc_register(SHARE_MEMORY_FN, wrapper_share_memory, sizeof(void*), sizeof(void*) + sizeof(int) * 2);
-    rpc_register(CREATE_SHARE_MEMORY_FN, wrapper_create_share_memory, sizeof(void*), sizeof(int));
+    rpc_register(SHARE_MEMORY_FN, wrapper_share_memory, sizeof(SHARE_MEMORY_RETURN_TYPE), SHARE_MEMORY_ARGS_SIZE);
+    rpc_register(CREATE_SHARE_MEMORY_FN, wrapper_create_share_memory, sizeof(CREATE_SHARE_MEMORY_RETURN_TYPE), CREATE_SHARE_MEMORY_ARGS_SIZE);
 
     set_allow(ANY_TASK);
 
