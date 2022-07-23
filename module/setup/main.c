@@ -45,13 +45,13 @@ PUBLIC void kmod_main(void) {
     while (true) {
         set_allow(INIT_SERVICE);
 
-	int recv_ret;
         check_ipc();
-        recv_ret = recv_msg(name).source != -1;
-	assert(recv_ret);
+        int recv_ret = recv_msg(name).source;
+	assert(recv_ret != -1);
+
         check_ipc();
-        recv_ret = recv_msg(&buffer).source != -1;
-	assert(recv_ret);
+        recv_ret = recv_msg(&buffer).source;
+	assert(recv_ret != -1);
 
         if (context == NULL) {
             context = load_fs(DISK_SEL_IDE0_MASTER, 0);
@@ -61,7 +61,7 @@ PUBLIC void kmod_main(void) {
 
         bool status = load_file(context, name, buffer);
 
-	int send_ret = send_msg(MSG_NORMAL_IPC, &status, sizeof(bool), INIT_SERVICE);
+	bool send_ret = send_msg(MSG_NORMAL_IPC, &status, sizeof(bool), INIT_SERVICE);
 	assert(send_ret);
     }
 
