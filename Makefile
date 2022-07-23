@@ -6,7 +6,7 @@
 # 
 # --------------------------------------------------------------------------------
 # 
-# 作者: theflysong
+# 作者: theflysong 383494
 # 
 # Makefile
 # 
@@ -34,6 +34,7 @@ PROGRAM_FORMAT ?= elf
 COMPILER_PREFIX := $(ARCHITECTURE)-$(PROGRAM_FORMAT)
 BUILD_VERSION ?= 1
 # 这里本来有LOOPA和LOOPB，但依赖于get_loop.sh，故放在工具区
+
 
 include ./version.mk
 
@@ -198,10 +199,10 @@ $(RAW_ICON): $(TAYHUANG_ICON)
 .PHONY: clean
 clean:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
-	$(CD) libs && $(MAKE) clean
-	$(CD) loader && $(MAKE) clean
-	$(CD) kernel && $(MAKE) clean
-	$(CD) module && $(MAKE) clean
+	-$(CD) libs && $(MAKE) clean
+	-$(CD) loader && $(MAKE) clean
+	-$(CD) kernel && $(MAKE) clean
+	-$(CD) module && $(MAKE) clean
 
 #写入映像
 .PHONY: image

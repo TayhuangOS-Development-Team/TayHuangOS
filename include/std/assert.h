@@ -22,8 +22,6 @@ void assertion_failure(const char *expression, const char *file, const char *bas
 void panic_failure(const char *expression, const char *file, const char *base_file, int line);
 void panic(const char *format, ...);
 
-//TODO:改正所有引用assert后使用新assert
-/*
 #ifdef NDEBUG
     #define assert(expression) ((void)0)
     #define panic_assert(expression) (expression)
@@ -33,14 +31,3 @@ void panic(const char *format, ...);
     #define panic_assert(expression) if (! (expression)) \
         panic_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
 #endif
-*/
-#ifdef _DEBUG
-    #define assert(expression) if (! (expression)) \
-        assertion_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
-    #define panic_assert(expression) if (! (expression)) \
-        panic_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
-#else
-    #define assert(expression) (expression)
-    #define panic_assert(expression) (expression)
-#endif
-
