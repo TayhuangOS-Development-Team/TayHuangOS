@@ -136,8 +136,11 @@ PRIVATE VOLATILE bool i2_ready = false;
 program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
-    assert(send_msg(MSG_NORMAL_IPC, (void*)name, strlen(name) + 1, SETUP_SERVICE));
-    assert(send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE));
+    int send_ret;
+    send_ret = send_msg(MSG_NORMAL_IPC, (void*)name, strlen(name) + 1, SETUP_SERVICE);
+    assert(send_ret != 0);	//在错误提示里便于区分
+    send_ret = send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE);
+    assert(send_ret);
     set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
 
     bool status;

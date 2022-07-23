@@ -31,9 +31,9 @@ build:
 #清理
 .PHONY: clean
 clean:
-	$(CD) driver && $(MAKE) clean
-	$(CD) setup && $(MAKE) clean
-	$(CD) testbench && $(MAKE) clean
+	-$(CD) driver && $(MAKE) clean
+	-$(CD) setup && $(MAKE) clean
+	-$(CD) testbench && $(MAKE) clean
 
 .PHONY: image
 image:
