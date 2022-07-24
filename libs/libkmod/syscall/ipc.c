@@ -24,9 +24,14 @@
 #include <debug/logging.h>
 
 PRIVATE normal_ipc_handler_t __normal_ipc_handler__ = NULL;
+PRIVATE irq_handler_t __irq_handler__ = NULL;
 
 PUBLIC void register_normal_ipc_handler(normal_ipc_handler_t handler) {
     __normal_ipc_handler__ = handler;
+}
+
+PUBLIC void register_irq_handler(irq_handler_t handler) {
+    __irq_handler__ = handler;
 }
 
 #define MESSAGE_LEN (1024)
@@ -56,7 +61,10 @@ PUBLIC void message_loop(void) {
             rpc_tail(result.source, msg);
             break;
         }
-        case MSG_IRQ_WAKE: {
+        case MSG_IRQ: {
+            if (__irq_handler__ != NULL) {
+                __irq_handler__(*(int*)msg);
+            }
             break;
         }
         }
