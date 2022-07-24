@@ -16,8 +16,8 @@
 
 
 
-OBJECTSDIR := $(OBJECTSDIR)/module/
-BINDIR := $(BINDIR)/module/
+OBJECTSDIR := $(OBJECTSDIR)/driver/
+BINDIR := $(BINDIR)/driver/
 DRIVERDIR := $(MODULEDIR)/driver/
 export OBJECTSDIR BINDIR DRIVERDIR
 
@@ -25,12 +25,15 @@ export OBJECTSDIR BINDIR DRIVERDIR
 .PHONY: build
 build:
 	$(CD) video && $(MAKE) build
+	$(CD) keyboard && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
 	$(CD) video && $(MAKE) clean
+	$(CD) keyboard && $(MAKE) clean
 
 .PHONY: image
 image:
 	$(CD) video && $(MAKE) image
+	$(CD) keyboard && $(MAKE) image
