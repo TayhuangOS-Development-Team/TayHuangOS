@@ -29,7 +29,7 @@ typedef struct {
 #define MSG_NORMAL_IPC (0x00)
 #define MSG_RPC_CALL   (0x01)
 #define MSG_RPC_RESULT (0x02)
-#define MSG_IRQ_WAKE   (0x03)
+#define MSG_IRQ        (0x03)
 
 typedef struct {
     byte message_no : 6; 
