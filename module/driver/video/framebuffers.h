@@ -20,7 +20,15 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void *get_framebuffer(int pid);
-PUBLIC void set_framebuffer(int pid, void *framebuffer);
+typedef struct {
+    void *framebuffer;
+    int column;
+    int line;
+    int width;
+    int height;
+} frame_t;
+
+PUBLIC frame_t *get_framebuffer(int pid);
+PUBLIC void set_framebuffer(int pid, void *framebuffer, int column, int line, int width, int height);
 PUBLIC bool has_framebuffer(int pid);
 PUBLIC void remove_framebuffer(int pid);

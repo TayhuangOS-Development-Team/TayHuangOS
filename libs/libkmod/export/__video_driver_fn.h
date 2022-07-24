@@ -26,12 +26,18 @@
 
 #define TEXT_WRITE_STRING_FN (1)
 #define TEXT_WRITE_STRING_ARGS_SIZE (-1)
+#define TEXT_WRITE_STRING_ARGS_BASE_SIZE (sizeof(int) * 2 + sizeof(byte) + sizeof(int))
 #define TEXT_WRITE_STRING_RETURN_TYPE bool
 
 #define CREATE_FRAMEBUFFER_FN (2)
-#define CREATE_FRAMEBUFFER_ARGS_SIZE (sizeof(int) * 2)
+#define CREATE_FRAMEBUFFER_ARGS_SIZE (sizeof(int) * 4)
 #define CREATE_FRAMEBUFFER_RETURN_TYPE void*
 
 #define SWAP_FRAMEBUFFER_FN (3)
-#define SWAP_FRAMEBUFFE_ARGS_SIZE (0)
-#define SWAP_FRAMEBUFFE_RETURN_TYPE bool
+#define SWAP_FRAMEBUFFER_ARGS_SIZE (sizeof(bool))
+#define SWAP_FRAMEBUFFER_RETURN_TYPE bool
+
+PUBLIC bool write_char(int column, int line, byte color, byte ch);
+PUBLIC bool write_string(int column, int line, byte color, const char *str);
+PUBLIC void *create_framebuffer(int column, int line, int width, int height);
+PUBLIC bool swap_framebuffer(bool use_default_color);

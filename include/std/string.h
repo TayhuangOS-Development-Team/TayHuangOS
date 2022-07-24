@@ -36,7 +36,7 @@ rep\n\t\
 stosb" : : "g"(sz), "g"(_val), "g"(dst) : "%rcx", "%rdi", "%rax");
 }
 
-static inline void memcpy(void *dst, void *src, unsigned long long sz) {
+static inline void memcpy(void *dst, const void *src, unsigned long long sz) {
     __asm__ __volatile__ ("movq %0, %%rcx\n\t\
 movq %1, %%rsi\n\t\
 movq %2, %%rdi\n\t\
@@ -48,7 +48,7 @@ movsb" : : "g"(sz), "g"(src), "g"(dst) : "%rcx", "%rdi", "%rsi");
 #else
 
 
-static inline void memset(void *dst, int val, unsigned int sz) {
+static inline void memset(void *dst, const int val, unsigned int sz) {
     unsigned int _val = val;
     __asm__ __volatile__ ("movl %0, %%ecx\n\t\
 movl %1, %%eax\n\t\
