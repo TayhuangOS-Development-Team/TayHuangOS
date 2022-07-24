@@ -20,13 +20,17 @@
 
 #include <tayhuang/defs.h>
 
+//共享内存
 #define SHARE_MEMORY_FN (0)
 #define SHARE_MEMORY_ARGS_SIZE (sizeof(void*) + sizeof(int) * 2)
 #define SHARE_MEMORY_RETURN_TYPE void*
 
+//创建共享内存
 #define CREATE_SHARE_MEMORY_FN (1)
 #define CREATE_SHARE_MEMORY_ARGS_SIZE (sizeof(int))
 #define CREATE_SHARE_MEMORY_RETURN_TYPE void*
 
+//共享内存
 PUBLIC void *share_memory(void *addr, int pages, int target);
+//创建共享内存
 PUBLIC void *create_share_memory(int pages);

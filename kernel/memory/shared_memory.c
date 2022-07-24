@@ -21,13 +21,14 @@
 #include <memory/paging.h>
 #include <task/task_manager.h>
 
+//进行映射
 PUBLIC bool shm_mapping(void *mem, int pages, int src_pid, int target_pid) {
     //获取原页表与新页表
     void *target_pgd = get_task_by_pid(target_pid)->mm_info.pgd;
     void *source_pgd = get_task_by_pid(src_pid)->mm_info.pgd;
 
     //映射
-    set_mappingvv(source_pgd, mem, target_pgd, mem, pages, true, true);
+    bool ret =set_mappingvv(source_pgd, mem, target_pgd, mem, pages, true, true);
 
-    return true;
+    return ret;
 }
