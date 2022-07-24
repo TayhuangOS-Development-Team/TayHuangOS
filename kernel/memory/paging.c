@@ -45,6 +45,7 @@ PRIVATE void *__get_free_page(void) {
 }
 
 PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool us) {
+    //获取各级页项索引
     int pml4e_idx = (((qword)vaddr) >> 39) & 0x1FF;
     int pdpte_idx = (((qword)vaddr) >> 30) & 0x1FF;
     int pde_idx = (((qword)vaddr) >> 21) & 0x1FF;
@@ -109,6 +110,7 @@ PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool 
 
 //设置映射
 PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us) {
+    //对齐
     vaddr = (void*)((qword)(vaddr) & ~(MEMUNIT_SZ - 1));
     for (int i = 0 ; i < pages ; i ++) {
         if (! __set_mapping(pgd, vaddr + (i * MEMUNIT_SZ), paddr + (i * MEMUNIT_SZ), rw, us)) {
@@ -119,6 +121,7 @@ PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw,
 }
 
 PUBLIC bool set_mappingvv(void *src_pgd, void *src_addr, void *dst_pgd, void *dst_addr, int pages, bool rw, bool us) {
+    //对齐
     src_addr = (void*)((qword)(src_addr) & ~(MEMUNIT_SZ - 1));
     dst_addr = (void*)((qword)(dst_addr) & ~(MEMUNIT_SZ - 1));
     for (int i = 0 ; i < pages ; i ++) {
@@ -173,7 +176,8 @@ PUBLIC void *get_physical_address(void *__pgd, void *vaddr) {
         lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
         return NULL;
     }
-    
+
+    //获取地址, 加上offse
     void *paddr = (void*)((pt[pte_idx].address << 12) + offset);
     return paddr;
 }
