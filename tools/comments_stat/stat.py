@@ -42,6 +42,7 @@ def stat_comment(fp):
 
     comment_num = 0
     code_num = 0
+    flag = 0
     with open(fp, 'r') as f:
         for line in f:
             # 去掉空格
@@ -51,9 +52,33 @@ def stat_comment(fp):
             if not line:
                 continue
 
+            if flag != 0:
+                if flag == 1:
+                    if line.startswith('* SPDX-License-Identifier: LGPL-2.1-only'): #忽略许可证
+                        flag = 3
+                        continue
+                    comment_num = comment_num + 1
+                    flag = 2
+
+                if flag == 2:
+                    comment_num = comment_num + 1
+
+                if line.find('*/') != -1:
+                    flag = 0
+
+                continue
+
             # 是//开头的注释
             if line.startswith('//'):
                 comment_num = comment_num + 1
+                continue
+
+            # 含有/*
+            if line.find('/*') != -1:
+                if line.find('*/') == -1:
+                    flag = 1
+                else:
+                    comment_num = comment_num + 1
                 continue
 
             #是代码

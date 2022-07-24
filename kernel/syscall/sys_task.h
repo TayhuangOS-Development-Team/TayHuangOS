@@ -21,4 +21,5 @@
 #include <tayhuang/defs.h>
 
 //系统调用进程
+//使用rpc系统实现
 PUBLIC void sys_task(void);
