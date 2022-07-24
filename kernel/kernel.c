@@ -138,7 +138,7 @@ program_info load_mod_by_setup(const char *name) {
     void *mod_addr = kmalloc(MOD_SIZE);
 
     bool send_ret = send_msg(MSG_NORMAL_IPC, (void*)name, strlen(name) + 1, SETUP_SERVICE);
-    assert(send_ret);	//在错误提示里便于区分
+    assert(send_ret);
 
     send_ret = send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE);
     assert(send_ret);
