@@ -1,2 +1,12 @@
-添加UEFI支持
-重构ipc_func.s
+kernel/kernel.c:222:    //TODO: 更改loader以获取framebuffer的bpp
+kernel/syscall/rpc.c:35://TODO: 使用红黑树
+libs/libc/misc/timer.c:24://TODO: 实现此函数
+libs/libc/misc/timer.h:22://TODO: 实现此函数
+libs/libkmod/memory/malloc.c:83:        //TODO: extended the heap!
+libs/libkmod/printf.c:51://TODO: 重写
+libs/libkmod/syscall/rpc.c:41://TODO: 使用红黑树
+libs/libkmod/syscall/rpc.c:173:        //TODO: 加到队列中
+Makefile:163:	#TODO:添加UEFI支持
+libs/libc/ipc/ipc.h:21://FIXME: 重构
+libs/libc/ipc/ipc_func.S:19:/*FIXME: 重构*/
+
