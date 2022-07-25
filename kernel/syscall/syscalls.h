@@ -54,6 +54,11 @@ PUBLIC void set_mailbuffer(void *buffer, qword size);
 PUBLIC void __reg_irq(int irq);
 PUBLIC void reg_irq(int irq);
 
+//锁
+#define TEST_AND_LOCK_SN (0x05)
+PUBLIC bool __test_and_lock(bool *val);
+PUBLIC bool test_and_lock(bool *val);
+
 //IRQ处理器
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags);
 
