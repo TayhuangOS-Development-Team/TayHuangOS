@@ -26,8 +26,8 @@
 
 #if (defined __STDC_VERSION__ && __STDC_VERSION__ > 201710L)	
 // for C23
-#define true ((_Bool)+1u)
-#define false ((_Bool)+0u)
+#define true ((_Bool) + 1u)
+#define false ((_Bool) + 0u)
 #else
 #define true 1
 #define false 0

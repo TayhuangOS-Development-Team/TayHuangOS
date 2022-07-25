@@ -31,8 +31,8 @@ PRIVATE void *LHEAP_BOTTOM = NULL; //堆底
 
 PUBLIC void init_lheap(void *lheap_size) { //初始化堆
     LHEAP_SEGMENTS = (lh_seg*)(LHEAP_BASE + lheap_size - sizeof(lh_seg) * LH_SEG_NUM);
-    LHEAP_TOP = (void*)(LHEAP_BASE + lheap_size - sizeof(lh_seg) * LH_SEG_NUM);
-    LHEAP_BOTTOM = (void*)LHEAP_BASE;
+    LHEAP_TOP = (void *)(LHEAP_BASE + lheap_size - sizeof(lh_seg) * LH_SEG_NUM);
+    LHEAP_BOTTOM = (void *)LHEAP_BASE;
     memset(LHEAP_SEGMENTS, 0, sizeof(lh_seg) * LH_SEG_NUM);
 }
 

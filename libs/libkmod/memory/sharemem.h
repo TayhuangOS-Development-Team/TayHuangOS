@@ -19,4 +19,5 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <tayhuang/paging.h>
 #include <export/__sys_task_fn.h>

@@ -61,14 +61,14 @@ PRIVATE void write_to_buffer(task_struct *target, msgpack_struct *pack, void *sr
     void *addr = pack;
     //写pack头
     for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
-        *(byte*)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte*)addr;
+        *(byte *)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte *)addr;
         addr ++;
         target->ipc_info.write_ptr = increase_ptr(target, target->ipc_info.write_ptr);
     }
 
     //写主体
     for (int i = 0 ; i < pack->length ; i ++) {
-        *(byte*)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte*)(__pa(src_pgd, src));
+        *(byte *)__pa(target->mm_info.pgd, target->ipc_info.write_ptr) = *(byte *)(__pa(src_pgd, src));
         src ++;
         target->ipc_info.write_ptr = increase_ptr(target, target->ipc_info.write_ptr);
     }
@@ -78,14 +78,14 @@ PRIVATE void read_from_buffer(msgpack_struct *pack, void *dst) {
     void *addr = pack;
     //写pack头
     for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
-        *(byte*)addr = *(byte*)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
+        *(byte *)addr = *(byte *)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
         addr ++;
         current_task->ipc_info.read_ptr = increase_ptr(current_task, current_task->ipc_info.read_ptr);
     }
 
     //写主体
     for (int i = 0 ; i < pack->length ; i ++) {
-        *(byte*)(__pa(current_task->mm_info.pgd, dst)) = *(byte*)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
+        *(byte *)(__pa(current_task->mm_info.pgd, dst)) = *(byte *)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
         dst ++;
         current_task->ipc_info.read_ptr = increase_ptr(current_task, current_task->ipc_info.read_ptr);
     }
@@ -175,7 +175,7 @@ PUBLIC recvmsg_result_struct __recv_msg(void *dst) {
 
 PUBLIC recvmsg_result_struct recv_msg(void *dst) {
     qword value = dosyscall(RECV_MSG_SN, 0, 0, 0, NULL, dst, 0, 0, 0, 0, 0, 0, 0, 0);;
-    return *(recvmsg_result_struct*)&value;
+    return *(recvmsg_result_struct *)&value;
 }
 
 //-------------------
@@ -212,6 +212,23 @@ PUBLIC void __reg_irq(int irq) {
 
 PUBLIC void reg_irq(int irq) {
     dosyscall(REG_IRQ_SN, 0, 0, irq, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0);
+}
+
+//--------------------
+
+PUBLIC bool __test_and_lock(bool *val) {
+    bool *paddr = (bool *)__pa(current_task->mm_info.pgd, val);
+
+    if (*paddr) {
+        return false;
+    }
+
+    *paddr = true;
+    return true;
+}
+
+PUBLIC bool test_and_lock(bool *val) {
+    return dosyscall(TEST_AND_LOCK_SN, 0, 0, 0, NULL, val, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 //--------------------

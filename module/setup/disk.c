@@ -86,7 +86,7 @@ PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     }
 
     for (int i = 0 ; i < 256 ; i ++) {
-        *(((word*)dst) + i) = inw(IDE0_DATA); //256字数据
+        *(((word *)dst) + i) = inw(IDE0_DATA); //256字数据
     }
 }
 
@@ -114,7 +114,7 @@ PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
     }
 
     for (int i = 0 ; i < 256 ; i ++) {
-        *(((word*)dst) + i) = inw(IDE1_DATA); //256字数据
+        *(((word *)dst) + i) = inw(IDE1_DATA); //256字数据
     }
 }
 
@@ -151,7 +151,7 @@ PRIVATE void read_ide0_sector(dword lba, bool slave, void *dst) { //读IDE0的�
     }
 
     for (int i = 0 ; i < 256 ; i ++) { //每扇区256个字
-        *(((word*)dst) + i) = inw(IDE0_DATA);
+        *(((word *)dst) + i) = inw(IDE0_DATA);
     }
 }
 
@@ -180,7 +180,7 @@ PRIVATE void read_ide1_sector(dword lba, bool slave, void *dst) { //读IDE1的�
     }
 
     for (int i = 0 ; i < 256 ; i ++) { //每扇区256个字
-        *(((word*)dst) + i) = inw(IDE1_DATA);
+        *(((word *)dst) + i) = inw(IDE1_DATA);
     }
 }
 

@@ -28,10 +28,10 @@ typedef struct {
     int size : 20;
 } rpc_args_struct;
 
-typedef rpc_args_struct(*rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);
+typedef rpc_args_struct(* rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);
 
-#define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
-#define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
+#define ARG_READ(args, type) *(type *)(((args) = (((void *)(args)) + sizeof(type))) - sizeof(type))
+#define ARG_WRITE(args, type, value) *(type *)(((args) = (((void *)(args)) + sizeof(type))) - sizeof(type)) = value
 
 #define MAKE_ARGS(args, sz) ((rpc_args_struct){.data = (args), .size = (sz)})
 
@@ -41,4 +41,4 @@ PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size r
 PUBLIC rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result);
 PUBLIC void *rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size);
 
-#define remote_call(ret_type, service, func, args) (*(ret_type*)rpc_call(service, func, args, sizeof(ret_type)))
+#define remote_call(ret_type, service, func, args) (*(ret_type *)rpc_call(service, func, args, sizeof(ret_type)))

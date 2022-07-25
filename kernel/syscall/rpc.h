@@ -29,10 +29,10 @@ typedef struct {
     int size : 20;
 } rpc_args_struct;
 
-typedef rpc_args_struct(*rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);
+typedef rpc_args_struct(* rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);
 
-#define ARG_READ(args, type) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type))
-#define ARG_WRITE(args, type, value) *(type*)(((args) = (((void*)(args)) + sizeof(type))) - sizeof(type)) = value
+#define ARG_READ(args, type) *(type *)(((args) = (((void *)(args)) + sizeof(type))) - sizeof(type))
+#define ARG_WRITE(args, type, value) *(type *)(((args) = (((void *)(args)) + sizeof(type))) - sizeof(type)) = value
 
 //处理RPC请求
 PUBLIC void deal_rpc_request(int caller, void *msg);

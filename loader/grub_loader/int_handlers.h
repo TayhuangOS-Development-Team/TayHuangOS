@@ -75,7 +75,7 @@ PUBLIC void irq13_handler(void);
 PUBLIC void irq14_handler(void);
 PUBLIC void irq15_handler(void);
 
-typedef void(*irq_handler)(int);
+typedef void(* irq_handler)(int);
 //注册IRQ中断处理器
 PUBLIC void register_irq_handler(int irq, irq_handler handler);
 PUBLIC void enable_irq(int irq); //启用IRQ

@@ -153,7 +153,7 @@ char *dtoa(double val, char *buffer, int round) {
 }
 
 char *ftoea(float val, char *buffer, unsigned char upper_e) {
-    // int v = *(int*)&val;
+    // int v = *(int *)&val;
     // int sign = v >> 31;
     // int exponent = (v >> 23 & 0xFF) - 128;
     // int fraction = v & 0x7FFFFF;
@@ -161,7 +161,7 @@ char *ftoea(float val, char *buffer, unsigned char upper_e) {
 }
 
 char *dtoea(double val, char *buffer, unsigned char upper_e) {
-    // long long v = *(long long*)&val;
+    // long long v = *(long long *)&val;
     // int sign = v >> 63;
     // int exponent = (v >> 51 & 0x7FF) - 128;
     // long long fraction = v & 0x7FFFFFFFFFFFF;

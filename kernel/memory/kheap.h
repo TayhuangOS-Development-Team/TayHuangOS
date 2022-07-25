@@ -20,9 +20,9 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void init_kheap(void *prepare_base, int prepare_size);
-PUBLIC void *kmalloc(int size); //分配内存
-static inline void *kcalloc(int num, int size) { //分配num个size的内存
+PUBLIC void init_kheap(void *prepare_base, size_t prepare_size);
+PUBLIC void *kmalloc(size_t size); //分配内存
+static inline void *kcalloc(int num, size_t size) { //分配num个size的内存
     return kmalloc(num * size);
 }
 PUBLIC void kfree(void *ptr); //释放内存
