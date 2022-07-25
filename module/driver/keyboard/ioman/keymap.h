@@ -75,5 +75,6 @@ enum {
     F12,
     LGUI,
     RGUI,
-    APPS
+    APPS,
+    PAUSEBREAK
 };
