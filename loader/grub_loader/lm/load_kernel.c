@@ -40,7 +40,7 @@ void *load_elf(void *kernel_bin, void **kernel_start, void **kernel_limit) {
     Elf64_Ehdr *elf_header = kernel_bin;
     for (int i = 0 ; i < elf_header->e_phnum ; i ++) {
         void *plimit = NULL;
-        void *pstart = (void*)0xFFFFFFFF;
+        void *pstart = (void *)0xFFFFFFFF;
         load_program(kernel_bin, kernel_bin + elf_header->e_phoff + i * elf_header->e_phentsize, &pstart, &plimit);
         *kernel_limit = max(*kernel_limit, plimit);
         *kernel_start = min(*kernel_start, pstart);
@@ -69,8 +69,8 @@ void load_kernel(load_result_struct *result) {
 
         result->setup_mod = setup_mod_buffer;
 
-        result->kernel_start = (void*)0xFFFFFFFF;
-        result->kernel_limit = (void*)NULL;
+        result->kernel_start = (void *)0xFFFFFFFF;
+        result->kernel_limit = (void *)NULL;
         result->kernel_entry = load_elf(kernel_bin_buffer, &result->kernel_start, &result->kernel_limit);
 
         terminate_fs(context);

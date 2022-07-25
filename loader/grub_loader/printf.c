@@ -26,14 +26,14 @@
 //写生字符(串)
 PUBLIC void write_char(char ch, int color, int posx, int posy) {
     int pos = posx + posy * 80;
-    *(((short*)VIDEO_ADDRESS) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
+    *(((short *)VIDEO_ADDRESS) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
 }
 
 PUBLIC  void write_str(const char *str, int color, int posx, int posy) {
     int pos = posx + posy * 80;
     while (*str != '\0') {
         char ch = *str;
-        *(((short*)VIDEO_ADDRESS) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
+        *(((short *)VIDEO_ADDRESS) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
         pos ++;
         str ++;
     }
@@ -288,7 +288,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
                 break;
             }
             case PRINT_TY_STRING: {
-                char *str = va_arg(args, char*);
+                char *str = va_arg(args, char *);
                 strcpy(buffer, str);
                 buffer += strlen(str);
                 offset += strlen(str);

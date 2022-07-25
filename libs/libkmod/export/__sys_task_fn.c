@@ -28,7 +28,7 @@ PUBLIC void *share_memory(void *addr, int pages, int target) {
     void *buf = buffer;
 
     //写入参数
-    ARG_WRITE(buf, void*, addr);
+    ARG_WRITE(buf, void *, addr);
     ARG_WRITE(buf, int, pages);
     ARG_WRITE(buf, int, target);
 

@@ -37,14 +37,14 @@ PUBLIC void init_video(void *video_addr, int width, int height) {
 //写生字符(串)
 PUBLIC void write_char(char ch, int color, int posx, int posy) {
     int pos = posx + posy * 80;
-    *(((short*)video_address) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
+    *(((short *)video_address) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
 }
 
 PUBLIC void write_str(const char *str, int color, int posx, int posy) {
     int pos = posx + posy * 80;
     while (*str != '\0') {
         char ch = *str;
-        *(((short*)video_address) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
+        *(((short *)video_address) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
         pos ++;
         str ++;
     }
@@ -336,7 +336,7 @@ PUBLIC int vsprintk(char *buffer, const char *format, va_list args) {
                 break;
             }
             case PRINT_TY_STRING: { //字符串
-                char *str = va_arg(args, char*);
+                char *str = va_arg(args, char *);
                 strcpy(buffer, str);
                 buffer += strlen(str);
                 offset += strlen(str);

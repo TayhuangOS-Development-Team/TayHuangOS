@@ -44,24 +44,24 @@ PUBLIC void kmod_main(void) {
     set_allow(ANY_TASK);
 
     void *addr = create_share_memory(1);
-    *(qword*)(addr) = 8;
+    *(qword *)(addr) = 8;
 
     void *new_addr = share_memory(addr, 1, 2);
 
     linfo ("%p", new_addr);
 
-    send_msg(MSG_NORMAL_IPC, &new_addr, sizeof(void*), 2);
+    send_msg(MSG_NORMAL_IPC, &new_addr, sizeof(void *), 2);
 
     write_string(0, 0, 0x0A, "I'm testbench2");
 
     void *framebuffer = create_framebuffer(4, 4, 4, 4);
     linfo ("%p", framebuffer);
-    *(byte*)(framebuffer + 0) = 'A';
-    *(byte*)(framebuffer + 1) = 0x0A;
-    *(byte*)(framebuffer + 2) = 'B';
-    *(byte*)(framebuffer + 3) = 0x0A;
-    *(byte*)(framebuffer + 4) = 'C';
-    *(byte*)(framebuffer + 5) = 0x0A;
+    *(byte *)(framebuffer + 0) = 'A';
+    *(byte *)(framebuffer + 1) = 0x0A;
+    *(byte *)(framebuffer + 2) = 'B';
+    *(byte *)(framebuffer + 3) = 0x0A;
+    *(byte *)(framebuffer + 4) = 'C';
+    *(byte *)(framebuffer + 5) = 0x0A;
     swap_framebuffer(false);
 
     message_loop();

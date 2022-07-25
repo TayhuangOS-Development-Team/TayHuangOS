@@ -50,7 +50,7 @@ typedef char *va_list;
 //初始化可变参数列表
 #define va_start(lst, start) (lst = (((va_list)&start) + INTSIZEOF(start)))
 //获取列表参数
-#define va_arg(lst, ty) (*(ty*)((lst += INTSIZEOF(ty)) - INTSIZEOF(ty)))
+#define va_arg(lst, ty) (*(ty *)((lst += INTSIZEOF(ty)) - INTSIZEOF(ty)))
 //结束获取
 #define va_end(lst) (lst = ((va_list)0))
 

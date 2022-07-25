@@ -58,7 +58,7 @@ PRIVATE proccess_info *list_find_proccess(rpc_func func_no) {
 }
 
 PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
-    proccess_node *new_node = (proccess_node*)(malloc(sizeof(proccess_node)));
+    proccess_node *new_node = (proccess_node *)(malloc(sizeof(proccess_node)));
 
     new_node->func_no = func_no;
     new_node->info = info;
@@ -94,7 +94,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     void *return_data = malloc(sizeof(rpc_func) + result.size);
     void *_data = return_data;
     ARG_WRITE(_data, rpc_func, func_no);
-    memcpy(_data, (void*)result.data, result.size);
+    memcpy(_data, (void *)result.data, result.size);
 
     if (info->return_size == result.size || info->return_size == -1) {
         send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
@@ -103,12 +103,12 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
         lerror ("RPC: Return size not match!Get %d, Expect %d", result.size, info->return_size);
     }
 
-    free((void*)result.data);
+    free((void *)result.data);
     free(return_data);
 }
 
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size) {
-    proccess_info *info = (proccess_info*)(malloc(sizeof(proccess_info)));
+    proccess_info *info = (proccess_info *)(malloc(sizeof(proccess_info)));
     info->func_no = func;
     info->proccess = process;
     info->return_size = return_size;

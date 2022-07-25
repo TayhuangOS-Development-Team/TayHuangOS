@@ -63,7 +63,7 @@ PUBLIC void message_loop(void) {
         }
         case MSG_IRQ: {
             if (__irq_handler__ != NULL) {
-                __irq_handler__(*(int*)msg);
+                __irq_handler__(*(int *)msg);
             }
             break;
         }
