@@ -39,7 +39,7 @@ ASMFLAGS :=
 ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(TESTBENCHDIR)/testbench2" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+C_INCLUDE := -I"$(TESTBENCHDIR)/testbench2" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libfifo" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 ifeq ($(MODE), debug)
 	C_DEFS += -D_DEBUG
@@ -48,7 +48,7 @@ else
 endif
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(TESTBENCHDIR)/testbench2" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+CPP_INCLUDE := -I"$(TESTBENCHDIR)/testbench2" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libfifo" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
 LIBRARIES := -lkmod -lfifo
