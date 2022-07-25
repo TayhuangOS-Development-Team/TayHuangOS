@@ -30,195 +30,61 @@
 
 #include <fifo.h>
 #include <keymap.h>
+#include <key_parser.h>
 
+//缓冲区
 PRIVATE void *fifo = NULL;
-
-PRIVATE enum {
-    NORMAL = 0,
-    E0_XX = 1,
-    E1_XX = 2,
-    E1_STAGE_UNIT = 4,
-    E1_STAGE_MASK = 28,
-    E1_STAGE_END = 20,
-    E1_FAILED = 32,
-    NUMLOCKING = 64,
-    CAPSLOCKING = 128,
-    LSHIFT_PUSHED = 1024,
-    RSHIFT_PUSHED = 2048,
-} state;
-
-PRIVATE byte pausebreak_codes[] = {
-    0xE1, 0x1D, 0x45,
-    0xE1, 0x9D, 0xC5
-};
 
 PRIVATE void irq_handler(int irq) {
     if (irq == 1) {
-        byte code = inb(KEYBOARD_8042_DATA0);
+        byte code = inb(KEYBOARD_8042_DATA0); //读取操作码
         short key;
         
         if (fifo == NULL) {
             return;
         }
         
-        else if ((state & E1_XX) != 0) {
-            linfo ("flags += e1_stage_unit");
-            state += E1_STAGE_UNIT;
-
-            if (code != pausebreak_codes[(state & E1_STAGE_MASK) / E1_STAGE_UNIT]) {
-                linfo ("flags += e1_failed");
-                state |= E1_FAILED;
-            }
-
-            if ((state & E1_STAGE_MASK) == E1_STAGE_END) {
-                key = PAUSEBREAK;
-                
-                linfo ("flags -= e1_stages");
-                state &= ~E1_STAGE_MASK;
-                linfo ("flags -= e1_xx");
-                state &= ~E1_XX;
-
-                if ((state & E1_FAILED) != 0) {
-                    linfo ("flags -= e1_failed");
-                    state &= ~E1_FAILED;
-                    return;
-                }
-                    
-                linfo ("Pause Break(%d, %#02X)", PAUSEBREAK, PAUSEBREAK);
-
-                return;
-            }
+        //E1开头的scan code序列
+        if ((state & E1_XX) != 0) {
+            key = do_e1(code);
         }
-        else if ((state & E0_XX) != 0) {
-            if (code & 0x80) {
-                return;
-            }
-
-            code &= 0x7F;
-
-            key = KEYMAP[code][2];
-            linfo ("Function(%d, %#02X;code=%d, %#02X)", key, key, code, code);
-
-            linfo ("flags -= e0_xx");
-            state &= ~E0_XX;
+        else if ((state & E0_XX) != 0) { //E0开头的scan code序列
+            key = do_e0(code);
         }
-        else if (((state & LSHIFT_PUSHED) != 0) || ((state & RSHIFT_PUSHED) != 0)) {
-            if (code == 0xE0) {
-                linfo ("flags += e0_xx");
-                state |= E0_XX;
-                return;
-            }
-            else if (code == 0xE1) {
-                linfo ("flags += e1_xx");
-                state |= E1_XX;
-                return;
-            }
-            else if (code & 0x80) {
-                code &= 0x7F;
-                key = KEYMAP[code][0];
-
-                if (key == LSHIFT) {
-                    linfo ("flags -= lshift_pushed");
-                    state &= ~LSHIFT_PUSHED;
-                    return;
-                }
-                
-                if (key == RSHIFT) {
-                    linfo ("flags -= rshift_pushed");
-                    state &= ~RSHIFT_PUSHED;
-                    return;
-                }
-                return;
-            }
-            
-            code &= 0x7F;
-            key = KEYMAP[code][1];
-
-            if (key == LSHIFT) {
-                linfo ("flags += lshift_pushed");
-                state |= LSHIFT_PUSHED;
-                return;
-            }
-            else if (key == RSHIFT) {
-                linfo ("flags += rshift_pushed");
-                state |= RSHIFT_PUSHED;
-                return;
-            }
-
-            linfo ("%c(%d, %#02X;code=%d, %#02X)", key, key, key, code, code);
+        else if (((state & LSHIFT_PUSHED) != 0) || ((state & RSHIFT_PUSHED) != 0)) { //按下shift
+            key = do_shift(code);
         }
         else {
-            if (code == 0xE0) {
-                linfo ("flags += e0_xx");
-                state = E0_XX;
-                return;
-            }
-            else if (code == 0xE1) {
-                linfo ("flags += e1_xx");
-                state |= E1_XX;
-                return;
-            }
-            else if (code & 0x80) {
-                return;
-            }
-
-            code &= 0x7F;
-            key = KEYMAP[code][0];
-            
-            if (key == LSHIFT) {
-                linfo ("flags += lshift_pushed");
-                state |= LSHIFT_PUSHED;
-                return;
-            }
-            else if (key == RSHIFT) {
-                linfo ("flags += rshift_pushed");
-                state |= RSHIFT_PUSHED;
-                return;
-            }
-
-            if ((key >= 'a' && key <= 'z')) {
-                if (state & CAPSLOCKING) {
-                    key = KEYMAP[code][1];
-                }
-            }
-
-            if (key >= PAD_HOME && key <= PAD_DOT) {
-                if (state & NUMLOCKING) {
-                    key = KEYMAP[code][1];
-                }
-            }
-
-            if (key >= 256) {  
-                linfo ("Function(%d, %#02X;code=%d, %#02X)", key, key, code, code);
-            }
-            else {
-                linfo ("%c(%d, %#02X;code=%d, %#02X)", key, key, key, code, code);
-            }
+            key = do_normal(code);
         }
 
-        if (key == CAPSLOCK) {
-            if (state & CAPSLOCKING) {
+        if (key == CAPSLOCK) { //大写锁定
+            if (state & CAPSLOCKING) { //release
                 linfo ("flags -= capslocking");
                 state &= ~CAPSLOCKING;
             }
-            else {
+            else { //set
                 linfo ("flags += capslocking");
                 state |= CAPSLOCKING;
             }
             return;
         }
-        else if (key == NUMLOCK) {
-            if (state & NUMLOCKING) {
+        else if (key == NUMLOCK) { //小键盘锁定
+            if (state & NUMLOCKING) { //release
                 linfo ("flags -= numlocking");
                 state &= ~NUMLOCKING;
             }
-            else {
+            else { //set
                 linfo ("flags += numlocking");
                 state |= NUMLOCKING;
             }
             return;
         }
+        else if (key == 0) {
+            return;
+        }
 
+        //写到fifo中
         fifo_write_bytes(fifo, (byte*)&key, sizeof(short));
     }
 }
@@ -245,33 +111,47 @@ PUBLIC rpc_args_struct wrapper_share_keybuffer(int service, rpc_func func, rpc_a
 }
 
 PRIVATE void init_keyboard(void) {
-    outb (KEYBOARD_8042_DATA0, 0xFA);
+    // 重置Output buffer
+    outb (KEYBOARD_8042_DATA0, 0xF4);
+
+    // 启用键盘
     outb (KEYBOARD_8042_CONTROL, 0xAE);
 
+    // 读取status
     outb(KEYBOARD_8042_CONTROL, 0x20);
-    if (inb(0x60) != 0xFA) {
+
+    //ACK
+    if (inb(0x60) != 0xFA) { 
         linfo ("Error!");
         return;
     }
-    byte status = inb(0x60);
+
+    //获取status
+    byte status = inb(0x60); 
     status |= 1;
-    outb(KEYBOARD_8042_CONTROL, 0x60);
+
+    //设置status
+    outb(KEYBOARD_8042_CONTROL, 0x60); 
     outb(KEYBOARD_8042_DATA0, status);
 }
 
 PUBLIC void kmod_main(void) {
     set_logging_name("Keyboard IO Manager");
-
-    linfo ("Hi!");
     
+    //注册IRQ=1
     reg_irq(1);
     register_irq_handler(irq_handler);
 
+    //设置RPC函数
     rpc_register(SHARE_KEYBUFFER_FN, wrapper_share_keybuffer, sizeof(void *), sizeof(bool));
 
+    //创建缓冲区
     fifo = create_fifo(KEY_BUFFER_SIZE);
+
+    //设置状态
     state = NORMAL;
 
+    //初始化硬盘
     init_keyboard();
 
     message_loop();
