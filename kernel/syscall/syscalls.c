@@ -201,7 +201,7 @@ PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) 
     if (IRQ_HANDLE_TASKS[irq] == 0) {
         return;
     }
-    dummy_send_msg(&irq, sizeof(int), IRQ_HANDLE_TASKS[irq]);
+    dummy_send_msg(MSG_IRQ, &irq, sizeof(int), IRQ_HANDLE_TASKS[irq]);
 }
 
 //--------------------
@@ -233,7 +233,7 @@ PUBLIC bool test_and_lock(bool *val) {
 
 //--------------------
 
-PUBLIC bool dummy_send_msg(void *src, qword size, int dst) {
+PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
     if ((target == NULL) || 
@@ -244,6 +244,7 @@ PUBLIC bool dummy_send_msg(void *src, qword size, int dst) {
     }
 
     msgpack_struct pack;
+    pack.message_no = msgno;
     pack.length = size;
     pack.source = DUMMY_TASK;
 

@@ -63,4 +63,4 @@ PUBLIC bool test_and_lock(bool *val);
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags);
 
 //dummy进程发送消息
-PUBLIC bool dummy_send_msg(void *src, qword size, int dst);
+PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst);
