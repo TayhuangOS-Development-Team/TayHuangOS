@@ -24,9 +24,11 @@ export OBJECTSDIR
 build:
 	$(CD) libc && $(MAKE) build
 	$(CD) libkmod && $(MAKE) build
-
+	$(CD) libfifo && $(MAKE) build
+	
 #清理
 .PHONY: clean
 clean:
 	$(CD) libc && $(MAKE) clean
 	$(CD) libkmod && $(MAKE) clean
+	$(CD) libfifo && $(MAKE) clean
