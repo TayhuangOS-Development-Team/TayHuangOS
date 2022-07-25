@@ -27,10 +27,10 @@ PUBLIC void set_allow(int pid);
 PUBLIC recvmsg_result_struct recv_msg(void *msg);
 PUBLIC void set_mailbuffer(void *buffer, int size);
 
-typedef void(*normal_ipc_handler_t)(int, void*);
+typedef void(* normal_ipc_handler_t)(int, void *);
 PUBLIC void register_normal_ipc_handler(normal_ipc_handler_t handler);
 
-typedef void(*irq_handler_t)(int);
+typedef void(* irq_handler_t)(int);
 PUBLIC void register_irq_handler(irq_handler_t handler);
 
 PUBLIC void message_loop(void);

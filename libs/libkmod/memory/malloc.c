@@ -89,7 +89,7 @@ PUBLIC void *malloc(int size) {
 
     //分割
     if ((current->size > HEAPDIV_MIN_SZ) && (remain_size >= HEAPUNIT_SZ)) {
-        chunk_struct *new_free_chunk = (chunk_struct*)(((void*)current) + sizeof(chunk_struct) + fixed_size);
+        chunk_struct *new_free_chunk = (chunk_struct*)(((void *)current) + sizeof(chunk_struct) + fixed_size);
 
         new_free_chunk->size = current->size - fixed_size;
         new_free_chunk->next = current->next;
@@ -120,14 +120,14 @@ PUBLIC void free(void *addr) {
     last->next = current;
 
     //可以合并
-    if ((((void*)last) + last->size) == current) {
+    if ((((void *)last) + last->size) == current) {
         last->size += current->size;
         last->next = current->next;
         current = last;
     }
 
     //可以合并
-    if ((((void*)last) + last->size) == last->next) {
+    if ((((void *)last) + last->size) == last->next) {
         last->size += last->next->size;
         last->next = last->next->next;
     }

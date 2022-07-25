@@ -32,8 +32,8 @@
 #include <tayhuang/paging.h>
 
 static inline void __write_char(int column, int line, byte color, byte ch) {
-    *(byte*)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 0) = ch;
-    *(byte*)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 1) = color;
+    *(byte *)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 0) = ch;
+    *(byte *)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 1) = color;
 }
 
 PRIVATE rpc_args_struct wrapper_write_char(int caller, rpc_func func_no, rpc_args_struct args) {
@@ -112,7 +112,7 @@ PRIVATE rpc_args_struct wrapper_create_framebuffer(int caller, rpc_func func_no,
     int width = ARG_READ(args.data, int);
     int height = ARG_READ(args.data, int);
 
-    void **result = (void**)malloc(sizeof(void*));
+    void **result = (void **)malloc(sizeof(void *));
     *result = __create_framebuffer(caller, column, line, width, height);
 
     return (rpc_args_struct){.data = result, .size = sizeof(CREATE_FRAMEBUFFER_RETURN_TYPE)};
@@ -126,8 +126,8 @@ PRIVATE void __swap_framebuffer(int caller, bool use_default_color) {
         for (int i = 0 ; i < frame->height ; i ++) {
             for (int j = 0 ; j < frame->width ; j ++) {
                 int pos = (i * frame->width + j) * 2;
-                byte ch = *(byte*)(framebuffer + pos);
-                byte color = *(byte*)(framebuffer + pos + 1);
+                byte ch = *(byte *)(framebuffer + pos);
+                byte color = *(byte *)(framebuffer + pos + 1);
 
                 write_char(frame->column + j, frame->height + i, color, ch);
             }
@@ -137,7 +137,7 @@ PRIVATE void __swap_framebuffer(int caller, bool use_default_color) {
         for (int i = 0 ; i < frame->height ; i ++) {
             for (int j = 0 ; j < frame->width ; j ++) {
                 int pos = (i * frame->width + j) * 2;
-                byte ch = *(byte*)(framebuffer + pos);
+                byte ch = *(byte *)(framebuffer + pos);
 
                 write_char(frame->column + j, frame->height + i, 0x0F, ch);
             }

@@ -50,7 +50,7 @@ PRIVATE SHARE_MEMORY_RETURN_TYPE __share_memory(void *addr, int pages, int sourc
 }
 
 PRIVATE rpc_args_struct wrapper_share_memory(int caller, rpc_func func_no, rpc_args_struct args) {
-    void *addr = ARG_READ(args.data, void*);
+    void *addr = ARG_READ(args.data, void *);
     int pages = ARG_READ(args.data, int);
     int target = ARG_READ(args.data, int);
     

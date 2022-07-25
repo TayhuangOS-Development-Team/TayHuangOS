@@ -90,7 +90,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     void *return_data = kmalloc(sizeof(rpc_func) + result.size);
     void *_data = return_data;
     ARG_WRITE(_data, rpc_func, func_no);
-    memcpy(_data, (void*)result.data, result.size);
+    memcpy(_data, (void *)result.data, result.size);
 
     //判断返回值是否正确
     if (info->return_size == result.size || info->return_size == -1) {
@@ -100,7 +100,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
         lerror ("Sys task", "RPC: Return size not match!Get %d, Expect %d", result.size, info->return_size);
     }
 
-    kfree((void*)result.data);
+    kfree((void *)result.data);
     kfree(return_data);
 }
 

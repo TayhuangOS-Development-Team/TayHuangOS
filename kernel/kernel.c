@@ -59,7 +59,7 @@ PRIVATE struct gdt_ptr gdtr;
 PRIVATE struct tss TSS;
 
 PRIVATE inline void set_tss(void *addr, qword base, dword limit, byte type) { //设置TSS
-    struct tss_struct *desc = (struct tss_struct*)addr;
+    struct tss_struct *desc = (struct tss_struct *)addr;
     memset(desc, 0, sizeof(struct tss_struct));
 
     desc->limit0 = (word)limit;
@@ -137,7 +137,7 @@ program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
 
-    bool send_ret = send_msg(MSG_NORMAL_IPC, (void*)name, strlen(name) + 1, SETUP_SERVICE);
+    bool send_ret = send_msg(MSG_NORMAL_IPC, (void *)name, strlen(name) + 1, SETUP_SERVICE);
     assert(send_ret);
 
     send_ret = send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE);

@@ -30,9 +30,9 @@
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 
-    void *addr = *(void**)msg;
+    void *addr = *(void **)msg;
     linfo ("%p", addr);
-    linfo ("%d", *(qword*)addr);
+    linfo ("%d", *(qword *)addr);
 }
 
 PUBLIC void kmod_main(void) {
