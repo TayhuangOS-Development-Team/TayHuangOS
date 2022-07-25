@@ -20,4 +20,4 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void sayhello(void);
+PUBLIC void *create_fifo(size_t fifo_size);

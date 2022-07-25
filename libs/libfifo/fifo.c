@@ -17,8 +17,29 @@
 
 
 #include <fifo.h>
-#include <debug/logging.h>
 
-PUBLIC void sayhello(void) {
-    linfo ("!!!");
+#include <debug/logging.h>
+#include <memory/sharemem.h>
+
+typedef struct {
+    bool lock;
+    size_t write_offset;
+    size_t read_offset;
+    size_t fifo_size;
+    size_t used_length;
+    char buffer[0];
+} fifo_struct;
+
+PUBLIC void *create_fifo(size_t fifo_size) {
+    int pages = (fifo_size + MEMUNIT_SZ - 1) / MEMUNIT_SZ;
+
+    linfo ("Fifo: Create fifo, size=%d(%d pages)", fifo_size, pages);
+
+    fifo_struct *fifo = create_share_memory(pages);
+    fifo->lock = false;
+    fifo->write_offset = 0;
+    fifo->read_offset = 0;
+    fifo->used_length = 0;
+
+    return fifo;
 }

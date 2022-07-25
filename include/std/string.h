@@ -26,7 +26,7 @@ char *strcpy(void *dst, const char *src); //复制字符串src至字符串dst
 
 #ifndef LOADER32BIT
 
-static inline void memset(void *dst, int val, unsigned long long sz) {
+static inline void memset(void *dst, int val, size_t sz) {
     unsigned long long _val = val;
     __asm__ __volatile__ ("movq %0, %%rcx\n\t\
 movq %1, %%rax\n\t\
@@ -36,7 +36,7 @@ rep\n\t\
 stosb" : : "g"(sz), "g"(_val), "g"(dst) : "%rcx", "%rdi", "%rax");
 }
 
-static inline void memcpy(void *dst, const void *src, unsigned long long sz) {
+static inline void memcpy(void *dst, const void *src, size_t sz) {
     __asm__ __volatile__ ("movq %0, %%rcx\n\t\
 movq %1, %%rsi\n\t\
 movq %2, %%rdi\n\t\
