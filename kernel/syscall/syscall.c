@@ -44,7 +44,7 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
     }
     case SET_MAILBUFFER_SN: __set_mailbuffer(dst, counter); break;
     case REG_IRQ_SN: __reg_irq(data); break;
-    case TEST_AND_LOCK_SN: __test_and_lock(dst); break;
+    case TEST_AND_LOCK_SN: return __test_and_lock(dst); break;
     default: break;
     }
     return 0;
