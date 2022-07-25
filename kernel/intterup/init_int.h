@@ -90,4 +90,4 @@ PUBLIC void enable_irq(int irq);
 PUBLIC void send_eoi(int irq);
 //初始化IDT
 PUBLIC void init_idt(void);
-typedef void(*int_handler)(void);
+typedef void(* int_handler)(void);

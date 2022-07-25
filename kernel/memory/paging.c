@@ -51,7 +51,7 @@ PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool 
     int pde_idx = (((qword)vaddr) >> 21) & 0x1FF;
     int pte_idx = (((qword)vaddr) >> 12) & 0x1FF;
 
-    PML4E *pml4 = (PML4E*)__pgd;
+    PML4E *pml4 = (PML4E *)__pgd;
     //当前PML4E未分配
     if (pml4[pml4e_idx].p == false) { 
         pml4[pml4e_idx].p = true;
@@ -63,7 +63,7 @@ PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool 
         pml4[pml4e_idx].address = (((qword)__get_free_page()) >> 12);
     }
 
-    PDPTE *pdpt = (PDPTE*)(pml4[pml4e_idx].address << 12);
+    PDPTE *pdpt = (PDPTE *)(pml4[pml4e_idx].address << 12);
     if (pdpt == NULL) return false;
     //当前PDPTE未分配
     if (pdpt[pdpte_idx].p == false) {
@@ -76,7 +76,7 @@ PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool 
         pdpt[pdpte_idx].address = (((qword)__get_free_page()) >> 12);
     }
 
-    PDE *pd = (PDE*)(pdpt[pdpte_idx].address << 12);
+    PDE *pd = (PDE *)(pdpt[pdpte_idx].address << 12);
     if (pd == NULL) return false;
     //当前PDE未分配
     if (pd[pde_idx].p == false) { 
@@ -89,7 +89,7 @@ PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool 
         pd[pde_idx].address = (((qword)__get_free_page()) >> 12);
     }
 
-    PTE *pt = (PTE*)(pd[pde_idx].address << 12);
+    PTE *pt = (PTE *)(pd[pde_idx].address << 12);
     if (pt == NULL) return false;
     //当前PTE未分配
     if (pt[pte_idx].p == false) { 
@@ -111,7 +111,7 @@ PRIVATE bool __set_mapping(void *__pgd, void *vaddr, void *paddr, bool rw, bool 
 //设置映射
 PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw, bool us) {
     //对齐
-    vaddr = (void*)((qword)(vaddr) & ~(MEMUNIT_SZ - 1));
+    vaddr = (void *)((qword)(vaddr) & ~(MEMUNIT_SZ - 1));
     for (int i = 0 ; i < pages ; i ++) {
         if (! __set_mapping(pgd, vaddr + (i * MEMUNIT_SZ), paddr + (i * MEMUNIT_SZ), rw, us)) {
             return false;
@@ -122,8 +122,8 @@ PUBLIC bool set_mapping(void *pgd, void *vaddr, void *paddr, int pages, bool rw,
 
 PUBLIC bool set_mappingvv(void *src_pgd, void *src_addr, void *dst_pgd, void *dst_addr, int pages, bool rw, bool us) {
     //对齐
-    src_addr = (void*)((qword)(src_addr) & ~(MEMUNIT_SZ - 1));
-    dst_addr = (void*)((qword)(dst_addr) & ~(MEMUNIT_SZ - 1));
+    src_addr = (void *)((qword)(src_addr) & ~(MEMUNIT_SZ - 1));
+    dst_addr = (void *)((qword)(dst_addr) & ~(MEMUNIT_SZ - 1));
     for (int i = 0 ; i < pages ; i ++) {
         if (! __set_mapping(dst_pgd, dst_addr + (i * MEMUNIT_SZ), __pa(src_pgd, src_addr + (i * MEMUNIT_SZ)), rw, us)) {
             return false;
@@ -178,6 +178,6 @@ PUBLIC void *get_physical_address(void *__pgd, void *vaddr) {
     }
 
     //获取地址, 加上offse
-    void *paddr = (void*)((pt[pte_idx].address << 12) + offset);
+    void *paddr = (void *)((pt[pte_idx].address << 12) + offset);
     return paddr;
 }

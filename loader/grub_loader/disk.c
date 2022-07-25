@@ -81,7 +81,7 @@ PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     wait_ide0_drq();
 
     for (int i = 0 ; i < 256 ; i ++) {
-        *(((word*)dst) + i) = inw(IDE0_DATA); //256字数据
+        *(((word *)dst) + i) = inw(IDE0_DATA); //256字数据
     }
 }
 
@@ -100,7 +100,7 @@ PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
     wait_ide1_drq();
 
     for (int i = 0 ; i < 256 ; i ++) {
-        *(((word*)dst) + i) = inw(IDE1_DATA); //256字数据
+        *(((word *)dst) + i) = inw(IDE1_DATA); //256字数据
     }
 }
 
@@ -128,7 +128,7 @@ PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void *dst) { //读
     for (int i = 0 ; i < num ; i ++) { //num个扇区
         wait_ide0_drq(); //等待DRQ
         for (int j = 0 ; j < 256 ; j ++) { //每扇区256个字
-            *(((word*)dst) + i * 256 + j) = inw(IDE0_DATA);
+            *(((word *)dst) + i * 256 + j) = inw(IDE0_DATA);
         }
         for (int j = 0 ; j < 3 ; j ++)
             outb(DELAY_PORT, 0); //延迟一会儿
@@ -152,7 +152,7 @@ PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void *dst) { //读
     for (int i = 0 ; i < num ; i ++) { //num个扇区
         wait_ide1_drq(); //等待DRQ
         for (int j = 0 ; j < 256 ; j ++) { //每扇区256个字
-            *(((word*)dst) + i * 256 + j) = inw(IDE1_DATA);
+            *(((word *)dst) + i * 256 + j) = inw(IDE1_DATA);
         }
         for (int j = 0 ; j < 3 ; j ++)
             outb(DELAY_PORT, 0); //延迟一会儿

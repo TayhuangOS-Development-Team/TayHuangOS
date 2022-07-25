@@ -348,7 +348,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
                 break;
             }
             case PRINT_TY_STRING: { //字符串
-                char *str = va_arg(args, char*);
+                char *str = va_arg(args, char *);
                 strcpy(buffer, str);
                 buffer += strlen(str);
                 offset += strlen(str);

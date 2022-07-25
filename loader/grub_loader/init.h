@@ -20,7 +20,7 @@
 
 #include <tayhuang/descs.h>
 
-typedef void(*int_handler)(void);
+typedef void(* int_handler)(void);
 
 #define GDT_SIZE (16)
 #define IDT_SIZE (128)

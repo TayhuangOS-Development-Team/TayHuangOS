@@ -97,7 +97,7 @@ PRIVATE dword get_fat32_entry(fs_context context, dword last) {
     int offset = num_off * INFO.bytes_per_sector + //扇区间偏移量
                  _offset * sizeof(dword); //扇区内偏移量
 
-    dword entry = *((dword*)(_context->fat_buffer + offset));
+    dword entry = *((dword *)(_context->fat_buffer + offset));
     return entry;
 }
 
@@ -159,8 +159,8 @@ PRIVATE dword get_file_start_clus(fs_context context, const char *name) {
     for (int i = 0 ; i < 16 * FAT32_ENTRIES_PER_SECTOR ; i ++) {
         memcpy(rdname, _context->root_directory + i * FAT32_ENTRY_SIZE + 0, 11);
         if (! strcmp(name, rdname)) {
-            dword low_word = *(word*)(_context->root_directory + i * FAT32_ENTRY_SIZE + 0x1A); //低字
-            dword high_word = *(word*)(_context->root_directory + i * FAT32_ENTRY_SIZE + 0x14); //高字
+            dword low_word = *(word *)(_context->root_directory + i * FAT32_ENTRY_SIZE + 0x1A); //低字
+            dword high_word = *(word *)(_context->root_directory + i * FAT32_ENTRY_SIZE + 0x14); //高字
             return (high_word << 16) + low_word;
         }
     }

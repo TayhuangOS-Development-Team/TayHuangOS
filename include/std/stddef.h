@@ -17,7 +17,7 @@
 
 #pragma once
 
-#define NULL ((void*)0)
+#define NULL ((void *)0)
 
 #ifndef __SIZE_TYPE__
 #define __SIZE_TYPE__ unsigned int

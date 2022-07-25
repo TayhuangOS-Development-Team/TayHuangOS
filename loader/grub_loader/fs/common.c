@@ -69,20 +69,20 @@ PUBLIC fs_context load_fs(int disk_selector, int partition_id){
 }
 
 PUBLIC void display_fs_info(fs_context context) {
-    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
+    if (*((dword *)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
         display_fat32_fs_info(context);
     }
 }
 
 PUBLIC bool load_file(fs_context context, const char *name, void *dst) {
-    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
+    if (*((dword *)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
         return load_fat32_file(context, name, dst);
     }
     return false;
 }
 
 PUBLIC void terminate_fs(fs_context context) {
-    if (*((dword*)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
+    if (*((dword *)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
         terminate_fat32_fs(context);
     }
 }
