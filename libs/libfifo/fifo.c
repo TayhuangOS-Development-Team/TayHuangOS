@@ -21,6 +21,8 @@
 #include <debug/logging.h>
 #include <memory/sharemem.h>
 
+#include <syscall/syscall.h>
+
 typedef struct {
     bool lock;
     size_t write_offset;
@@ -29,6 +31,10 @@ typedef struct {
     size_t used_length;
     char buffer[0];
 } fifo_struct;
+
+PRIVATE void wait_and_lock(fifo_struct *fifo) {
+    while (! test_and_lock(&fifo->lock)); //没上锁则一直进行检测并上锁操作
+}
 
 PUBLIC void *create_fifo(size_t fifo_size) {
     int pages = (fifo_size + MEMUNIT_SZ - 1) / MEMUNIT_SZ;

@@ -51,7 +51,7 @@ CPP_DEFS := $(ARCHDEF_C)
 CPP_INCLUDE := -I"$(TESTBENCHDIR)/testbench2" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
-LIBRARIES := -lkmod
+LIBRARIES := -lkmod -lfifo
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \

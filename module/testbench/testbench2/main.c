@@ -64,6 +64,8 @@ PUBLIC void kmod_main(void) {
     *(byte *)(framebuffer + 5) = 0x0A;
     swap_framebuffer(false);
 
+    void *fifo = create_fifo(8000);
+
     message_loop();
 
     while (true);
