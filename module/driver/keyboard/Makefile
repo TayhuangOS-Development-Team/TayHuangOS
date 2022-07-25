@@ -16,72 +16,17 @@
 
 
 
-OBJECTSDIR := $(OBJECTSDIR)/keyboard/
 
-KEYBOARD_OUTPUT := $(BINDIR)/keyboard.mod
-KEYBOARD_SYMBOL_OUTPUT := $(BINDIR)/keyboard.sym
-
-CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
-		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
-
-CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
-		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
- 		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
-		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
-
-C_SRC := main keymap
-
-CPP_SRC :=
-
-ASMFLAGS :=
-ASM_SRC :=
-
-C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(DRIVERDIR)/keyboard" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
-
-ifeq ($(MODE), debug)
-	C_DEFS += -D_DEBUG
-else
-	CPP_DEFS += -D_DEBUG
-endif
-
-CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(DRIVERDIR)/keyboard" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
-
-LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
-LIBRARIES := -lkmod
-
-OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
-           $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
-		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
-
-$(OBJECTSDIR)/%.o : %.cpp
-	$(MKDIR) $(dir $@)
-	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
-
-$(OBJECTSDIR)/%.o : %.c
-	$(MKDIR) $(dir $@)
-	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
-
-$(OBJECTSDIR)/%.o : %.S
-	$(MKDIR) $(dir $@)
-	$(GAS) -o $@ $^
-
+#编译
 .PHONY: build
-build: $(OBJECTS)
-	$(MKDIR) $(dir $(KEYBOARD_OUTPUT))
-	$(LD) $(LD_FLAGS) -T keyboard.ld -o $(KEYBOARD_OUTPUT) $^ --start-group $(LIBRARIES) --end-group
-ifeq ($(MODE), debug)
-	$(OBJCOPY) --only-keep-debug $(KEYBOARD_OUTPUT) $(KEYBOARD_SYMBOL_OUTPUT)
-	$(OBJCOPY) --strip-debug $(KEYBOARD_OUTPUT)
-endif
+build:
+	$(CD) ioman && $(MAKE) build
 
+#清理
 .PHONY: clean
 clean:
-	$(RM) $(KEYBOARD_OUTPUT) $(OBJECTS)
+	$(CD) ioman && $(MAKE) clean
 
 .PHONY: image
 image:
-	$(SUDO) $(COPY) $(KEYBOARD_OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+	$(CD) ioman && $(MAKE) image

@@ -34,10 +34,12 @@
 #define TTY_DRIVER_SERVICE API_PID(4)
 //keyboard.mod 键盘驱动
 #define KEYBOARD_DRIVER_SERVICE API_PID(5)
+#define KEYBOARD_IOMAN_SERVICE API_PID(6)
 //disk.mod 硬盘驱动
-#define DISK_DRIVER_SERVICE API_PID(6)
+#define DISK_DRIVER_SERVICE API_PID(7)
+#define DISK_IOMAN_SERVICE API_PID(8)
 //vfs.mod 文件系统虚拟设备驱动
-#define VFS_DRIVER_SERVICE API_PID(7)
+#define VFS_DRIVER_SERVICE API_PID(9)
 
 //空进程
 #define NULL_TASK (0)

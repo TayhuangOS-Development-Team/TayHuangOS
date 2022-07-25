@@ -238,19 +238,19 @@ PUBLIC void init(void) {
     send_msg(MSG_NORMAL_IPC, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
     
     //-------------------KEYBOARD-----------------------
-    program_info keyboard_mod_info = load_mod_by_setup("keyboard.mod");
+    program_info keyboard_ioman_info = load_mod_by_setup("keyboard.man");
     initialize_kmod_task(
-        create_task(DS_SERVICE, keyboard_mod_info.stack_top, keyboard_mod_info.stack_bottom, keyboard_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    keyboard_mod_info.pgd, keyboard_mod_info.start, keyboard_mod_info.end, keyboard_mod_info.start, keyboard_mod_info.end,
-                     keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top,keyboard_mod_info.start, keyboard_mod_info.end,
+        create_task(DS_SERVICE, keyboard_ioman_info.stack_top, keyboard_ioman_info.stack_bottom, keyboard_ioman_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    keyboard_ioman_info.pgd, keyboard_ioman_info.start, keyboard_ioman_info.end, keyboard_ioman_info.start, keyboard_ioman_info.end,
+                     keyboard_ioman_info.heap_bottom, keyboard_ioman_info.heap_top,keyboard_ioman_info.start, keyboard_ioman_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    KEYBOARD_DRIVER_SERVICE, 1, 0, current_task));
+                    KEYBOARD_IOMAN_SERVICE, 1, 0, current_task));
 
-    set_allow(KEYBOARD_DRIVER_SERVICE);
+    set_allow(KEYBOARD_IOMAN_SERVICE);
     check_ipc();
     recv_msg(&status);
     if (! status) {
-        lerror ("Init", "Failed to initialize keyboard driver!");
+        lerror ("Init", "Failed to initialize keyboard io manager!");
         while (1);
     }
 
