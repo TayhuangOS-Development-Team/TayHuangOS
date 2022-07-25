@@ -47,8 +47,8 @@ PUBLIC void load_program(void *pgd, void *addr, Elf64_Phdr *header, void **start
     vmemset (pgd, header->p_vaddr + header->p_filesz, 0, header->p_memsz - header->p_filesz);
 
     //设置段头/尾
-    *start = (void*)(header->p_vaddr);
-    *end   = (void*)(header->p_vaddr + header->p_memsz);
+    *start = (void *)(header->p_vaddr);
+    *end   = (void *)(header->p_vaddr + header->p_memsz);
 }
 
 #define STACK_SIZE (16 * MEMUNIT_SZ)
@@ -76,7 +76,7 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
     program_info infomations;
 
     //头
-    Elf64_Ehdr *header = (Elf64_Ehdr*)addr;
+    Elf64_Ehdr *header = (Elf64_Ehdr *)addr;
 
     //基本信息
     infomations.entry = header->e_entry;
@@ -90,7 +90,7 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
         void *start = 0xFFFFFFFFFFFFFFFF;
         void *end   = 0x0000000000000000;
 
-        Elf64_Phdr *pro_header = (Elf64_Phdr*)(addr + header->e_phoff + i * header->e_phentsize);
+        Elf64_Phdr *pro_header = (Elf64_Phdr *)(addr + header->e_phoff + i * header->e_phentsize);
         load_program (infomations.pgd, addr, pro_header, &start, &end);
 
         //设置程序头/尾

@@ -68,8 +68,8 @@ movsb" : : "g"(sz), "g"(src), "g"(dst) : "%ecx", "%edi", "%esi");
 }
 
 //一些关于字符、字符串、内存的函数:str的
-static inline char* strchr(const char* s, char c) {
-	register char* __res;
+static inline char *strchr(const char *s, char c) {
+	register char *__res;
 	__asm__("cld\n\t"
 		"movb %%al,%%ah\n"
 		"1:\tlodsb\n\t"
@@ -107,7 +107,7 @@ static inline int strncmp(const char *cs,const char *ct, int count){
 }
 
 static inline char *strrchr(const char *s,char c){
-    register char* __res;
+    register char *__res;
 	__asm__("cld\n\t"
 		"movb %%al,%%ah\n"
 		"1:\tlodsb\n\t"
@@ -122,8 +122,8 @@ static inline char *strrchr(const char *s,char c){
 	return __res;
 }
 
-static inline int strspn(const char* cs, const char* ct) {
-	register char* __res;
+static inline int strspn(const char *cs, const char *ct) {
+	register char *__res;
 	__asm__("cld\n\t"
 		"movl %4,%%edi\n\t"
 		"repne\n\t"
@@ -145,8 +145,8 @@ static inline int strspn(const char* cs, const char* ct) {
 	return __res - cs;
 }
 
-static inline int strcspn(const char* cs, const char* ct) {
-	register char* __res;
+static inline int strcspn(const char *cs, const char *ct) {
+	register char *__res;
 	__asm__("cld\n\t"
 		"movl %4,%%edi\n\t"
 		"repne\n\t"
@@ -168,8 +168,8 @@ static inline int strcspn(const char* cs, const char* ct) {
 	return __res - cs;
 }
 
-static inline char* strpbrk(const char* cs, const char* ct) {
-	register char* __res;
+static inline char *strpbrk(const char *cs, const char *ct) {
+	register char *__res;
 	__asm__("cld\n\t"
 		"movl %4,%%edi\n\t"
 		"repne\n\t"
@@ -194,7 +194,7 @@ static inline char* strpbrk(const char* cs, const char* ct) {
 	return __res;
 }
 
-static inline char* strncpy(char* dest, const char* src, int count) {
+static inline char *strncpy(char *dest, const char *src, int count) {
 	__asm__("cld\n"
 		"1:\tdecl %2\n\t"
 		"js 2f\n\t"
@@ -210,7 +210,7 @@ static inline char* strncpy(char* dest, const char* src, int count) {
 	return dest;
 }
 
-static inline char* strcat(char* dest, const char* src) {
+static inline char *strcat(char *dest, const char *src) {
 	__asm__("cld\n\t"
 		"repne\n\t"
 		"scasb\n\t"
@@ -224,7 +224,7 @@ static inline char* strcat(char* dest, const char* src) {
 	return dest;
 }
 
-static inline char* strncat(char* dest, const char* src, int count) {
+static inline char *strncat(char *dest, const char *src, int count) {
 	__asm__("cld\n\t"
 		"repne\n\t"
 		"scasb\n\t"
@@ -243,10 +243,10 @@ static inline char* strncat(char* dest, const char* src, int count) {
 	return dest;
 }
 
-static inline char* strtok(char* s, const char* ct) {
-	char* ___strtok;
+static inline char *strtok(char *s, const char *ct) {
+	char *___strtok;
 
-	register char* __res;
+	register char *__res;
 	__asm__("testl %1,%1\n\t"
 		"jne 1f\n\t"
 		"testl %0,%0\n\t"
@@ -303,7 +303,7 @@ static inline char* strtok(char* s, const char* ct) {
 	return __res;
 }
 
-static inline void* memmove(void* dest, const void* src, int n) {
+static inline void *memmove(void *dest, const void *src, int n) {
 	if (dest < src)
 		__asm__("cld\n\t"
 			"rep\n\t"
@@ -319,7 +319,7 @@ static inline void* memmove(void* dest, const void* src, int n) {
 	return dest;
 }
 
-static inline int memcmp(const void* cs, const void* ct, int count) {
+static inline int memcmp(const void *cs, const void *ct, int count) {
 	register int __res;
 	__asm__("cld\n\t"
 		"repe\n\t"
@@ -334,8 +334,8 @@ static inline int memcmp(const void* cs, const void* ct, int count) {
 	return __res;
 }
 
-static inline void* memchr(const void* cs, char c, int count) {
-	register void* __res;
+static inline void *memchr(const void *cs, char c, int count) {
+	register void *__res;
 	if (!count)
 		return NULL;
 	__asm__("cld\n\t"

@@ -39,7 +39,7 @@ PUBLIC void setup_longmode(void *pml4) {
     cr3_t cr3 = get_cr3();
     cr4_t cr4 = get_cr4();
     efer_t efer = get_efer();
-    *((int*)&cr3) |= (dword)pml4;
+    *((int *)&cr3) |= (dword)pml4;
     set_cr3(cr3);
     cr4.pae = true; //物理地址拓展
     set_cr4(cr4);
@@ -49,7 +49,7 @@ PUBLIC void setup_longmode(void *pml4) {
     set_cr0(cr0);
 }
 
-PUBLIC void *setup_paging(qword memsz, void** limit) {
+PUBLIC void *setup_paging(qword memsz, void ** limit) {
     const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
     const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
     const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
@@ -70,10 +70,10 @@ PUBLIC void *setup_paging(qword memsz, void** limit) {
     }
 
     PML4E *const pml4_start_address = PAGE_ADDRESS;
-    PDPTE *const pdpt_start_address = ((void*)pml4_start_address) + pml4_num * MEMUNIT_SZ;
-    PDE *const pd_start_address = ((void*)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
-    PTE *const pt_start_address = ((void*)pd_start_address) + pd_num * MEMUNIT_SZ;
-    void *const page_start_address = ((void*)pt_start_address) + pt_num * MEMUNIT_SZ;
+    PDPTE *const pdpt_start_address = ((void *)pml4_start_address) + pml4_num * MEMUNIT_SZ;
+    PDE *const pd_start_address = ((void *)pdpt_start_address) + pdpt_num * MEMUNIT_SZ;
+    PTE *const pt_start_address = ((void *)pd_start_address) + pd_num * MEMUNIT_SZ;
+    void *const page_start_address = ((void *)pt_start_address) + pt_num * MEMUNIT_SZ;
 
     *limit = page_start_address;
 

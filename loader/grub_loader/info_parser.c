@@ -39,13 +39,13 @@ PRIVATE void parse_vbe(struct multiboot_tag_vbe *tag) {
 }
 
 PRIVATE void parse_framebuffer(struct multiboot_tag_framebuffer *tag, void **framebuffer, int *width, int *height) {
-    *framebuffer = (void*)(tag->common.framebuffer_addr & 0xFFFFFFFF);
+    *framebuffer = (void *)(tag->common.framebuffer_addr & 0xFFFFFFFF);
     *width = tag->common.framebuffer_width;
     *height = tag->common.framebuffer_height;
 }
 
 PUBLIC void parse_args(struct multiboot_tag *tag, parse_result_struct *result) {
-    tag = ((void*)tag) + 8;
+    tag = ((void *)tag) + 8;
     while (tag->type != MULTIBOOT_TAG_TYPE_END) {
         switch (tag->type)
         {
@@ -67,14 +67,14 @@ PUBLIC void parse_args(struct multiboot_tag *tag, parse_result_struct *result) {
         }
 
         int tag_size = (tag->size + 7) & ~7;
-        tag = (struct multiboot_tag*)(((void*)tag) + tag_size);
+        tag = (struct multiboot_tag*)(((void *)tag) + tag_size);
     }
 
 #ifndef VBE_ENABLE
     result->is_graphic = false;
     result->screen_width = 80;
     result->screen_height = 25;
-    result->framebuffer = (void*)0xB8000;
+    result->framebuffer = (void *)0xB8000;
 #else
     result->is_graphic = true;
 #endif

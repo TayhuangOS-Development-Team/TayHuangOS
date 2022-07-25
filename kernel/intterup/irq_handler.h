@@ -22,7 +22,7 @@
 
 #include <intterup/init_int.h>
 
-typedef void(*irq_handler)(int, struct intterup_args*, bool);
+typedef void(* irq_handler)(int, struct intterup_args*, bool);
 //注册IRQ处理器
 PUBLIC void register_irq_handler(int irq, irq_handler handler);
 //通用IRQ处理器
