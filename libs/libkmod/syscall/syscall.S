@@ -97,4 +97,12 @@ __rpc_call: /*rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_st
     pushq $0
     jmp __rpc_call__
     ret
-    
+
+    .global test_and_lock
+    .type test_and_lock, @function
+test_and_lock:
+    movq $0x05, %rax
+    /*movq %rdi, %rdi*/
+
+    int $0x40
+    ret

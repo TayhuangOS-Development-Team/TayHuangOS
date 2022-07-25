@@ -62,10 +62,10 @@ PRIVATE void add_free_area(int order, void *address) {
 }
 
 //初始化pmm
-PUBLIC void init_pmm(qword memsize, void *reserved_limit) {
+PUBLIC void init_pmm(size_t memsize, void *reserved_limit) {
     qword pages = ((memsize + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
     linfo ("PMM", "memsize = %#016X, %#016X pages in total", memsize, pages);
-    qword reserved_pages = ((((qword)reserved_limit) + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
+    qword reserved_pages = ((((size_t)reserved_limit) + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1)) / MEMUNIT_SZ;
     linfo ("PMM", "%#016X pages added", pages - reserved_pages);
     pages -= reserved_pages;
 
@@ -157,7 +157,7 @@ PUBLIC void alloc_vpages(void *pgd, void *addr, int pages) {
     }
 }
 
-PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
+PUBLIC void vmemset(void *pgd, void *addr, int val, size_t size) {
     //利用for逐字节设置
     for (int i = 0 ; i < size ; i ++) {
         *(byte *)__pa(pgd, addr) = val;
@@ -165,7 +165,7 @@ PUBLIC void vmemset(void *pgd, void *addr, int val, int size) {
     }
 }
 
-PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
+PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, size_t size) {
     //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
         *(byte *)dst = *(byte *)__pa(src_pgd, src);
@@ -174,7 +174,7 @@ PUBLIC void vpmemcpy(void *dst, void *src_pgd, void *src, int size) {
     }
 }
 
-PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
+PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, size_t size) {
     //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
         *(byte *)__pa(dst_pgd, dst) = *(byte *)src;
@@ -183,7 +183,7 @@ PUBLIC void pvmemcpy(void *dst_pgd, void *dst, void *src, int size) {
     }
 }
 
-PUBLIC void vvmemcpy(void *dst_pgd, void *dst, void *src_pgd, void *src, int size) {
+PUBLIC void vvmemcpy(void *dst_pgd, void *dst, void *src_pgd, void *src, size_t size) {
     //利用for逐字节复制
     for (int i = 0 ; i < size ; i ++) {
         *(byte *)__pa(dst_pgd, dst) = *(byte *)__pa(src_pgd, src);

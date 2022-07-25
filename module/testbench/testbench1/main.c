@@ -27,12 +27,18 @@
 #include <syscall/ipc.h>
 #include <syscall/rpc.h>
 
+#include <fifo.h>
+
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 
-    void *addr = *(void **)msg;
-    linfo ("%p", addr);
-    linfo ("%d", *(qword *)addr);
+    void *fifo = *(void **)msg;
+    linfo ("%p", fifo);
+    qword data;
+
+    while (! fifo_read_bytes(fifo, (byte*)&data, sizeof(qword)));
+    
+    linfo ("%d", data);
 }
 
 PUBLIC void kmod_main(void) {

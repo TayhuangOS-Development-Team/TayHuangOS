@@ -20,4 +20,11 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void sayhello(void);
+PUBLIC void *create_fifo(size_t fifo_size);
+PUBLIC void *share_fifo(void *fifo, int target);
+PUBLIC bool fifo_write_bytes(void *fifo, byte *data, size_t size);
+PUBLIC bool fifo_read_bytes(void *fifo, byte *data, size_t size);
+PUBLIC size_t fifo_read_all(void *fifo, byte *data);
+PUBLIC size_t fifo_get_size(void *fifo);
+PUBLIC size_t fifo_get_used_size(void *fifo);
+PUBLIC size_t fifo_get_free_size(void *fifo);

@@ -22,3 +22,4 @@
 
 PUBLIC void moo(void);
 PUBLIC void reg_irq(int irq);
+PUBLIC bool test_and_lock(bool *val);

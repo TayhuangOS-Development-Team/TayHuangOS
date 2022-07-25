@@ -27,7 +27,7 @@ PRIVATE void *start_addr = NULL;
 
 //一个段的信息
 struct __seg_info {
-    qword size : 63;
+    size_t size : 63;
     bool used : 1;
     struct __seg_info *next;
     struct __seg_info *last;
@@ -41,7 +41,7 @@ typedef struct __seg_info seg_info_struct;
 #define MIN_SEG_SIZE (64)
 
 //初始化kheap
-PUBLIC void init_kheap(void *prepare_base, int prepare_size) {
+PUBLIC void init_kheap(void *prepare_base, size_t prepare_size) {
     start_addr = prepare_base;
     seg_info_struct *start_seg = (seg_info_struct *)prepare_base; 
 
@@ -83,11 +83,11 @@ PRIVATE seg_info_struct *do_combine(seg_info_struct *seg) {
     return seg;
 }
 
-PUBLIC void *kmalloc(int size) {
+PUBLIC void *kmalloc(size_t size) {
     size += sizeof(seg_info_struct);
 
     //修正大小
-    int fixed_size = (size + (MIN_SEG_SIZE - 1)) & ~(MIN_SEG_SIZE - 1);
+    size_t fixed_size = (size + (MIN_SEG_SIZE - 1)) & ~(MIN_SEG_SIZE - 1);
 
     seg_info_struct *cur_seg = (seg_info_struct *)start_addr;
 
