@@ -77,6 +77,8 @@ PUBLIC void register_signal_handler_t(signal_t signal, signal_handler_t handler)
 
 #define MESSAGE_LEN (1024)
 
+PUBLIC int self_pid = 0;
+
 PUBLIC void message_loop(void) {
     static void *msg = NULL;
     if (msg == NULL) {
