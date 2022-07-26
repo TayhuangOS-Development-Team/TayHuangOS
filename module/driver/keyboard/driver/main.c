@@ -8,17 +8,30 @@
  * 
  * 作者: theflysong
  * 
- * keymap.h
+ * main.c
  * 
- * 扫描码与按键的对应表
+ * 主函数
  * 
  */
 
 
 
-#pragma once
+#include <debug/logging.h>
 
-#include <tayhuang/defs.h>
-#include <key_types.h>
+#include <syscall/ipc.h>
 
-EXTERN short KEYMAP[128][3];
+#include <export/__ioman.h>
+
+PRIVATE void *fifo = NULL;
+
+PUBLIC void kmod_main(void) {
+    set_logging_name("Keyboard");
+
+    linfo ("Hi!");
+
+    fifo = share_keybuffer(false);
+
+    linfo ("%p", fifo);
+
+    check_ipc();
+}

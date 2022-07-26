@@ -254,6 +254,22 @@ PUBLIC void init(void) {
         while (1);
     }
 
+    program_info keyboard_mod_info = load_mod_by_setup("keyboard.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, keyboard_mod_info.stack_top, keyboard_mod_info.stack_bottom, keyboard_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    keyboard_mod_info.pgd, keyboard_mod_info.start, keyboard_mod_info.end, keyboard_mod_info.start, keyboard_mod_info.end,
+                     keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top,keyboard_mod_info.start, keyboard_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    KEYBOARD_DRIVER_SERVICE, 1, 0, current_task));
+
+    set_allow(KEYBOARD_DRIVER_SERVICE);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize keyboard driver!");
+        while (1);
+    }
+
     //-------------------TESTBENCH-----------------------
     program_info tb1_mod_info = load_mod_by_setup("tb1.mod");
     initialize_kmod_task(

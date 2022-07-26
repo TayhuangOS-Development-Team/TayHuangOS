@@ -21,12 +21,15 @@
 .PHONY: build
 build:
 	$(CD) ioman && $(MAKE) build
+	$(CD) driver && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
 	$(CD) ioman && $(MAKE) clean
+	$(CD) driver && $(MAKE) clean
 
 .PHONY: image
 image:
 	$(CD) ioman && $(MAKE) image
+	$(CD) driver && $(MAKE) image
