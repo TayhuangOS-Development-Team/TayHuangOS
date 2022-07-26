@@ -26,6 +26,10 @@
 //相关信息
 typedef struct {
     bool lock;
+    int wait_empty_pid;
+    int wait_full_pid;
+    int wait_readable_pid;
+    int wait_writable_pid;
     size_t write_offset;
     size_t read_offset;
     size_t fifo_size;
@@ -154,4 +158,20 @@ PUBLIC size_t fifo_get_used_size(void *fifo) {
 
 PUBLIC size_t fifo_get_free_size(void *fifo) {
     return fifo_get_size(fifo) - fifo_get_used_size(fifo); //FIFO大小 - 已使用大小 = 空闲大小
+}
+
+PUBLIC void wait_fifo_empty(void *fifo) {
+    
+}
+
+PUBLIC void wait_fifo_full(void *fifo) {
+
+}
+
+PUBLIC void wait_fifo_readable(void *fifo) {
+
+}
+
+PUBLIC void wait_fifo_writable(void *fifo) {
+
 }

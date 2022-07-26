@@ -34,3 +34,8 @@ PUBLIC size_t fifo_read_all(void *fifo, byte *data);
 PUBLIC size_t fifo_get_size(void *fifo);
 PUBLIC size_t fifo_get_used_size(void *fifo);
 PUBLIC size_t fifo_get_free_size(void *fifo);
+//FIFO信号
+PUBLIC void wait_fifo_empty(void *fifo);
+PUBLIC void wait_fifo_full(void *fifo);
+PUBLIC void wait_fifo_readable(void *fifo);
+PUBLIC void wait_fifo_writable(void *fifo);
