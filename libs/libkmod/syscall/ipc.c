@@ -34,6 +34,47 @@ PUBLIC void register_irq_handler(irq_handler_t handler) {
     __irq_handler__ = handler;
 }
 
+typedef struct __handler_node {
+    signal_t signal;
+    signal_handler_t handler;
+    struct __handler_node *next;
+} handler_node;
+
+PRIVATE handler_node *list_head;
+
+PRIVATE void add_node(handler_node *node) {
+    node->next = list_head;
+    list_head = node;
+}
+
+PRIVATE signal_handler_t get_handler(signal_t signal) {
+    if (list_head == NULL) {
+        return NULL;
+    }
+
+    handler_node *node = list_head;
+
+    while (node->next != NULL && (node->signal != signal)) {
+        node = node->next;
+    }
+
+    if (node->signal != signal) {
+        return NULL;
+    }
+
+    return node->handler;
+}
+
+PUBLIC void register_signal_handler_t(signal_t signal, signal_handler_t handler) {
+    handler_node *node = (handler_node*)(malloc(sizeof(handler_node)));
+
+    node->signal = signal;
+    node->handler = handler;
+
+    add_node(node);
+}
+
+
 #define MESSAGE_LEN (1024)
 
 PUBLIC void message_loop(void) {
@@ -66,6 +107,12 @@ PUBLIC void message_loop(void) {
                 __irq_handler__(*(int *)msg);
             }
             break;
+        }
+        case MSG_SIGNAL: {
+            signal_handler_t handler = get_handler(*(signal_t*)msg);
+            if (handler != NULL) {
+                handler();
+            }
         }
         }
         
