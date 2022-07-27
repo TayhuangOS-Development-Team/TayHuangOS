@@ -58,6 +58,8 @@ PUBLIC void __kmod_init__(void) {
     bool send_ret = send_msg(MSG_NORMAL_IPC, &status, sizeof(bool), INIT_SERVICE);
     assert(send_ret);
 
+    self_pid = pid;
+
     kmod_main();
 
     while (true);
