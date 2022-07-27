@@ -37,3 +37,5 @@ typedef void(* signal_handler_t)(void);
 PUBLIC void register_signal_handler_t(signal_t signal, signal_handler_t handler);
 
 PUBLIC void message_loop(void);
+
+EXTERN PUBLIC int self_pid;
