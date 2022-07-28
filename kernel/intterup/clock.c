@@ -66,8 +66,8 @@ PUBLIC void clock_int_handler(int irq, struct intterup_args *regs, bool entered_
         after_syscall(regs);
 
         //是level1则减少时间片计数
-        if (current_task->level == 1) {
-            current_task->count --;
+        if (current_thread->task->level == 1) {
+            current_thread->count --;
         }
     }
 }

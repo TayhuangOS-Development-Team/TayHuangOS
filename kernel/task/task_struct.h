@@ -56,7 +56,32 @@ typedef struct {
             cs,
             rflags;
     } program;
-} thread_info_struct;
+} register_info_struct;
+
+typedef struct __task_struct task_struct;
+
+typedef struct __thread_info_struct {
+    register_info_struct registers;
+
+    //线程状态
+    enum {
+        READY = 0,
+        RUNNING,
+        SUBBMITED,
+        WAITING,
+        TERMINATED,
+        EXCEPTION
+    } state;
+
+    struct __thread_info_struct *next;
+    //空闲链表
+    struct __thread_info_struct *free_next;
+
+    task_struct *task;
+
+    word count : 10; //时间片
+    byte priority : 6; //优先级
+}thread_info_struct;
 
 //内存管理信息
 typedef struct {
@@ -84,30 +109,18 @@ typedef struct {
     qword mail_size; //邮箱大小
     qword used_size; //已使用大小
     int allow_pid; //允许的PID
+    thread_info_struct *msg_handler_thread; //消息处理线程
 } ipc_info_struct;
 
 typedef struct __task_struct {
     //进程信息
-    thread_info_struct thread_info;
+    thread_info_struct *threads;
     mm_info_struct mm_info;
     ipc_info_struct ipc_info;
-
-    //进程状态
-    enum {
-        READY = 0,
-        RUNNING,
-        SUBBMITED,
-        WAITING,
-        TERMINATED,
-        EXCEPTION
-    } state;
 
     //进程链表
     struct __task_struct *last;
     struct __task_struct *next;
-
-    //空闲链表
-    struct __task_struct *free_next;
 
     //进程树
     struct __task_struct *parent;
@@ -115,8 +128,6 @@ typedef struct __task_struct {
     struct __task_struct *bro;
 
 
-    int pid : 20; //PID
-    word count : 7; //时间片
-    byte priority : 3; //优先级
-    byte level : 2; //调度级别
+    int pid : 28; //PID
+    byte level : 4; //调度级别
 } task_struct;

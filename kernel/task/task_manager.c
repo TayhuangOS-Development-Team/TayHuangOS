@@ -90,91 +90,106 @@ PUBLIC void remove_task(task_struct *task) {
 }
 
 //链表头/尾
-PRIVATE task_struct *level0_list_head = NULL;
-PRIVATE task_struct *level0_list_tail = NULL;
-PRIVATE task_struct *level1_list_head = NULL;
-PRIVATE task_struct *level1_list_tail = NULL;
+PRIVATE thread_info_struct *level0_list_head = NULL;
+PRIVATE thread_info_struct *level0_list_tail = NULL;
+PRIVATE thread_info_struct *level1_list_head = NULL;
+PRIVATE thread_info_struct *level1_list_tail = NULL;
 
 //获取空闲进程表
-PUBLIC task_struct *get_level0_list(void) {
+PUBLIC thread_info_struct *get_level0_list(void) {
     return level0_list_head;
 }
 
-PUBLIC task_struct *get_level1_list(void) {
+PUBLIC thread_info_struct *get_level1_list(void) {
     return level1_list_head;
 }
 
 //获取空闲进程
-PUBLIC task_struct *dequeue_level0_task(void) {
-    task_struct *task = level0_list_head;
+PUBLIC thread_info_struct *dequeue_level0_thread(void) {
+    thread_info_struct *thread = level0_list_head;
 
-    level0_list_head = task->free_next;
+    level0_list_head = thread->free_next;
     if (level0_list_head == NULL) {
         level0_list_tail = NULL;
     }
-    task->free_next = NULL;
+    thread->free_next = NULL;
 
-    return task;
+    return thread;
 }
 
-PUBLIC task_struct *dequeue_level1_task(void) {
-    task_struct *task = level1_list_head;
+PUBLIC thread_info_struct *dequeue_level1_thread(void) {
+    thread_info_struct *thread = level1_list_head;
 
-    level1_list_head = task->free_next;
+    level1_list_head = thread->free_next;
     if (level1_list_head == NULL) {
         level1_list_tail = NULL;
     }
-    task->free_next = NULL;
+    thread->free_next = NULL;
 
-    return task;
+    return thread;
 }
 
-//level0是否有task
-PUBLIC bool has_level0_task(void) {
+//level0是否有thread
+PUBLIC bool has_level0_thread(void) {
     return level0_list_head != NULL;
 }
 
-//level1是否有task
-PUBLIC bool has_level1_task(void) {
+//level1是否有thread
+PUBLIC bool has_level1_thread(void) {
     return level1_list_head != NULL;
 }
 
 //加入空闲进程
-PUBLIC void enqueue_level0_task(task_struct *task) {
+PUBLIC void enqueue_level0_thread(thread_info_struct *thread) {
     if (level0_list_tail == NULL) {
-        level0_list_tail = level0_list_head = task;
-        task->free_next = NULL;
+        level0_list_tail = level0_list_head = thread;
+        thread->free_next = NULL;
         return;
     }
-    level0_list_tail->free_next = task;
-    task->free_next = NULL;
-    level0_list_tail = task;
+    level0_list_tail->free_next = thread;
+    thread->free_next = NULL;
+    level0_list_tail = thread;
 }
 
-PUBLIC void enqueue_level1_task(task_struct *task) {
+PUBLIC void enqueue_level1_thread(thread_info_struct *thread) {
     if (level1_list_tail == NULL) {
-        level1_list_tail = level1_list_head = task;
-        task->free_next = NULL;
+        level1_list_tail = level1_list_head = thread;
+        thread->free_next = NULL;
         return;
     }
-    level1_list_tail->free_next = task;
-    task->free_next = NULL;
-    level1_list_tail = task;
+    level1_list_tail->free_next = thread;
+    thread->free_next = NULL;
+    level1_list_tail = thread;
 }
 
-//初始化thread_info
-PRIVATE void __init_thread_info(thread_info_struct *thread_info, word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags) {
+//创建thread_info
+PUBLIC thread_info_struct *create_thread_info(
+    word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags, int priority, task_struct *task
+) {
+    thread_info_struct *thread_info = (thread_info_struct *)kmalloc(sizeof(thread_info_struct));
+
     memset (thread_info, 0, sizeof(thread_info_struct));
 
-    thread_info->basic.gs = thread_info->basic.fs = thread_info->basic.es = thread_info->basic.ds = ds;
+    //设置主线程信息
+    thread_info->registers.basic.gs = thread_info->registers.basic.fs = thread_info->registers.basic.es = thread_info->registers.basic.ds = ds;
 
-    thread_info->stack.rbp = (qword)stack_bottom;
-    thread_info->stack.rsp = (qword)stack_top;
-    thread_info->stack.ss = ds;
+    thread_info->registers.stack.rbp = (qword)stack_bottom;
+    thread_info->registers.stack.rsp = (qword)stack_top;
+    thread_info->registers.stack.ss = ds;
 
-    thread_info->program.rip = (qword)entry;
-    thread_info->program.cs = cs;
-    thread_info->program.rflags = rflags;
+    thread_info->registers.program.rip = (qword)entry;
+    thread_info->registers.program.cs = cs;
+    thread_info->registers.program.rflags = rflags;
+
+    thread_info->state = SUBBMITED; //提交态
+
+    thread_info->next = thread_info->free_next = NULL;
+    thread_info->task = task;
+
+    thread_info->priority = priority;
+    thread_info->count = priority * 3;
+
+    return thread_info;
 }
 
 //初始化mm_info
@@ -212,6 +227,7 @@ PRIVATE void __init_ipc_info(ipc_info_struct *ipc_info) {
     ipc_info->mail_size = 0;
     ipc_info->used_size = 0;
     ipc_info->allow_pid = NULL_TASK;
+    ipc_info->msg_handler_thread = NULL;
 }
 
 //创建进程(low level)
@@ -221,19 +237,16 @@ PUBLIC task_struct *__create_task(
      qword shm_start, qword shm_end,
     int pid, int priority, int level, task_struct *parent
 ) {
-    task_struct *task = kmalloc(sizeof(task_struct));
+    task_struct *task = (task_struct *)kmalloc(sizeof(task_struct));
 
-    __init_thread_info(&task->thread_info, ds, stack_top, stack_bottom, entry, cs, rflags);
+    task->threads = create_thread_info(ds, stack_top, stack_bottom, entry, cs, rflags, priority, task);
     __init_mm_info(&task->mm_info, pgd, code_start, code_end, data_start, data_end, stack_bottom, stack_top,
                         heap_start, heap_end, rodata_start, rodata_end, shm_start, shm_end);
     __init_ipc_info(&task->ipc_info);
 
-    task->state = SUBBMITED; //提交态
-    task->last = task->next = task->free_next = NULL;
+    task->last = task->next = NULL;
     
     task->pid = pid;
-    task->count = 0;
-    task->priority = priority;
     task->level = level;
     
     task->parent = parent;
@@ -262,10 +275,10 @@ PUBLIC task_struct *create_task(
 
     //加入空闲队列
     if (level == 0) {
-        enqueue_level0_task(task);
+        enqueue_level0_thread(task->threads);
     }
     else if (level == 1) {
-        enqueue_level1_task(task);
+        enqueue_level1_thread(task->threads);
     }
 
     return task;

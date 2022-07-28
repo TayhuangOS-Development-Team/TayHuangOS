@@ -179,7 +179,7 @@ PUBLIC void init(void) {
 
     create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                SYSTASK_SERVICE, 1, 0, current_task);
+                SYSTASK_SERVICE, 1, 0, current_thread->task);
 
     bool status;
     
@@ -368,12 +368,12 @@ PUBLIC void entry(struct boot_args *_args) {
 
     linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
 
-    current_task = __create_task(DS_SERVICE, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_SERVICE, RFLAGS_SERVICE,
+    current_thread = __create_task(DS_SERVICE, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_SERVICE, RFLAGS_SERVICE,
                  kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 INIT_SERVICE, 1, 0, NULL);
+                 INIT_SERVICE, 1, 0, NULL)->threads;
 
-    add_task(current_task);
-    current_task->state = RUNNING;
+    add_task(current_thread->task);
+    current_thread->state = RUNNING;
 
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
     asmv ("jmp init");

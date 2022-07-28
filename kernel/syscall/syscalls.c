@@ -78,16 +78,16 @@ PRIVATE void read_from_buffer(msgpack_struct *pack, void *dst) {
     void *addr = pack;
     //写pack头
     for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
-        *(byte *)addr = *(byte *)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
+        *(byte *)addr = *(byte *)__pa(current_thread->task->mm_info.pgd, current_thread->task->ipc_info.read_ptr);
         addr ++;
-        current_task->ipc_info.read_ptr = increase_ptr(current_task, current_task->ipc_info.read_ptr);
+        current_thread->task->ipc_info.read_ptr = increase_ptr(current_thread->task, current_thread->task->ipc_info.read_ptr);
     }
 
     //写主体
     for (int i = 0 ; i < pack->length ; i ++) {
-        *(byte *)(__pa(current_task->mm_info.pgd, dst)) = *(byte *)__pa(current_task->mm_info.pgd, current_task->ipc_info.read_ptr);
+        *(byte *)(__pa(current_thread->task->mm_info.pgd, dst)) = *(byte *)__pa(current_thread->task->mm_info.pgd, current_thread->task->ipc_info.read_ptr);
         dst ++;
-        current_task->ipc_info.read_ptr = increase_ptr(current_task, current_task->ipc_info.read_ptr);
+        current_thread->task->ipc_info.read_ptr = increase_ptr(current_thread->task, current_thread->task->ipc_info.read_ptr);
     }
 }
 
@@ -96,7 +96,7 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
 
     if ((target == NULL) || 
         ((target->ipc_info.used_size + size + sizeof(msgpack_struct)) > target->ipc_info.mail_size) ||
-        ((target->ipc_info.allow_pid != current_task->pid) && (target->ipc_info.allow_pid != ANY_TASK)))
+        ((target->ipc_info.allow_pid != current_thread->task->pid) && (target->ipc_info.allow_pid != ANY_TASK)))
     {
         return false;
     }
@@ -104,23 +104,24 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
     msgpack_struct pack;
     pack.length = size;
     pack.message_no = msgno;
-    pack.source = current_task->pid;
+    pack.source = current_thread->task->pid;
 
     //增加已使用大小
     target->ipc_info.used_size += sizeof(msgpack_struct) + size;
 
     //写到buffer里
-    write_to_buffer(target, &pack, current_task->mm_info.pgd, src);
+    write_to_buffer(target, &pack, current_thread->task->mm_info.pgd, src);
 
     //唤醒
-    if (target->state == WAITING && target->ipc_info.allow_pid != DUMMY_TASK) {
-        target->state = READY;
+    //TODO 改成target->ipc_info.msg_handler_thread
+    if (target->threads->state == WAITING && target->ipc_info.allow_pid != DUMMY_TASK) {
+        target->threads->state = READY;
 
         if (target->level == 0) {
-            enqueue_level0_task(target);
+            enqueue_level0_thread(target);
         }
         else {
-            enqueue_level1_task(target);
+            enqueue_level1_thread(target);
         }
     }
     return true;
@@ -133,11 +134,11 @@ PUBLIC bool send_msg(int msgno, void *src, qword size, int dst) {
 //-------------------
 
 PUBLIC void __check_ipc(void) {
-    if (current_task->ipc_info.used_size > 0) {
+    if (current_thread->task->ipc_info.used_size > 0) {
         return;
     }
 
-    current_task->state = WAITING;
+    current_thread->state = WAITING;
 }
 
 PUBLIC void check_ipc(void) {
@@ -147,7 +148,7 @@ PUBLIC void check_ipc(void) {
 //-------------------
 
 PUBLIC void __set_allow(int pid) {
-    current_task->ipc_info.allow_pid = pid;
+    current_thread->task->ipc_info.allow_pid = pid;
 }
 
 PUBLIC void set_allow(int pid) {
@@ -157,7 +158,7 @@ PUBLIC void set_allow(int pid) {
 //------------------
 
 PUBLIC recvmsg_result_struct __recv_msg(void *dst) {
-    if (current_task->ipc_info.used_size <= 0) {
+    if (current_thread->task->ipc_info.used_size <= 0) {
         return (recvmsg_result_struct){.source = -1, .message_no = -1};
     }
 
@@ -166,8 +167,8 @@ PUBLIC recvmsg_result_struct __recv_msg(void *dst) {
     read_from_buffer(&pack, dst);
     
     //减少已使用大小
-    assert(current_task->ipc_info.used_size >= (pack.length + sizeof(msgpack_struct)));
-    current_task->ipc_info.used_size -= (pack.length + sizeof(msgpack_struct));
+    assert(current_thread->task->ipc_info.used_size >= (pack.length + sizeof(msgpack_struct)));
+    current_thread->task->ipc_info.used_size -= (pack.length + sizeof(msgpack_struct));
 
     recvmsg_result_struct result = (recvmsg_result_struct){.source = pack.source, .message_no = pack.message_no};
     return result;
@@ -182,11 +183,11 @@ PUBLIC recvmsg_result_struct recv_msg(void *dst) {
 
 PUBLIC void __set_mailbuffer(void *buffer, qword size) {
     //设置指针
-    current_task->ipc_info.read_ptr = current_task->ipc_info.write_ptr = current_task->ipc_info.mail = buffer;
+    current_thread->task->ipc_info.read_ptr = current_thread->task->ipc_info.write_ptr = current_thread->task->ipc_info.mail = buffer;
     //设置邮箱大小
-    current_task->ipc_info.mail_size = size;
+    current_thread->task->ipc_info.mail_size = size;
     //设置已使用大小
-    current_task->ipc_info.used_size = 0;
+    current_thread->task->ipc_info.used_size = 0;
 }
 
 PUBLIC void set_mailbuffer(void *buffer, qword size) {
@@ -207,7 +208,7 @@ PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) 
 //--------------------
 
 PUBLIC void __reg_irq(int irq) {
-    IRQ_HANDLE_TASKS[irq] = current_task->pid;
+    IRQ_HANDLE_TASKS[irq] = current_thread->task->pid;
 }
 
 PUBLIC void reg_irq(int irq) {
@@ -217,7 +218,7 @@ PUBLIC void reg_irq(int irq) {
 //--------------------
 
 PUBLIC bool __test_and_lock(bool *val) {
-    bool *paddr = (bool *)__pa(current_task->mm_info.pgd, val);
+    bool *paddr = (bool *)__pa(current_thread->task->mm_info.pgd, val);
 
     if (*paddr) {
         return false;
@@ -255,14 +256,15 @@ PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
     write_to_buffer(target, &pack, kernel_pml4, src);
 
     //唤醒
-    if (target->state == WAITING) {
-        target->state = READY;
+    //TODO 改成target->ipc_info.msg_handler_thread
+    if (target->threads->state == WAITING) {
+        target->threads->state = READY;
 
         if (target->level == 0) {
-            enqueue_level0_task(target);
+            enqueue_level0_thread(target);
         }
         else {
-            enqueue_level1_task(target);
+            enqueue_level1_thread(target);
         }
     }
     return true;
