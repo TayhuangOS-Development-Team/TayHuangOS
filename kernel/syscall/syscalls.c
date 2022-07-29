@@ -118,10 +118,10 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
         target->threads->state = READY;
 
         if (target->level == 0) {
-            enqueue_level0_thread(target);
+            enqueue_level0_thread(target->threads);
         }
         else {
-            enqueue_level1_thread(target);
+            enqueue_level1_thread(target->threads);
         }
     }
     return true;
@@ -261,10 +261,10 @@ PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
         target->threads->state = READY;
 
         if (target->level == 0) {
-            enqueue_level0_thread(target);
+            enqueue_level0_thread(target->threads);
         }
         else {
-            enqueue_level1_thread(target);
+            enqueue_level1_thread(target->threads);
         }
     }
     return true;
