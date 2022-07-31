@@ -162,36 +162,6 @@ PUBLIC void enqueue_level1_thread(thread_info_struct *thread) {
     level1_list_tail = thread;
 }
 
-//创建thread_info
-PUBLIC thread_info_struct *create_thread_info(
-    word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags, int priority, task_struct *task
-) {
-    thread_info_struct *thread_info = (thread_info_struct *)kmalloc(sizeof(thread_info_struct));
-
-    memset (thread_info, 0, sizeof(thread_info_struct));
-
-    //设置主线程信息
-    thread_info->registers.basic.gs = thread_info->registers.basic.fs = thread_info->registers.basic.es = thread_info->registers.basic.ds = ds;
-
-    thread_info->registers.stack.rbp = (qword)stack_bottom;
-    thread_info->registers.stack.rsp = (qword)stack_top;
-    thread_info->registers.stack.ss = ds;
-
-    thread_info->registers.program.rip = (qword)entry;
-    thread_info->registers.program.cs = cs;
-    thread_info->registers.program.rflags = rflags;
-
-    thread_info->state = SUBBMITED; //提交态
-
-    thread_info->next = thread_info->free_next = NULL;
-    thread_info->task = task;
-
-    thread_info->priority = priority;
-    thread_info->count = priority * 3;
-
-    return thread_info;
-}
-
 //初始化mm_info
 PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword stack_start, qword stack_end,
         qword heap_start, qword heap_end, qword rodata_start, qword rodata_end, qword shm_start, qword shm_end) {
@@ -251,6 +221,11 @@ PUBLIC task_struct *__create_task(
     
     task->parent = parent;
     task->children = NULL;
+
+    task->ds = ds;
+    task->cs = cs;
+    task->rflags = rflags;
+    task->priority = priority;
 
     return task;
 }

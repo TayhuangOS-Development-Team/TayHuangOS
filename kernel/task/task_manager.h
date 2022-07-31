@@ -47,7 +47,6 @@ PUBLIC void add_task(task_struct *task);
 //移除进程
 PUBLIC void remove_task(task_struct *task);
 
-
 //获取空闲进程表
 PUBLIC thread_info_struct *get_level0_list(void);
 PUBLIC thread_info_struct *get_level1_list(void);
@@ -64,10 +63,6 @@ PUBLIC bool has_level1_thread(void);
 //加入空闲进程
 PUBLIC void enqueue_level0_thread(thread_info_struct *thread);
 PUBLIC void enqueue_level1_thread(thread_info_struct *thread);
-
-PUBLIC thread_info_struct *create_thread_info(
-    word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags, int priority, task_struct *task
-);
 
 //创建进程(low level)
 PUBLIC task_struct *__create_task(

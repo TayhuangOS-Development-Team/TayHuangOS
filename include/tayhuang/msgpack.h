@@ -21,9 +21,9 @@
 #include <tayhuang/defs.h>
 
 typedef struct {
-    qword length : 38;
+    qword length : 30;
     byte message_no : 6; 
-    dword source : 20;
+    dword source : 28;
 } msgpack_struct;
 
 #define MSG_NORMAL_IPC    (0x00)

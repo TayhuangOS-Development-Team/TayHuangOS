@@ -20,68 +20,7 @@
 
 #include <tayhuang/defs.h>
 #include <tayhuang/msgpack.h>
-
-//进程的寄存器信息
-typedef struct {
-    //基本寄存器
-    struct {
-        b64 r15,
-            r14,
-            r13,
-            r12,
-            r11,
-            r10,
-            r9,
-            r8,
-            rdi,
-            rsi,
-            rdx,
-            rcx,
-            rbx,
-            rax,
-            gs,
-            fs,
-            es,
-            ds;
-    } basic;
-    //栈寄存器
-    struct {
-        b64 rbp;
-        b64 rsp,
-            ss;
-    } stack;
-    //程序寄存器
-    struct {
-        b64 rip,
-            cs,
-            rflags;
-    } program;
-} register_info_struct;
-
-typedef struct __task_struct task_struct;
-
-typedef struct __thread_info_struct {
-    register_info_struct registers;
-
-    //线程状态
-    enum {
-        READY = 0,
-        RUNNING,
-        SUBBMITED,
-        WAITING,
-        TERMINATED,
-        EXCEPTION
-    } state;
-
-    struct __thread_info_struct *next;
-    //空闲链表
-    struct __thread_info_struct *free_next;
-
-    task_struct *task;
-
-    word count : 10; //时间片
-    byte priority : 6; //优先级
-}thread_info_struct;
+#include <task/thread.h>
 
 //内存管理信息
 typedef struct {
@@ -127,7 +66,11 @@ typedef struct __task_struct {
     struct __task_struct *children;
     struct __task_struct *bro;
 
-
     int pid : 28; //PID
     byte level : 4; //调度级别
+
+    word cs;
+    word ds;
+    qword rflags;
+    int priority;
 } task_struct;

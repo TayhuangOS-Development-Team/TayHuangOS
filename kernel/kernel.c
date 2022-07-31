@@ -165,6 +165,13 @@ program_info load_mod_by_setup(const char *name) {
     return mod_info;
 }
 
+PUBLIC void init2(void) {
+    linfo ("Init2", "Init second thread!");
+
+    current_thread->state = WAITING;
+    while (true);
+}
+
 //first task-init
 PUBLIC void init(void) {
     void *mail = kmalloc(8192);
@@ -175,12 +182,13 @@ PUBLIC void init(void) {
     
     linfo ("Init", "Hi!I'm Init!");
 
+    create_thread(RING0_STACKTOP3, RING0_STACKBOTTOM3, init2, current_thread->task);
+
     //-------------------SYS TASK------------------------
 
     create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 SYSTASK_SERVICE, 1, 0, current_thread->task);
-
     bool status;
     
     set_allow(SYSTASK_SERVICE);
