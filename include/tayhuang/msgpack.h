@@ -31,15 +31,6 @@ typedef struct {
 #define MSG_RPC_RESULT    (0x02)
 #define MSG_IRQ           (0x03)
 #define MSG_WAKEUP        (0x04)
-#define MSG_SIGNAL        (0x05)
-
-#define SIGNAL_NULL             (0x00)
-#define SIGNAL_EXIT             (0x01)
-#define SIGNAL_TERMINATE        (0x02)
-#define SIGNAL_FIFO_FULL        (0x03)
-#define SIGNAL_FIFO_EMPTY       (0x04)
-#define SIGNAL_FIFO_READABLE    (0x05)
-#define SIGNAL_FIFO_WRITABLE    (0x06)
 
 typedef int signal_t;
 

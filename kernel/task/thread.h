@@ -68,8 +68,12 @@ typedef struct __thread_info_struct {
         RUNNING,
         SUBBMITED,
         WAITING,
+        WAITING_IPC,
         TERMINATED,
-        EXCEPTION
+        EXCEPTION,
+        SUSPEND,
+        WAITING_SUSPEND,
+        WAITING_IPC_SUSPEND
     } state;
 
     struct __thread_info_struct *next;

@@ -76,14 +76,14 @@ PRIVATE void write_to_buffer(task_struct *target, msgpack_struct *pack, void *sr
 
 PRIVATE void read_from_buffer(msgpack_struct *pack, void *dst) {
     void *addr = pack;
-    //写pack头
+    //读pack头
     for (int i = 0 ; i < sizeof(msgpack_struct) ; i ++) {
         *(byte *)addr = *(byte *)__pa(current_thread->task->mm_info.pgd, current_thread->task->ipc_info.read_ptr);
         addr ++;
         current_thread->task->ipc_info.read_ptr = increase_ptr(current_thread->task, current_thread->task->ipc_info.read_ptr);
     }
 
-    //写主体
+    //读主体
     for (int i = 0 ; i < pack->length ; i ++) {
         *(byte *)(__pa(current_thread->task->mm_info.pgd, dst)) = *(byte *)__pa(current_thread->task->mm_info.pgd, current_thread->task->ipc_info.read_ptr);
         dst ++;
@@ -114,7 +114,7 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
 
     //唤醒
     //TODO 改成target->ipc_info.msg_handler_thread
-    if (target->threads->state == WAITING && target->ipc_info.allow_pid != DUMMY_TASK) {
+    if (target->threads->state == WAITING_IPC && target->ipc_info.allow_pid != DUMMY_TASK) {
         target->threads->state = READY;
 
         if (target->level == 0) {
@@ -134,11 +134,15 @@ PUBLIC bool send_msg(int msgno, void *src, qword size, int dst) {
 //-------------------
 
 PUBLIC void __check_ipc(void) {
+    if (current_thread->task->ipc_info.mail == NULL) {
+        return;
+    }
+
     if (current_thread->task->ipc_info.used_size > 0) {
         return;
     }
 
-    current_thread->state = WAITING;
+    current_thread->state = WAITING_IPC;
 }
 
 PUBLIC void check_ipc(void) {
@@ -178,6 +182,22 @@ PUBLIC recvmsg_result_struct recv_msg(void *dst) {
     qword value = dosyscall(RECV_MSG_SN, 0, 0, 0, NULL, dst, 0, 0, 0, 0, 0, 0, 0, 0);;
     return *(recvmsg_result_struct *)&value;
 }
+//--------------------
+
+PUBLIC bool __test_and_lock(bool *val) {
+    bool *paddr = (bool *)__pa(current_thread->task->mm_info.pgd, val);
+
+    if (*paddr) {
+        return false;
+    }
+
+    *paddr = true;
+    return true;
+}
+
+PUBLIC bool test_and_lock(bool *val) {
+    return dosyscall(TEST_AND_LOCK_SN, 0, 0, 0, NULL, val, 0, 0, 0, 0, 0, 0, 0, 0);
+}
 
 //-------------------
 
@@ -188,10 +208,27 @@ PUBLIC void __set_mailbuffer(void *buffer, qword size) {
     current_thread->task->ipc_info.mail_size = size;
     //设置已使用大小
     current_thread->task->ipc_info.used_size = 0;
+    //设置最新消息
+    current_thread->task->ipc_info.lastest_msg = NULL;
 }
 
 PUBLIC void set_mailbuffer(void *buffer, qword size) {
     dosyscall(SET_MAILBUFFER_SN, 0, size, 0, NULL, buffer, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+//--------------------
+
+PUBLIC void __clear_mail(void) {
+    //指针归零
+    current_thread->task->ipc_info.read_ptr = current_thread->task->ipc_info.write_ptr = current_thread->task->ipc_info.mail;
+    //已使用大小归零
+    current_thread->task->ipc_info.used_size = 0;
+    //最新消息清空
+    current_thread->task->ipc_info.lastest_msg = NULL;
+}
+
+PUBLIC void clear_mail(void) {
+    dosyscall(CLEAR_MAIL_SN, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 //--------------------
@@ -215,22 +252,6 @@ PUBLIC void reg_irq(int irq) {
     dosyscall(REG_IRQ_SN, 0, 0, irq, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0);
 }
 
-//--------------------
-
-PUBLIC bool __test_and_lock(bool *val) {
-    bool *paddr = (bool *)__pa(current_thread->task->mm_info.pgd, val);
-
-    if (*paddr) {
-        return false;
-    }
-
-    *paddr = true;
-    return true;
-}
-
-PUBLIC bool test_and_lock(bool *val) {
-    return dosyscall(TEST_AND_LOCK_SN, 0, 0, 0, NULL, val, 0, 0, 0, 0, 0, 0, 0, 0);
-}
 
 //--------------------
 
@@ -257,7 +278,7 @@ PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
 
     //唤醒
     //TODO 改成target->ipc_info.msg_handler_thread
-    if (target->threads->state == WAITING) {
+    if (target->threads->state == WAITING_IPC) {
         target->threads->state = READY;
 
         if (target->level == 0) {

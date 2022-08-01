@@ -34,7 +34,7 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
 LIBS_C_SRC := ctype string tostring debug
 MEMORY_C_SRC := kheap pmm paging
 INTTERUP_C_SRC := clock exception init_int irq_handler
-TASK_C_SRC := task_scheduler task_manager thread
+TASK_C_SRC := task_scheduler task_manager thread signal
 SYSCALL_C_SRC := syscall syscalls rpc sys_task
 C_SRC := kernel printk logging kmod_loader \
 	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \

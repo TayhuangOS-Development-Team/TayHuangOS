@@ -45,19 +45,23 @@ PUBLIC void set_allow(int pid);
 PUBLIC recvmsg_result_struct __recv_msg(void *dst);
 PUBLIC recvmsg_result_struct recv_msg(void *dst);
 
+#define CLEAR_MAIL_SN (0x05)
+PUBLIC void __clear_mail(void);
+PUBLIC void clear_mail(void);
+
+//锁
+#define TEST_AND_LOCK_SN (0x06)
+PUBLIC bool __test_and_lock(bool *val);
+PUBLIC bool test_and_lock(bool *val);
+
 #define SET_MAILBUFFER_SN (0x07)
 PUBLIC void __set_mailbuffer(void *buffer, qword size);
 PUBLIC void set_mailbuffer(void *buffer, qword size);
 
 //其他
-#define REG_IRQ_SN (0x0A)
+#define REG_IRQ_SN (0x0B)
 PUBLIC void __reg_irq(int irq);
 PUBLIC void reg_irq(int irq);
-
-//锁
-#define TEST_AND_LOCK_SN (0x05)
-PUBLIC bool __test_and_lock(bool *val);
-PUBLIC bool test_and_lock(bool *val);
 
 //IRQ处理器
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags);

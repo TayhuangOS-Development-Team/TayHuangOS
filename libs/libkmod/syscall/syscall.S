@@ -61,6 +61,15 @@ recv_msg: /*recvmsg_result_struct recv_msg(void *msg)*/
     int $0x40
     ret
 
+    .global test_and_lock
+    .type test_and_lock, @function
+test_and_lock:
+    movq $0x06, %rax
+    /*movq %rdi, %rdi*/
+
+    int $0x40
+    ret
+
     .global set_mailbuffer
     .type set_mailbuffer, @function
 set_mailbuffer: /*void set_mailbuffer(void *buffer, int size)*/
@@ -74,7 +83,7 @@ set_mailbuffer: /*void set_mailbuffer(void *buffer, int size)*/
     .global reg_irq
     .type reg_irq, @function
 reg_irq: /*void reg_irq(int irq)*/
-    movq $0x0A, %rax
+    movq $0x0B, %rax
     movq %rdi, %rdx
 
     int $0x40
@@ -96,13 +105,4 @@ __rpc_call: /*rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_st
     pushq %rsp
     pushq $0
     jmp __rpc_call__
-    ret
-
-    .global test_and_lock
-    .type test_and_lock, @function
-test_and_lock:
-    movq $0x05, %rax
-    /*movq %rdi, %rdi*/
-
-    int $0x40
     ret
