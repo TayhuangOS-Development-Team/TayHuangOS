@@ -51,24 +51,7 @@ PUBLIC void load_program(void *pgd, void *addr, Elf64_Phdr *header, void **start
     *end   = (void *)(header->p_vaddr + header->p_memsz);
 }
 
-#define STACK_SIZE (16 * MEMUNIT_SZ)
-
-//分配栈
-PUBLIC void alloc_stack(void *pgd, void *stack_top, void **stack_bottom) {
-    *stack_bottom = stack_top - STACK_SIZE;
-    alloc_vpages(pgd, *stack_bottom, STACK_SIZE / MEMUNIT_SZ);
-}
-
-#define HEAP_SIZE (16 * MEMUNIT_SZ)
-
-//分配堆
-PUBLIC void alloc_heap(void *pgd, void *heap_bottom, void **heap_top) {
-    *heap_top = heap_bottom + HEAP_SIZE;
-    alloc_vpages(pgd, heap_bottom, HEAP_SIZE / MEMUNIT_SZ);
-}
-
 //在段与段之间流出空隙
-#define STACK_OFFSET (2 * MEMUNIT_SZ)
 #define HEAP_OFFSET  (2 * MEMUNIT_SZ)
 
 //从内存中加载kmod
@@ -99,13 +82,12 @@ PUBLIC program_info load_kmod_from_memory(void *addr) {
     }
 
     //栈顶
-    infomations.stack_top   = (((qword)infomations.start) - STACK_OFFSET + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1);
+    infomations.stack_top   = KMOD_STACK_TOP;
+    infomations.stack_bottom = KMOD_STACK_TOP - THREAD_STACK_SIZE;
 
     //堆底
-    infomations.heap_bottom = (((qword)infomations.end)   + HEAP_OFFSET  + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1);
-
-    alloc_stack(infomations.pgd, infomations.stack_top, &infomations.stack_bottom);
-    alloc_heap (infomations.pgd, infomations.heap_bottom, &infomations.heap_top);
+    infomations.heap_bottom = (((qword)infomations.end) + HEAP_OFFSET  + (MEMUNIT_SZ - 1)) & ~(MEMUNIT_SZ - 1);
+    infomations.heap_top = infomations.heap_bottom + TASK_INIT_HEAP_SIZE;
 
     //映射内核
     mapping_kernel(infomations.pgd);

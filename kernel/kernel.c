@@ -180,7 +180,7 @@ PUBLIC void init(void) {
 
     create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                SYSTASK_SERVICE, 1, 0, current_thread->task);
+                SYSTASK_SERVICE, 1, 0, current_thread->task, true);
     bool status;
     
     set_allow(SYSTASK_SERVICE);
@@ -200,7 +200,7 @@ PUBLIC void init(void) {
                     setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end,
                      setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    SETUP_SERVICE, 1, 0, current_thread->task));
+                    SETUP_SERVICE, 1, 0, current_thread->task, false));
 
     set_allow(SETUP_SERVICE);
     check_ipc();
@@ -217,7 +217,7 @@ PUBLIC void init(void) {
                     video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end,
                      video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    VIDEO_DRIVER_SERVICE, 1, 0, current_thread->task));
+                    VIDEO_DRIVER_SERVICE, 1, 0, current_thread->task, false));
     
     //TODO: 更改loader以获取framebuffer的bpp
     set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
@@ -244,7 +244,7 @@ PUBLIC void init(void) {
                     keyboard_ioman_info.pgd, keyboard_ioman_info.start, keyboard_ioman_info.end, keyboard_ioman_info.start, keyboard_ioman_info.end,
                      keyboard_ioman_info.heap_bottom, keyboard_ioman_info.heap_top,keyboard_ioman_info.start, keyboard_ioman_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    KEYBOARD_IOMAN_SERVICE, 1, 0, current_thread->task));
+                    KEYBOARD_IOMAN_SERVICE, 1, 0, current_thread->task, false));
 
     set_allow(KEYBOARD_IOMAN_SERVICE);
     check_ipc();
@@ -261,7 +261,7 @@ PUBLIC void init(void) {
                     tb1_mod_info.pgd, tb1_mod_info.start, tb1_mod_info.end, tb1_mod_info.start, tb1_mod_info.end,
                      tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    alloc_pid(), 1, 1, current_thread->task));
+                    alloc_pid(), 1, 1, current_thread->task, false));
 
     set_allow(ANY_TASK);
     check_ipc();
@@ -277,7 +277,7 @@ PUBLIC void init(void) {
                     tb2_mod_info.pgd, tb2_mod_info.start, tb2_mod_info.end, tb2_mod_info.start, tb2_mod_info.end,
                      tb2_mod_info.heap_bottom, tb2_mod_info.heap_top,tb2_mod_info.start, tb2_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    alloc_pid(), 1, 1, current_thread->task));
+                    alloc_pid(), 1, 1, current_thread->task, false));
 
     set_allow(ANY_TASK);
     check_ipc();
@@ -370,7 +370,7 @@ PUBLIC void entry(struct boot_args *_args) {
 
     current_thread = __create_task(DS_SERVICE, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_SERVICE, RFLAGS_SERVICE,
                  kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 INIT_SERVICE, 1, 0, NULL)->threads;
+                 INIT_SERVICE, 1, 0, NULL, true)->threads;
 
     add_task(current_thread->task);
     current_thread->state = RUNNING;

@@ -21,6 +21,8 @@
 #include <task/task_manager.h>
 
 #include <memory/kheap.h>
+#include <memory/pmm.h>
+#include <tayhuang/paging.h>
 
 #include <string.h>
 
@@ -55,8 +57,15 @@ PUBLIC thread_info_struct *create_thread_info(
 }
 
 
-PUBLIC thread_info_struct *create_thread(void *stack_top, void *stack_bottom, void *entry, task_struct *task) {
+PUBLIC thread_info_struct *__create_thread(void *stack_top, void *stack_bottom, void *entry, task_struct *task) {
     thread_info_struct *thread = create_thread_info(task->ds, stack_top, stack_bottom, entry, task->cs, task->rflags, task->priority, task);
+
+    if (! task->kernel_task) {
+        qword pages = THREAD_INIT_STACK_SIZE / MEMUNIT_SZ;
+        void *real_bottom = stack_top - THREAD_INIT_STACK_SIZE;
+
+        alloc_vpages(task->mm_info.pgd, real_bottom, pages);
+    }
 
     thread_info_struct *parent = task->threads;
 

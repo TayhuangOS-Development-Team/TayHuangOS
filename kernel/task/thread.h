@@ -90,4 +90,7 @@ PUBLIC thread_info_struct *create_thread_info(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags, int priority, task_struct *task
 );
 
-PUBLIC thread_info_struct *create_thread(void *stack_top, void *stack_bottom, void *entry, task_struct *task);
+PUBLIC thread_info_struct *__create_thread(void *stack_top, void *stack_bottom, void *entry, task_struct *task);
+
+#define THREAD_STACK_SIZE (0x800000)      //线程栈大小
+#define THREAD_INIT_STACK_SIZE (0x10000) //初始化栈大小

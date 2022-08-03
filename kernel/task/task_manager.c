@@ -19,6 +19,8 @@
 #include <task/task_manager.h>
 
 #include <memory/kheap.h>
+#include <memory/pmm.h>
+#include <tayhuang/paging.h>
 
 #include <string.h>
 
@@ -42,7 +44,7 @@ PUBLIC void create_empty_task(void) {
     empty_task = __create_task(
         DS_KERNEL, RING0_STACKTOP3, RING0_STACKBOTTOM3, empty, CS_KERNEL, RFLAGS_KERNEL,
         kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        -1, -1, -1, NULL
+        -1, -1, -1, NULL, true
     );
 }
 
@@ -214,14 +216,24 @@ PUBLIC task_struct *__create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
      qword shm_start, qword shm_end,
-    int pid, int priority, int level, task_struct *parent
+    int pid, int priority, int level, task_struct *parent, bool kernel_task
 ) {
     task_struct *task = (task_struct *)kmalloc(sizeof(task_struct));
 
     task->threads = create_thread_info(ds, stack_top, stack_bottom, entry, cs, rflags, priority, task);
+
     __init_mm_info(&task->mm_info, pgd, code_start, code_end, data_start, data_end, stack_bottom, stack_top,
                         heap_start, heap_end, rodata_start, rodata_end, shm_start, shm_end);
     __init_ipc_info(&task->ipc_info);
+    
+    if (! kernel_task) {
+        qword pages = THREAD_INIT_STACK_SIZE / MEMUNIT_SZ;
+        void *real_bottom = stack_top - THREAD_INIT_STACK_SIZE;
+        alloc_vpages(task->mm_info.pgd, real_bottom, pages);
+
+        pages = TASK_INIT_HEAP_SIZE / MEMUNIT_SZ;
+        alloc_vpages(task->mm_info.pgd, heap_start, pages);
+    }
 
     task->last = task->next = NULL;
     
@@ -235,6 +247,7 @@ PUBLIC task_struct *__create_task(
     task->cs = cs;
     task->rflags = rflags;
     task->priority = priority;
+    task->kernel_task = kernel_task;
 
     return task;
 }
@@ -244,12 +257,12 @@ PUBLIC task_struct *create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
      qword shm_start, qword shm_end,
-    int pid, int priority, int level, task_struct *parent
+    int pid, int priority, int level, task_struct *parent, bool kernel_task
 ) {
     task_struct *task = __create_task(ds, stack_top, stack_bottom, entry, cs, rflags,
                                         pgd, code_start, code_end, data_start, data_end, heap_start, heap_end, rodata_start, rodata_end,
                                          shm_start, shm_end,
-                                        pid, priority, level, parent);
+                                        pid, priority, level, parent, kernel_task);
 
     //加入队列
     add_task(task);

@@ -73,4 +73,7 @@ typedef struct __task_struct {
     word ds;
     qword rflags;
     int priority;
+    bool kernel_task;
 } task_struct;
+
+#define TASK_INIT_HEAP_SIZE (0x10000) //初始化堆大小
