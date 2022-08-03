@@ -112,12 +112,10 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
     //写到buffer里
     write_to_buffer(target, &pack, current_thread->task->mm_info.pgd, src);
 
-    //唤醒
-    //TODO 改成target->ipc_info.msg_handler_thread
-    if (target->threads->state == WAITING_IPC && target->ipc_info.allow_pid != DUMMY_TASK) {
-        target->threads->state = READY;
+    if (target->ipc_info.msg_handler_thread->state == WAITING_IPC && target->ipc_info.allow_pid != DUMMY_TASK) {
+        target->ipc_info.msg_handler_thread->state = READY;
 
-        enqueue_thread(target->threads);
+        enqueue_thread(target->ipc_info.msg_handler_thread);
     }
     return true;
 }
@@ -205,6 +203,8 @@ PUBLIC void __set_mailbuffer(void *buffer, qword size) {
     current_thread->task->ipc_info.used_size = 0;
     //设置最新消息
     current_thread->task->ipc_info.lastest_msg = NULL;
+
+    current_thread->task->ipc_info.msg_handler_thread = current_thread;
 }
 
 PUBLIC void set_mailbuffer(void *buffer, qword size) {
@@ -294,11 +294,10 @@ PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
     write_to_buffer(target, &pack, kernel_pml4, src);
 
     //唤醒
-    //TODO 改成target->ipc_info.msg_handler_thread
-    if (target->threads->state == WAITING_IPC) {
-        target->threads->state = READY;
+    if (target->ipc_info.msg_handler_thread->state == WAITING_IPC) {
+        target->ipc_info.msg_handler_thread->state = READY;
 
-        enqueue_thread(target->threads);
+        enqueue_thread(target->ipc_info.msg_handler_thread);
     }
     return true;
 }
