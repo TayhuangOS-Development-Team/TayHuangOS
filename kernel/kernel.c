@@ -166,6 +166,18 @@ program_info load_mod_by_setup(const char *name) {
     return mod_info;
 }
 
+PRIVATE volatile id_t sid1 = 0;
+PRIVATE volatile id_t sid2 = 0;
+
+PUBLIC void init2(void) {
+    while (true) {
+        linfo ("Init", "init2");
+
+        up_signal(sid1);
+        down_signal(sid2);
+    }
+}
+
 //first task-init
 PUBLIC void init(void) {
     void *mail = kmalloc(8192);
@@ -191,29 +203,17 @@ PUBLIC void init(void) {
         while (1);
     }
 
-    create_signal(4);
-    write_serial_str("---------------------\n");
-    print_tree();
+    sid1 = create_signal(6, 1, false);
+    sid2 = create_signal(6, 0, false);
 
-    create_signal(4);
-    write_serial_str("---------------------\n");
-    print_tree();
+    create_thread(RING0_STACKTOP3, RING0_STACKBOTTOM3, init2, current_thread->task);
 
-    create_signal(4);
-    write_serial_str("---------------------\n");
-    print_tree();
+    while (true) {
+        linfo ("Init", "init1");
 
-    create_signal(4);
-    write_serial_str("---------------------\n");
-    print_tree();
-
-    create_signal(4);
-    write_serial_str("---------------------\n");
-    print_tree();
-    
-    create_signal(4);
-    write_serial_str("---------------------\n");
-    print_tree();
+        down_signal(sid1);
+        up_signal(sid2);
+    }
 
     // //---------------------SETUP-------------------------
     // program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);

@@ -117,12 +117,7 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
     if (target->threads->state == WAITING_IPC && target->ipc_info.allow_pid != DUMMY_TASK) {
         target->threads->state = READY;
 
-        if (target->level == 0) {
-            enqueue_level0_thread(target->threads);
-        }
-        else {
-            enqueue_level1_thread(target->threads);
-        }
+        enqueue_thread(target->threads);
     }
     return true;
 }
@@ -244,6 +239,28 @@ PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) 
 
 //--------------------
 
+PUBLIC id_t create_signal(int max_signals, int value, bool soft) {
+    return dosyscall(CREATE_SIGNAL_SN, 0, max_signals, value, NULL, NULL, soft, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC int get_signals(id_t id) {
+    return dosyscall(GET_SIGNALS_SN, 0, 0, id, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC void up_signal(id_t id) {
+    dosyscall(UP_SIGNAL_SN, 0, 0, id, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC void down_signal(id_t id) {
+    dosyscall(DOWN_SIGNAL_SN, 0, 0, id, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC bool is_soft_signal(id_t id) {
+    return dosyscall(IS_SOFT_SIGNAL_SN, 0, 0, id, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+//--------------------
+
 PUBLIC void __reg_irq(int irq) {
     IRQ_HANDLE_TASKS[irq] = current_thread->task->pid;
 }
@@ -281,12 +298,7 @@ PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
     if (target->threads->state == WAITING_IPC) {
         target->threads->state = READY;
 
-        if (target->level == 0) {
-            enqueue_level0_thread(target->threads);
-        }
-        else {
-            enqueue_level1_thread(target->threads);
-        }
+        enqueue_thread(target->threads);
     }
     return true;
 }

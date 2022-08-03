@@ -89,12 +89,7 @@ PRIVATE void down_thread(struct intterup_args *regs) {
     if (current_thread->state == RUNNING) {
         current_thread->state = READY;
 
-        if (current_thread->task->level == 0) {
-            enqueue_level0_thread(current_thread);
-        }
-        else if (current_thread->task->level == 1) {
-            enqueue_level0_thread(current_thread);
-        }
+        enqueue_thread(current_thread);
     }
 }
 

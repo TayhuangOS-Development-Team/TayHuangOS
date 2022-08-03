@@ -56,7 +56,7 @@ PUBLIC thread_info_struct *create_thread_info(
 
 
 PUBLIC thread_info_struct *create_thread(void *stack_top, void *stack_bottom, void *entry, task_struct *task) {
-    thread_info_struct *thread = create_thread_info(task->ds, stack_bottom, stack_top, entry, task->cs, task->rflags, task->priority, task);
+    thread_info_struct *thread = create_thread_info(task->ds, stack_top, stack_bottom, entry, task->cs, task->rflags, task->priority, task);
 
     thread_info_struct *parent = task->threads;
 
@@ -65,13 +65,8 @@ PUBLIC thread_info_struct *create_thread(void *stack_top, void *stack_bottom, vo
     }
 
     parent->next = parent;
-
-    if (task->level == 0) {
-        enqueue_level0_thread(thread);
-    }
-    else if (task->level == 1) {
-        enqueue_level1_thread(thread);
-    }
+    
+    enqueue_thread(thread);
 
     return thread;
 }

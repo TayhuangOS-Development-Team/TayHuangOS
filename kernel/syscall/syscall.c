@@ -22,6 +22,7 @@
 #include <tayhuang/control_registers.h>
 
 #include <task/task_scheduler.h>
+#include <task/signal.h>
 
 #include <logging.h>
 #include <global.h>
@@ -43,6 +44,11 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
         return *(qword *)&value; //bit hack
     }
     case SET_MAILBUFFER_SN: __set_mailbuffer(dst, counter); break;
+    case CREATE_SIGNAL_SN: return __create_signal(counter, data, arg1);
+    case GET_SIGNALS_SN: return __get_signals(data);
+    case UP_SIGNAL_SN: __up_signal(data); break;
+    case DOWN_SIGNAL_SN: __down_signal(data); break;
+    case IS_SOFT_SIGNAL_SN: return __is_soft_signal(data); break;
     case REG_IRQ_SN: __reg_irq(data); break;
     case TEST_AND_LOCK_SN: return __test_and_lock(dst); break;
     default: break;

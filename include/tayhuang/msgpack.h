@@ -32,8 +32,6 @@ typedef struct {
 #define MSG_IRQ           (0x03)
 #define MSG_WAKEUP        (0x04)
 
-typedef int signal_t;
-
 typedef struct {
     byte message_no : 6; 
     dword source : 20;

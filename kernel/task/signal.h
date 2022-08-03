@@ -20,6 +20,8 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC id_t create_signal(qword max_signals);
-PUBLIC void up_signal(id_t signal);
-PUBLIC void down_signal(id_t signal);
+PUBLIC id_t __create_signal(int max_signals, int value, bool soft);
+PUBLIC void __up_signal(id_t id);
+PUBLIC void __down_signal(id_t id);
+PUBLIC int __get_signals(id_t id);
+PUBLIC bool __is_soft_signal(id_t id);

@@ -83,7 +83,7 @@ set_mailbuffer: /*void set_mailbuffer(void *buffer, int size)*/
     .global reg_irq
     .type reg_irq, @function
 reg_irq: /*void reg_irq(int irq)*/
-    movq $0x0B, %rax
+    movq $0x10, %rax
     movq %rdi, %rdx
 
     int $0x40

@@ -162,6 +162,15 @@ PUBLIC void enqueue_level1_thread(thread_info_struct *thread) {
     level1_list_tail = thread;
 }
 
+PUBLIC void enqueue_thread(thread_info_struct *thread) {
+    if (thread->task->level == 0) {
+        enqueue_level0_thread(thread);
+    }
+    else if (thread->task->level == 1) {
+        enqueue_level0_thread(thread);
+    }
+}
+
 //初始化mm_info
 PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword stack_start, qword stack_end,
         qword heap_start, qword heap_end, qword rodata_start, qword rodata_end, qword shm_start, qword shm_end) {
@@ -249,12 +258,7 @@ PUBLIC task_struct *create_task(
     parent->children = task;
 
     //加入空闲队列
-    if (level == 0) {
-        enqueue_level0_thread(task->threads);
-    }
-    else if (level == 1) {
-        enqueue_level1_thread(task->threads);
-    }
+    enqueue_thread(task->threads);
 
     return task;
 }

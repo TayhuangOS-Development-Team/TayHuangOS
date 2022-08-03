@@ -58,8 +58,23 @@ PUBLIC bool test_and_lock(bool *val);
 PUBLIC void __set_mailbuffer(void *buffer, qword size);
 PUBLIC void set_mailbuffer(void *buffer, qword size);
 
+#define CREATE_SIGNAL_SN (0x08)
+PUBLIC id_t create_signal(int max_signals, int value, bool soft);
+
+#define GET_SIGNALS_SN (0x09)
+PUBLIC int get_signals(id_t id);
+
+#define UP_SIGNAL_SN (0x0A)
+PUBLIC void up_signal(id_t id);
+
+#define DOWN_SIGNAL_SN (0x0B)
+PUBLIC void down_signal(id_t id);
+
+#define IS_SOFT_SIGNAL_SN (0x0C)
+PUBLIC bool is_soft_signal(id_t id);
+
 //其他
-#define REG_IRQ_SN (0x0B)
+#define REG_IRQ_SN (0x10)
 PUBLIC void __reg_irq(int irq);
 PUBLIC void reg_irq(int irq);
 

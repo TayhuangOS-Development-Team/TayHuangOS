@@ -17,15 +17,72 @@
 
 
 #include <task/signal.h>
+#include <task/thread.h>
+#include <task/task_scheduler.h>
+#include <task/task_manager.h>
 #include <memory/kheap.h>
 #include <logging.h>
 #include <printk.h>
 
-typedef struct __signal_node {
+//----------------------------
+
+//等待进程队列
+typedef struct __wtnode_t {
+    thread_info_struct *thread;
+    struct __wtnode_t *next;
+} wtnode_t;
+
+PRIVATE wtnode_t *wthead, *wttail;
+
+PRIVATE void enqueue_wt(thread_info_struct *thread) {
+    wtnode_t *node = (wtnode_t*)kmalloc(sizeof(wtnode_t));
+
+    node->thread = thread;
+    node->next = NULL;
+
+    //队列为空
+    if (wttail == NULL) {
+        wthead = wttail = node;
+    }
+    else { //加入队尾
+        wttail->next = node;
+        wttail = node;
+    }
+}
+
+PRIVATE thread_info_struct *dequeue_wt(void) {
+    if (wthead == NULL) {
+        return NULL;
+    }
+
+    wtnode_t *head = wthead;
+    wthead = head->next;
+
+    if (wthead == NULL) { //队列为空
+        wttail = NULL;
+    }
+
+    thread_info_struct *thread = head->thread;
+    kfree(head);
+
+    return thread;
+}
+
+//----------------------------
+
+typedef struct {
     id_t id;
 
-    qword signals;
-    qword max_signals;
+    int signals;
+    int max_signals;
+
+    bool soft; //当soft = 1时，不在up和down操作中对进程进行休眠
+
+    
+} signal_t;
+
+typedef struct __signal_node {
+    signal_t signal;
 
     struct __signal_node *left;
     struct __signal_node *right;
@@ -38,7 +95,7 @@ PRIVATE signal_node *create_signal_node(void) {
     signal_node *node = kmalloc(sizeof(signal_node));
 
     node->left = node->right = node->parent = NULL;
-    node->signals = node->max_signals = node->id = 0;
+    node->signal.signals = node->signal.max_signals = node->signal.id = node->signal.soft = 0;
     node->factor = 0;
     
     return node;
@@ -156,9 +213,33 @@ PRIVATE void __fix_rl(signal_node *node) {
     __fix_rr(node);
 }
 
-//调整因子
-PRIVATE void update_factor(signal_node *node) {
-    signal_node *parent = node->parent;
+PRIVATE void __insert_signal(signal_node *parent, signal_node *node) {
+    while (parent != NULL) {
+        if (node->signal.id == parent->signal.id) {
+            lerror("Signal", "Signal ID %d exists!", node->signal.id);
+            return;
+        }
+        else if (node->signal.id > parent->signal.id) { //左侧
+            if (parent->left == NULL) { //仍然有孩子
+                node->parent = parent;
+                parent->left = node;
+                break;
+            }
+            else {
+                parent = parent->left;
+            }
+        }
+        else if (node->signal.id < parent->signal.id) { //右侧
+            if (parent->right == NULL) { //仍然有孩子
+                node->parent = parent;
+                parent->right = node;
+                break;
+            }
+            else {
+                parent = parent->right;
+            }
+        }
+    }
 
     while (parent != NULL) {
         if (node == parent->left) { //左侧
@@ -179,52 +260,21 @@ PRIVATE void update_factor(signal_node *node) {
         else {
             if (parent->factor == -2) {
                 if (parent->left->factor == -1) {
-                    linfo ("Signal", "Fix %d LL", parent->id);
                     __fix_ll(parent);
                 }
                 else {
-                    linfo ("Signal", "Fix %d LR", parent->id);
                     __fix_lr(parent);
                 }
             }
             else if (parent->factor == 2) {
                 if (parent->right->factor == 1) {
-                    linfo ("Signal", "Fix %d RR", parent->id);
                     __fix_rr(parent);
                 }
                 else {
-                    linfo ("Signal", "Fix %d RL", parent->id);
                     __fix_rl(parent);
                 }
             }
             break;
-        }
-    }
-}
-
-PRIVATE void __insert_signal(signal_node *parent, signal_node *node) {
-    if (node->id == parent->id) {
-        lerror("Signal", "Signal ID %d exists!", node->id);
-        return;
-    }
-    else if (node->id > parent->id) {
-        if (parent->left == NULL) {
-            node->parent = parent;
-            parent->left = node;
-            update_factor(node);
-        }
-        else {
-            __insert_signal(parent->left, node);
-        }
-    }
-    else if (node->id < parent->id) {
-        if (parent->right == NULL) {
-            node->parent = parent;
-            parent->right = node;
-            update_factor(node);
-        }
-        else {
-            __insert_signal(parent->right, node);
         }
     }
 }
@@ -238,39 +288,78 @@ PRIVATE void insert_signal(signal_node *node) {
     __insert_signal(signal_root, node);
 }
 
+PRIVATE signal_t *get_signal(id_t id) {
+    signal_node *node = signal_root;
+
+    while (node != NULL) {
+        if (node->signal.id == id) {
+            return &node->signal;
+        }
+        else if (id > node->signal.id) {
+            node = node->left;
+        }
+        else if (id < node->signal.id) {
+            node = node->right;
+        }
+    }
+
+    return NULL;
+}
+
+//---------------------------------
+
 PRIVATE id_t cur_id = 0;
 
-PUBLIC id_t create_signal(qword max_signals) {
-    id_t id = cur_id ++;
+PUBLIC id_t __create_signal(int max_signals, int value, bool soft) {
+    id_t id = cur_id;
+    cur_id ++;
 
     signal_node *node = create_signal_node();
 
-    node->id = id;
-    node->max_signals = max_signals;
+    node->signal.id = id;
+    node->signal.signals = value;
+    node->signal.max_signals = max_signals;
+    node->signal.soft = soft;
 
     insert_signal(node);
 
-    return id;
+    return node->signal.id;
 }
 
-PUBLIC void __print_tree(int level, signal_node *node) {
-    for (int i = 0 ; i < level ; i ++) {
-        write_serial_char(' ');
+PUBLIC void __up_signal(id_t id) {
+    signal_t *signal = get_signal(id);
+
+    if (signal->signals < signal->max_signals) {
+        signal->signals ++;
     }
 
-    if (node == NULL) {
-        write_serial_str("[]\n");
-        return;
+    if (! signal->soft) {
+        if (signal->signals <= 0) {
+            thread_info_struct *thread = dequeue_wt();
+            thread->state = READY;
+
+            enqueue_thread(thread);
+        }
     }
-
-    char buffer[256];
-    sprintk(buffer, "(%d)[%d/%d]:\n", node->id, node->signals, node->max_signals);
-    write_serial_str(buffer);
-
-    __print_tree(level + 1, node->left);
-    __print_tree(level + 1, node->right);
 }
 
-PUBLIC void print_tree(void) {
-    __print_tree(0, signal_root);
+PUBLIC void __down_signal(id_t id) {
+    signal_t *signal = get_signal(id);
+
+    signal->signals --;
+    
+    if (! signal->soft) {
+        if (signal->signals < 0){ //等待
+            enqueue_wt(current_thread);
+            current_thread->state = WAITING;
+        }
+    }
+}
+
+PUBLIC int __get_signals(id_t id) {
+    return get_signal(id)->signals;
+}
+
+PUBLIC bool __is_soft_signal(id_t id) {
+    return get_signal(id)->soft;
 }

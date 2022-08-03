@@ -63,6 +63,7 @@ PUBLIC bool has_level1_thread(void);
 //加入空闲进程
 PUBLIC void enqueue_level0_thread(thread_info_struct *thread);
 PUBLIC void enqueue_level1_thread(thread_info_struct *thread);
+PUBLIC void enqueue_thread(thread_info_struct *thread);
 
 //创建进程(low level)
 PUBLIC task_struct *__create_task(
