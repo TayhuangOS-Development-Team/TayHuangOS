@@ -93,12 +93,16 @@ PUBLIC thread_info_struct *create_thread_info(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags, int priority, task_struct *task
 );
 
+//创建线程
 PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task);
 
+//移除线程
 PUBLIC void remove_thread(thread_info_struct *thread);
 
+//根据tid获得线程
 PUBLIC thread_info_struct *get_thread_by_tid(int tid, task_struct *task);
 
+//结束线程
 PUBLIC void __termintate_thread(thread_info_struct *thread);
 
 #define THREAD_STACK_SIZE (0x800000)      //线程栈大小

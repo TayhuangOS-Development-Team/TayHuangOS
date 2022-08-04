@@ -86,10 +86,14 @@ PRIVATE void down_thread(struct intterup_args *regs) {
     current_thread->registers.program.rip    = regs->rip;
     current_thread->registers.program.rflags = regs->rflags;
 
-    if (current_thread->state == RUNNING) {
+    if (current_thread->state == RUNNING) { //被抢占
         current_thread->state = READY;
 
         enqueue_thread(current_thread);
+    }
+
+    if (current_thread->state == TERMINATED || current_thread->state == EXCEPTION) { //结束
+        remove_thread(current_thread);
     }
 }
 
@@ -107,7 +111,7 @@ PRIVATE void up_thread(struct intterup_args *regs) {
 
     regs->pgd    = current_thread->task->mm_info.pgd;
 
-    current_thread->state = RUNNING;
+    current_thread->state = RUNNING; //运行中
 }
 
 //进行调度

@@ -60,16 +60,17 @@ PUBLIC thread_info_struct *create_thread_info(
 
 PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
     void *stack_top = (void*)task->mm_info.stack_end;
-    void *stack_bottom = stack_top - THREAD_STACK_SIZE;
+    void *stack_bottom = stack_top - THREAD_STACK_SIZE; //获得栈
     task->mm_info.stack_end = (qword)stack_bottom;
 
-    thread_info_struct *thread = create_thread_info(task->ds, stack_top, stack_bottom, entry, task->cs, task->rflags, task->priority, task);
+    //创建线程信息
+    thread_info_struct *thread = create_thread_info(task->ds, stack_top, stack_bottom, entry, task->cs, task->rflags, task->priority, task); 
 
-    if (! task->kernel_task) {
+    if (! task->kernel_task) { //不是内核进程
         qword pages = THREAD_INIT_STACK_SIZE / MEMUNIT_SZ;
         void *real_bottom = stack_top - THREAD_INIT_STACK_SIZE;
 
-        alloc_vpages(task->mm_info.pgd, real_bottom, pages);
+        alloc_vpages(task->mm_info.pgd, real_bottom, pages); //分配栈
     }
 
     thread_info_struct *parent = task->threads;
@@ -78,6 +79,7 @@ PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
         parent = parent->next;
     }
 
+    //入队
     parent->next = parent;
     thread->last = parent;
     
@@ -87,12 +89,14 @@ PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
 }
 
 PUBLIC void remove_thread(thread_info_struct *thread) {
+    //从列表中删除
     if (thread->last != NULL) {
         thread->last->next = thread->next;
     }
     if (thread->next != NULL) {
         thread->next->last = thread->last;
     }
+    kfree(thread);
 }
 
 PUBLIC thread_info_struct *get_thread_by_tid(int tid, task_struct *task) {
