@@ -39,6 +39,8 @@ PUBLIC void normal_ipc_handler(int caller, void *msg) {
     while (! fifo_read_bytes(fifo, (byte*)&data, sizeof(qword)));
     
     linfo ("%d", data);
+
+    while (true);
 }
 
 PUBLIC void kmod_main(void) {

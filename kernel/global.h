@@ -24,6 +24,7 @@
 EXTERN PUBLIC void *kernel_pml4;
 EXTERN PUBLIC struct boot_args args;
 EXTERN PUBLIC int cur_pid;
+EXTERN PUBLIC int cur_tid;
 EXTERN PUBLIC bool entered_handler;
 
 //GDT表项编号

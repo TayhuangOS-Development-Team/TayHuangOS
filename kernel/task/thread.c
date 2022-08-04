@@ -53,11 +53,16 @@ PUBLIC thread_info_struct *create_thread_info(
     thread_info->priority = priority;
     thread_info->count = priority * 3;
 
+    thread_info->tid = task->cur_tid ++;
+
     return thread_info;
 }
 
+PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
+    void *stack_top = (void*)task->mm_info.stack_end;
+    void *stack_bottom = stack_top - THREAD_STACK_SIZE;
+    task->mm_info.stack_end = (qword)stack_bottom;
 
-PUBLIC thread_info_struct *__create_thread(void *stack_top, void *stack_bottom, void *entry, task_struct *task) {
     thread_info_struct *thread = create_thread_info(task->ds, stack_top, stack_bottom, entry, task->cs, task->rflags, task->priority, task);
 
     if (! task->kernel_task) {
@@ -74,8 +79,31 @@ PUBLIC thread_info_struct *__create_thread(void *stack_top, void *stack_bottom, 
     }
 
     parent->next = parent;
+    thread->last = parent;
     
     enqueue_thread(thread);
 
     return thread;
+}
+
+PUBLIC void remove_thread(thread_info_struct *thread) {
+    if (thread->last != NULL) {
+        thread->last->next = thread->next;
+    }
+    if (thread->next != NULL) {
+        thread->next->last = thread->last;
+    }
+}
+
+PUBLIC thread_info_struct *get_thread_by_tid(int tid, task_struct *task) {
+    for (thread_info_struct *thread = task->threads ; thread != NULL ; thread = thread->next) {
+        if (thread->tid == tid) {
+            return thread;
+        }
+    }
+    return NULL;
+}
+
+PUBLIC void __termintate_thread(thread_info_struct *thread) {
+    thread->state = TERMINATED;
 }

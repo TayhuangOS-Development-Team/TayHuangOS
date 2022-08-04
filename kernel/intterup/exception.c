@@ -27,10 +27,9 @@
 
 #include <assert.h>
 
-PUBLIC int fault_num[32] = {};
-
+PUBLIC qword errcode; 
 //通用异常处理器
-PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
+PUBLIC void general_exception_handler(int vector, struct intterup_args *regs) {
     __set_cr3(kernel_pml4);
 
     const char *exception_msg[] = { //异常信息
@@ -76,13 +75,11 @@ PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
     }
     //打印Vector号
     lerror ("Exception", "Vector = %d", vector); 
-    if (regs->code < 0xFFFFFFFFFFFFFFFF) {
+    if (errcode < 0xFFFFFFFFFFFFFFFF) {
         //打印错误码
-        lerror ("Exception", "Error code = %d", regs->code); 
+        lerror ("Exception", "Error code = %d", errcode); 
     }
 
-    lerror ("Exception", "");
-    lerror ("Exception", "");
     lerror ("Exception", "Registers:");\
     //打印寄存器
     lerror ("Exception", "cs:  %#016X;rip: %#016X;rflags:%#016X;", regs->cs, regs->rip, regs->rflags); 
@@ -91,16 +88,11 @@ PUBLIC void general_exception_handler(int vector, struct exception_args *regs) {
     lerror ("Exception", "rsp: %#016X;rbp: %#016X;r8 :   %#016X;", regs->rsp, regs->rbp, regs->r8);
     lerror ("Exception", "r9 : %#016X;r10: %#016X;r11:   %#016X;", regs->r9, regs->r10, regs->r11);
     lerror ("Exception", "r12: %#016X;r13: %#016X;r14:   %#016X;", regs->r12, regs->r13, regs->r14);
-    lerror ("Exception", "r15: %#016X;pgd: %#016X;pid:   %#016X;", regs->r15, regs->pgd, current_thread->task->pid);
+    lerror ("Exception", "r15: %#016X;pgd: %#016X;pid:   %016d;", regs->r15, regs->pgd, current_thread->task->pid);
     lerror ("Exception", "cr0: %#016X;cr2: %#016X;cr4:   %#016X;", __get_cr0(), __get_cr2(), __get_cr4());
+    lerror ("Exception", "tid: %016d;", current_thread->tid);
 
-    fault_num[vector] ++;
+    current_thread->state = EXCEPTION;
 
-    //错误次数过多
-    if (fault_num[vector] >= 32) {
-        lfatal ("Exception", "TOO MUCH FAULT!");
-        panic ("TOO MUCH FAULT!VECTOR = %d", vector);
-    }
-
-    while (true);
+    after_syscall(regs);
 }

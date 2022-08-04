@@ -219,6 +219,7 @@ PUBLIC task_struct *__create_task(
     int pid, int priority, int level, task_struct *parent, bool kernel_task
 ) {
     task_struct *task = (task_struct *)kmalloc(sizeof(task_struct));
+    task->cur_tid = 1;
 
     task->threads = create_thread_info(ds, stack_top, stack_bottom, entry, cs, rflags, priority, task);
 

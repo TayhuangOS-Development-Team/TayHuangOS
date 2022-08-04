@@ -66,8 +66,9 @@ typedef struct __task_struct {
     struct __task_struct *children;
     struct __task_struct *bro;
 
-    int pid : 28; //PID
-    byte level : 4; //调度级别
+    int pid; //PID
+    int level; //调度级别
+    int cur_tid;
 
     word cs;
     word ds;

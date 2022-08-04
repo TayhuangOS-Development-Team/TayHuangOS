@@ -68,6 +68,8 @@ PUBLIC void kmod_main(void) {
     qword data = 114514;
     fifo_write_bytes(fifo, (byte *)&data, sizeof(qword));
 
+    asmv ("ud2");
+    
     message_loop();
 
     while (true);

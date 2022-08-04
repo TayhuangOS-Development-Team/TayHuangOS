@@ -77,20 +77,29 @@ typedef struct __thread_info_struct {
     } state;
 
     struct __thread_info_struct *next;
+    struct __thread_info_struct *last;
     //空闲链表
     struct __thread_info_struct *free_next;
 
     task_struct *task;
 
-    word count : 10; //时间片
-    byte priority : 6; //优先级
+    int count; //时间片
+    int priority; //优先级
+
+    int tid;
 }thread_info_struct;
 
 PUBLIC thread_info_struct *create_thread_info(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags, int priority, task_struct *task
 );
 
-PUBLIC thread_info_struct *__create_thread(void *stack_top, void *stack_bottom, void *entry, task_struct *task);
+PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task);
+
+PUBLIC void remove_thread(thread_info_struct *thread);
+
+PUBLIC thread_info_struct *get_thread_by_tid(int tid, task_struct *task);
+
+PUBLIC void __termintate_thread(thread_info_struct *thread);
 
 #define THREAD_STACK_SIZE (0x800000)      //线程栈大小
 #define THREAD_INIT_STACK_SIZE (0x10000) //初始化栈大小
