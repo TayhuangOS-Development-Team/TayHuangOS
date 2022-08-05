@@ -58,7 +58,7 @@ PUBLIC thread_info_struct *create_thread_info(
     return thread_info;
 }
 
-PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
+PUBLIC thread_info_struct *__create_thread__(void *entry, task_struct *task) {
     void *stack_top = (void*)task->mm_info.stack_bottom;
     qword stack_size = task->kernel_task ? KERNEL_TASK_STACK_SIZE : THREAD_STACK_SIZE;
     void *stack_bottom = stack_top - stack_size; //获得栈

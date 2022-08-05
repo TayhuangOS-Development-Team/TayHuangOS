@@ -43,6 +43,7 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
         recvmsg_result_struct value = __recv_msg(dst);
         return *(qword *)&value; //bit hack
     }
+    case TEST_AND_LOCK_SN: return __test_and_lock(dst); break;
     case SET_MAILBUFFER_SN: __set_mailbuffer(dst, counter); break;
     case CREATE_SIGNAL_SN: return __create_signal(counter, data, arg1);
     case GET_SIGNALS_SN: return __get_signals(data);
@@ -50,7 +51,8 @@ PUBLIC qword syscall(int sysno, qword mode, qword counter, qword data, void *src
     case DOWN_SIGNAL_SN: __down_signal(data); break;
     case IS_SOFT_SIGNAL_SN: return __is_soft_signal(data); break;
     case REG_IRQ_SN: __reg_irq(data); break;
-    case TEST_AND_LOCK_SN: return __test_and_lock(dst); break;
+    case CREATE_THREAD_SN: __create_thread((thread_function)src, dst);
+    case EXIT_THREAD_SN: __exit_thread(dst);
     default: break;
     }
     return 0;

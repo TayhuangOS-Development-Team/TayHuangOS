@@ -269,7 +269,6 @@ PUBLIC void reg_irq(int irq) {
     dosyscall(REG_IRQ_SN, 0, 0, irq, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0);
 }
 
-
 //--------------------
 
 PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
@@ -300,4 +299,26 @@ PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
         enqueue_thread(target->ipc_info.msg_handler_thread);
     }
     return true;
+}
+
+//-------------------
+
+PUBLIC int __create_thread(thread_function entry, void *args) {
+    thread_info_struct *thread = __create_thread__(entry, current_thread->task);
+    thread->registers.basic.rdi = (qword)args; //参数
+
+    return thread->tid;
+}
+
+PUBLIC int create_thread(thread_function entry, void *args) {
+    return dosyscall(CREATE_THREAD_SN, 0, 0, 0, entry, args, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+PUBLIC void __exit_thread(void *retval) {
+    //TODO: save the retval
+    current_thread->state = TERMINATED;
+}
+
+PUBLIC void exit_thread(void *retval) {
+    dosyscall(EXIT_THREAD_SN, 0, 0, 0, NULL, retval, 0, 0, 0, 0, 0, 0, 0, 0);
 }

@@ -169,13 +169,21 @@ program_info load_mod_by_setup(const char *name) {
 PRIVATE id_t signal_a = 0;
 PRIVATE id_t signal_b = 0;
 
-PUBLIC void init2(void) {
+PUBLIC void init2(void *args) {
+    int i = 0;
     while (true) {
         linfo ("Init", "init2");
 
         up_signal(signal_a);
         down_signal(signal_b);
+
+        i ++;
+        if (i >= 100) {
+            break;
+        }
     }
+
+    exit_thread(NULL);
 }
 
 //first task-init
@@ -188,7 +196,7 @@ PUBLIC void init(void) {
     signal_a = create_signal(2, 0, false);
     signal_b = create_signal(2, 0, false);
 
-    __create_thread(init2, current_thread->task);
+    create_thread(init2, NULL);
 
     //do something
     start_schedule();

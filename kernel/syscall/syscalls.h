@@ -78,6 +78,17 @@ PUBLIC bool is_soft_signal(id_t id);
 PUBLIC void __reg_irq(int irq);
 PUBLIC void reg_irq(int irq);
 
+typedef void(*thread_function)(void *);
+
+//线程
+#define CREATE_THREAD_SN (0x20)
+PUBLIC int __create_thread(thread_function entry, void *args);
+PUBLIC int create_thread(thread_function entry, void *args);
+
+#define EXIT_THREAD_SN (0x21)
+PUBLIC void __exit_thread(void *retval);
+PUBLIC void exit_thread(void *retval);
+
 //IRQ处理器
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags);
 

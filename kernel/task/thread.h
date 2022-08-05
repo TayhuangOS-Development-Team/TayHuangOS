@@ -94,7 +94,7 @@ PUBLIC thread_info_struct *create_thread_info(
 );
 
 //创建线程
-PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task);
+PUBLIC thread_info_struct *__create_thread__(void *entry, task_struct *task);
 
 //移除线程
 PUBLIC void remove_thread(thread_info_struct *thread);
@@ -103,7 +103,7 @@ PUBLIC void remove_thread(thread_info_struct *thread);
 PUBLIC thread_info_struct *get_thread_by_tid(int tid, task_struct *task);
 
 //结束线程
-PUBLIC void __termintate_thread(thread_info_struct *thread);
+PUBLIC void __termintate_thread__(thread_info_struct *thread);
 
 #define THREAD_STACK_SIZE (0x800000)      //线程栈大小
 #define THREAD_INIT_STACK_SIZE (0x10000) //初始化栈大小
