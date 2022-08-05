@@ -143,24 +143,22 @@ PUBLIC bool has_level1_thread(void) {
 
 //加入空闲进程
 PUBLIC void enqueue_level0_thread(thread_info_struct *thread) {
+    thread->free_next = NULL;
     if (level0_list_tail == NULL) {
         level0_list_tail = level0_list_head = thread;
-        thread->free_next = NULL;
         return;
     }
     level0_list_tail->free_next = thread;
-    thread->free_next = NULL;
     level0_list_tail = thread;
 }
 
 PUBLIC void enqueue_level1_thread(thread_info_struct *thread) {
+    thread->free_next = NULL;
     if (level1_list_tail == NULL) {
         level1_list_tail = level1_list_head = thread;
-        thread->free_next = NULL;
         return;
     }
     level1_list_tail->free_next = thread;
-    thread->free_next = NULL;
     level1_list_tail = thread;
 }
 
@@ -174,7 +172,7 @@ PUBLIC void enqueue_thread(thread_info_struct *thread) {
 }
 
 //初始化mm_info
-PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword stack_start, qword stack_end,
+PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword stack_top, qword stack_bottom,
         qword heap_start, qword heap_end, qword rodata_start, qword rodata_end, qword shm_start, qword shm_end) {
     mm_info->pgd = pgd;
 
@@ -184,8 +182,8 @@ PRIVATE void __init_mm_info(mm_info_struct *mm_info, void *pgd, qword code_start
     mm_info->data_start = data_start;
     mm_info->data_end = data_end;
 
-    mm_info->stack_start = stack_start;
-    mm_info->stack_end = stack_end;
+    mm_info->stack_top = stack_top;
+    mm_info->stack_bottom = stack_bottom;
 
     mm_info->heap_start = heap_start;
     mm_info->heap_end = heap_end;
@@ -219,11 +217,11 @@ PUBLIC task_struct *__create_task(
     int pid, int priority, int level, task_struct *parent, bool kernel_task
 ) {
     task_struct *task = (task_struct *)kmalloc(sizeof(task_struct));
-    task->cur_tid = 1;
+    task->cur_tid = 0;
 
     task->threads = create_thread_info(ds, stack_top, stack_bottom, entry, cs, rflags, priority, task);
 
-    __init_mm_info(&task->mm_info, pgd, code_start, code_end, data_start, data_end, stack_bottom, stack_top,
+    __init_mm_info(&task->mm_info, pgd, code_start, code_end, data_start, data_end, stack_top, stack_bottom,
                         heap_start, heap_end, rodata_start, rodata_end, shm_start, shm_end);
     __init_ipc_info(&task->ipc_info);
     
@@ -268,8 +266,10 @@ PUBLIC task_struct *create_task(
     //加入队列
     add_task(task);
 
-    task->bro = parent->children;
-    parent->children = task;
+    if (parent != NULL) {
+        task->bro = parent->children;
+        parent->children = task;
+    }
 
     //加入空闲队列
     enqueue_thread(task->threads);

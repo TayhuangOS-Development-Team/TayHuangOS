@@ -59,9 +59,11 @@ PUBLIC thread_info_struct *create_thread_info(
 }
 
 PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
-    void *stack_top = (void*)task->mm_info.stack_end;
-    void *stack_bottom = stack_top - THREAD_STACK_SIZE; //获得栈
-    task->mm_info.stack_end = (qword)stack_bottom;
+    void *stack_top = (void*)task->mm_info.stack_bottom;
+    qword stack_size = task->kernel_task ? KERNEL_TASK_STACK_SIZE : THREAD_STACK_SIZE;
+    void *stack_bottom = stack_top - stack_size; //获得栈
+    linfo ("!", "Stack:%p->%p", stack_bottom, stack_top);
+    task->mm_info.stack_bottom = (qword)stack_bottom;
 
     //创建线程信息
     thread_info_struct *thread = create_thread_info(task->ds, stack_top, stack_bottom, entry, task->cs, task->rflags, task->priority, task); 
@@ -80,7 +82,7 @@ PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
     }
 
     //入队
-    parent->next = parent;
+    parent->next = thread;
     thread->last = parent;
     
     enqueue_thread(thread);

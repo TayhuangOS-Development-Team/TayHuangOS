@@ -49,6 +49,8 @@ EXTERN PUBLIC bool entered_handler;
 
 //堆栈分配
 #define RING0_STACKTOP      (0x1400000)
+#define RING0_T1STACKBOTTOM (0x13C0000)
+#define RING0_T2STACKBOTTOM (0x1380000)
 #define RING0_STACKBOTTOM   (0x1300000)
 
 #define RING0_STACKTOP2     (0x1300000)
@@ -66,6 +68,8 @@ EXTERN PUBLIC bool entered_handler;
 //默认共享内存地址(4GB~8GB)
 #define DEFAULT_SHM_START   (0x100000000)
 #define DEFAULT_SHM_END     (0x200000000)
+
+#define KERNEL_TASK_STACK_SIZE (0x8000)
 
 //映射内核
 PUBLIC void mapping_kernel(void *pgd);

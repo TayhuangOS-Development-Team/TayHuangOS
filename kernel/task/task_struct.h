@@ -27,7 +27,7 @@ typedef struct {
     void *pgd;
     qword code_start, code_end; //代码段
     qword data_start, data_end; //数据段
-    qword stack_start, stack_end; //栈段
+    qword stack_top, stack_bottom; //栈段
     qword heap_start, heap_end; //堆段
     qword rodata_start, rodata_end; //只读数据段
     qword shm_start, shm_end; //共享内存区
