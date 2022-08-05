@@ -62,7 +62,6 @@ PUBLIC thread_info_struct *__create_thread(void *entry, task_struct *task) {
     void *stack_top = (void*)task->mm_info.stack_bottom;
     qword stack_size = task->kernel_task ? KERNEL_TASK_STACK_SIZE : THREAD_STACK_SIZE;
     void *stack_bottom = stack_top - stack_size; //获得栈
-    linfo ("!", "Stack:%p->%p", stack_bottom, stack_top);
     task->mm_info.stack_bottom = (qword)stack_bottom;
 
     //创建线程信息
