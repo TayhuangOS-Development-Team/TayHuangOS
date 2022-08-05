@@ -91,7 +91,7 @@ PRIVATE void read_from_buffer(msgpack_struct *pack, void *dst) {
     }
 }
 
-PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
+PUBLIC bool __send_msg(msgno_id msgno, void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
     if ((target == NULL) || 
@@ -103,7 +103,8 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
 
     msgpack_struct pack;
     pack.length = size;
-    pack.message_no = msgno;
+    pack.message_no = msgno.message_no;
+    pack.msg_id = msgno.msg_id;
     pack.source = current_thread->task->pid;
 
     //增加已使用大小
@@ -120,8 +121,8 @@ PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst) {
     return true;
 }
 
-PUBLIC bool send_msg(int msgno, void *src, qword size, int dst) {
-    return dosyscall(SEND_MSG_SN, 0, size, dst, src, NULL, msgno, 0, 0, 0, 0, 0, 0, 0);
+PUBLIC bool send_msg(msgno_id msgno, void *src, qword size, int dst) {
+    return dosyscall(SEND_MSG_SN, 0, size, dst, src, NULL, *(qword*)&msgno, 0, 0, 0, 0, 0, 0, 0);
 }
 
 //-------------------
@@ -154,9 +155,9 @@ PUBLIC void set_allow(int pid) {
 
 //------------------
 
-PUBLIC recvmsg_result_struct __recv_msg(void *dst) {
+PUBLIC msgpack_struct __recv_msg(void *dst) {
     if (current_thread->task->ipc_info.used_size <= 0) {
-        return (recvmsg_result_struct){.source = -1, .message_no = -1};
+        return (msgpack_struct){.source = -1, .message_no = -1};
     }
 
     msgpack_struct pack;
@@ -167,13 +168,12 @@ PUBLIC recvmsg_result_struct __recv_msg(void *dst) {
     assert(current_thread->task->ipc_info.used_size >= (pack.length + sizeof(msgpack_struct)));
     current_thread->task->ipc_info.used_size -= (pack.length + sizeof(msgpack_struct));
 
-    recvmsg_result_struct result = (recvmsg_result_struct){.source = pack.source, .message_no = pack.message_no};
-    return result;
+    return pack;
 }
 
-PUBLIC recvmsg_result_struct recv_msg(void *dst) {
+PUBLIC msgpack_struct recv_msg(void *dst) {
     qword value = dosyscall(RECV_MSG_SN, 0, 0, 0, NULL, dst, 0, 0, 0, 0, 0, 0, 0, 0);;
-    return *(recvmsg_result_struct *)&value;
+    return *(msgpack_struct *)&value;
 }
 //--------------------
 
@@ -234,7 +234,7 @@ PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags) 
     if (IRQ_HANDLE_TASKS[irq] == 0) {
         return;
     }
-    dummy_send_msg(MSG_IRQ, &irq, sizeof(int), IRQ_HANDLE_TASKS[irq]);
+    dummy_send_msg((msgno_id){.message_no = MSG_IRQ, .msg_id = get_msgid()}, &irq, sizeof(int), IRQ_HANDLE_TASKS[irq]);
 }
 
 //--------------------
@@ -271,7 +271,7 @@ PUBLIC void reg_irq(int irq) {
 
 //--------------------
 
-PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
+PUBLIC bool dummy_send_msg(msgno_id msgno, void *src, qword size, int dst) {
     task_struct *target = get_task_by_pid(dst);
 
     if ((target == NULL) || 
@@ -282,7 +282,8 @@ PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst) {
     }
 
     msgpack_struct pack;
-    pack.message_no = msgno;
+    pack.message_no = msgno.message_no;
+    pack.msg_id = msgno.msg_id;
     pack.length = size;
     pack.source = DUMMY_TASK;
 

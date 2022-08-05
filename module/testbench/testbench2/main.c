@@ -63,12 +63,10 @@ PUBLIC void kmod_main(void) {
     void *new_fifo = share_fifo(fifo, 2);
     linfo ("%p", new_fifo);
 
-    send_msg(MSG_NORMAL_IPC, (byte *)&new_fifo, sizeof(void *), 2);
+    send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, (byte *)&new_fifo, sizeof(void *), 2);
 
     qword data = 114514;
     fifo_write_bytes(fifo, (byte *)&data, sizeof(qword));
-
-    asmv ("ud2");
     
     message_loop();
 

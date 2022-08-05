@@ -67,7 +67,7 @@ PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
     head_node = new_node;
 }
 
-PUBLIC void deal_rpc_request(int caller, void *msg) {
+PUBLIC void deal_rpc_request(msgpack_struct pack, void *msg) {
     rpc_func func_no = ARG_READ(msg, rpc_func);
 
     proccess_info *info = list_find_proccess(func_no);
@@ -89,7 +89,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     }
 
     rpc_args_struct args = {.data = (qword)msg, .size = args_size};
-    rpc_args_struct result = info->proccess(caller, func_no, args);
+    rpc_args_struct result = info->proccess(pack.source, func_no, args);
 
     void *return_data = malloc(sizeof(rpc_func) + result.size);
     void *_data = return_data;
@@ -97,7 +97,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     memcpy(_data, (void *)result.data, result.size);
 
     if (info->return_size == result.size || info->return_size == -1) {
-        send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
+        send_msg((msgno_id){.message_no = MSG_RPC_RESULT, .msg_id = pack.msg_id}, return_data, sizeof(rpc_func) + result.size, pack.source);
     }
     else {
         lerror ("RPC: Return size not match!Get %d, Expect %d", result.size, info->return_size);
@@ -124,17 +124,17 @@ PRIVATE task_info_struct wait_result_task;
 
 PRIVATE bool entered = false;
 
-PUBLIC rpc_args_struct rpc_tail(int service, void *msg) {
+PUBLIC rpc_args_struct rpc_tail(msgpack_struct pack, void *msg) {
     linfo ("RPC: Recieved RPC Result");
 
-    if (service != wait_service) {
-        lerror ("RPC: Service not match!");
+    if (pack.source != wait_service) {
+        lerror ("RPC: Service not match!Wait %d, Got %d", wait_service, pack.source);
         return (rpc_args_struct){.data = (qword)NULL, .size = 0};
     }
 
     rpc_func func = ARG_READ(msg, rpc_func);
     if (func != wait_func) {
-        lerror ("RPC: Function not match!");
+        lerror ("RPC: Function not match!Wait %d, Got %d", wait_func, func);
         return (rpc_args_struct){.data = (qword)NULL, .size = 0};
     }
 
@@ -182,7 +182,7 @@ PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct 
     ARG_WRITE(_data, rpc_size, args.size);
     ARG_WRITE(_data, rpc_size, return_size);
     memcpy(_data, args.data, args.size);
-    send_msg(MSG_RPC_CALL, data, size, service);
+    send_msg((msgno_id){.message_no = MSG_RPC_CALL, .msg_id = get_msgid()}, data, size, service);
     free (data);
 
     linfo ("RPC: Wait for RPC Result");

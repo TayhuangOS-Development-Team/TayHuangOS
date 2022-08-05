@@ -18,7 +18,7 @@
 
 #pragma once
 
-#define API_PID(x) (0x10000 + (x))
+#define API_PID(x) (0x8000 + (x))
 
 //init()
 #define INIT_SERVICE (1)

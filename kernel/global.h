@@ -26,6 +26,15 @@ EXTERN PUBLIC struct boot_args args;
 EXTERN PUBLIC int cur_pid;
 EXTERN PUBLIC int cur_tid;
 EXTERN PUBLIC bool entered_handler;
+EXTERN PUBLIC word msgid_counter;
+
+static inline word get_msgid(void) {
+    if (msgid_counter == 65535) {
+        msgid_counter = 0;
+        return 65535;
+    }
+    return msgid_counter ++;
+}
 
 //GDT表项编号
 #define tr_idx (1)

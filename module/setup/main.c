@@ -61,7 +61,7 @@ PUBLIC void kmod_main(void) {
 
         bool status = load_file(context, name, buffer);
 
-	    bool send_ret = send_msg(MSG_NORMAL_IPC, &status, sizeof(bool), INIT_SERVICE);
+	    bool send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &status, sizeof(bool), INIT_SERVICE);
 	    assert(send_ret);
     }
 

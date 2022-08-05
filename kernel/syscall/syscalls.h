@@ -30,8 +30,8 @@ PUBLIC void moo(void);
 
 //IPC相关
 #define SEND_MSG_SN (0x01)
-PUBLIC bool __send_msg(int msgno, void *src, qword size, int dst);
-PUBLIC bool send_msg(int msgno, void *src, qword size, int dst);
+PUBLIC bool __send_msg(msgno_id msgno, void *src, qword size, int dst);
+PUBLIC bool send_msg(msgno_id msgno, void *src, qword size, int dst);
 
 #define CHECK_IPC_SN (0x02)
 PUBLIC void __check_ipc(void);
@@ -42,8 +42,8 @@ PUBLIC void __set_allow(int pid);
 PUBLIC void set_allow(int pid);
 
 #define RECV_MSG_SN (0x04)
-PUBLIC recvmsg_result_struct __recv_msg(void *dst);
-PUBLIC recvmsg_result_struct recv_msg(void *dst);
+PUBLIC msgpack_struct __recv_msg(void *dst);
+PUBLIC msgpack_struct recv_msg(void *dst);
 
 #define CLEAR_MAIL_SN (0x05)
 PUBLIC void __clear_mail(void);
@@ -93,4 +93,4 @@ PUBLIC void exit_thread(void *retval);
 PUBLIC void normal_irq_handler(int irq, struct intterup_args *args, bool flags);
 
 //dummy进程发送消息
-PUBLIC bool dummy_send_msg(int msgno, void *src, qword size, int dst);
+PUBLIC bool dummy_send_msg(msgno_id msgno, void *src, qword size, int dst);

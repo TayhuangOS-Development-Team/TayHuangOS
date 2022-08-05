@@ -37,6 +37,7 @@ PUBLIC void register_irq_handler(irq_handler_t handler) {
 #define MESSAGE_LEN (1024)
 
 PUBLIC int self_pid = 0;
+PUBLIC word msgid_counter = 0;
 
 PUBLIC void message_loop(void) {
     static void *msg = NULL;
@@ -46,7 +47,7 @@ PUBLIC void message_loop(void) {
 
     while (true) {
         check_ipc();
-        recvmsg_result_struct result = recv_msg(msg);
+        msgpack_struct result = recv_msg(msg);
 
         switch(result.message_no) {
         case MSG_NORMAL_IPC: {
@@ -56,11 +57,11 @@ PUBLIC void message_loop(void) {
             break;
         }
         case MSG_RPC_CALL: {
-            deal_rpc_request(result.source, msg);
+            deal_rpc_request(result, msg);
             break;
         }
         case MSG_RPC_RESULT: {
-            rpc_tail(result.source, msg);
+            rpc_tail(result, msg);
             break;
         }
         case MSG_IRQ: {

@@ -54,6 +54,7 @@
 PUBLIC void *kernel_pml4 = NULL;
 PUBLIC struct boot_args args;
 PUBLIC int cur_pid = 2;
+PUBLIC word msgid_counter = 0;
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -138,10 +139,10 @@ program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
 
-    bool send_ret = send_msg(MSG_NORMAL_IPC, (void *)name, strlen(name) + 1, SETUP_SERVICE);
+    bool send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, (void *)name, strlen(name) + 1, SETUP_SERVICE);
     assert(send_ret);
 
-    send_ret = send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE);
+    send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &mod_addr, sizeof(mod_addr), SETUP_SERVICE);
     assert(send_ret);
 
     set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
@@ -166,26 +167,6 @@ program_info load_mod_by_setup(const char *name) {
     return mod_info;
 }
 
-PRIVATE id_t signal_a = 0;
-PRIVATE id_t signal_b = 0;
-
-PUBLIC void init2(void *args) {
-    int i = 0;
-    while (true) {
-        linfo ("Init", "init2");
-
-        up_signal(signal_a);
-        down_signal(signal_b);
-
-        i ++;
-        if (i >= 100) {
-            break;
-        }
-    }
-
-    exit_thread(NULL);
-}
-
 //first task-init
 PUBLIC void init(void) {
     void *mail = kmalloc(8192);
@@ -193,85 +174,71 @@ PUBLIC void init(void) {
     
     linfo ("Init", "Hi!I'm Init!");
 
-    signal_a = create_signal(2, 0, false);
-    signal_b = create_signal(2, 0, false);
-
-    create_thread(init2, NULL);
-
     //do something
     start_schedule();
 
-    while (true) {
-        linfo ("Init", "init1");
-
-        down_signal(signal_a);
-        up_signal(signal_b);
-    }
-
-    // check_ipc();
-
     //-------------------SYS TASK------------------------
 
-    // create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
-    //             kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    //             SYSTASK_SERVICE, 1, 0, current_thread->task, true);
-    // bool status;
+    create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
+                kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                SYSTASK_SERVICE, 1, 0, current_thread->task, true);
+    bool status;
     
-    // set_allow(SYSTASK_SERVICE);
-    // check_ipc();
-    // recv_msg(&status);
-    // if (! status) {
-    //     lerror ("Init", "Failed to initialize sys_task()!");
-    //     while (1);
-    // }
+    set_allow(SYSTASK_SERVICE);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize sys_task()!");
+        while (1);
+    }
 
-    // //---------------------SETUP-------------------------
-    // program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
-    // print_mod_info(&setup_mod_info);
+    //---------------------SETUP-------------------------
+    program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
+    print_mod_info(&setup_mod_info);
     
-    // initialize_kmod_task(
-    //     create_task(DS_SERVICE, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-    //                 setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end,
-    //                  setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
-    //                  DEFAULT_SHM_START, DEFAULT_SHM_END,
-    //                 SETUP_SERVICE, 1, 0, current_thread->task, false));
+    initialize_kmod_task(
+        create_task(DS_SERVICE, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end,
+                     setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    SETUP_SERVICE, 1, 0, current_thread->task, false));
 
-    // set_allow(SETUP_SERVICE);
-    // check_ipc();
-    // recv_msg(&status);
-    // if (! status) {
-    //     lerror ("Init", "Failed to initialize setup module!");
-    //     while (1);
-    // }
+    set_allow(SETUP_SERVICE);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize setup module!");
+        while (1);
+    }
 
-    // //---------------------VIDEO-------------------------
-    // program_info video_mod_info = load_mod_by_setup("video.mod");
-    // initialize_kmod_task(
-    //     create_task(DS_SERVICE, video_mod_info.stack_top, video_mod_info.stack_bottom, video_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-    //                 video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end,
-    //                  video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
-    //                  DEFAULT_SHM_START, DEFAULT_SHM_END,
-    //                 VIDEO_DRIVER_SERVICE, 1, 0, current_thread->task, false));
+    //---------------------VIDEO-------------------------
+    program_info video_mod_info = load_mod_by_setup("video.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, video_mod_info.stack_top, video_mod_info.stack_bottom, video_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end,
+                     video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    VIDEO_DRIVER_SERVICE, 1, 0, current_thread->task, false));
     
-    // //TODO: 更改loader以获取framebuffer的bpp
-    // set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
+    //TODO: 更改loader以获取framebuffer的bpp
+    set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
 
-    // set_allow(VIDEO_DRIVER_SERVICE);
-    // check_ipc();
-    // recv_msg(&status);
-    // if (! status) {
-    //     lerror ("Init", "Failed to initialize video driver!");
-    //     while (1);
-    // }
+    set_allow(VIDEO_DRIVER_SERVICE);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize video driver!");
+        while (1);
+    }
 
-    // video_info_struct video_info;
-    // video_info.framebuffer = args.framebuffer;
-    // video_info.height = args.screen_height;
-    // video_info.width = args.screen_width;
-    // video_info.is_graphic_mode = args.is_graphic_mode;
-    // send_msg(MSG_NORMAL_IPC, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
+    video_info_struct video_info;
+    video_info.framebuffer = args.framebuffer;
+    video_info.height = args.screen_height;
+    video_info.width = args.screen_width;
+    video_info.is_graphic_mode = args.is_graphic_mode;
+    send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
     
-    // //-------------------KEYBOARD-----------------------
+    //-------------------KEYBOARD-----------------------
     // program_info keyboard_ioman_info = load_mod_by_setup("keyboard.man");
     // initialize_kmod_task(
     //     create_task(DS_SERVICE, keyboard_ioman_info.stack_top, keyboard_ioman_info.stack_bottom, keyboard_ioman_info.entry, CS_SERVICE, RFLAGS_SERVICE,
@@ -288,42 +255,42 @@ PUBLIC void init(void) {
     //     while (1);
     // }
 
-    // //-------------------TESTBENCH-----------------------
-    // program_info tb1_mod_info = load_mod_by_setup("tb1.mod");
-    // initialize_kmod_task(
-    //     create_task(DS_SERVICE, tb1_mod_info.stack_top, tb1_mod_info.stack_bottom, tb1_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-    //                 tb1_mod_info.pgd, tb1_mod_info.start, tb1_mod_info.end, tb1_mod_info.start, tb1_mod_info.end,
-    //                  tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
-    //                  DEFAULT_SHM_START, DEFAULT_SHM_END,
-    //                 alloc_pid(), 1, 1, current_thread->task, false));
+    //-------------------TESTBENCH-----------------------
+    program_info tb1_mod_info = load_mod_by_setup("tb1.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, tb1_mod_info.stack_top, tb1_mod_info.stack_bottom, tb1_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    tb1_mod_info.pgd, tb1_mod_info.start, tb1_mod_info.end, tb1_mod_info.start, tb1_mod_info.end,
+                     tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    alloc_pid(), 1, 1, current_thread->task, false));
 
-    // set_allow(ANY_TASK);
-    // check_ipc();
-    // recv_msg(&status);
-    // if (! status) {
-    //     lerror ("Init", "Failed to initialize testbench 1!");
-    //     while (1);
-    // }
+    set_allow(ANY_TASK);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize testbench 1!");
+        while (1);
+    }
 
-    // program_info tb2_mod_info = load_mod_by_setup("tb2.mod");
-    // initialize_kmod_task(
-    //     create_task(DS_SERVICE, tb2_mod_info.stack_top, tb2_mod_info.stack_bottom, tb2_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-    //                 tb2_mod_info.pgd, tb2_mod_info.start, tb2_mod_info.end, tb2_mod_info.start, tb2_mod_info.end,
-    //                  tb2_mod_info.heap_bottom, tb2_mod_info.heap_top,tb2_mod_info.start, tb2_mod_info.end,
-    //                  DEFAULT_SHM_START, DEFAULT_SHM_END,
-    //                 alloc_pid(), 1, 1, current_thread->task, false));
+    program_info tb2_mod_info = load_mod_by_setup("tb2.mod");
+    initialize_kmod_task(
+        create_task(DS_SERVICE, tb2_mod_info.stack_top, tb2_mod_info.stack_bottom, tb2_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    tb2_mod_info.pgd, tb2_mod_info.start, tb2_mod_info.end, tb2_mod_info.start, tb2_mod_info.end,
+                     tb2_mod_info.heap_bottom, tb2_mod_info.heap_top,tb2_mod_info.start, tb2_mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    alloc_pid(), 1, 1, current_thread->task, false));
 
-    // set_allow(ANY_TASK);
-    // check_ipc();
-    // recv_msg(&status);
-    // if (! status) {
-    //     lerror ("Init", "Failed to initialize testbench 2!");
-    //     while (1);
-    // }
+    set_allow(ANY_TASK);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize testbench 2!");
+        while (1);
+    }
 
-    // check_ipc();
+    check_ipc();
 
-    // linfo ("Init", "Init End");
+    linfo ("Init", "Init End");
     
     while (true);
 }
