@@ -37,8 +37,6 @@
 PRIVATE void *fifo = NULL;
 
 PRIVATE void irq_handler(int irq) {
-    linfo ("fuck!");
-
     if (irq == 1) {
         byte code = inb(KEYBOARD_8042_DATA0); //读取操作码
         short key;
