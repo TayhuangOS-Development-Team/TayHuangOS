@@ -27,8 +27,9 @@
 typedef struct {
     id_t mutex;
 
-    id_t empty;
-    id_t full;
+    id_t empty; //还有多少剩余空间
+    id_t full; //还有多少内容
+    
 
     size_t write_offset;
     size_t read_offset;
@@ -71,8 +72,8 @@ PUBLIC void *share_fifo(void *fifo, int target) {
 PRIVATE byte fifo_read_byte(fifo_struct *fifo) {
     byte data;
 
-    down_signal(fifo->full);
-    down_signal(fifo->mutex);
+    down_signal(fifo->full); //内容 - 1
+    down_signal(fifo->mutex); //进入临界区
 
     data = fifo->buffer[fifo->read_offset];
     fifo->read_offset ++;
@@ -80,15 +81,15 @@ PRIVATE byte fifo_read_byte(fifo_struct *fifo) {
         fifo->read_offset = 0;
     }
 
-    up_signal(fifo->mutex);
-    up_signal(fifo->empty);
+    up_signal(fifo->mutex); //离开临界区
+    up_signal(fifo->empty); //空位 + 1
 
     return data;
 }
 
 PRIVATE void fifo_write_byte(fifo_struct *fifo, byte data) {
-    down_signal(fifo->empty);
-    down_signal(fifo->mutex);
+    down_signal(fifo->empty); //空位 - 1
+    down_signal(fifo->mutex); //进入临界区
 
     fifo->buffer[fifo->write_offset] = data;
     fifo->write_offset ++;
@@ -96,8 +97,8 @@ PRIVATE void fifo_write_byte(fifo_struct *fifo, byte data) {
         fifo->write_offset = 0;
     }
 
-    up_signal(fifo->mutex);
-    up_signal(fifo->full);
+    up_signal(fifo->mutex); //离开临界区
+    up_signal(fifo->full); //内容 + 1
 }
 
 PUBLIC void fifo_write_bytes(void *fifo, byte *data, size_t size) {
