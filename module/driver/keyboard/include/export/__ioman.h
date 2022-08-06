@@ -19,6 +19,7 @@
 #pragma once
 
 #include <tayhuang/defs.h>
+#include <key_types.h>
 
 #define SHARE_KEYBUFFER_FN (0)
 #define SHARE_KEYBUFFER_ARGS_SIZE (sizeof(bool))
