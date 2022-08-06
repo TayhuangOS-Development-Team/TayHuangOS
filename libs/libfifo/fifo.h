@@ -26,9 +26,9 @@ PUBLIC void *create_fifo(size_t fifo_size);
 //共享FIFO
 PUBLIC void *share_fifo(void *fifo, int target);
 //向FIFO写
-PUBLIC bool fifo_write_bytes(void *fifo, byte *data, size_t size);
+PUBLIC void fifo_write_bytes(void *fifo, byte *data, size_t size);
 //从FIFO读
-PUBLIC bool fifo_read_bytes(void *fifo, byte *data, size_t size);
+PUBLIC void fifo_read_bytes(void *fifo, byte *data, size_t size);
 PUBLIC size_t fifo_read_all(void *fifo, byte *data);
 //FIFO信息
 PUBLIC size_t fifo_get_size(void *fifo);
