@@ -32,21 +32,8 @@
 
 #define MAIL_SIZE (8 * 1024)
 
-PRIVATE void __message_loop(void *args) {
-    //分配邮箱缓冲区
-    void *mail_buffer = malloc(MAIL_SIZE);
-    set_mailbuffer(mail_buffer, MAIL_SIZE);
-
-    set_allow(ANY_TASK);
-
-    //通知init该模块已初始化完成
-    bool status = true;
-    bool send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &status, sizeof(bool), INIT_SERVICE);
-    assert(send_ret);
-
-    message_loop();
-    exit_thread(NULL);
-}
+PUBLIC int self_pid;
+PUBLIC word msgid_counter;
 
 PUBLIC void __kmod_init__(void) {
     register int magic __asm__("rax");
@@ -63,16 +50,18 @@ PUBLIC void __kmod_init__(void) {
     //初始化堆
     init_heap(pid, heap_start, heap_end);
 
-    self_pid = pid;
+    //分配邮箱缓冲区
+    void *mail_buffer = malloc(MAIL_SIZE);
+    set_mailbuffer(mail_buffer, MAIL_SIZE);
 
-    kmod_init();
+    set_allow(ANY_TASK);
 
-    create_thread(__message_loop, NULL);
+    //通知init该模块已初始化完成
+    bool status = true;
+    bool send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &status, sizeof(bool), INIT_SERVICE);
+    assert(send_ret);
 
     kmod_main();
-
-    id_t signal = create_signal(1, 0, false);
-    down_signal(signal);
 
     while (true);
     //exit();

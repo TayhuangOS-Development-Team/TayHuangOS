@@ -136,7 +136,7 @@ PRIVATE void init_keyboard(void) {
     outb(KEYBOARD_8042_DATA0, status);
 }
 
-PUBLIC void kmod_main(void) {
+PUBLIC void kmod_init(void) {
     set_logging_name("Keyboard IO Manager");
     
     //注册IRQ=1
@@ -145,7 +145,9 @@ PUBLIC void kmod_main(void) {
 
     //设置RPC函数
     rpc_register(SHARE_KEYBUFFER_FN, wrapper_share_keybuffer, sizeof(SHARE_KEYBUFFER_RETURN_TYPE), SHARE_KEYBUFFER_ARGS_SIZE);
+}
 
+PUBLIC void kmod_main(void) {
     //创建缓冲区
     //FIXME: 新的RPC机制使得必须要先进入message loop才可以使用rpc函数
     fifo = create_fifo(KEY_BUFFER_SIZE);
@@ -155,8 +157,4 @@ PUBLIC void kmod_main(void) {
 
     //初始化硬盘
     init_keyboard();
-
-    message_loop();
-
-    while (true);
 }

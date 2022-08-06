@@ -26,11 +26,13 @@
 
 PRIVATE void *fifo = NULL;
 
-PUBLIC void kmod_main(void) {
+PUBLIC void kmod_init(void) {
     set_logging_name("Keyboard");
 
     linfo ("Hi!");
+}
 
+PUBLIC void kmod_main(void) {
     fifo = share_keybuffer(false);
     linfo ("%p", fifo);
 
@@ -40,6 +42,4 @@ PUBLIC void kmod_main(void) {
         fifo_read_bytes(fifo, &key, 1);
         linfo ("%c(%d, %#2X)", key, key, key);
     }
-
-    message_loop();
 }
