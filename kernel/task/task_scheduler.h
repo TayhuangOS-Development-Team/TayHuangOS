@@ -22,11 +22,11 @@
 #include <intterup/init_int.h>
 
 //当前进程
-EXTERN PUBLIC task_struct *current_task;
+EXTERN PUBLIC thread_info_struct *current_thread;
 //开始调度
 PUBLIC void start_schedule(void);
-//获得下一个运行的进程
-PUBLIC task_struct *get_next_run_task(void);
+//获得下一个运行的线程
+PUBLIC thread_info_struct *get_next_run_thread(void);
 //是否需要调度
 PUBLIC bool should_switch(void);
 //进行调度

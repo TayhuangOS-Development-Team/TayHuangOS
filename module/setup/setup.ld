@@ -22,7 +22,7 @@ OUTPUT_ARCH("i386:x86-64")
 
 SECTIONS
 {
-    . = 0x4000000;
+    . = 0x20000000;
     .text : { *(.text) }
     .data : { *(.data) }
     .bss : { *(.bss) }
