@@ -25,21 +25,17 @@
 
 //相关信息
 typedef struct {
-    bool lock;
+    id_t mutex;
+
+    id_t empty;
+    id_t full;
+
     size_t write_offset;
     size_t read_offset;
     size_t fifo_size;
     size_t used_size;
     char buffer[0];
 } fifo_struct;
-
-PRIVATE void wait_and_lock(fifo_struct *fifo) {
-    while (! test_and_lock(&fifo->lock)); //没上锁则一直进行检测并上锁操作
-}
-
-PRIVATE void unlock(fifo_struct *fifo) {
-    fifo->lock = false;
-}
 
 PUBLIC void *create_fifo(size_t fifo_size) {
     int pages = (fifo_size + MEMUNIT_SZ - 1) / MEMUNIT_SZ; //获得页数
@@ -50,7 +46,8 @@ PUBLIC void *create_fifo(size_t fifo_size) {
     fifo_struct *fifo = (fifo_struct *)create_share_memory(pages);
 
     //初始化信息
-    fifo->lock = false;
+    fifo->mutex = create_signal(1, 1, false);
+
     fifo->fifo_size = pages * MEMUNIT_SZ - sizeof(fifo_struct);
     fifo->write_offset = 0;
     fifo->read_offset = 0;
@@ -69,73 +66,52 @@ PUBLIC void *share_fifo(void *fifo, int target) {
     return new_fifo;
 }
 
-PUBLIC bool fifo_write_bytes(void *fifo, byte *data, size_t size) {
-    //判断缓冲区有没有空间进行写入
-    if (size > fifo_get_free_size(fifo)) {
-        return false;
+PRIVATE byte fifo_read_byte(fifo_struct *fifo) {
+    byte data;
+
+    down_signal(fifo->full);
+    down_signal(fifo->mutex);
+
+    data = fifo->buffer[fifo->read_offset];
+    fifo->read_offset ++;
+    if (fifo->read_offset == fifo->fifo_size) {
+        fifo->read_offset = 0;
     }
 
-    fifo_struct *_fifo = (fifo_struct *)fifo;
-    wait_and_lock(_fifo); //上锁
+    up_signal(fifo->mutex);
+    up_signal(fifo->empty);
 
-    if (_fifo->write_offset + size <= _fifo->fifo_size) { //没有跨越边界
-        memcpy(&_fifo->buffer[_fifo->write_offset], data, size); //复制
-
-        _fifo->write_offset += size; //移动指针
-        _fifo->used_size += size; //增加已使用大小
-
-        if (_fifo->write_offset == _fifo->fifo_size) { //回到开始位置
-            _fifo->write_offset = 0;
-        }
-    }
-    else { //跨越边界了
-        size_t tail_size = _fifo->fifo_size - _fifo->write_offset; //缓冲区尾部的剩余大小
-        size_t head_size = size - tail_size; //缓冲区头部还需要的大小
-
-        memcpy(&_fifo->buffer[_fifo->write_offset], data, tail_size); //复制
-        memcpy(&_fifo->buffer[0], data + tail_size, head_size); //复制
-
-        _fifo->write_offset = head_size; //移动指针
-        _fifo->used_size += size; //增加已使用大小
-    }
-
-    unlock(_fifo); //解锁
-
-    return true;
+    return data;
 }
 
-PUBLIC bool fifo_read_bytes(void *fifo, byte *data, size_t size) {
-    if (size > fifo_get_used_size(fifo)) {
-        return false;
+PRIVATE void fifo_write_byte(fifo_struct *fifo, byte data) {
+    down_signal(fifo->empty);
+    down_signal(fifo->mutex);
+
+    fifo->buffer[fifo->write_offset] = data;
+    fifo->read_offset ++;
+    if (fifo->read_offset == fifo->fifo_size) {
+        fifo->read_offset = 0;
     }
 
+    up_signal(fifo->mutex);
+    up_signal(fifo->full);
+}
+
+PUBLIC void fifo_write_bytes(void *fifo, byte *data, size_t size) {
     fifo_struct *_fifo = (fifo_struct *)fifo;
-    wait_and_lock(_fifo); //上锁
-
-    if (_fifo->read_offset + size <= _fifo->fifo_size) { //没有跨越边界
-        memcpy(data, &_fifo->buffer[_fifo->read_offset], size); //复制
-
-        _fifo->read_offset += size; //移动指针
-        _fifo->used_size -= size; //减少已使用大小
-
-        if (_fifo->read_offset == _fifo->fifo_size) { //回到开始位置
-            _fifo->read_offset = 0;
-        }
+    
+    for (int i = 0 ; i < size ; i ++) {
+        fifo_write_byte(_fifo, *(data + i));
     }
-    else { //跨越边界了
-        size_t tail_size = _fifo->fifo_size - _fifo->read_offset; //缓冲区尾部的剩余大小
-        size_t head_size = size - tail_size; //缓冲区头部还需要的大小
+}
 
-        memcpy(data, &_fifo->buffer[_fifo->read_offset], tail_size); //复制
-        memcpy(data + tail_size, &_fifo->buffer[0], head_size); //复制
-
-        _fifo->read_offset = head_size; //移动指针
-        _fifo->used_size -= size; //减少已使用大小
+PUBLIC void fifo_read_bytes(void *fifo, byte *data, size_t size) {
+    fifo_struct *_fifo = (fifo_struct *)fifo;
+    
+    for (int i = 0 ; i < size ; i ++) {
+        *(data + i) = fifo_read_byte(_fifo);
     }
-
-    unlock(_fifo); //解锁
-
-    return true;
 }
 
 PUBLIC size_t fifo_read_all(void *fifo, byte *data) {

@@ -36,22 +36,19 @@ PUBLIC void normal_ipc_handler(int caller, void *msg) {
     linfo ("%p", fifo);
     qword data;
 
-    while (! fifo_read_bytes(fifo, (byte*)&data, sizeof(qword)));
+    fifo_read_bytes(fifo, (byte*)&data, sizeof(qword));
     
     linfo ("%d", data);
-
-    while (true);
 }
 
-PUBLIC void kmod_main(void) {
+PUBLIC void kmod_init(void) {
     set_logging_name("Testbench1");
 
     linfo ("Hi!I'm testbench1!");
     
     register_normal_ipc_handler(normal_ipc_handler);
     set_allow(ANY_TASK);
+}
 
-    message_loop();
-
-    while (true);
+PUBLIC void kmod_main(void) {
 }

@@ -29,8 +29,6 @@
 
 #include <tayhuang/msgpack.h>
 
-#include <task/task.h>
-
 typedef struct  {
     rpc_func func_no;
     rpc_proccess_wrapper proccess;
