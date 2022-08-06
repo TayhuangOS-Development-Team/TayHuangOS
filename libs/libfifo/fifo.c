@@ -47,6 +47,8 @@ PUBLIC void *create_fifo(size_t fifo_size) {
 
     //初始化信息
     fifo->mutex = create_signal(1, 1, false);
+    fifo->empty = create_signal(fifo_size, fifo_size, false);
+    fifo->full = create_signal(fifo_size, 0, false);
 
     fifo->fifo_size = pages * MEMUNIT_SZ - sizeof(fifo_struct);
     fifo->write_offset = 0;
@@ -89,9 +91,9 @@ PRIVATE void fifo_write_byte(fifo_struct *fifo, byte data) {
     down_signal(fifo->mutex);
 
     fifo->buffer[fifo->write_offset] = data;
-    fifo->read_offset ++;
-    if (fifo->read_offset == fifo->fifo_size) {
-        fifo->read_offset = 0;
+    fifo->write_offset ++;
+    if (fifo->write_offset == fifo->fifo_size) {
+        fifo->write_offset = 0;
     }
 
     up_signal(fifo->mutex);

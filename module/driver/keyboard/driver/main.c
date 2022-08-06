@@ -34,12 +34,10 @@ PUBLIC void kmod_init(void) {
 
 PUBLIC void kmod_main(void) {
     fifo = share_keybuffer(false);
-    linfo ("%p", fifo);
-
-    byte key;
 
     while (true) {
-        fifo_read_bytes(fifo, &key, 1);
-        linfo ("%c(%d, %#2X)", key, key, key);
+        key_t key;
+        fifo_read_bytes(fifo, (byte*)&key, sizeof(key_t));
+        linfo ("%c(%d, %#04X)", key, key, key);
     }
 }

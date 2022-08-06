@@ -18,7 +18,7 @@
 
 #include <keymap.h>
 
-PUBLIC short KEYMAP[128][3] = {
+PUBLIC key_t KEYMAP[128][3] = {
 //                             NORMAL           SHIFT           E0
 /*0x00 - none       */    {            0,              0,               0},
 /*0x01 - esc        */    {          ESC,            ESC,               0},

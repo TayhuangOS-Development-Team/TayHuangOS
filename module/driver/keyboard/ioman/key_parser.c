@@ -24,7 +24,7 @@
 PUBLIC int state;
 
 PUBLIC short do_normal(byte code) {
-    short key;
+    key_t key;
     if (code == 0xE0) { //e0
         linfo ("flags += e0_xx");
         state = E0_XX;
@@ -65,13 +65,6 @@ PUBLIC short do_normal(byte code) {
         }
     }
 
-    if (key >= 256) {  
-        linfo ("Function(%d, %#02X;code=%d, %#02X)", key, key, code, code);
-    }
-    else {
-        linfo ("%c(%d, %#02X;code=%d, %#02X)", key, key, key, code, code);
-    }
-
     return key;
 }
 
@@ -82,8 +75,7 @@ PUBLIC short do_e0(byte code) {
 
     code &= 0x7F;
 
-    short key = KEYMAP[code][2];
-    linfo ("Function(%d, %#02X;code=%d, %#02X)", key, key, code, code);
+    key_t key = KEYMAP[code][2];
 
     linfo ("flags -= e0_xx");
     state &= ~E0_XX;
@@ -108,7 +100,7 @@ PUBLIC short do_e1(byte code) {
     }
 
     if ((state & E1_STAGE_MASK) == E1_STAGE_END) { //读完
-        short key = PAUSEBREAK;
+        key_t key = PAUSEBREAK;
         
         linfo ("flags -= e1_stages"); //重置state
         state &= ~E1_STAGE_MASK;
@@ -121,7 +113,6 @@ PUBLIC short do_e1(byte code) {
             return 0;
         }
             
-        linfo ("Pause Break(%d, %#02X)", PAUSEBREAK, PAUSEBREAK); //Pause Break
         return key;
     }
 
@@ -141,7 +132,7 @@ PUBLIC short do_shift(byte code) {
     }
     else if (code & 0x80) { //break code
         code &= 0x7F;
-        short key = KEYMAP[code][0];
+        key_t key = KEYMAP[code][0];
 
         if (key == LSHIFT) { //lshift release
             linfo ("flags -= lshift_pushed");
@@ -158,7 +149,7 @@ PUBLIC short do_shift(byte code) {
     }
     
     code &= 0x7F;
-    short key = KEYMAP[code][1];
+    key_t key = KEYMAP[code][1];
 
     if (key == LSHIFT) { //lshift pushed
         linfo ("flags += lshift_pushed");
@@ -169,13 +160,6 @@ PUBLIC short do_shift(byte code) {
         linfo ("flags += rshift_pushed");
         state |= RSHIFT_PUSHED;
         return 0;
-    }
-
-    if (key >= 256) {  
-        linfo ("Function(%d, %#02X;code=%d, %#02X)", key, key, code, code);
-    }
-    else {
-        linfo ("%c(%d, %#02X;code=%d, %#02X)", key, key, key, code, code);
     }
 
     return key;

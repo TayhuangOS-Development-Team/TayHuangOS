@@ -18,6 +18,8 @@
 
 #pragma once
 
+typedef short key_t;
+
 enum {
     ESC = 256,
     BACKSPACE,

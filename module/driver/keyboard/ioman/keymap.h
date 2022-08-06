@@ -21,4 +21,4 @@
 #include <tayhuang/defs.h>
 #include <key_types.h>
 
-EXTERN short KEYMAP[128][3];
+EXTERN key_t KEYMAP[128][3];
