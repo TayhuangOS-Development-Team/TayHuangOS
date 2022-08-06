@@ -35,7 +35,7 @@ PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 }
 
-PUBLIC void kmod_main(void) {
+PUBLIC void kmod_init(void) {
     set_logging_name("Video");
     
     check_ipc();
@@ -44,8 +44,7 @@ PUBLIC void kmod_main(void) {
     register_normal_ipc_handler(normal_ipc_handler);
     text_register_rpc_functions();
     set_allow(ANY_TASK);
+}
 
-    message_loop();
-
-    while (true);
+PUBLIC void kmod_main(void) {
 }
