@@ -39,6 +39,7 @@
 
 #include <task/task_manager.h>
 #include <task/task_scheduler.h>
+#include <task/signal.h>
 
 #include <syscall/syscall.h>
 #include <syscall/rpc.h>
@@ -53,6 +54,7 @@
 PUBLIC void *kernel_pml4 = NULL;
 PUBLIC struct boot_args args;
 PUBLIC int cur_pid = 2;
+PUBLIC word msgid_counter = 0;
 
 PRIVATE struct desc_struct GDT[16];
 PRIVATE struct gdt_ptr gdtr;
@@ -137,10 +139,10 @@ program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
 
-    bool send_ret = send_msg(MSG_NORMAL_IPC, (void *)name, strlen(name) + 1, SETUP_SERVICE);
+    bool send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, (void *)name, strlen(name) + 1, SETUP_SERVICE);
     assert(send_ret);
 
-    send_ret = send_msg(MSG_NORMAL_IPC, &mod_addr, sizeof(mod_addr), SETUP_SERVICE);
+    send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &mod_addr, sizeof(mod_addr), SETUP_SERVICE);
     assert(send_ret);
 
     set_mapping(get_task_by_pid(SETUP_SERVICE)->mm_info.pgd, mod_addr, mod_addr, MOD_SIZE / MEMUNIT_SZ, true, false);
@@ -169,18 +171,17 @@ program_info load_mod_by_setup(const char *name) {
 PUBLIC void init(void) {
     void *mail = kmalloc(8192);
     set_mailbuffer(mail, 8192);
+    
+    linfo ("Init", "Hi!I'm Init!");
 
     //do something
     start_schedule();
-    
-    linfo ("Init", "Hi!I'm Init!");
 
     //-------------------SYS TASK------------------------
 
     create_task(DS_SERVICE, RING0_STACKTOP2, RING0_STACKBOTTOM2, sys_task, CS_SERVICE, RFLAGS_SERVICE,
                 kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                SYSTASK_SERVICE, 1, 0, current_task);
-
+                SYSTASK_SERVICE, 1, 0, current_thread->task, true);
     bool status;
     
     set_allow(SYSTASK_SERVICE);
@@ -200,7 +201,7 @@ PUBLIC void init(void) {
                     setup_mod_info.pgd, setup_mod_info.start, setup_mod_info.end, setup_mod_info.start, setup_mod_info.end,
                      setup_mod_info.heap_bottom, setup_mod_info.heap_top,setup_mod_info.start, setup_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    SETUP_SERVICE, 1, 0, current_task));
+                    SETUP_SERVICE, 1, 0, current_thread->task, false));
 
     set_allow(SETUP_SERVICE);
     check_ipc();
@@ -217,7 +218,7 @@ PUBLIC void init(void) {
                     video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end,
                      video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    VIDEO_DRIVER_SERVICE, 1, 0, current_task));
+                    VIDEO_DRIVER_SERVICE, 1, 0, current_thread->task, false));
     
     //TODO: 更改loader以获取framebuffer的bpp
     set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
@@ -235,24 +236,24 @@ PUBLIC void init(void) {
     video_info.height = args.screen_height;
     video_info.width = args.screen_width;
     video_info.is_graphic_mode = args.is_graphic_mode;
-    send_msg(MSG_NORMAL_IPC, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
+    send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
     
     //-------------------KEYBOARD-----------------------
-    program_info keyboard_ioman_info = load_mod_by_setup("keyboard.man");
-    initialize_kmod_task(
-        create_task(DS_SERVICE, keyboard_ioman_info.stack_top, keyboard_ioman_info.stack_bottom, keyboard_ioman_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    keyboard_ioman_info.pgd, keyboard_ioman_info.start, keyboard_ioman_info.end, keyboard_ioman_info.start, keyboard_ioman_info.end,
-                     keyboard_ioman_info.heap_bottom, keyboard_ioman_info.heap_top,keyboard_ioman_info.start, keyboard_ioman_info.end,
-                     DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    KEYBOARD_IOMAN_SERVICE, 1, 0, current_task));
+    // program_info keyboard_ioman_info = load_mod_by_setup("keyboard.man");
+    // initialize_kmod_task(
+    //     create_task(DS_SERVICE, keyboard_ioman_info.stack_top, keyboard_ioman_info.stack_bottom, keyboard_ioman_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+    //                 keyboard_ioman_info.pgd, keyboard_ioman_info.start, keyboard_ioman_info.end, keyboard_ioman_info.start, keyboard_ioman_info.end,
+    //                  keyboard_ioman_info.heap_bottom, keyboard_ioman_info.heap_top,keyboard_ioman_info.start, keyboard_ioman_info.end,
+    //                  DEFAULT_SHM_START, DEFAULT_SHM_END,
+    //                 KEYBOARD_IOMAN_SERVICE, 1, 0, current_thread->task, false));
 
-    set_allow(KEYBOARD_IOMAN_SERVICE);
-    check_ipc();
-    recv_msg(&status);
-    if (! status) {
-        lerror ("Init", "Failed to initialize keyboard io manager!");
-        while (1);
-    }
+    // set_allow(KEYBOARD_IOMAN_SERVICE);
+    // check_ipc();
+    // recv_msg(&status);
+    // if (! status) {
+    //     lerror ("Init", "Failed to initialize keyboard io manager!");
+    //     while (1);
+    // }
 
     program_info keyboard_mod_info = load_mod_by_setup("keyboard.mod");
     initialize_kmod_task(
@@ -277,7 +278,7 @@ PUBLIC void init(void) {
                     tb1_mod_info.pgd, tb1_mod_info.start, tb1_mod_info.end, tb1_mod_info.start, tb1_mod_info.end,
                      tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    alloc_pid(), 1, 1, current_task));
+                    alloc_pid(), 1, 1, current_thread->task, false));
 
     set_allow(ANY_TASK);
     check_ipc();
@@ -293,7 +294,7 @@ PUBLIC void init(void) {
                     tb2_mod_info.pgd, tb2_mod_info.start, tb2_mod_info.end, tb2_mod_info.start, tb2_mod_info.end,
                      tb2_mod_info.heap_bottom, tb2_mod_info.heap_top,tb2_mod_info.start, tb2_mod_info.end,
                      DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    alloc_pid(), 1, 1, current_task));
+                    alloc_pid(), 1, 1, current_thread->task, false));
 
     set_allow(ANY_TASK);
     check_ipc();
@@ -384,12 +385,12 @@ PUBLIC void entry(struct boot_args *_args) {
 
     linfo ("Kernel", "Hello, I'm TayhuangOS Kernel!");
 
-    current_task = __create_task(DS_SERVICE, RING0_STACKTOP, RING0_STACKBOTTOM, init, CS_SERVICE, RFLAGS_SERVICE,
+    current_thread = __create_task(DS_SERVICE, RING0_STACKTOP, RING0_T1STACKBOTTOM, init, CS_SERVICE, RFLAGS_SERVICE,
                  kernel_pml4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 INIT_SERVICE, 1, 0, NULL);
+                 INIT_SERVICE, 1, 0, NULL, true)->threads;
 
-    add_task(current_task);
-    current_task->state = RUNNING;
+    add_task(current_thread->task);
+    current_thread->state = RUNNING;
 
     asmv ("movq %0, %%rsp" : : "g"(RING0_STACKTOP));
     asmv ("jmp init");

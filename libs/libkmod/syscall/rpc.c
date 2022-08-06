@@ -67,7 +67,7 @@ PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
     head_node = new_node;
 }
 
-PUBLIC void deal_rpc_request(int caller, void *msg) {
+PRIVATE void __deal_rpc_request__(msgpack_struct pack, void *msg) {
     rpc_func func_no = ARG_READ(msg, rpc_func);
 
     proccess_info *info = list_find_proccess(func_no);
@@ -89,7 +89,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     }
 
     rpc_args_struct args = {.data = (qword)msg, .size = args_size};
-    rpc_args_struct result = info->proccess(caller, func_no, args);
+    rpc_args_struct result = info->proccess(pack.source, func_no, args);
 
     void *return_data = malloc(sizeof(rpc_func) + result.size);
     void *_data = return_data;
@@ -97,7 +97,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     memcpy(_data, (void *)result.data, result.size);
 
     if (info->return_size == result.size || info->return_size == -1) {
-        send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
+        send_msg((msgno_id){.message_no = MSG_RPC_RESULT, .msg_id = pack.msg_id}, return_data, sizeof(rpc_func) + result.size, pack.source);
     }
     else {
         lerror ("RPC: Return size not match!Get %d, Expect %d", result.size, info->return_size);
@@ -105,6 +105,32 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
 
     free((void *)result.data);
     free(return_data);
+}
+
+PRIVATE void __deal_rpc_request(void *args) {
+    void *_args = args;
+    msgpack_struct pack = ARG_READ(_args, msgpack_struct);
+    void *msg = ARG_READ(_args, void *);
+
+    __deal_rpc_request__(pack, msg);
+
+    free(args);
+    free(msg);
+
+    exit_thread(NULL);
+}
+
+PUBLIC void deal_rpc_request(msgpack_struct pack, void *msg) {
+    void *_msg = malloc(pack.length);
+    memcpy(_msg, msg, pack.length);
+
+    void *args = malloc(sizeof(msgpack_struct) + sizeof(void *));
+    void *_args = args;
+
+    ARG_WRITE(_args, msgpack_struct, pack);
+    ARG_WRITE(_args, void *, _msg);
+
+    create_thread(__deal_rpc_request, args);
 }
 
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size) {
@@ -116,78 +142,65 @@ PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size r
     add_proccess(func, info);
 }
 
-PRIVATE rpc_func wait_func = 0;
-PRIVATE int wait_service = 0;
-PRIVATE rpc_size wait_size = 0;
-PRIVATE void *wait_result = NULL;
-PRIVATE task_info_struct wait_result_task;
-
-PRIVATE bool entered = false;
-
-PUBLIC rpc_args_struct rpc_tail(int service, void *msg) {
-    linfo ("RPC: Recieved RPC Result");
-
-    if (service != wait_service) {
-        lerror ("RPC: Service not match!");
-        return (rpc_args_struct){.data = (qword)NULL, .size = 0};
-    }
-
-    rpc_func func = ARG_READ(msg, rpc_func);
-    if (func != wait_func) {
-        lerror ("RPC: Function not match!");
-        return (rpc_args_struct){.data = (qword)NULL, .size = 0};
-    }
-
-    entered = false;
-    memcpy(wait_result, msg, wait_size);
-    rpc_args_struct args = (rpc_args_struct){.data = wait_result, .size = wait_size};
-    asmv ("movq %0, %%rax" : : "g"(args));
-    asmv ("movq %0, %%rsp" : : "g"(wait_result_task.rsp));
-    asmv ("pop %rbx");
-    asmv ("pop %rbp");
-    asmv ("pop %rdi");
-    asmv ("pop %rsi");
-    asmv ("pop %r12");
-    asmv ("pop %r13");
-    asmv ("pop %r14");
-    asmv ("pop %r15");
-    asmv ("ret");
-    return (rpc_args_struct){.data = NULL, .size = 0};
-}
-
-PUBLIC void rpc_mid(int service, rpc_func func, rpc_size return_size, void *result, void *retaddr, stack_struct *stack_addr) {
-    wait_result_task.rsp = stack_addr;
-
-    wait_func = func;
-    wait_service = service;
-    wait_size = return_size;
-    wait_result = result;
-
-    asmv ("subq $0x200, %rsp");
-    message_loop();
-}
-
-PUBLIC rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr, stack_struct *stack_addr) {
-    if (entered) {
-        linfo ("RPC: wait for rpc_call free");
-        //TODO: 加到队列中
-        return (rpc_args_struct){.data = (qword)NULL, .size = 0};
-    }
-    entered = true;
-
+PUBLIC void *prepare_params(rpc_func func, rpc_size return_size, rpc_args_struct args) {
     rpc_size size = sizeof(rpc_func) + sizeof(rpc_size) * 2 + args.size;
+
+    // 准备参数
     void *data = malloc(size);
     void *_data = data;
     ARG_WRITE(_data, rpc_func, func);
     ARG_WRITE(_data, rpc_size, args.size);
     ARG_WRITE(_data, rpc_size, return_size);
     memcpy(_data, args.data, args.size);
-    send_msg(MSG_RPC_CALL, data, size, service);
-    free (data);
 
-    linfo ("RPC: Wait for RPC Result");
-    rpc_mid(service, func, return_size, result, retaddr, stack_addr);
-    return (rpc_args_struct){.data = (qword)NULL, .size = 0};
+    return data;
+}
+
+PUBLIC rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result) {
+    void *params = prepare_params(func, return_size, args);
+
+    //设置信号量
+    word id = get_msgid();
+    id_t signal = create_signal(2, 0, false);
+    void *return_data = malloc(sizeof(rpc_func) + return_size);
+
+    set_rpc_result(id, signal, return_data);
+    
+    //发送
+    send_msg(
+        (msgno_id){.message_no = MSG_RPC_CALL, .msg_id = id},
+        params,
+        sizeof(rpc_func) + sizeof(rpc_size) * 2 + args.size,
+        service
+    );
+
+    //等待结果
+    linfo ("RPC: Wait for RPC Result ; msgid = %d, signal=%d", id, signal);
+    down_signal(signal);
+
+    //TODO: 添加delete_signal功能并在此处增加
+    // delete_signal(signal);
+    
+    //获得结果
+    linfo ("RPC: Recieved RPC Result");
+
+    void *_return_data = return_data;
+
+    //判断是否为目标功能
+    rpc_func got_func = ARG_READ(_return_data, rpc_func);
+    if (func != got_func) {
+        lerror ("RPC: Function not match!Wait %d, Got %d", func, got_func);
+        free(return_data);
+        free(params);
+        return (rpc_args_struct){.data = (qword)NULL, .size = 0};
+    }
+
+    //拷贝
+    memcpy(result, _return_data, return_size);
+
+    free(return_data);
+    free(params);
+    return (rpc_args_struct){.data = result, .size = return_size};
 }
 
 PUBLIC void *rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size) {

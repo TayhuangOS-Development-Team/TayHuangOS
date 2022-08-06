@@ -146,7 +146,7 @@ PUBLIC void *get_physical_address(void *__pgd, void *vaddr) {
     if (pml4[pml4e_idx].p == false) { 
         lerror ("Paging", "Address %p doesn't exist!", vaddr);
         lerror ("Paging", "Error In PML4 %p, Index %#03X", pml4, pml4e_idx);
-        lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
+        lerror ("Paging", "Current Task(PID = %d)", current_thread->task->pid);
         return NULL;
     }
 
@@ -155,7 +155,7 @@ PUBLIC void *get_physical_address(void *__pgd, void *vaddr) {
     if (pdpt[pdpte_idx].p == false) {
         lerror ("Paging", "Address %p doesn't exist!", vaddr);
         lerror ("Paging", "Error In PML4 %p PDPT %p, Index %#03X", pml4, pdpt, pdpte_idx);
-        lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
+        lerror ("Paging", "Current Task(PID = %d)", current_thread->task->pid);
         return NULL;
     }
 
@@ -164,7 +164,7 @@ PUBLIC void *get_physical_address(void *__pgd, void *vaddr) {
     if (pd[pde_idx].p == false) {
         lerror ("Paging", "Address %p doesn't exist!", vaddr);
         lerror ("Paging", "Error In PML4 %p PDPT %p PD %p, Index %#03X", pml4, pdpt, pd, pde_idx);
-        lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
+        lerror ("Paging", "Current Task(PID = %d)", current_thread->task->pid);
         return NULL;
     }
 
@@ -173,7 +173,7 @@ PUBLIC void *get_physical_address(void *__pgd, void *vaddr) {
     if (pt[pte_idx].p == false) {
         lerror ("Paging", "Address %p doesn't exist!", vaddr);
         lerror ("Paging", "Error In PML4 %p PDPT %p PD %p PT %p, Index %#03X", pml4, pdpt, pd, pt, pte_idx);
-        lerror ("Paging", "Current Task(PID = %d)", current_task->pid);
+        lerror ("Paging", "Current Task(PID = %d)", current_thread->task->pid);
         return NULL;
     }
 

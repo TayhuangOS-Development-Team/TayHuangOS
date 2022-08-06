@@ -50,37 +50,6 @@ struct intterup_args {
         ss;
 } __attribute__((packed));
 
-//异常参数
-struct exception_args {
-    b64 r15,
-        r14,
-        r13,
-        r12,
-        r11,
-        r10,
-        r9,
-        r8,
-        rdi,
-        rsi,
-        rdx,
-        rcx,
-        rbx,
-        rax,
-        gs,
-        fs,
-        es,
-        ds,
-        pgd,
-        rbp;
-    b64 ist;
-    b64 code; 
-    b64 rip,
-        cs,
-        rflags,
-        rsp,
-        ss;
-} __attribute__((packed));
-
 //初始化PIC
 PUBLIC void init_pic(void);
 //禁用/启用 IRQ

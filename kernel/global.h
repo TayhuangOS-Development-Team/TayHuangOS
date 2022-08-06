@@ -24,7 +24,17 @@
 EXTERN PUBLIC void *kernel_pml4;
 EXTERN PUBLIC struct boot_args args;
 EXTERN PUBLIC int cur_pid;
+EXTERN PUBLIC int cur_tid;
 EXTERN PUBLIC bool entered_handler;
+EXTERN PUBLIC word msgid_counter;
+
+static inline word get_msgid(void) {
+    if (msgid_counter == 65535) {
+        msgid_counter = 0;
+        return 65535;
+    }
+    return msgid_counter ++;
+}
 
 //GDT表项编号
 #define tr_idx (1)
@@ -47,18 +57,28 @@ EXTERN PUBLIC bool entered_handler;
 #define RFLAGS_KERNEL (1 << 9)
 
 //堆栈分配
-#define RING0_STACKTOP      (0x14C0000)
-#define RING0_STACKBOTTOM   (0x1480000)
-#define RING0_STACKTOP2     (0x1480000)
-#define RING0_STACKBOTTOM2  (0x1440000)
-#define RING0_STACKTOP3     (0x1440000)
-#define RING0_STACKBOTTOM3  (0x1400000)
-#define IST0_STACKTOP       (0x1400000)
-#define IST0_STACKBOTTOM    (0x13C0000)
+#define RING0_STACKTOP      (0x1400000)
+#define RING0_T1STACKBOTTOM (0x13C0000)
+#define RING0_T2STACKBOTTOM (0x1380000)
+#define RING0_STACKBOTTOM   (0x1300000)
+
+#define RING0_STACKTOP2     (0x1300000)
+#define RING0_STACKBOTTOM2  (0x1200000)
+
+#define RING0_STACKTOP3     (0x1200000)
+#define RING0_STACKBOTTOM3  (0x1100000)
+
+#define IST0_STACKTOP       (0x1100000)
+#define IST0_STACKBOTTOM    (0x1000000)
+
+//内核模块堆栈顶(1GB)
+#define KMOD_STACK_TOP (0x40000000)
 
 //默认共享内存地址(4GB~8GB)
 #define DEFAULT_SHM_START   (0x100000000)
 #define DEFAULT_SHM_END     (0x200000000)
+
+#define KERNEL_TASK_STACK_SIZE (0x8000)
 
 //映射内核
 PUBLIC void mapping_kernel(void *pgd);

@@ -24,7 +24,7 @@
 #include <intterup/init_int.h>
 
 //通用异常处理器
-PUBLIC void general_exception_handler(int vector, struct exception_args *regs);
+PUBLIC void general_exception_handler(int vector, struct intterup_args *regs);
 
 //各类异常
 PUBLIC void divide_by_zero_error(void); //除以0

@@ -24,6 +24,7 @@
 #include <logging.h>
 
 #include <string.h>
+#include <global.h>
 
 typedef struct  {
     rpc_func func_no;
@@ -61,7 +62,7 @@ PRIVATE void add_proccess(rpc_func func_no, proccess_info *info) {
     head_node = new_node;
 }
 
-PUBLIC void deal_rpc_request(int caller, void *msg) {
+PUBLIC void deal_rpc_request(msgpack_struct pack, void *msg) {
     rpc_func func_no = ARG_READ(msg, rpc_func);
 
     //判断是否是正确的RPC请求
@@ -84,7 +85,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
     }
 
     rpc_args_struct args = {.data = (qword)msg, .size = args_size};
-    rpc_args_struct result = info->proccess(caller, func_no, args);
+    rpc_args_struct result = info->proccess(pack.source, func_no, args);
 
     //设置返回数据
     void *return_data = kmalloc(sizeof(rpc_func) + result.size);
@@ -94,7 +95,7 @@ PUBLIC void deal_rpc_request(int caller, void *msg) {
 
     //判断返回值是否正确
     if (info->return_size == result.size || info->return_size == -1) {
-        send_msg(MSG_RPC_RESULT, return_data, sizeof(rpc_func) + result.size, caller);
+        send_msg((msgno_id){.message_no = MSG_RPC_RESULT, .msg_id = pack.msg_id}, return_data, sizeof(rpc_func) + result.size, pack.source);
     }
     else {
         lerror ("Sys task", "RPC: Return size not match!Get %d, Expect %d", result.size, info->return_size);
@@ -132,7 +133,7 @@ PUBLIC rpc_args_struct rpc_direct_call(int service, rpc_func func, rpc_args_stru
     ARG_WRITE(_data, rpc_size, args.size);
     ARG_WRITE(_data, rpc_size, return_size);
     memcpy(_data, args.data, args.size);
-    send_msg(MSG_RPC_CALL, data, size, service); //发送
+    send_msg((msgno_id){.message_no = MSG_RPC_CALL, .msg_id = get_msgid()}, data, size, service); //发送
 
     kfree (data);
     check_ipc(); //等待IPC

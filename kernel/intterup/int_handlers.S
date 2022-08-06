@@ -91,8 +91,14 @@
     iretq
 .endm
 
+.extern errcode
+.type errcode, @object
+
 .macro nonerrcode_exception vector
-    pushq $0xFFFFFFFFFFFFFFFF
+    pushq %rax
+    movq $0xFFFFFFFFFFFFFFFF, %rax
+    movq %rax, (errcode)
+    popq %rax
     int_x64_pushad
     movq $\vector, %rdi
     movq %rsp, %rsi
@@ -100,6 +106,11 @@
 .endm
 
 .macro errcode_exception vector
+    pushq %rax
+    movq 8(%rsp), %rax
+    movq %rax, (errcode)
+    popq %rax
+    addq $8, %rsp
     int_x64_pushad
     movq $\vector, %rdi
     movq %rsp, %rsi
@@ -109,7 +120,6 @@
 _exception:
     call general_exception_handler
     int_x64_popad
-    addq $8, %rsp
     iretq
 
 
