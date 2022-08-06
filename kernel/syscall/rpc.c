@@ -26,6 +26,8 @@
 #include <string.h>
 #include <global.h>
 
+#include <assert.h>
+
 typedef struct  {
     rpc_func func_no;
     rpc_proccess_wrapper proccess;
@@ -95,7 +97,8 @@ PUBLIC void deal_rpc_request(msgpack_struct pack, void *msg) {
 
     //判断返回值是否正确
     if (info->return_size == result.size || info->return_size == -1) {
-        send_msg((msgno_id){.message_no = MSG_RPC_RESULT, .msg_id = pack.msg_id}, return_data, sizeof(rpc_func) + result.size, pack.source);
+        bool send_ret = send_msg((msgno_id){.message_no = MSG_RPC_RESULT, .msg_id = pack.msg_id}, return_data, sizeof(rpc_func) + result.size, pack.source);
+        assert(send_ret);
     }
     else {
         lerror ("Sys task", "RPC: Return size not match!Get %d, Expect %d", result.size, info->return_size);

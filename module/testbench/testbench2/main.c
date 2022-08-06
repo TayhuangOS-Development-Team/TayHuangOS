@@ -37,31 +37,6 @@ PUBLIC void normal_ipc_handler(int caller, void *msg) {
 }
 
 PUBLIC void main(void *args) {
-    write_string(0, 0, 0x0A, "I'm testbench2");
-
-    void *framebuffer = create_framebuffer(4, 4, 4, 4);
-    linfo ("%p", framebuffer);
-    *(byte *)(framebuffer + 0) = 'A';
-    *(byte *)(framebuffer + 1) = 0x0A;
-    *(byte *)(framebuffer + 2) = 'B';
-    *(byte *)(framebuffer + 3) = 0x0A;
-    *(byte *)(framebuffer + 4) = 'C';
-    *(byte *)(framebuffer + 5) = 0x0A;
-    swap_framebuffer(false);
-
-    void *fifo = create_fifo(8000);
-    share_fifo(fifo, 2);
-    
-    linfo ("%p", fifo);
-
-    void *new_fifo = share_fifo(fifo, 2);
-    linfo ("%p", new_fifo);
-
-    send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, (byte *)&new_fifo, sizeof(void *), 2);
-
-    qword data = 114514;
-    fifo_write_bytes(fifo, (byte *)&data, sizeof(qword));
-
     exit_thread(NULL);
 }
 

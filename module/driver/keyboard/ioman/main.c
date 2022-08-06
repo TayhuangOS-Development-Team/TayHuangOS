@@ -37,6 +37,8 @@
 PRIVATE void *fifo = NULL;
 
 PRIVATE void irq_handler(int irq) {
+    linfo ("fuck!");
+
     if (irq == 1) {
         byte code = inb(KEYBOARD_8042_DATA0); //读取操作码
         short key;
@@ -145,6 +147,7 @@ PUBLIC void kmod_main(void) {
     rpc_register(SHARE_KEYBUFFER_FN, wrapper_share_keybuffer, sizeof(SHARE_KEYBUFFER_RETURN_TYPE), SHARE_KEYBUFFER_ARGS_SIZE);
 
     //创建缓冲区
+    //FIXME: 新的RPC机制使得必须要先进入message loop才可以使用rpc函数
     fifo = create_fifo(KEY_BUFFER_SIZE);
 
     //设置状态

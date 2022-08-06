@@ -20,6 +20,8 @@
 
 #include <syscall/ipc.h>
 
+#include <fifo.h>
+
 #include <export/__ioman.h>
 
 PRIVATE void *fifo = NULL;
@@ -30,8 +32,14 @@ PUBLIC void kmod_main(void) {
     linfo ("Hi!");
 
     fifo = share_keybuffer(false);
-
     linfo ("%p", fifo);
 
-    check_ipc();
+    byte key;
+
+    while (true) {
+        fifo_read_bytes(fifo, &key, 1);
+        linfo ("%c(%d, %#2X)", key, key, key);
+    }
+
+    message_loop();
 }
