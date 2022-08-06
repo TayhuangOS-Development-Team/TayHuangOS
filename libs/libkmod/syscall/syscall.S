@@ -162,21 +162,3 @@ exit_thread: /*PUBLIC void exit_thread(void *retval)*/
 
     int $0x40
     ret
-
-    .extern __rpc_call__ /*rpc_args_struct __rpc_call__(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result, void *retaddr, void *stackaddr)*/
-    .global __rpc_call
-    .type __rpc_call, @function
-__rpc_call: /*rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result)*/
-    movq (%rsp), %r9 /*retaddr*/
-    pushq %r15
-    pushq %r14
-    pushq %r13
-    pushq %r12
-    pushq %rsi
-    pushq %rdi
-    pushq %rbp
-    pushq %rbx
-    pushq %rsp
-    pushq $0
-    jmp __rpc_call__
-    ret

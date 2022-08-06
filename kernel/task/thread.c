@@ -34,7 +34,7 @@ PUBLIC thread_info_struct *create_thread_info(
 
     memset (thread_info, 0, sizeof(thread_info_struct));
 
-    //设置主线程信息
+    //设置线程信息
     thread_info->registers.basic.gs = thread_info->registers.basic.fs = thread_info->registers.basic.es = thread_info->registers.basic.ds = ds;
 
     thread_info->registers.stack.rbp = (qword)stack_bottom;
@@ -107,8 +107,4 @@ PUBLIC thread_info_struct *get_thread_by_tid(int tid, task_struct *task) {
         }
     }
     return NULL;
-}
-
-PUBLIC void __termintate_thread(thread_info_struct *thread) {
-    thread->state = TERMINATED;
 }

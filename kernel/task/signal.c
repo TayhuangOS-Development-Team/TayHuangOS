@@ -32,43 +32,7 @@ typedef struct __wtnode_t {
     struct __wtnode_t *next;
 } wtnode_t;
 
-PRIVATE wtnode_t *wthead, *wttail;
-
-PRIVATE void enqueue_wt(thread_info_struct *thread) {
-    wtnode_t *node = (wtnode_t*)kmalloc(sizeof(wtnode_t));
-
-    node->thread = thread;
-    node->next = NULL;
-
-    //队列为空
-    if (wttail == NULL) {
-        wthead = wttail = node;
-    }
-    else { //加入队尾
-        wttail->next = node;
-        wttail = node;
-    }
-}
-
-PRIVATE thread_info_struct *dequeue_wt(void) {
-    if (wthead == NULL) {
-        return NULL;
-    }
-
-    wtnode_t *head = wthead;
-    wthead = head->next;
-
-    if (wthead == NULL) { //队列为空
-        wttail = NULL;
-    }
-
-    thread_info_struct *thread = head->thread;
-    kfree(head);
-
-    return thread;
-}
-
-//----------------------------
+//-------------------------
 
 typedef struct {
     id_t id;
@@ -78,7 +42,7 @@ typedef struct {
 
     bool soft; //当soft = 1时，不在up和down操作中对进程进行休眠
 
-    
+    wtnode_t *wthead, *wttail;
 } signal_t;
 
 typedef struct __signal_node {
@@ -306,6 +270,42 @@ PRIVATE signal_t *get_signal(id_t id) {
     return NULL;
 }
 
+//-------------------------
+
+PRIVATE void enqueue_wt(signal_t *signal, thread_info_struct *thread) {
+    wtnode_t *node = (wtnode_t*)kmalloc(sizeof(wtnode_t));
+
+    node->thread = thread;
+    node->next = NULL;
+
+    //队列为空
+    if (signal->wttail == NULL) {
+        signal->wthead = signal->wttail = node;
+    }
+    else { //加入队尾
+        signal->wttail->next = node;
+        signal->wttail = node;
+    }
+}
+
+PRIVATE thread_info_struct *dequeue_wt(signal_t *signal) {
+    if (signal->wthead == NULL) {
+        return NULL;
+    }
+
+    wtnode_t *head = signal->wthead;
+    signal->wthead = head->next;
+
+    if (signal->wthead == NULL) { //队列为空
+        signal->wttail = NULL;
+    }
+
+    thread_info_struct *thread = head->thread;
+    kfree(head);
+
+    return thread;
+}
+
 //---------------------------------
 
 PRIVATE id_t cur_id = 0;
@@ -320,6 +320,8 @@ PUBLIC id_t __create_signal(int max_signals, int value, bool soft) {
     node->signal.signals = value;
     node->signal.max_signals = max_signals;
     node->signal.soft = soft;
+    node->signal.wthead = NULL;
+    node->signal.wttail = NULL;
 
     insert_signal(node);
 
@@ -335,7 +337,7 @@ PUBLIC void __up_signal(id_t id) {
 
     if (! signal->soft) {
         if (signal->signals <= 0) {
-            thread_info_struct *thread = dequeue_wt();
+            thread_info_struct *thread = dequeue_wt(signal);
             thread->state = READY;
 
             enqueue_thread(thread);
@@ -350,7 +352,7 @@ PUBLIC void __down_signal(id_t id) {
     
     if (! signal->soft) {
         if (signal->signals < 0){ //等待
-            enqueue_wt(current_thread);
+            enqueue_wt(signal, current_thread);
             current_thread->state = WAITING;
         }
     }

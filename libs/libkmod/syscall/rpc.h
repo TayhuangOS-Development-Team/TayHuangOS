@@ -36,7 +36,6 @@ typedef rpc_args_struct(* rpc_proccess_wrapper)(int, rpc_func, rpc_args_struct);
 
 #define MAKE_ARGS(args, sz) ((rpc_args_struct){.data = (args), .size = (sz)})
 
-PUBLIC rpc_args_struct rpc_tail(msgpack_struct pack, void *msg);
 PUBLIC void deal_rpc_request(msgpack_struct pack, void *msg);
 PUBLIC void rpc_register(rpc_func func, rpc_proccess_wrapper process, rpc_size return_size, rpc_size args_size); //当args_size = -1时, 不对参数大小进行检验
 PUBLIC rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size return_size, void *result);

@@ -102,8 +102,5 @@ PUBLIC void remove_thread(thread_info_struct *thread);
 //根据tid获得线程
 PUBLIC thread_info_struct *get_thread_by_tid(int tid, task_struct *task);
 
-//结束线程
-PUBLIC void __termintate_thread__(thread_info_struct *thread);
-
 #define THREAD_STACK_SIZE (0x800000)      //线程栈大小
 #define THREAD_INIT_STACK_SIZE (0x10000) //初始化栈大小

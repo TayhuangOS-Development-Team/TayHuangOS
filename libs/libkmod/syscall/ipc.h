@@ -45,3 +45,5 @@ static inline word get_msgid(void) {
     }
     return msgid_counter ++;
 }
+
+PUBLIC void set_rpc_result(int msgid, id_t signal, void *data);

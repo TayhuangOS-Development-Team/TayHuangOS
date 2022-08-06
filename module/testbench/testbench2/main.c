@@ -25,6 +25,7 @@
 
 #include <syscall/ipc.h>
 #include <syscall/rpc.h>
+#include <syscall/syscall.h>
 
 #include <memory/sharemem.h>
 #include <memory/malloc.h>
@@ -35,14 +36,7 @@ PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
 }
 
-PUBLIC void kmod_main(void) {
-    set_logging_name("Testbench2");
-
-    linfo ("Hi!I'm testbench2!");
-    
-    register_normal_ipc_handler(normal_ipc_handler);
-    set_allow(ANY_TASK);
-
+PUBLIC void main(void *args) {
     write_string(0, 0, 0x0A, "I'm testbench2");
 
     void *framebuffer = create_framebuffer(4, 4, 4, 4);
@@ -67,7 +61,20 @@ PUBLIC void kmod_main(void) {
 
     qword data = 114514;
     fifo_write_bytes(fifo, (byte *)&data, sizeof(qword));
+
+    exit_thread(NULL);
+}
+
+PUBLIC void kmod_main(void) {
+    set_logging_name("Testbench2");
+
+    linfo ("Hi!I'm testbench2!");
     
+    register_normal_ipc_handler(normal_ipc_handler);
+    set_allow(ANY_TASK);
+
+    create_thread(main, NULL);
+
     message_loop();
 
     while (true);

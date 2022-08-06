@@ -94,7 +94,6 @@ PRIVATE void down_thread(struct intterup_args *regs) {
     else if (current_thread->state == TERMINATED || current_thread->state == EXCEPTION) { //结束
         remove_thread(current_thread);
     }
-
 }
 
 //上升进程
