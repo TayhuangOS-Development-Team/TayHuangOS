@@ -95,16 +95,16 @@ PUBLIC void sys_task(void) {
 
     //初始化完成
     bool status = true;
-    bool send_ret = send_msg(MSG_NORMAL_IPC, &status, sizeof(bool), INIT_SERVICE);
+    bool send_ret = send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &status, sizeof(bool), INIT_SERVICE);
     assert(send_ret);
 
     while (true) {
         //接收消息
         check_ipc();
-        recvmsg_result_struct result = recv_msg(msg);
+        msgpack_struct result = recv_msg(msg);
         //是RPC调用
         if (result.message_no == MSG_RPC_CALL) {
-            deal_rpc_request(result.source, msg);
+            deal_rpc_request(result, msg);
         }
     }
 }

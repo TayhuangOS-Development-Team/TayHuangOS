@@ -47,30 +47,30 @@ PUBLIC void add_task(task_struct *task);
 //移除进程
 PUBLIC void remove_task(task_struct *task);
 
-
 //获取空闲进程表
-PUBLIC task_struct *get_level0_list(void);
-PUBLIC task_struct *get_level1_list(void);
+PUBLIC thread_info_struct *get_level0_list(void);
+PUBLIC thread_info_struct *get_level1_list(void);
 
 //获取空闲进程
-PUBLIC task_struct *dequeue_level0_task(void);
-PUBLIC task_struct *dequeue_level1_task(void);
+PUBLIC thread_info_struct *dequeue_level0_thread(void);
+PUBLIC thread_info_struct *dequeue_level1_thread(void);
 
-//level0是否有task
-PUBLIC bool has_level0_task(void);
-//level1是否有task
-PUBLIC bool has_level1_task(void);
+//level0是否有thread
+PUBLIC bool has_level0_thread(void);
+//level1是否有thread
+PUBLIC bool has_level1_thread(void);
 
 //加入空闲进程
-PUBLIC void enqueue_level0_task(task_struct *task);
-PUBLIC void enqueue_level1_task(task_struct *task);
+PUBLIC void enqueue_level0_thread(thread_info_struct *thread);
+PUBLIC void enqueue_level1_thread(thread_info_struct *thread);
+PUBLIC void enqueue_thread(thread_info_struct *thread);
 
 //创建进程(low level)
 PUBLIC task_struct *__create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
      qword shm_start, qword shm_end,
-    int pid, int priority, int level, task_struct *parent
+    int pid, int priority, int level, task_struct *parent, bool kernel_task
 );
 
 //创建进程
@@ -78,5 +78,5 @@ PUBLIC task_struct *create_task(
     word ds, void *stack_top, void *stack_bottom, void *entry, word cs, qword rflags,
     void *pgd, qword code_start, qword code_end, qword data_start, qword data_end, qword heap_start, qword heap_end, qword rodata_start, qword rodata_end,
      qword shm_start, qword shm_end,
-    int pid, int priority, int level, task_struct *parent
+    int pid, int priority, int level, task_struct *parent, bool kernel_task
 );
