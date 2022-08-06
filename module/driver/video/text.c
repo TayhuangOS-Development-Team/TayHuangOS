@@ -77,6 +77,7 @@ PRIVATE rpc_args_struct wrapper_write_string(int caller, rpc_func func_no, rpc_a
     for (int i = 0 ; i < num ; i ++) {
         byte ch = ARG_READ(args.data, byte);
         ch &= 0xFF;
+        linfo ("%c", ch);
         __write_char(column + i, line, color, ch);
     }
 

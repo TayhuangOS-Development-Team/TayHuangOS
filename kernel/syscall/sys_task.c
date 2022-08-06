@@ -102,6 +102,7 @@ PUBLIC void sys_task(void) {
         //接收消息
         check_ipc();
         msgpack_struct result = recv_msg(msg);
+
         //是RPC调用
         if (result.message_no == MSG_RPC_CALL) {
             deal_rpc_request(result, msg);

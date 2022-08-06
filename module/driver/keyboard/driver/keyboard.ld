@@ -1,24 +1,29 @@
 /*
  * SPDX-License-Identifier: LGPL-2.1-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: theflysong
- * 
- * keymap.h
- * 
- * 扫描码与按键的对应表
- * 
+ *
+ * keyboard.ld
+ *
+ * keyboard LD脚本
+ *
  */
 
 
 
-#pragma once
+ENTRY(_start)
+OUTPUT_FORMAT("elf64-x86-64")
+OUTPUT_ARCH("i386:x86-64")
 
-#include <tayhuang/defs.h>
-#include <key_types.h>
-
-EXTERN short KEYMAP[128][3];
+SECTIONS
+{
+    . = 0x4000000;
+    .text : { *(.text) }
+    .data : { *(.data) }
+    .bss : { *(.bss) }
+}

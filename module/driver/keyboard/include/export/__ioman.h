@@ -8,9 +8,9 @@
  * 
  * 作者: theflysong
  * 
- * keymap.h
+ * __ioman.h
  * 
- * 扫描码与按键的对应表
+ * IO Manager Functions
  * 
  */
 
@@ -19,6 +19,9 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-#include <key_types.h>
 
-EXTERN short KEYMAP[128][3];
+#define SHARE_KEYBUFFER_FN (0)
+#define SHARE_KEYBUFFER_ARGS_SIZE (sizeof(bool))
+#define SHARE_KEYBUFFER_RETURN_TYPE void *
+
+PUBLIC void *share_keybuffer(bool flag);

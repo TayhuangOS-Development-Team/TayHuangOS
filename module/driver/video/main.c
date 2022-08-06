@@ -28,18 +28,18 @@
 #include <syscall/rpc.h>
 
 #include <global.h>
+#include <string.h>
 
 PUBLIC video_info_struct video_info;
 
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
+    
+    memcpy(&video_info, msg, sizeof(video_info_struct));
 }
 
 PUBLIC void kmod_init(void) {
     set_logging_name("Video");
-    
-    check_ipc();
-    recv_msg(&video_info);
     
     register_normal_ipc_handler(normal_ipc_handler);
     text_register_rpc_functions();

@@ -31,6 +31,7 @@
 #include <memory/malloc.h>
 
 #include <export/__video_driver_fn.h>
+#include <string.h>
 
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     set_allow(ANY_TASK);
@@ -50,6 +51,7 @@ PUBLIC void kmod_main(void) {
 
     void *framebuffer = create_framebuffer(4, 4, 4, 4);
     linfo ("%p", framebuffer);
+    memset(framebuffer, 0, 4 * 4 * 2);
     *(byte *)(framebuffer + 0) = 'A';
     *(byte *)(framebuffer + 1) = 0x0A;
     *(byte *)(framebuffer + 2) = 'B';

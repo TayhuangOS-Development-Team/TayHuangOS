@@ -16,9 +16,9 @@
 
 
 
-OBJECTSDIR := $(OBJECTSDIR)/keyboard/ioman
+OBJECTSDIR := $(OBJECTSDIR)/keyboard/driver
 
-KEYBOARD_OUTPUT := $(BINDIR)/keyboard.man
+KEYBOARD_OUTPUT := $(BINDIR)/keyboard.mod
 KEYBOARD_SYMBOL_OUTPUT := $(BINDIR)/keyboard.sym
 
 CFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcmodel=large \
@@ -31,7 +31,9 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
-C_SRC := main keymap key_parser
+IMPORT_C_SRC := __ioman
+C_SRC := main \
+	$(foreach src, $(IMPORT_C_SRC), import/$(src))
 
 CPP_SRC :=
 
@@ -39,7 +41,7 @@ ASMFLAGS :=
 ASM_SRC :=
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(DRIVERDIR)/keyboard/ioman" -I"$(DRIVERDIR)/keyboard/include" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libfifo" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+C_INCLUDE := -I"$(DRIVERDIR)/keyboard/driver" -I"$(DRIVERDIR)/keyboard/include" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libfifo" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 ifeq ($(MODE), debug)
 	C_DEFS += -D_DEBUG
@@ -48,7 +50,7 @@ else
 endif
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(DRIVERDIR)/keyboard/ioman" -I"$(DRIVERDIR)/keyboard/include" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libfifo" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+CPP_INCLUDE := -I"$(DRIVERDIR)/keyboard/driver" -I"$(DRIVERDIR)/keyboard/include" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/libs/libfifo" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
 LIBRARIES := -lkmod -lfifo

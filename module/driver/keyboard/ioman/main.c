@@ -10,7 +10,7 @@
  * 
  * main.c
  * 
- * keyboard 主函数
+ * 主函数
  * 
  */
 
@@ -31,6 +31,7 @@
 #include <fifo.h>
 #include <keymap.h>
 #include <key_parser.h>
+#include <export/__ioman.h>
 
 //缓冲区
 PRIVATE void *fifo = NULL;
@@ -91,9 +92,7 @@ PRIVATE void irq_handler(int irq) {
 
 #define KEY_BUFFER_SIZE (8192)
 
-#define SHARE_KEYBUFFER_FN (0)
-
-PUBLIC void *share_keybuffer(int caller, bool flag) {
+PRIVATE void *__share_keybuffer(int caller, bool flag) {
     if (caller != KEYBOARD_DRIVER_SERVICE) { //只与键盘驱动分享Key Buffer
         return NULL;
     }
@@ -105,9 +104,9 @@ PUBLIC rpc_args_struct wrapper_share_keybuffer(int service, rpc_func func, rpc_a
     bool flag = ARG_READ(args.data, bool);
 
     void **buffer = malloc(sizeof(void *));
-    *buffer = share_keybuffer(service, flag);
+    *buffer = __share_keybuffer(service, flag);
 
-    return (rpc_args_struct){.data = buffer, .size = sizeof(void *)};
+    return (rpc_args_struct){.data = buffer, .size = sizeof(SHARE_KEYBUFFER_RETURN_TYPE)};
 }
 
 PRIVATE void init_keyboard(void) {
@@ -135,7 +134,7 @@ PRIVATE void init_keyboard(void) {
     outb(KEYBOARD_8042_DATA0, status);
 }
 
-PUBLIC void kmod_main(void) {
+PUBLIC void kmod_init(void) {
     set_logging_name("Keyboard IO Manager");
     
     //注册IRQ=1
@@ -143,9 +142,12 @@ PUBLIC void kmod_main(void) {
     register_irq_handler(irq_handler);
 
     //设置RPC函数
-    rpc_register(SHARE_KEYBUFFER_FN, wrapper_share_keybuffer, sizeof(void *), sizeof(bool));
+    rpc_register(SHARE_KEYBUFFER_FN, wrapper_share_keybuffer, sizeof(SHARE_KEYBUFFER_RETURN_TYPE), SHARE_KEYBUFFER_ARGS_SIZE);
+}
 
+PUBLIC void kmod_main(void) {
     //创建缓冲区
+    //FIXME: 新的RPC机制使得必须要先进入message loop才可以使用rpc函数
     fifo = create_fifo(KEY_BUFFER_SIZE);
 
     //设置状态
@@ -153,8 +155,4 @@ PUBLIC void kmod_main(void) {
 
     //初始化硬盘
     init_keyboard();
-
-    message_loop();
-
-    while (true);
 }
