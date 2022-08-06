@@ -31,23 +31,31 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os 
 
+_LIBKMOD_MEMORY_SRC := malloc
+_LIBKMOD_LIBS_SRC := ctype string tostring
+_LIBKMOD_DEBUG_SRC := debug logging
+_LIBKMOD_C_SRC := init printf \
+	$(foreach src, $(_LIBKMOD_MEMORY_SRC), memory/$(src)) \
+	$(foreach src, $(_LIBKMOD_LIBS_SRC), libs/$(src)) \
+	$(foreach src, $(_LIBKMOD_DEBUG_SRC), debug/$(src))
 FS_C_SRC := common fat32
 C_SRC := main disk \
-	$(foreach src, $(FS_C_SRC), fs/$(src))
+	$(foreach src, $(FS_C_SRC), fs/$(src)) \
+	$(foreach src, $(_LIBKMOD_C_SRC), _libkmod/$(src))
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC :=
+ASM_SRC := _libkmod/entry _libkmod/syscall/syscall
 
 C_DEFS := $(ARCHDEF_C)
-C_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+C_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(MODULEDIR)/setup/_libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 CPP_DEFS := $(ARCHDEF_C)
-CPP_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(ROOTDIR)/libs/libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
+CPP_INCLUDE := -I"$(MODULEDIR)/setup" -I"$(MODULEDIR)/setup/_libkmod" -I"$(ROOTDIR)/include" -I"$(ROOTDIR)/include/std"
 
 LD_FLAGS := -static -L"$(BUILDDIR)/bin/" -z max-page-size=0x1000
-LIBRARIES := -lkmod
+LIBRARIES :=
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \

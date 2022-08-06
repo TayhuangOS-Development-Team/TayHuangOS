@@ -8,9 +8,9 @@
  * 
  * 作者: theflysong
  * 
- * task.h
+ * malloc.h
  * 
- * 任务
+ * 分配内存
  * 
  */
 
@@ -20,18 +20,6 @@
 
 #include <tayhuang/defs.h>
 
-typedef struct {
-    reg64_t rbx;
-    reg64_t rbp;
-    reg64_t rdi;
-    reg64_t rsi;
-    reg64_t r12;
-    reg64_t r13;
-    reg64_t r14;
-    reg64_t r15;
-    reg64_t rip;
-} stack_struct;
-
-typedef struct {
-    stack_struct *rsp;
-} task_info_struct;
+PUBLIC bool init_heap(int pid, void *heap_start, void *heap_end);
+PUBLIC void *malloc(int size);
+PUBLIC void free(void *addr);
