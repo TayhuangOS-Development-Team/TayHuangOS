@@ -8,21 +8,21 @@
  * 
  * 作者: theflysong
  * 
- * __ioman.h
+ * main.c
  * 
- * IO Manager Functions
+ * tty主函数
  * 
  */
 
 
 
-#pragma once
-
 #include <tayhuang/defs.h>
-#include <export/keyboard/key_types.h>
+#include <debug/logging.h>
 
-#define SHARE_KEYBUFFER_FN (0)
-#define SHARE_KEYBUFFER_ARGS_SIZE (sizeof(bool))
-#define SHARE_KEYBUFFER_RETURN_TYPE void *
+PUBLIC void kmod_init(void) {
+    set_logging_name("TTY");
+    linfo ("Hi!I'm TTY!");
+}
 
-PUBLIC void *share_keybuffer(bool flag);
+PUBLIC void kmod_main(void) {
+}

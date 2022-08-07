@@ -119,22 +119,6 @@ static inline void init_sse(void) { //SSE
 //0 ~ 32MB系统保留
 #define RESERVED_LIMIT (0x2000000)
 
-void print_mod_info(program_info *mod_info) {
-    linfo ("KMod Loader", "--------------------------------------------");
-    linfo ("KMod Loader", "Start:        %p", mod_info->start);
-    linfo ("KMod Loader", "End:          %p", mod_info->end);
-    linfo ("KMod Loader", "Entry:        %p", mod_info->entry);
-    linfo ("KMod Loader", "PGD:          %p", mod_info->pgd);
-    linfo ("KMod Loader", "Stack Bottom: %p", mod_info->stack_bottom);
-    linfo ("KMod Loader", "Stack Top:    %p", mod_info->stack_top);
-    linfo ("KMod Loader", "Heap Bottom:  %p", mod_info->heap_bottom);
-    linfo ("KMod Loader", "Heap Top:     %p", mod_info->heap_top);
-    linfo ("KMod Loader", "--------------------------------------------");
-}
-
-PRIVATE VOLATILE bool i1_ready = false;
-PRIVATE VOLATILE bool i2_ready = false;
-
 program_info load_mod_by_setup(const char *name) {
     #define MOD_SIZE (64 * 1024)
     void *mod_addr = kmalloc(MOD_SIZE);
@@ -162,7 +146,26 @@ program_info load_mod_by_setup(const char *name) {
 
     kfree(mod_addr);
 
-    print_mod_info(&mod_info);
+    return mod_info;
+}
+
+PUBLIC program_info load_and_init_mod(const char *modname, const char *name, int pid, int level) {
+    program_info mod_info = load_mod_by_setup(modname);
+    initialize_kmod_task(
+        create_task(DS_SERVICE, mod_info.stack_top, mod_info.stack_bottom, mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
+                    mod_info.pgd, mod_info.start, mod_info.end, mod_info.start, mod_info.end,
+                     mod_info.heap_bottom, mod_info.heap_top,mod_info.start, mod_info.end,
+                     DEFAULT_SHM_START, DEFAULT_SHM_END,
+                    pid, 1, level, current_thread->task, false));
+
+    bool status;
+    set_allow(pid);
+    check_ipc();
+    recv_msg(&status);
+    if (! status) {
+        lerror ("Init", "Failed to initialize %s!", name);
+        while (1);
+    }
 
     return mod_info;
 }
@@ -194,7 +197,6 @@ PUBLIC void init(void) {
 
     //---------------------SETUP-------------------------
     program_info setup_mod_info = load_kmod_from_memory(SETUP_MOD_BASE);
-    print_mod_info(&setup_mod_info);
     
     initialize_kmod_task(
         create_task(DS_SERVICE, setup_mod_info.stack_top, setup_mod_info.stack_bottom, setup_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
@@ -212,24 +214,11 @@ PUBLIC void init(void) {
     }
 
     //---------------------VIDEO-------------------------
-    program_info video_mod_info = load_mod_by_setup("video.mod");
-    initialize_kmod_task(
-        create_task(DS_SERVICE, video_mod_info.stack_top, video_mod_info.stack_bottom, video_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    video_mod_info.pgd, video_mod_info.start, video_mod_info.end, video_mod_info.start, video_mod_info.end,
-                     video_mod_info.heap_bottom, video_mod_info.heap_top,video_mod_info.start, video_mod_info.end,
-                     DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    VIDEO_DRIVER_SERVICE, 1, 0, current_thread->task, false));
     
+    program_info video_mod_info = load_and_init_mod("video.mod", "video driver", VIDEO_DRIVER_SERVICE, 0);
+
     //TODO: 更改loader以获取framebuffer的bpp
     set_mapping(video_mod_info.pgd, args.framebuffer, args.framebuffer, (args.is_graphic_mode ? 0x6000000 : 0x8000) / MEMUNIT_SZ, true, false);
-
-    set_allow(VIDEO_DRIVER_SERVICE);
-    check_ipc();
-    recv_msg(&status);
-    if (! status) {
-        lerror ("Init", "Failed to initialize video driver!");
-        while (1);
-    }
 
     video_info_struct video_info;
     video_info.framebuffer = args.framebuffer;
@@ -239,70 +228,15 @@ PUBLIC void init(void) {
     send_msg((msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()}, &video_info, sizeof(video_info_struct), VIDEO_DRIVER_SERVICE);
     
     //-------------------KEYBOARD-----------------------
-    program_info keyboard_ioman_info = load_mod_by_setup("keyboard.man");
-    initialize_kmod_task(
-        create_task(DS_SERVICE, keyboard_ioman_info.stack_top, keyboard_ioman_info.stack_bottom, keyboard_ioman_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    keyboard_ioman_info.pgd, keyboard_ioman_info.start, keyboard_ioman_info.end, keyboard_ioman_info.start, keyboard_ioman_info.end,
-                     keyboard_ioman_info.heap_bottom, keyboard_ioman_info.heap_top,keyboard_ioman_info.start, keyboard_ioman_info.end,
-                     DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    KEYBOARD_IOMAN_SERVICE, 1, 0, current_thread->task, false));
+    load_and_init_mod("keyboard.man", "keyboard I/O manager", KEYBOARD_IOMAN_SERVICE, 0);
+    load_and_init_mod("keyboard.mod", "keyboard driver", KEYBOARD_DRIVER_SERVICE, 0);
 
-    set_allow(KEYBOARD_IOMAN_SERVICE);
-    check_ipc();
-    recv_msg(&status);
-    if (! status) {
-        lerror ("Init", "Failed to initialize keyboard io manager!");
-        while (1);
-    }
-
-    program_info keyboard_mod_info = load_mod_by_setup("keyboard.mod");
-    initialize_kmod_task(
-        create_task(DS_SERVICE, keyboard_mod_info.stack_top, keyboard_mod_info.stack_bottom, keyboard_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    keyboard_mod_info.pgd, keyboard_mod_info.start, keyboard_mod_info.end, keyboard_mod_info.start, keyboard_mod_info.end,
-                     keyboard_mod_info.heap_bottom, keyboard_mod_info.heap_top,keyboard_mod_info.start, keyboard_mod_info.end,
-                     DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    KEYBOARD_DRIVER_SERVICE, 1, 0, current_thread->task, false));
-
-    set_allow(KEYBOARD_DRIVER_SERVICE);
-    check_ipc();
-    recv_msg(&status);
-    if (! status) {
-        lerror ("Init", "Failed to initialize keyboard driver!");
-        while (1);
-    }
+    //---------------------TTY---------------------------
+    load_and_init_mod("tty.mod", "TTY", TTY_DRIVER_SERVICE, 0);
 
     //-------------------TESTBENCH-----------------------
-    program_info tb1_mod_info = load_mod_by_setup("tb1.mod");
-    initialize_kmod_task(
-        create_task(DS_SERVICE, tb1_mod_info.stack_top, tb1_mod_info.stack_bottom, tb1_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    tb1_mod_info.pgd, tb1_mod_info.start, tb1_mod_info.end, tb1_mod_info.start, tb1_mod_info.end,
-                     tb1_mod_info.heap_bottom, tb1_mod_info.heap_top,tb1_mod_info.start, tb1_mod_info.end,
-                     DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    alloc_pid(), 1, 1, current_thread->task, false));
-
-    set_allow(ANY_TASK);
-    check_ipc();
-    recv_msg(&status);
-    if (! status) {
-        lerror ("Init", "Failed to initialize testbench 1!");
-        while (1);
-    }
-
-    program_info tb2_mod_info = load_mod_by_setup("tb2.mod");
-    initialize_kmod_task(
-        create_task(DS_SERVICE, tb2_mod_info.stack_top, tb2_mod_info.stack_bottom, tb2_mod_info.entry, CS_SERVICE, RFLAGS_SERVICE,
-                    tb2_mod_info.pgd, tb2_mod_info.start, tb2_mod_info.end, tb2_mod_info.start, tb2_mod_info.end,
-                     tb2_mod_info.heap_bottom, tb2_mod_info.heap_top,tb2_mod_info.start, tb2_mod_info.end,
-                     DEFAULT_SHM_START, DEFAULT_SHM_END,
-                    alloc_pid(), 1, 1, current_thread->task, false));
-
-    set_allow(ANY_TASK);
-    check_ipc();
-    recv_msg(&status);
-    if (! status) {
-        lerror ("Init", "Failed to initialize testbench 2!");
-        while (1);
-    }
+    load_and_init_mod("tb1.mod", "testbench 1", alloc_pid(), 1);
+    load_and_init_mod("tb2.mod", "testbench 2", alloc_pid(), 1);
 
     check_ipc();
 

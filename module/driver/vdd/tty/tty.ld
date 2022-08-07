@@ -1,28 +1,29 @@
 /*
  * SPDX-License-Identifier: LGPL-2.1-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: theflysong
- * 
- * __ioman.h
- * 
- * IO Manager Functions
- * 
+ *
+ * tty.ld
+ *
+ * tty LD脚本
+ *
  */
 
 
 
-#pragma once
+ENTRY(_start)
+OUTPUT_FORMAT("elf64-x86-64")
+OUTPUT_ARCH("i386:x86-64")
 
-#include <tayhuang/defs.h>
-#include <export/keyboard/key_types.h>
-
-#define SHARE_KEYBUFFER_FN (0)
-#define SHARE_KEYBUFFER_ARGS_SIZE (sizeof(bool))
-#define SHARE_KEYBUFFER_RETURN_TYPE void *
-
-PUBLIC void *share_keybuffer(bool flag);
+SECTIONS
+{
+    . = 0x20000000;
+    .text : { *(.text) }
+    .data : { *(.data) }
+    .bss : { *(.bss) }
+}

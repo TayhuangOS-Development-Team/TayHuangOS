@@ -32,7 +32,7 @@
 #include <assert.h>
 #include <logging.h>
 
-#include <export/__sys_task_fn.h>
+#include <export/sys_task/__sys_task_fn.h>
 
 #define MSG_LENGTH (2048)
 

@@ -19,6 +19,6 @@
 #pragma once
 
 #include <tayhuang/defs.h>
-#include <key_types.h>
+#include <export/keyboard/key_types.h>
 
 EXTERN key_t KEYMAP[128][3];

@@ -16,27 +16,21 @@
 
 
 
-OBJECTSDIR := $(OBJECTSDIR)/driver/
-BINDIR := $(BINDIR)/driver/
-DRIVERDIR := $(MODULEDIR)/driver/
-export OBJECTSDIR BINDIR DRIVERDIR
+OBJECTSDIR := $(OBJECTSDIR)/vdd/
+BINDIR := $(BINDIR)/vdd/
+VDDDIR := $(MODULEDIR)/vdd/
+export OBJECTSDIR BINDIR VDDDIR
 
 #编译
 .PHONY: build
 build:
-	$(CD) video && $(MAKE) build
-	$(CD) keyboard && $(MAKE) build
-	$(CD) vdd && $(MAKE) build
+	$(CD) tty && $(MAKE) build
 
 #清理
 .PHONY: clean
 clean:
-	$(CD) video && $(MAKE) clean
-	$(CD) keyboard && $(MAKE) clean
-	$(CD) vdd && $(MAKE) clean
+	$(CD) tty && $(MAKE) clean
 
 .PHONY: image
 image:
-	$(CD) video && $(MAKE) image
-	$(CD) keyboard && $(MAKE) image
-	$(CD) vdd && $(MAKE) image
+	$(CD) tty && $(MAKE) image

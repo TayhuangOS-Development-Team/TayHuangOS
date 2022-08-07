@@ -18,7 +18,7 @@
 
 #include <global.h>
 #include <framebuffers.h>
-#include <export/__video_driver_fn.h>
+#include <export/video/__video_driver_fn.h>
 
 #include <debug/logging.h>
 
