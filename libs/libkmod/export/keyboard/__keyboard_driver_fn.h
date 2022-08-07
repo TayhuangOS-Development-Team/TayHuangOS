@@ -8,9 +8,9 @@
  * 
  * 作者: theflysong
  * 
- * __ioman.h
+ * __keyboard_driver_fn.h
  * 
- * IO Manager Functions
+ * keyboard_driver 函数功能
  * 
  */
 
@@ -21,8 +21,8 @@
 #include <tayhuang/defs.h>
 #include <export/keyboard/key_types.h>
 
-#define SHARE_KEYBUFFER_FN (0)
-#define SHARE_KEYBUFFER_ARGS_SIZE (sizeof(bool))
-#define SHARE_KEYBUFFER_RETURN_TYPE void *
+#define GETKEY_FN (0)
+#define GETKEY_ARGS_SIZE (sizeof(bool))
+#define GETKEY_RETURN_TYPE key_t
 
-PUBLIC void *share_keybuffer(bool flag);
+PUBLIC key_t getkey(bool peek);

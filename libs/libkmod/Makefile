@@ -34,7 +34,7 @@ LIBS_C_SRC := ctype string tostring
 DEBUG_C_SRC := logging debug
 MEMORY_C_SRC := malloc
 SYSCALL_C_SRC := rpc ipc
-EXPORT_C_SRC := __sys_task_fn __video_driver_fn
+EXPORT_C_SRC := sys_task/__sys_task_fn video/__video_driver_fn keyboard/__keyboard_driver_fn
 C_SRC := init printf \
          $(foreach src, $(LIBS_C_SRC), libs/$(src)) \
          $(foreach src, $(DEBUG_C_SRC), debug/$(src)) \

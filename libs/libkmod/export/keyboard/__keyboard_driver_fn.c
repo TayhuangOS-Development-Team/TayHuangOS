@@ -8,21 +8,19 @@
  * 
  * 作者: theflysong
  * 
- * __ioman.h
+ * __keyboard_driver_fn.c
  * 
- * IO Manager Functions
+ * keyboard_driver 函数功能
  * 
  */
 
 
 
-#pragma once
+#include <export/keyboard/__keyboard_driver_fn.h>
 
-#include <tayhuang/defs.h>
-#include <export/keyboard/key_types.h>
+#include <tayhuang/services.h>
 
-#define SHARE_KEYBUFFER_FN (0)
-#define SHARE_KEYBUFFER_ARGS_SIZE (sizeof(bool))
-#define SHARE_KEYBUFFER_RETURN_TYPE void *
+#include <syscall/rpc.h>
+#include <memory/malloc.h>
 
-PUBLIC void *share_keybuffer(bool flag);
+#include <string.h>

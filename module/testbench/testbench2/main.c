@@ -30,7 +30,7 @@
 #include <memory/sharemem.h>
 #include <memory/malloc.h>
 
-#include <export/__video_driver_fn.h>
+#include <export/video/__video_driver_fn.h>
 #include <string.h>
 
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
