@@ -86,7 +86,7 @@ PRIVATE void irq_handler(int irq) {
         }
 
         //写到fifo中
-        fifo_write_bytes(fifo, (byte*)&key, sizeof(short));
+        fifo_write_bytes(fifo, (byte *)&key, sizeof(short));
     }
 }
 

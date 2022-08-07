@@ -173,15 +173,12 @@ PUBLIC rpc_args_struct __rpc_call(int service, rpc_func func, rpc_args_struct ar
     );
 
     //等待结果
-    linfo ("RPC: Wait for RPC Result ; msgid = %d, signal=%d", id, signal);
     down_signal(signal);
 
     //TODO: 添加delete_signal功能并在此处增加
     // delete_signal(signal);
     
     //获得结果
-    linfo ("RPC: Recieved RPC Result");
-
     void *_return_data = return_data;
 
     //判断是否为目标功能
@@ -206,13 +203,11 @@ PUBLIC void *rpc_call(int service, rpc_func func, rpc_args_struct args, rpc_size
     static int result_sz = 0;
 
     if (result == NULL) {
-        linfo ("RPC: Init result buffer");
         result = malloc(return_size);
         result_sz = return_size;
     }
 
     if (return_size > result_sz) {
-        linfo ("RPC: Extend result buffer");
         free(result);
         result = malloc(return_size);
         result_sz = return_size;

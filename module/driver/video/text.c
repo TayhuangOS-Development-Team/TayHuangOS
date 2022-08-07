@@ -31,6 +31,8 @@
 
 #include <tayhuang/paging.h>
 
+#include <string.h>
+
 static inline void __write_char(int column, int line, byte color, byte ch) {
     *(byte *)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 0) = ch;
     *(byte *)(video_info.framebuffer + ((line * video_info.width) + column) * 2 + 1) = color;
@@ -71,7 +73,6 @@ PRIVATE rpc_args_struct wrapper_write_string(int caller, rpc_func func_no, rpc_a
         return (rpc_args_struct){.data = result, .size = sizeof(TEXT_WRITE_STRING_RETURN_TYPE)};
     }
 
-
     color &= 0xFF;
 
     for (int i = 0 ; i < num ; i ++) {
@@ -86,13 +87,15 @@ PRIVATE rpc_args_struct wrapper_write_string(int caller, rpc_func func_no, rpc_a
     return (rpc_args_struct){.data = result, .size = sizeof(TEXT_WRITE_STRING_RETURN_TYPE)};
 }
 
-PRIVATE void *__create_framebuffer(int caller, int column, int line, int width, int height) {
-    if (width < 0 || width >= video_info.width) {
-        return NULL;
+PRIVATE int cur_id = 0;
+
+PRIVATE create_framebuffer_result __create_framebuffer(int caller, int column, int line, int width, int height) {
+    if (width < 0 || width > video_info.width) {
+        return (create_framebuffer_result){.framebuffer = NULL, .id = -1};
     }
 
-    if (height < 0 || height >= video_info.height) {
-        return NULL;
+    if (height < 0 || height > video_info.height) {
+        return (create_framebuffer_result){.framebuffer = NULL, .id = -1};
     }
 
     int bpp = video_info.is_graphic_mode ? 2 : 4;
@@ -102,9 +105,10 @@ PRIVATE void *__create_framebuffer(int caller, int column, int line, int width, 
     void *__framebuffer = create_share_memory(pages);
     void *framebuffer = share_memory(__framebuffer, pages, caller);
 
-    set_framebuffer(caller, __framebuffer, column, line, width, height);
+    int id = cur_id ++;
+    set_framebuffer(id, __framebuffer, column, line, width, height);
 
-    return framebuffer;
+    return (create_framebuffer_result){.framebuffer = framebuffer, .id = id};
 }
 
 PRIVATE rpc_args_struct wrapper_create_framebuffer(int caller, rpc_func func_no, rpc_args_struct args) {
@@ -113,43 +117,36 @@ PRIVATE rpc_args_struct wrapper_create_framebuffer(int caller, rpc_func func_no,
     int width = ARG_READ(args.data, int);
     int height = ARG_READ(args.data, int);
 
-    void **result = (void **)malloc(sizeof(void *));
+    create_framebuffer_result *result = (create_framebuffer_result *)malloc(sizeof(create_framebuffer_result));
     *result = __create_framebuffer(caller, column, line, width, height);
 
     return (rpc_args_struct){.data = result, .size = sizeof(CREATE_FRAMEBUFFER_RETURN_TYPE)};
 }
 
-PRIVATE void __swap_framebuffer(int caller, bool use_default_color) {
-    frame_t *frame = get_framebuffer(caller);
+PRIVATE void __swap_framebuffer(int id) {
+    frame_t *frame = get_framebuffer(id);
     void *framebuffer = frame->framebuffer;
 
-    if (! use_default_color) {
-        for (int i = 0 ; i < frame->height ; i ++) {
-            for (int j = 0 ; j < frame->width ; j ++) {
-                int pos = (i * frame->width + j) * 2;
-                byte ch = *(byte *)(framebuffer + pos);
-                byte color = *(byte *)(framebuffer + pos + 1);
-
-                write_char(frame->column + j, frame->height + i, color, ch);
-            }
-        }
+    if (frame->column == 0 && frame->line == 0 && frame->width == video_info.width && frame->height == video_info.height) {
+        memcpy(video_info.framebuffer, framebuffer, frame->width * frame->height * 2);
+        return;
     }
-    else {
-        for (int i = 0 ; i < frame->height ; i ++) {
-            for (int j = 0 ; j < frame->width ; j ++) {
-                int pos = (i * frame->width + j) * 2;
-                byte ch = *(byte *)(framebuffer + pos);
 
-                write_char(frame->column + j, frame->height + i, 0x0F, ch);
-            }
+    for (int line = 0 ; line < frame->height ; line ++) {
+        for (int column = 0 ; column < frame->width ; column ++) {
+            int pos = (line * frame->width + column) * 2;
+            byte ch = *(byte *)(framebuffer + pos);
+            byte color = *(byte *)(framebuffer + pos + 1);
+
+            write_char(frame->column + column, frame->line + line, color, ch);
         }
     }
 }
 
 PRIVATE rpc_args_struct wrapper_swap_framebuffer(int caller, rpc_func func_no, rpc_args_struct args) {
-    bool use_default_color = ARG_READ(args.data, bool);
+    int id = ARG_READ(args.data, int);
 
-    __swap_framebuffer(caller, use_default_color);
+    __swap_framebuffer(id);
 
     bool *result = malloc(sizeof(SWAP_FRAMEBUFFER_RETURN_TYPE));
     *result = true;

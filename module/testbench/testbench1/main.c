@@ -36,7 +36,7 @@ PUBLIC void normal_ipc_handler(int caller, void *msg) {
     linfo ("%p", fifo);
     qword data;
 
-    fifo_read_bytes(fifo, (byte*)&data, sizeof(qword));
+    fifo_read_bytes(fifo, (byte *)&data, sizeof(qword));
     
     linfo ("%d", data);
 }

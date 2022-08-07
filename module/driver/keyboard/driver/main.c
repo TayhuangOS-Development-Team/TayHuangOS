@@ -21,6 +21,8 @@
 #include <syscall/ipc.h>
 #include <syscall/rpc.h>
 
+#include <tayhuang/services.h>
+
 #include <fifo.h>
 
 #include <memory/malloc.h>
@@ -29,11 +31,12 @@
 #include <export/keyboard/__keyboard_driver_fn.h>
 
 PRIVATE void *fifo = NULL;
+#define LOCAL_FIFO_SIZE (8192)
+PRIVATE void *local_fifo = NULL;
 
 PRIVATE key_t __getkey(void) {
     key_t key;
-    fifo_read_bytes(fifo, (byte*)&key, sizeof(key_t));
-    linfo ("%c(%d, %#04X)", key, key, key);
+    fifo_read_bytes(local_fifo, (byte *)&key, sizeof(key_t));
     return key;
 }
 
@@ -53,5 +56,19 @@ PUBLIC void kmod_init(void) {
 }
 
 PUBLIC void kmod_main(void) {
+    local_fifo = create_fifo(LOCAL_FIFO_SIZE);
     fifo = share_keybuffer(false);
+    while (true) {
+        key_t key;
+        fifo_read_bytes(fifo, (byte *)&key, sizeof(key_t));
+        
+        send_msg(
+            (msgno_id){.message_no = MSG_NORMAL_IPC, .msg_id = get_msgid()},
+            &key,
+            sizeof(key_t),
+            TTY_DRIVER_SERVICE
+        ); //发送key给TTY 令其回显
+
+        fifo_write_bytes(local_fifo, (byte *)&key, sizeof(key_t));
+    }
 }
