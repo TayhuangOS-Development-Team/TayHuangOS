@@ -97,6 +97,7 @@ PUBLIC void remove_thread(thread_info_struct *thread) {
     if (thread->next != NULL) {
         thread->next->last = thread->last;
     }
+    //TODO: 回收线程占用的资源 比如说栈
     kfree(thread);
 }
 

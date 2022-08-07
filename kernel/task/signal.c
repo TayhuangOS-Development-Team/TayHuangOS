@@ -345,6 +345,7 @@ PUBLIC void __up_signal(id_t id) {
     }
 }
 
+//TODO: 返回值改为bool
 PUBLIC void __down_signal(id_t id) {
     signal_t *signal = get_signal(id);
 
