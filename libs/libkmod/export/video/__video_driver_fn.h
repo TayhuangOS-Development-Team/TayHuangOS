@@ -31,13 +31,18 @@
 
 #define CREATE_FRAMEBUFFER_FN (2)
 #define CREATE_FRAMEBUFFER_ARGS_SIZE (sizeof(int) * 4)
-#define CREATE_FRAMEBUFFER_RETURN_TYPE void *
+#define CREATE_FRAMEBUFFER_RETURN_TYPE create_framebuffer_result
 
 #define SWAP_FRAMEBUFFER_FN (3)
-#define SWAP_FRAMEBUFFER_ARGS_SIZE (sizeof(bool))
+#define SWAP_FRAMEBUFFER_ARGS_SIZE (sizeof(int))
 #define SWAP_FRAMEBUFFER_RETURN_TYPE bool
+
+typedef struct {
+    void *framebuffer;
+    int id;
+} create_framebuffer_result;
 
 PUBLIC bool write_char(int column, int line, byte color, byte ch);
 PUBLIC bool write_string(int column, int line, byte color, const char *str);
-PUBLIC void *create_framebuffer(int column, int line, int width, int height);
-PUBLIC bool swap_framebuffer(bool use_default_color);
+PUBLIC create_framebuffer_result create_framebuffer(int column, int line, int width, int height);
+PUBLIC bool swap_framebuffer(int id);

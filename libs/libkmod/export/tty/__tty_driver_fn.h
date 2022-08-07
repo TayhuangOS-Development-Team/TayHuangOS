@@ -8,9 +8,9 @@
  * 
  * 作者: theflysong
  * 
- * framebuffers.h
+ * __tty_driver_fn.h
  * 
- * framebuffer表
+ * __tty_driver_fn 函数功能
  * 
  */
 
@@ -20,15 +20,13 @@
 
 #include <tayhuang/defs.h>
 
-typedef struct {
-    void *framebuffer;
-    int column;
-    int line;
-    int width;
-    int height;
-} frame_t;
+#define GET_CONSOLE_FN (0)
+#define GET_CONSOLE_ARGS_SIZE (sizeof(int))
+#define GET_CONSOLE_RETURN_TYPE void *
 
-PUBLIC frame_t *get_framebuffer(int id);
-PUBLIC void set_framebuffer(int id, void *framebuffer, int column, int line, int width, int height);
-PUBLIC bool has_framebuffer(int id);
-PUBLIC void remove_framebuffer(int id);
+#define FLUSH_CONSOLE_FN (1)
+#define FLUSH_CONSOLE_ARGS_SIZE (sizeof(int))
+#define FLUSH_CONSOLE_RETURN_TYPE bool
+
+PUBLIC void *get_console(int console_no);
+PUBLIC void flush_console(int console_no);

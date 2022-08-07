@@ -36,15 +36,9 @@ typedef struct _chunk {
 PRIVATE void *heap;
 
 PUBLIC bool init_heap(int pid, void *heap_start, void *heap_end) {
-    linfo ("Initialize buffer for %d", pid);
-
     heap = heap_start;
-
-    linfo ("Heap start address = %P", heap);
-
     int size = heap_end - heap;
 
-    linfo ("Heap size = %d", size);
 
     chunk_struct *list_start = (chunk_struct*)heap;
     chunk_struct *whole_heap = (chunk_struct*)(heap + + sizeof(chunk_struct));
@@ -58,8 +52,6 @@ PUBLIC bool init_heap(int pid, void *heap_start, void *heap_end) {
     whole_heap->size = size - + sizeof(chunk_struct);
     whole_heap->used = false;
     whole_heap->next = NULL;
-
-    linfo ("Initialize finished!");
 
     return true;
 }

@@ -22,7 +22,7 @@
 
 //TODO: 用红黑树
 typedef struct __framebuffer_node {
-    int pid;
+    int id;
     frame_t *framebuffer;
     struct __framebuffer_node *next_node;
 } framebuffer_node;
@@ -45,28 +45,28 @@ PUBLIC void add_node(framebuffer_node *node) {
     list_head = node;
 }
 
-PUBLIC frame_t *get_framebuffer(int pid) {
+PUBLIC frame_t *get_framebuffer(int id) {
     if (list_head == NULL) {
         return NULL;
     }
 
     framebuffer_node *node = list_head;
 
-    while (node->next_node != NULL && (node->pid != pid)) {
+    while (node->next_node != NULL && (node->id != id)) {
         node = node->next_node;
     }
 
-    if (node->pid != pid) {
+    if (node->id != id) {
         return NULL;
     }
 
     return node->framebuffer;
 }
 
-PUBLIC void set_framebuffer(int pid, void *framebuffer, int column, int line, int width, int height) {
+PUBLIC void set_framebuffer(int id, void *framebuffer, int column, int line, int width, int height) {
     if (list_head == NULL) {
         framebuffer_node *new_node = (framebuffer_node*)malloc(sizeof(framebuffer));
-        new_node->pid = pid;
+        new_node->id = id;
         new_node->framebuffer = create_frame(framebuffer, column, line, width, height);
         add_node(new_node);
         return;
@@ -74,39 +74,39 @@ PUBLIC void set_framebuffer(int pid, void *framebuffer, int column, int line, in
 
     framebuffer_node *node = list_head;
 
-    while (node->next_node != NULL && (node->pid != pid)) {
+    while (node->next_node != NULL && (node->id != id)) {
         node = node->next_node;
     }
 
-    if (node->pid != pid) {
+    if (node->id != id) {
         framebuffer_node *new_node = (framebuffer_node*)malloc(sizeof(framebuffer));
-        new_node->pid = pid;
+        new_node->id = id;
         new_node->framebuffer = create_frame(framebuffer, column, line, width, height);
         add_node(new_node);
 
         return;
     }
 
-    node->pid = pid;
+    node->id = id;
     node->framebuffer = framebuffer;
 }
 
-PUBLIC bool has_framebuffer(int pid) {
+PUBLIC bool has_framebuffer(int id) {
     if (list_head == NULL) {
         return false;
     }
 
     framebuffer_node *node = list_head;
 
-    while (node->next_node != NULL && (node->pid != pid)) {
+    while (node->next_node != NULL && (node->id != id)) {
         node = node->next_node;
     }
 
-    return node->pid == pid;
+    return node->id == id;
 }
 
 
-PUBLIC void remove_framebuffer(int pid) {
+PUBLIC void remove_framebuffer(int id) {
     if (list_head == NULL) {
         return;
     }
@@ -114,12 +114,12 @@ PUBLIC void remove_framebuffer(int pid) {
     framebuffer_node *last = NULL;
     framebuffer_node *node = list_head;
 
-    while (node->next_node != NULL && (node->pid != pid)) {
+    while (node->next_node != NULL && (node->id != id)) {
         last = node;
         node = node->next_node;
     }
 
-    if (node->pid != pid) {
+    if (node->id != id) {
         return;
     }
 

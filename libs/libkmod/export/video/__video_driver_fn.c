@@ -58,7 +58,7 @@ PUBLIC bool write_string(int column, int line, byte color, const char *str) {
     return ret;
 }
 
-PUBLIC void *create_framebuffer(int column, int line, int width, int height) {
+PUBLIC create_framebuffer_result create_framebuffer(int column, int line, int width, int height) {
     char buffer[CREATE_FRAMEBUFFER_ARGS_SIZE];
     void *buf = buffer;
 
@@ -67,16 +67,16 @@ PUBLIC void *create_framebuffer(int column, int line, int width, int height) {
     ARG_WRITE(buf, int, width);
     ARG_WRITE(buf, int, height);
 
-    void *framebuffer = remote_call(CREATE_FRAMEBUFFER_RETURN_TYPE, VIDEO_DRIVER_SERVICE, CREATE_FRAMEBUFFER_FN, MAKE_ARGS(buffer, CREATE_FRAMEBUFFER_ARGS_SIZE));
+    create_framebuffer_result framebuffer = remote_call(CREATE_FRAMEBUFFER_RETURN_TYPE, VIDEO_DRIVER_SERVICE, CREATE_FRAMEBUFFER_FN, MAKE_ARGS(buffer, CREATE_FRAMEBUFFER_ARGS_SIZE));
 
     return framebuffer;
 }
 
-PUBLIC bool swap_framebuffer(bool use_default_color) {
+PUBLIC bool swap_framebuffer(int id) {
     char buffer[SWAP_FRAMEBUFFER_ARGS_SIZE];
     void *buf = buffer;
 
-    ARG_WRITE(buf, bool, use_default_color);
+    ARG_WRITE(buf, bool, id);
 
     bool ret = remote_call(SWAP_FRAMEBUFFER_RETURN_TYPE, VIDEO_DRIVER_SERVICE, SWAP_FRAMEBUFFER_FN, MAKE_ARGS(buffer, SWAP_FRAMEBUFFER_ARGS_SIZE));
 

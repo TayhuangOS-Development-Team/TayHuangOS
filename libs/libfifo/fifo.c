@@ -41,8 +41,6 @@ typedef struct {
 PUBLIC void *create_fifo(size_t fifo_size) {
     int pages = (fifo_size + MEMUNIT_SZ - 1) / MEMUNIT_SZ; //获得页数
 
-    linfo ("Fifo: Create fifo, size=%d(%d pages)", fifo_size, pages);
-
     //创建
     fifo_struct *fifo = (fifo_struct *)create_share_memory(pages);
 
