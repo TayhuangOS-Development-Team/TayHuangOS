@@ -17,15 +17,44 @@
 
 
 #include <tayhuang/defs.h>
+#include <tayhuang/services.h>
+
 #include <debug/logging.h>
-#include <export/video/__video_driver_fn.h>
+#include <export/keyboard/__keyboard_driver_fn.h>
+
+#include <syscall/ipc.h>
+#include <syscall/syscall.h>
+
 #include <console.h>
+
+PRIVATE key_t key = 0;
+PRIVATE id_t signal = 0;
+
+PRIVATE void echo_input(void *args) {
+    while (true) {
+        down_signal(signal);
+        echo_ch((char)key);
+    }
+
+    exit_thread(NULL);
+} 
+
+PUBLIC void normal_ipc_handler(int caller, void *msg) {
+    if (caller == KEYBOARD_DRIVER_SERVICE) {
+        key = *(key_t*)msg;
+        up_signal(signal);
+    }
+}
 
 PUBLIC void kmod_init(void) {
     set_logging_name("TTY");
     linfo ("Hi!I'm TTY!");
 
     console_register_rpc_functions();
+    register_normal_ipc_handler(normal_ipc_handler);
+
+    signal = create_signal(1, 0, false);
+    create_thread(echo_input, NULL);
 }
 
 PUBLIC void kmod_main(void) {

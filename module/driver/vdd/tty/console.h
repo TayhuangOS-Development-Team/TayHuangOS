@@ -25,6 +25,9 @@ typedef struct {
     void *framebuffer;
     int framebuffer_id;
     int console_no;
+    int pos_x;
+    int pos_y;
+    int color;
 } console_t;
 
 #define CONSOLE_NUM (4)
@@ -34,6 +37,8 @@ typedef struct {
 #define CONSOLE_PAGES ((CONSOLE_SIZE + (MEMUNIT_SZ - 1)) / MEMUNIT_SZ)
 
 EXTERN PUBLIC console_t consoles[CONSOLE_NUM];
+EXTERN PUBLIC int current_active_console;
 
 PUBLIC void init_consoles(void);
 PUBLIC void console_register_rpc_functions(void);
+PUBLIC void echo_ch(char ch);

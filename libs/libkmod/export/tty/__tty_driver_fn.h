@@ -20,13 +20,8 @@
 
 #include <tayhuang/defs.h>
 
-#define GET_CONSOLE_FN (0)
-#define GET_CONSOLE_ARGS_SIZE (sizeof(int))
-#define GET_CONSOLE_RETURN_TYPE void *
-
 #define FLUSH_CONSOLE_FN (1)
 #define FLUSH_CONSOLE_ARGS_SIZE (sizeof(int))
 #define FLUSH_CONSOLE_RETURN_TYPE bool
 
-PUBLIC void *get_console(int console_no);
 PUBLIC void flush_console(int console_no);

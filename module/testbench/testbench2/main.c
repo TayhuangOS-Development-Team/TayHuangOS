@@ -62,24 +62,9 @@ PUBLIC void kmod_main(void) {
     qword data = 114514;
     fifo_write_bytes(fifo, (byte *)&data, sizeof(qword));
 
-    void *buffer = get_console(0);
-    *(byte*)(buffer + 0x00) = '['; *(byte*)(buffer + 0x01) = 0x0A;
-    *(byte*)(buffer + 0x02) = 'C'; *(byte*)(buffer + 0x03) = 0x0A;
-    *(byte*)(buffer + 0x04) = 'O'; *(byte*)(buffer + 0x05) = 0x0A;
-    *(byte*)(buffer + 0x06) = 'N'; *(byte*)(buffer + 0x07) = 0x0A;
-    *(byte*)(buffer + 0x08) = 'S'; *(byte*)(buffer + 0x09) = 0x0A;
-    *(byte*)(buffer + 0x0A) = 'O'; *(byte*)(buffer + 0x0B) = 0x0A;
-    *(byte*)(buffer + 0x0C) = 'L'; *(byte*)(buffer + 0x0D) = 0x0A;
-    *(byte*)(buffer + 0x0E) = 'E'; *(byte*)(buffer + 0x0F) = 0x0A;
-    *(byte*)(buffer + 0x10) = ' '; *(byte*)(buffer + 0x11) = 0x0A;
-    *(byte*)(buffer + 0x12) = '1'; *(byte*)(buffer + 0x13) = 0x0A;
-    *(byte*)(buffer + 0x14) = ']'; *(byte*)(buffer + 0x15) = 0x0A;
-    flush_console(0);
-
     int x = 0, y = 1;
     while (true) {
         key_t key = getkey();
-        write_char(x, y, 0x0A, key);
         x ++;
     }
 }
