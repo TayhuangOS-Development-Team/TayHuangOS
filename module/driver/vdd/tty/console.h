@@ -20,7 +20,9 @@
 
 #include <tayhuang/defs.h>
 #include <tayhuang/paging.h>
+#include <export/keyboard/__keyboard_driver_fn.h>
 
+//控制台结构
 typedef struct {
     void *framebuffer;
     int framebuffer_id;
@@ -30,6 +32,7 @@ typedef struct {
     int color;
 } console_t;
 
+//相关信息
 #define CONSOLE_NUM (4)
 #define CONSOLE_COLUMNS (80)
 #define CONSOLE_LINES (25)
@@ -38,7 +41,9 @@ typedef struct {
 
 EXTERN PUBLIC console_t consoles[CONSOLE_NUM];
 EXTERN PUBLIC int current_active_console;
+EXTERN PUBLIC id_t wait_enter;
 
 PUBLIC void init_consoles(void);
 PUBLIC void console_register_rpc_functions(void);
-PUBLIC void echo_ch(char ch);
+//回显
+PUBLIC void echo_key(key_t key);

@@ -48,6 +48,20 @@ PUBLIC void kmod_init(void) {
     set_allow(ANY_TASK);
 }
 
+PRIVATE bool start_with(const char *str1, const char *str2) {
+    if (strlen(str1) < strlen(str2)) {
+        return false;
+    }
+    while (*str2 != '\0') {
+        if (*str1 != *str2) {
+            return false;
+        }
+        str1 ++;
+        str2 ++;
+    }
+    return true;
+}
+
 PUBLIC void kmod_main(void) {
     void *fifo = create_fifo(8000);
     share_fifo(fifo, 2);
@@ -62,9 +76,37 @@ PUBLIC void kmod_main(void) {
     qword data = 114514;
     fifo_write_bytes(fifo, (byte *)&data, sizeof(qword));
 
-    int x = 0, y = 1;
+    tty_puts(0, "[CONSOLE 1]\n");
+    tty_putchar(0, '>');
+
+    char input[128] = {};
+    int pos = 0;
+
     while (true) {
-        key_t key = getkey();
-        x ++;
+        char ch = tty_getchar(0);
+
+        if (ch == '\n') {
+            input[pos] = '\0';
+
+            if (start_with(input, "echo ")) {
+                if (input[5] == '\0') {
+                    tty_puts(0, "Wrong arguments!\n");
+                }
+                else {
+                    tty_puts(0, &input[5]);
+                    tty_putchar(0, '\n');
+                }
+            }
+            else {
+                tty_puts(0, "Unknown Command!\n");
+            }
+
+            pos = 0;
+            tty_putchar(0, '>');
+        }
+        else {
+            input[pos] = ch;
+            pos ++;
+        }
     }
 }

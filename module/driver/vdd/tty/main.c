@@ -32,8 +32,9 @@ PRIVATE id_t signal = 0;
 
 PRIVATE void echo_input(void *args) {
     while (true) {
+        //等待key
         down_signal(signal);
-        echo_ch((char)key);
+        echo_key(key);
     }
 
     exit_thread(NULL);
@@ -42,7 +43,10 @@ PRIVATE void echo_input(void *args) {
 PUBLIC void normal_ipc_handler(int caller, void *msg) {
     if (caller == KEYBOARD_DRIVER_SERVICE) {
         key = *(key_t*)msg;
-        up_signal(signal);
+        up_signal(signal); //唤醒回显进程
+        if (key == ENTER) {
+            up_signal(wait_enter); //唤醒等待回车的进程
+        }
     }
 }
 
@@ -53,6 +57,7 @@ PUBLIC void kmod_init(void) {
     console_register_rpc_functions();
     register_normal_ipc_handler(normal_ipc_handler);
 
+    //用于唤醒回显进程
     signal = create_signal(1, 0, false);
     create_thread(echo_input, NULL);
 }

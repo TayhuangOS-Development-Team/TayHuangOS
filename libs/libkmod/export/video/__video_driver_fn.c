@@ -54,7 +54,7 @@ PUBLIC bool write_string(int column, int line, byte color, const char *str) {
     memcpy(buf, str, num);
 
     bool ret = remote_call(TEXT_WRITE_STRING_RETURN_TYPE, VIDEO_DRIVER_SERVICE, TEXT_WRITE_STRING_FN, MAKE_ARGS(buffer, size));
-    
+
     return ret;
 }
 
