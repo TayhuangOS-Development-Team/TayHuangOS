@@ -24,3 +24,14 @@
 #include <memory/malloc.h>
 
 #include <string.h>
+
+PUBLIC key_t getkey(void) {
+    char buffer[GETKEY_ARGS_SIZE];
+    void *buf = buffer;
+
+    ARG_WRITE(buf, bool, false);
+
+    key_t ret = remote_call(GETKEY_RETURN_TYPE, KEYBOARD_DRIVER_SERVICE, GETKEY_FN, MAKE_ARGS(buffer, GETKEY_ARGS_SIZE));
+
+    return ret;
+}

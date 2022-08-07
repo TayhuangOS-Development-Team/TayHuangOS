@@ -1,28 +1,29 @@
 /*
  * SPDX-License-Identifier: LGPL-2.1-only
  * -------------------------------*-TayhuangOS-*-----------------------------------
- * 
+ *
  *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- * 
+ *
  * --------------------------------------------------------------------------------
- * 
+ *
  * 作者: theflysong
- * 
- * __keyboard_driver_fn.h
- * 
- * keyboard_driver 函数功能
- * 
+ *
+ * tty.ld
+ *
+ * tty LD脚本
+ *
  */
 
 
 
-#pragma once
+ENTRY(_start)
+OUTPUT_FORMAT("elf64-x86-64")
+OUTPUT_ARCH("i386:x86-64")
 
-#include <tayhuang/defs.h>
-#include <export/keyboard/key_types.h>
-
-#define GETKEY_FN (0)
-#define GETKEY_ARGS_SIZE (sizeof(bool))
-#define GETKEY_RETURN_TYPE key_t
-
-PUBLIC key_t getkey(void);
+SECTIONS
+{
+    . = 0x20000000;
+    .text : { *(.text) }
+    .data : { *(.data) }
+    .bss : { *(.bss) }
+}

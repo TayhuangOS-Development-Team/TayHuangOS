@@ -8,21 +8,21 @@
  * 
  * 作者: theflysong
  * 
- * __keyboard_driver_fn.h
+ * main.c
  * 
- * keyboard_driver 函数功能
+ * tty主函数
  * 
  */
 
 
 
-#pragma once
-
 #include <tayhuang/defs.h>
-#include <export/keyboard/key_types.h>
+#include <debug/logging.h>
 
-#define GETKEY_FN (0)
-#define GETKEY_ARGS_SIZE (sizeof(bool))
-#define GETKEY_RETURN_TYPE key_t
+PUBLIC void kmod_init(void) {
+    set_logging_name("TTY");
+    linfo ("Hi!I'm TTY!");
+}
 
-PUBLIC key_t getkey(void);
+PUBLIC void kmod_main(void) {
+}
