@@ -66,7 +66,7 @@ PRIVATE inline void wait_ide1_drq(void) {
     while (! (inb(IDE1_STATUS) & 0x8));
 }
 
-PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
+PRIVATE void identify_ide0_disk(bool slave, NONNULL void *dst) { //获取IDE0参数
     outb (IDE0_DEVICE, MAKE_DEVICE_REG(0, slave, 0));
     relax_ide0();
     wait_for_ide0_free();
@@ -85,7 +85,7 @@ PRIVATE void identify_ide0_disk(bool slave, void *dst) { //获取IDE0参数
     }
 }
 
-PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
+PRIVATE void identify_ide1_disk(bool slave, NONNULL void *dst) { //获取IDE1参数
     outb (IDE1_DEVICE, MAKE_DEVICE_REG(0, slave, 0));
     relax_ide1();
     wait_for_ide1_free();
@@ -104,7 +104,7 @@ PRIVATE void identify_ide1_disk(bool slave, void *dst) { //获取IDE1参数
     }
 }
 
-PUBLIC void identify_disk(int selector, void *dst) {
+PUBLIC void identify_disk(int selector, NONNULL void *dst) {
     if ((selector & IDE_MASK) == 0) {
         identify_ide0_disk((selector & SLAVE_MASK) != 0, dst);
     }
@@ -113,7 +113,7 @@ PUBLIC void identify_disk(int selector, void *dst) {
     }
 }
 
-PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void *dst) { //读IDE0的扇区
+PRIVATE void read_ide0_sector(dword lba, int num, bool slave, NONNULL void *dst) { //读IDE0的扇区
     outb (IDE0_DEVICE, MAKE_DEVICE_REG(1, slave, lba >> 24));
     relax_ide0();
     wait_for_ide0_free();
@@ -136,7 +136,7 @@ PRIVATE void read_ide0_sector(dword lba, int num, bool slave, void *dst) { //读
 }
 
 
-PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void *dst) { //读IDE1的扇区
+PRIVATE void read_ide1_sector(dword lba, int num, bool slave, NONNULL void *dst) { //读IDE1的扇区
     outb (IDE1_DEVICE, MAKE_DEVICE_REG(1, slave, lba >> 24));
     relax_ide1();
     wait_for_ide1_free();
@@ -159,7 +159,7 @@ PRIVATE void read_ide1_sector(dword lba, int num, bool slave, void *dst) { //读
     }
 }
 
-PUBLIC void read_sector(dword lba, int num, int selector, void *dst) {
+PUBLIC void read_sector(dword lba, int num, int selector, NONNULL void *dst) {
     if ((selector & IDE_MASK) == 0) {
         read_ide0_sector(lba, num, (selector & SLAVE_MASK) != 0, dst);
     }
@@ -168,7 +168,7 @@ PUBLIC void read_sector(dword lba, int num, int selector, void *dst) {
     }
 }
 
-PUBLIC void get_partition(int selector, int number, partition_info *member) {
+PUBLIC void get_partition(int selector, int number, NONNULL partition_info *member) {
     void *buffer = lmalloc(512);
 
     read_sector(0, 1, selector, buffer);

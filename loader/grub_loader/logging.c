@@ -39,14 +39,14 @@ PUBLIC void write_serial_char(char ch) {
     outb(SERIAL_SEND, ch);
 }
 
-PUBLIC void write_serial_str(const char *str) {
+PUBLIC void write_serial_str(NONNULL const char *str) {
     while (*str != '\0') {
         write_serial_char(*str);
         str ++;
     }
 }
 
-PUBLIC void _log(const char *name, const char *type, const char *msg) {
+AUTOMATIC PUBLIC void _log(NONNULL const char *name, NONNULL const char *type, NONNULL const char *msg) {
     asmv ("cli");
     write_serial_char('(');
     write_serial_str(name);
@@ -59,7 +59,7 @@ PUBLIC void _log(const char *name, const char *type, const char *msg) {
     asmv ("sti");
 }
 
-PUBLIC void log(const char *name, const int type, const char *msg) {
+PUBLIC void log(NONNULL const char *name, const int type, NONNULL const char *msg) {
     const char *typename;
     switch (type) {
     case INFO: typename = "INFO"; break;
@@ -73,26 +73,26 @@ PUBLIC void log(const char *name, const int type, const char *msg) {
     _log(name, typename, msg);
 }
 
-PUBLIC void linfo(const char *name, const char *msg) {
+PUBLIC void linfo(NONNULL const char *name, NONNULL const char *msg) {
     log(name, INFO, msg);
 }
 
-PUBLIC void lwarn(const char *name, const char *msg) {
+PUBLIC void lwarn(NONNULL const char *name, NONNULL const char *msg) {
     log(name, WARN, msg);
 }
 
-PUBLIC void lerror(const char *name, const char *msg) {
+PUBLIC void lerror(NONNULL const char *name, NONNULL const char *msg) {
     log(name, ERROR, msg);
 }
 
-PUBLIC void lfatal(const char *name, const char *msg) {
+PUBLIC void lfatal(NONNULL const char *name, NONNULL const char *msg) {
     log(name, FATAL, msg);
 }
 
-PUBLIC void ltips(const char *name, const char *msg) {
+PUBLIC void ltips(NONNULL const char *name, NONNULL const char *msg) {
     log(name, TIPS, msg);
 }
 
-PUBLIC void lattention(const char *name, const char *msg) {
+PUBLIC void lattention(NONNULL const char *name, NONNULL const char *msg) {
     log(name, ATTENTION, msg);
 }

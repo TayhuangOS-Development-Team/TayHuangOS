@@ -78,7 +78,7 @@ typedef struct {
 #define FAT_BUFFER_SECTORS (4)
 #define INFO _context->infomations
 
-PRIVATE void __read_sector(FAT32_CONTEXT *context, dword lba, int num, void *dst) {
+PRIVATE void __read_sector(NONNULL FAT32_CONTEXT *context, dword lba, int num, NONNULL void *dst) {
     read_sector(context->partition.start_lba + lba, num, context->selector, dst);
 }
 
@@ -149,7 +149,7 @@ PUBLIC void terminate_fat32_fs(fs_context context) {
     lfree (context);
 }
 
-PRIVATE dword get_file_start_clus(fs_context context, const char *name) {
+PRIVATE dword get_file_start_clus(fs_context context, NONNULL const char *name) {
     if (strlen(name) != 11) {
         return -1;
     }
@@ -167,7 +167,7 @@ PRIVATE dword get_file_start_clus(fs_context context, const char *name) {
     return -1;
 }
 
-PRIVATE char *convert(const char *name, char *buffer) {
+PRIVATE NONNULL char *convert(NONNULL const char *name, NONNULL char *buffer) {
     char *backup = buffer;
     int cnt = 0;
     while (*name != '.') {
@@ -194,7 +194,7 @@ PRIVATE char *convert(const char *name, char *buffer) {
     return backup;
 }
 
-PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst) {
+PUBLIC bool load_fat32_file(fs_context context, NONNULL const char *name, NONNULL void *dst) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
     char _name[12];
     if (convert(name, _name) == NULL) {
@@ -208,7 +208,7 @@ PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst) {
     return true;
 }
 
-PUBLIC void display_fat32_fs_info(void *context) {
+PUBLIC void display_fat32_fs_info(NONNULL void *context) {
     FAT32_CONTEXT *_context = (FAT32_CONTEXT*)context;
 
     char oem_name[9], volumn_label[12], file_system[9];

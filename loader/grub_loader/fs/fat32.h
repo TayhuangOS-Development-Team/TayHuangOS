@@ -23,6 +23,6 @@
 
 #define FAT32_CONTEXT_MAGIC (0x93186A8E)
 PUBLIC fs_context load_fat32_fs(int disk_selector, int partition_id);
-PUBLIC bool load_fat32_file(fs_context context, const char *name, void *dst);
+PUBLIC bool load_fat32_file(fs_context context, NONNULL const char *name, NONNULL void *dst);
 PUBLIC void terminate_fat32_fs(fs_context context);
 PUBLIC void display_fat32_fs_info(fs_context context);

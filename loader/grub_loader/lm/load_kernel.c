@@ -26,7 +26,7 @@
 #include <elf.h>
 #include <string.h>
 
-PUBLIC void load_program(void *kernel_bin, Elf64_Phdr *program_header, void **start, void **limit) {
+PUBLIC void load_program(NONNULL void *kernel_bin, NONNULL Elf64_Phdr *program_header, NONNULL void **start, NONNULL void **limit) {
     if (program_header->p_type != PT_LOAD) { //不是要被加载的段
         return;
     }
@@ -36,7 +36,7 @@ PUBLIC void load_program(void *kernel_bin, Elf64_Phdr *program_header, void **st
     *start = program_header->p_vaddr;
 }
 
-void *load_elf(void *kernel_bin, void **kernel_start, void **kernel_limit) {
+NONNULL void *load_elf(NONNULL void *kernel_bin, NONNULL void **kernel_start, NONNULL void **kernel_limit) {
     Elf64_Ehdr *elf_header = kernel_bin;
     for (int i = 0 ; i < elf_header->e_phnum ; i ++) {
         void *plimit = NULL;
@@ -48,7 +48,7 @@ void *load_elf(void *kernel_bin, void **kernel_start, void **kernel_limit) {
     return elf_header->e_entry;
 }
 
-void load_kernel(load_result_struct *result) {
+void load_kernel(NONNULL load_result_struct *result) {
     void *kernel_bin_buffer = lmalloc(KERNEL_BIN_SIZE);
     void *setup_mod_buffer = lmalloc(SETUP_MOD_SIZE);
     for (int i = 0 ; i < 4 ; i ++) {

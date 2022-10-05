@@ -33,8 +33,7 @@
 
 #include <string.h>
 
-
-PUBLIC void setup_longmode(void *pml4) {
+PUBLIC void setup_longmode(NONNULL void *pml4) {
     cr0_t cr0 = get_cr0();
     cr3_t cr3 = get_cr3();
     cr4_t cr4 = get_cr4();
@@ -49,7 +48,7 @@ PUBLIC void setup_longmode(void *pml4) {
     set_cr0(cr0);
 }
 
-PUBLIC void *setup_paging(qword memsz, void ** limit) {
+PUBLIC NULLABLE("couldn't setup paging") void *setup_paging(qword memsz, NONNULL void **limit) {
     const int pte_pmu = (MEMUNIT_SZ / sizeof(PTE)); //PTE Per MEMUNIT
     const int pde_pmu = (MEMUNIT_SZ / sizeof(PDE)); //PDE Per MEMUNIT
     const int pdpte_pmu = (MEMUNIT_SZ / sizeof(PDPTE)); //PDPTE Per MEMUNIT
@@ -167,9 +166,9 @@ PUBLIC void *setup_paging(qword memsz, void ** limit) {
     return pml4_start_address;
 }
 
-PRIVATE void init_boot_args(struct boot_args *args, void *setup_mod, void *page_start, void *page_limit,
-                            void *kernel_start, void *kernel_limit, bool is_graphic, int screen_width,
-                            int screen_height, void *framebuffer, qword memsz) {
+PRIVATE void init_boot_args(struct NONNULL boot_args *args, NONNULL void *setup_mod, NONNULL void *page_start, NONNULL void *page_limit,
+                            NONNULL void *kernel_start, NONNULL void *kernel_limit, bool is_graphic, int screen_width,
+                            int screen_height, NONNULL void *framebuffer, qword memsz) {
     memset(args, 0, sizeof(struct boot_args));
 
     args->magic = BOOT_ARGS_MAGIC; //魔数
@@ -190,7 +189,7 @@ PRIVATE void init_boot_args(struct boot_args *args, void *setup_mod, void *page_
     args->setup_mod_addr = setup_mod;
 }
 
-PUBLIC void goto_longmode(word selector64, qword memsz, bool is_graphic, int screen_width, int screen_height, void *framebuffer) {
+PUBLIC void goto_longmode(word selector64, qword memsz, bool is_graphic, int screen_width, int screen_height, NONNULL void *framebuffer) {
     load_result_struct result;
     load_kernel(&result); //加载内核
 

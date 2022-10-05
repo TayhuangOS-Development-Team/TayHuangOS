@@ -208,9 +208,9 @@ reserved8_excepetion:
 _exception:
     call exception_handler
     add esp, 4
-_hlt:
+._hlt:
     hlt
-    jmp _hlt
+    jmp ._hlt
     
 extern irq_interrup_handler
 

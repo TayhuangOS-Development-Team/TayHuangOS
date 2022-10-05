@@ -17,11 +17,8 @@
 #pragma once
 
 #include <tayhuang/types.h>
+#include <tayhuang/attributes.h>
 
-#define PUBLIC                                        //公共
-#define PRIVATE static                                //私有
-#define EXTERN extern                                 //extern
-#define VOLATILE volatile                             //volatile
 #define HIGHBYTE(x) (((x) >> 8) & 0xFF)               //高字节
 #define LOWBYTE(x) (x & 0xFF)                         //低字节
 #define HIGHHEX(x) (((x) >> 4) & 0xF)                 //高16进制位
@@ -36,11 +33,11 @@
 #define LOWBIT(x) ((x) & (-(x)))                      //取最低bit
 #define TO2POW(num, x) (((num) + (x)-1) & (~((x)-1))) //向上取为2的n次幂
 #define abs(x) ((x) < 0 ? (-(x)) : (x))               //绝对值
-#define en_int() asmv("sti")
-#define dis_int() asmv("cli")
+#define en_int() asmv("sti") //启用中断
+#define dis_int() asmv("cli") //禁用中断
 
 //32位数x的前导0个数
-static inline dword leading_zeros(dword x) {
+INLINE dword leading_zeros(dword x) {
     if (x == 0) {
         return 32;
     }
@@ -70,7 +67,7 @@ static inline dword leading_zeros(dword x) {
 }
 
 //取log2 x近似值
-static inline int simple_log2(qword x) {
+INLINE int simple_log2(qword x) {
     int l = 0, r = 64;
     int mid = (l + r) >> 1;
 

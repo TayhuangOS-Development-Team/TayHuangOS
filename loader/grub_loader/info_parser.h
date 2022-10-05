@@ -29,4 +29,4 @@ typedef struct {
     void *framebuffer;
 } parse_result_struct;
 
-PUBLIC void parse_args(struct multiboot_tag *tag, parse_result_struct *result);
+PUBLIC void parse_args(NONNULL struct multiboot_tag *tag, NONNULL parse_result_struct *result);

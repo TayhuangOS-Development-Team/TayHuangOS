@@ -31,4 +31,4 @@ typedef struct {
     void *setup_mod;
 } load_result_struct;
 
-PUBLIC void load_kernel(load_result_struct *result);
+PUBLIC void load_kernel(NONNULL load_result_struct *result);

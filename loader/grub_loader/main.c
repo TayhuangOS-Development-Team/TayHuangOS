@@ -72,7 +72,7 @@ struct tayhuang_header TAYHUANG_HEADER __attribute__((section(".multiboot"))) = 
 };
 
 //loader主函数
-PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
+PUBLIC NORETURN void loader_main(struct multiboot_tag *multiboot_info) {
     init_gdt();
 
     init_idt();
@@ -105,10 +105,11 @@ PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
     linfo ("Loader", buffer);
 
     goto_longmode(7 << 3, result.memsz, result.is_graphic, width, height, framebuffer);
+    UNREACHABLE;
 }
 
 //loader入口点
-PUBLIC void entry(void) {
+PUBLIC NORETURN void entry(void) {
     register int magic __asm__("eax"); //Loader 魔数 存放在eax
     register struct multiboot_tag *multiboot_info __asm__("ebx"); //multiboot info 存放在ebx
 
@@ -116,9 +117,11 @@ PUBLIC void entry(void) {
 
     if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
         while (true);
+        UNREACHABLE;
     }
 
     loader_main(multiboot_info); //进入loader主函数
 
+    UNREACHABLE;
     while (1); //jmp $
 }

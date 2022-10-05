@@ -21,7 +21,7 @@
 #include <tayhuang/defs.h>
 
 #define PAGE_ADDRESS (0x3000000)
-PUBLIC void setup_longmode(void *pml4);
-PUBLIC void *setup_paging(qword memsz, void ** limit);
+PUBLIC void setup_longmode(NONNULL void *pml4);
+PUBLIC void NULLABLE("couldn't setup paging") *setup_paging(qword memsz, NONNULL void ** limit);
 
-PUBLIC void goto_longmode(word selector64, qword memsz, bool is_graphic, int screen_width, int screen_height, void *framebuffer);
+PUBLIC void goto_longmode(word selector64, qword memsz, bool is_graphic, int screen_width, int screen_height, NONNULL void *framebuffer);

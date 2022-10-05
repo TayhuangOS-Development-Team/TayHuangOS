@@ -74,7 +74,7 @@ PUBLIC void display_fs_info(fs_context context) {
     }
 }
 
-PUBLIC bool load_file(fs_context context, const char *name, void *dst) {
+PUBLIC bool load_file(fs_context context, NONNULL const char *name, NONNULL void *dst) {
     if (*((dword *)context) == FAT32_CONTEXT_MAGIC) { //比较context魔数
         return load_fat32_file(context, name, dst);
     }

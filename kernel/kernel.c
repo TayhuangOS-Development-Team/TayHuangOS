@@ -8,19 +8,15 @@
  * 
  * 作者: theflysong
  * 
- * kmod_prototypes.h
+ * kernel.c
  * 
- * 内核模块原型
+ * 内核
  * 
  */
 
-
-
-#pragma once
-
 #include <tayhuang/defs.h>
 
-PUBLIC void kmod_init(void);
-PUBLIC void kmod_main(void);
-
-#define KMOD_MAGIC (0x71BA4851)
+PUBLIC NORETURN void entry(void){
+    while (true);
+    UNREACHABLE;
+}

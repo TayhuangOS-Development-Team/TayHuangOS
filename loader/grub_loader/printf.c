@@ -29,7 +29,7 @@ PUBLIC void write_char(char ch, int color, int posx, int posy) {
     *(((short *)VIDEO_ADDRESS) + pos) = (((color & 0xFF) << 8) + (ch & 0xFF));
 }
 
-PUBLIC  void write_str(const char *str, int color, int posx, int posy) {
+PUBLIC void write_str(NONNULL const char *str, int color, int posx, int posy) {
     int pos = posx + posy * 80;
     while (*str != '\0') {
         char ch = *str;
@@ -81,7 +81,7 @@ PUBLIC void putchar(char ch) {
     }
 }
 
-PUBLIC void puts(const char *str) { // 打印字符串
+PUBLIC void puts(NONNULL const char *str) { // 打印字符串
     while (*str != '\0') {
         putchar(*str);
         str ++;
@@ -113,7 +113,7 @@ PUBLIC void clrscr(void) {
 }
 
 //基础vsprintf实现
-PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
+PUBLIC int vsprintf(NONNULL char *buffer, NONNULL const char *format, va_list args) {
     #define FLAG_SIGN 1
     #define FLAG_LEFT_ALIGN 2
     #define FLAG_FILL_ZERO 4
@@ -359,7 +359,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
 }
 
 //输出内容到buffer中
-PUBLIC int sprintf(char *buffer, const char *format, ...) {
+PUBLIC int sprintf(NONNULL char *buffer, NONNULL const char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -371,7 +371,7 @@ PUBLIC int sprintf(char *buffer, const char *format, ...) {
 }
 
 //输出内容到屏幕中
-PUBLIC int printf(const char *format, ...) {
+PUBLIC int printf(NONNULL const char *format, ...) {
     va_list args;
     va_start(args, format);
 

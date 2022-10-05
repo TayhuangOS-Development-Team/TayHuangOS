@@ -20,5 +20,5 @@
 
 #include <tayhuang/defs.h>
 
-PUBLIC void goto_ia32e(void *entrypoint, void *args, word selector64);
-PUBLIC void flush_cs(void);
+PUBLIC ASSEMBLY("lm/lm_operators.asm", 106) void goto_ia32e(NONNULL void *entrypoint, NONNULL void *args, word selector64);
+PUBLIC ASSEMBLY("lm/lm_operators.asm", 109) void flush_cs(void);

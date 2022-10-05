@@ -26,7 +26,7 @@ typedef void *fs_context;
 //加载文件系统上下文
 PUBLIC fs_context load_fs(int disk_selector, int partition_id);
 //读取文件
-PUBLIC bool load_file(fs_context context, const char *name, void *dst);
+PUBLIC bool load_file(fs_context context, NONNULL const char *name, NONNULL void *dst);
 //释放文件系统上下文
 PUBLIC void terminate_fs(fs_context context);
 //显示文件系统信息

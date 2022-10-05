@@ -22,7 +22,7 @@
 
 PUBLIC void init_serial(void);
 PUBLIC void write_serial_char(char ch);
-PUBLIC void write_serial_str(const char *str);
+PUBLIC void write_serial_str(NONNULL const char *str);
 
 enum {
     INFO = 0,
@@ -33,11 +33,11 @@ enum {
     ATTENTION
 };
 
-PUBLIC void _log(const char *name, const char *type, const char *msg);
-PUBLIC void log(const char *name, const int type, const char *msg);
-PUBLIC void linfo(const char *name, const char *msg);
-PUBLIC void lwarn(const char *name, const char *msg);
-PUBLIC void lerror(const char *name, const char *msg);
-PUBLIC void lfatal(const char *name, const char *msg);
-PUBLIC void ltips(const char *name, const char *msg);
-PUBLIC void lattention(const char *name, const char *msg);
+AUTOMATIC PUBLIC void _log(NONNULL const char *name, NONNULL const char *type, NONNULL const char *msg);
+PUBLIC void log(NONNULL const char *name, const int type, NONNULL const char *msg);
+PUBLIC void linfo(NONNULL const char *name, NONNULL const char *msg);
+PUBLIC void lwarn(NONNULL const char *name, NONNULL const char *msg);
+PUBLIC void lerror(NONNULL const char *name, NONNULL const char *msg);
+PUBLIC void lfatal(NONNULL const char *name, NONNULL const char *msg);
+PUBLIC void ltips(NONNULL const char *name, NONNULL const char *msg);
+PUBLIC void lattention(NONNULL const char *name, NONNULL const char *msg);

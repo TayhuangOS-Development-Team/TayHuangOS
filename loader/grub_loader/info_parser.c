@@ -20,7 +20,7 @@
 
 #include <printf.h>
 
-PRIVATE void parse_mem_info(struct multiboot_tag_mmap *tag, qword *memsz) {
+PRIVATE void parse_mem_info(NONNULL struct multiboot_tag_mmap *tag, NONNULL qword *memsz) {
     int size = tag->size - 4 * 4;
     int entry_num = size / tag->entry_size;
 
@@ -35,16 +35,16 @@ PRIVATE void parse_mem_info(struct multiboot_tag_mmap *tag, qword *memsz) {
     *memsz += 0x20000; //最终结果会少128KB
 }
 
-PRIVATE void parse_vbe(struct multiboot_tag_vbe *tag) {
+PRIVATE void parse_vbe(NONNULL struct multiboot_tag_vbe *tag) {
 }
 
-PRIVATE void parse_framebuffer(struct multiboot_tag_framebuffer *tag, void **framebuffer, int *width, int *height) {
+PRIVATE void parse_framebuffer(NONNULL struct multiboot_tag_framebuffer *tag, NONNULL void **framebuffer, NONNULL int *width, NONNULL int *height) {
     *framebuffer = (void *)(tag->common.framebuffer_addr & 0xFFFFFFFF);
     *width = tag->common.framebuffer_width;
     *height = tag->common.framebuffer_height;
 }
 
-PUBLIC void parse_args(struct multiboot_tag *tag, parse_result_struct *result) {
+PUBLIC void parse_args(NONNULL struct multiboot_tag *tag, NONNULL parse_result_struct *result) {
     tag = ((void *)tag) + 8;
     while (tag->type != MULTIBOOT_TAG_TYPE_END) {
         switch (tag->type)
