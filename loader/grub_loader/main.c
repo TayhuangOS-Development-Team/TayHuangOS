@@ -29,7 +29,6 @@
 #include <lm/setup_lm.h>
 
 #include <printf.h>
-#include <show_icon.h>
 
 #include <info_parser.h>
 #include <init.h>
@@ -101,10 +100,6 @@ PUBLIC void loader_main(struct multiboot_tag *multiboot_info) {
     void *framebuffer = result.framebuffer;
     int width = result.screen_width;
     int height = result.screen_height;
-
-#ifdef VBE_ENABLE
-    show_icon(framebuffer, width, height);
-#endif
 
     sprintf (buffer, "memory size=%#08X%08X", (dword)(result.memsz >> 32), (dword)result.memsz);
     linfo ("Loader", buffer);

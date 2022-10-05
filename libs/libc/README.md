@@ -1,3 +1,0 @@
-# Libc
-
-C Standard Library

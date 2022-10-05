@@ -31,22 +31,12 @@ CPPFLAGS := -m64 -Wall -Wno-int-conversion -Wstrict-prototypes -mfpmath=387 -mcm
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -mpreferred-stack-boundary=3 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-LIBS_C_SRC := ctype string tostring debug
-MEMORY_C_SRC := kheap pmm paging
-INTTERUP_C_SRC := clock exception init_int irq_handler
-TASK_C_SRC := task_scheduler task_manager thread signal
-SYSCALL_C_SRC := syscall syscalls rpc sys_task
-C_SRC := kernel printk logging kmod_loader \
-	$(foreach src, $(LIBS_C_SRC), libs/$(src)) \
-	$(foreach src, $(MEMORY_C_SRC), memory/$(src)) \
-	$(foreach src, $(INTTERUP_C_SRC), intterup/$(src)) \
-	$(foreach src, $(TASK_C_SRC), task/$(src)) \
-	$(foreach src, $(SYSCALL_C_SRC), syscall/$(src))
+C_SRC :=
 
 CPP_SRC :=
 
 ASMFLAGS :=
-ASM_SRC := entry intterup/int_handlers syscall/dosyscall
+ASM_SRC := entry
 
 C_DEFS := $(ARCHDEF_C)
 C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/kernel/"

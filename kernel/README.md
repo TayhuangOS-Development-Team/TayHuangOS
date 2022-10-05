@@ -1,3 +1,0 @@
-# Kernel
-
-Kernel source here

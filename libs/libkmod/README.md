@@ -1,3 +1,0 @@
-# Libkmod
-
-Kernel Module Library
