@@ -16,94 +16,17 @@
 
 
 
-# 配置区
-
-#include ./config.mk
-
-#定义区
-
-ARCHITECTURE ?= x86_64
-BOOT_TYPE := BIOS		#可选：BIOS UEFI
-ARCHDEF_C := -DARCH_$(ARCHITECTURE) #架构宏
-FILESYSTEM ?= fat32
-MODE ?= debug
-VBE_MODE ?= DISABLE
-KERNEL_PARTITION_OFFSET ?= 1048576
-IMAGE_SECTORS ?= 262144
-PROGRAM_FORMAT ?= elf
-COMPILER_PREFIX := $(ARCHITECTURE)-$(PROGRAM_FORMAT)
-BUILD_VERSION ?= 1
-# 这里本来有LOOPA和LOOPB，但依赖于get_loop.sh，故放在工具区
-
-
-include ./version.mk
-
-VERSION := $(CODE_VERSION)-$(MAJOR_VERSION).$(MINOR_VERSION).$(PATCH_VERSION):build $(BUILD_VERSION)
-
-export ARCHITECTURE ARCHDEF_C MODE VBE_MODE CODE_VERSION MAJOR_VERSION MINOR_VERSION PATCH_VERSION BUILD_VERSION VERSION
-
-#目录区
+# 脚本所在目录
 
 ROOTDIR := $(shell pwd)
-BUILDDIR := $(ROOTDIR)/build/$(MODE)/
-BINDIR := $(BUILDDIR)/bin/
-OBJECTSDIR := $(BUILDDIR)/objects/
-TAYHUANGOS_MOUNT_DIR := /mnt/tayhuangOS
-TAYHUANGOS_IMG := tayhuangOS.img
+SCRIPTDIR := $(ROOTDIR)/script/
 
-#工具区
+export ROOTDIR SCRIPTDIR
 
-MKDIR := mkdir -p -v
-GCC := $(COMPILER_PREFIX)-gcc
-GPP := $(COMPILER_PREFIX)-g++
-ASM := nasm
-GAS := $(COMPILER_PREFIX)-as
-RM := rm
-LD := $(COMPILER_PREFIX)-ld
-DD := dd
-_MKFS := mkfs
-GRUB_INSTALL := grub-install
-GRUB_MODULES := normal part_msdos ext2 fat multiboot all_video
-SUDO := sudo
-MOUNT := mount
-UMOUNT := umount
-ECHO := echo
-CD := cd
-COPY := cp
-OBJCOPY := $(COMPILER_PREFIX)-objcopy
-FDISK := fdisk
-LOOP_SETUP := losetup
-CHMOD := chmod
-AR := $(COMPILER_PREFIX)-ar
-
-ifeq ($(ARCHITECTURE), x86_64)
-	QEMU := qemu-system-x86_64
-endif
-
-QEMU_ARGS ?=
-QEMU_ARGS += -m size=256m,maxmem=256m \
-			 --enable-kvm \
-             -hda tayhuangOS.img \
-			 -serial stdio \
-			 -rtc base=localtime \
-			 -name "TayhuangOS"
-
-QEMU_DEBUG_ARGS := $(QEMU_ARGS) -s -S
-
-ifeq ($(FILESYSTEM), fat32)
-	MKFS := $(_MKFS).msdos -F 32 -n "TayhuangOS" -v -f 2
-endif
-
-export ROOTDIR BUILDDIR BINDIR OBJECTSDIR TAYHUANGOS_MOUNT_DIR TAYHUANGBOOT_MOUNT_DIR
-export GCC GPP ASM GAS RM MKDIR LD DD _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CD COPY OBJCOPY FDISK AR
-
-RAW_ICON := $(BINDIR)/tayicon.raw
-TAYHUANG_ICON := $(ROOTDIR)/TayhuangOS.png
-TOOLS_DIR := $(ROOTDIR)/tools/
-PNG_CONV := $(TOOLS_DIR)/png_converter/converter.py
-COUNTER := $(TOOLS_DIR)/build_counter/counter.py
-COMMENTS_STAT := $(TOOLS_DIR)/comments_stat/stat.py
-GET_LOOP := $(TOOLS_DIR)/get_loop_devices/get_loop.sh
+include $(SCRIPTDIR)/config.mk
+include $(SCRIPTDIR)/version.mk
+include $(SCRIPTDIR)/directory.mk
+include $(SCRIPTDIR)/tool.mk
 
 # 本来应该放在定义区，但依赖于get_loop.sh
 LOOPA ?= $(shell $(GET_LOOP) 0)
@@ -184,10 +107,10 @@ stat_code_density:
 .PHONY: build
 build: do_count
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
-	$(CD) libs && $(MAKE) build
-	$(CD) loader && $(MAKE) build
-	$(CD) kernel && $(MAKE) build
-	$(CD) module && $(MAKE) build
+	# $(CD) libs && $(MAKE) build
+	# $(CD) loader && $(MAKE) build
+	# $(CD) kernel && $(MAKE) build
+	# $(CD) module && $(MAKE) build
 ifeq ($(VBE_MODE), ENABLE)
 	$(MAKE) $(RAW_ICON)
 endif
@@ -199,10 +122,10 @@ $(RAW_ICON): $(TAYHUANG_ICON)
 .PHONY: clean
 clean:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
-	-$(CD) libs && $(MAKE) clean
-	-$(CD) loader && $(MAKE) clean
-	-$(CD) kernel && $(MAKE) clean
-	-$(CD) module && $(MAKE) clean
+	# -$(CD) libs && $(MAKE) clean
+	# -$(CD) loader && $(MAKE) clean
+	# -$(CD) kernel && $(MAKE) clean
+	# -$(CD) module && $(MAKE) clean
 
 #写入映像
 .PHONY: image
@@ -221,9 +144,9 @@ ifeq ($(VBE_MODE), ENABLE)
 	$(SUDO) $(COPY) $(RAW_ICON) $(TAYHUANGOS_MOUNT_DIR)/
 endif
 
-	$(CD) loader && $(MAKE) image
-	$(CD) kernel && $(MAKE) image
-	$(CD) module && $(MAKE) image
+	# $(CD) loader && $(MAKE) image
+	# $(CD) kernel && $(MAKE) image
+	# $(CD) module && $(MAKE) image
 
 .PHONY: run
 run:
