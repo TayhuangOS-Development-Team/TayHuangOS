@@ -1,20 +1,10 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /* Written 2000 by Andi Kleen */
 
-/* 
- * -------------------------------Reference from linux----------------------------------
- *
- * descs.h
- *
- * 描述符的结构及宏
- *
- */
-
-
-
 #pragma once
 
-#include <tayhuang/defs.h>
+#include <tayhuang/attributes.h>
+#include <tayhuang/types.h>
 
 struct desc_struct {
 	b16	limit0;

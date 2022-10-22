@@ -19,15 +19,6 @@
  *  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* 
- * -------------------------------Reference from grub2----------------------------------
- *
- * multiboot2.h
- *
- * multiboot2头
- *
- */
-
 #ifndef MULTIBOOT_HEADER
 #define MULTIBOOT_HEADER 1
 

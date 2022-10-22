@@ -1,17 +1,13 @@
-/*
+/**
+ * @file tostring.h
+ * @author theflysong (song_of_the_fly@163.com)
+ * @brief xx转字符串
+ * @version alpha-1.0.0
+ * @date 2022-10-22
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: theflysong
- *
- * tostring.h
- *
- * xx转字符串
- *
+ * 
  */
 
 

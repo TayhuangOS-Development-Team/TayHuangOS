@@ -1,22 +1,20 @@
-/* 
+/**
+ * @file attributes.h
+ * @author theflysong (song_of_the_fly@163.com)
+ * @brief 属性
+ * @version alpha-1.0.0
+ * @date 2022-10-22
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: theflysong
- *
- * attributes.h
- *
- * 属性
- *
+ * 
  */
 
 #pragma once
 
 #define PUBLIC                                        //公共
+#define API(source) extern                            //API函数
+#define IMPL(source)                                  //实现API
 #define PRIVATE static                                //私有
 #define EXTERN extern                                 //extern
 #define VOLATILE volatile                             //volatile

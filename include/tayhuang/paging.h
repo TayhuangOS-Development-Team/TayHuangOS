@@ -1,24 +1,21 @@
-/*
+/**
+ * @file paging.h
+ * @author theflysong (song_of_the_fly@163.com)
+ * @brief 分页
+ * @version alpha-1.0.0
+ * @date 2022-10-22
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: theflysong
- *
- * paging.h
- *
- * 分页相关结构/宏
- *
+ * 
  */
 
 
 
 #pragma once
 
-#include <tayhuang/defs.h>
+#include <tayhuang/attributes.h>
+#include <tayhuang/types.h>
 
 #define MEMUNIT_SZ (4096) //内存单元大小
 

@@ -1,17 +1,13 @@
-/*
+/**
+ * @file stdbool.h
+ * @author 383494
+ * @brief 标准库头文件 stdbool.h
+ * @version alpha-1.0.0
+ * @date 2022-10-22
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: 383494
- *
- * stdbool.h
- *
- * 标准库 stdbool.h 头文件
- *
+ * 
  */
 
 #pragma once

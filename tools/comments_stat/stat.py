@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: LGPL-2.1-only
 # -------------------------------*-TayhuangOS-*-----------------------------------
 # 
-#    Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
+#              Copyright (C) 2022, 2022 TayhuangOS Development Team
 # 
 # --------------------------------------------------------------------------------
 # 
