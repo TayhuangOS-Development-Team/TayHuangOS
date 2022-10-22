@@ -16,7 +16,25 @@
 
 # 需要定义 MODULENAME
 
+include $(SCRIPTDIR)/directory.mk
+include $(SCRIPTDIR)/tool.mk
+
 OBJECTSDIR := $(OBJECTSDIR)/$(MODULENAME)/
 BINDIR := $(BINDIR)/$(MODULENAME)/
 CURDIR := $(ROOTDIR)/$(MODULENAME)/
 export OBJECTSDIR BINDIR CURDIR
+
+
+define buildmod
+	$(CD) $(1) ; $(MAKE) build
+endef
+
+define imagemod
+	$(CD) $(1) ; $(MAKE) image
+endef
+
+define cleanmod
+	$(CD) $(1) ; $(MAKE) clean
+endef
+
+.PHONY: build image clean

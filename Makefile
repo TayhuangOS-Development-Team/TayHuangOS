@@ -108,7 +108,7 @@ stat_code_density:
 build: do_count
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
 	# $(CD) libs && $(MAKE) build
-	# $(CD) loader && $(MAKE) build
+	$(CD) loader && $(MAKE) build
 	# $(CD) kernel && $(MAKE) build
 	# $(CD) module && $(MAKE) build
 ifeq ($(VBE_MODE), ENABLE)
@@ -123,7 +123,7 @@ $(RAW_ICON): $(TAYHUANG_ICON)
 clean:
 	$(ECHO) "TayhuangOS Version: $(VERSION)"
 	# -$(CD) libs && $(MAKE) clean
-	# -$(CD) loader && $(MAKE) clean
+	-$(CD) loader && $(MAKE) clean
 	# -$(CD) kernel && $(MAKE) clean
 	# -$(CD) module && $(MAKE) clean
 
@@ -144,7 +144,7 @@ ifeq ($(VBE_MODE), ENABLE)
 	$(SUDO) $(COPY) $(RAW_ICON) $(TAYHUANGOS_MOUNT_DIR)/
 endif
 
-	# $(CD) loader && $(MAKE) image
+	$(CD) loader && $(MAKE) image
 	# $(CD) kernel && $(MAKE) image
 	# $(CD) module && $(MAKE) image
 

@@ -8,18 +8,20 @@
 # 
 # 作者: theflysong 383494
 # 
-# directory.mk
+# compile.mk
 # 
-# 目录makefile
+# 编译
 # 
 #
 
 # 需要定义 ASM_SRC 
-# 需要定义 C_SRC CFLAGS C_INCLUDE C_DEFS
-# 需要定义 CPP_SRC CPPFLAGS CPP_INCLUDE CPP_DEFS
+# 需要定义 MODULENAME 
+# 需要定义 C_SRC C_FLAGS C_INCLUDE C_DEFS
+# 需要定义 CPP_SRC CPP_FLAGS CPP_INCLUDE CPP_DEFS
+# 需要定义 LD_FLAGS LIBRARIES LD_SRCIPT 
 
-include $(SCRIPTDIR)/directory
-include $(SCRIPTDIR)/tool
+include $(SCRIPTDIR)/module.mk
+include $(SCRIPTDIR)/tool.mk
 
 OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
            $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
@@ -27,12 +29,21 @@ OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
 
 $(OBJECTSDIR)/%.o : %.cpp
 	$(MKDIR) $(dir $@)
-	$(GPP) -c $(CPPFLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
+	$(GPP) -c $(CPP_FLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.c
 	$(MKDIR) $(dir $@)
-	$(GCC) -c $(CFLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
+	$(GCC) -c $(C_FLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
 
 $(OBJECTSDIR)/%.o : %.S
 	$(MKDIR) $(dir $@)
 	$(GAS) -o $@ $^
+
+define link
+	$(MKDIR) $(dir $(1))
+	$(LD) $(LD_FLAGS) -T $(LD_SRCIPT) -o $(1) $(2) --start-group $(LIBRARIES) --end-group
+endef
+
+define extract
+	$(foreach src, $(1), $(2)/$(src))
+endef

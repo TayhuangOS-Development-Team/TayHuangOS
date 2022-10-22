@@ -8,7 +8,7 @@
 # 
 # 作者: theflysong 383494
 # 
-# module.mk
+# directory.mk
 # 
 # 目录
 # 
