@@ -22,6 +22,11 @@
 #define HEAP_SIZE (524288)
 
 /**
+ * @brief 初始化堆
+ * 
+ */
+void mm_init(void);
+/**
  * @brief 分配内存
  * 
  * @param size 要求大小

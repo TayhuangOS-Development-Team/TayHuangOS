@@ -19,6 +19,7 @@
 #include <init/intterup.h>
 
 #include <logging.h>
+#include <heap.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
@@ -111,7 +112,6 @@ __attribute__((section(".multiboot")))
  */
 IMPL NORETURN void main(struct multiboot_tag *multiboot_info) {
     LINFO ("GRUB2 Loader", "Initialized");
-
     while (true);
 }
 
@@ -131,6 +131,7 @@ IMPL NORETURN void entry(void) {
     // 设置栈指针
     asmv ("movl $0x2008000, %esp");
 
+    //初始化
     init_gdt();
     init_idt();
     init_pic();
@@ -138,6 +139,9 @@ IMPL NORETURN void entry(void) {
     asmv("sti");
 
     init_serial();
+
+    mm_init();
     
+    //进入主函数
     main(multiboot_info);
 }

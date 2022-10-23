@@ -23,9 +23,26 @@ byte HEAP[HEAP_SIZE];
  * 
  */
 typedef struct _freeblk {
-    void *start;
+    int block_size;
     struct _freeblk *next;
 } freeblk;
+
+/**
+ * @brief 获取有效部分大小
+ * 
+ * @param block_size 块大小
+ * @return 有效部分大小
+ */
+PRIVATE int get_valid_size(int block_size) {
+    return block_size - sizeof(freeblk);
+}
+
+void mm_init(void) {
+    //大块 HEAP
+    freeblk *block = (freeblk *)HEAP;
+    block->block_size = HEAP_SIZE;
+    block->next = NULL;
+}
 
 //TODO
 void *malloc(int size) {
