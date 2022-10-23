@@ -16,5 +16,22 @@
 #include <tayhuang/types.h>
 #include <stdarg.h>
 
+/**
+ * @brief 打印到缓存
+ * 最基础的printf
+ * 
+ * @param buffer 缓存
+ * @param format format字符串
+ * @param args format参数
+ * @return 打印的字符个数 
+ */
 PUBLIC int vsprintf(char *buffer, const char *format, va_list args);
+/**
+ * @brief 打印到缓存
+ * 
+ * @param buffer 缓存
+ * @param format format字符串
+ * @param ... format参数
+ * @return 打印的字符个数 
+ */
 PUBLIC int sprintf(char *buffer, const char *format, ...);

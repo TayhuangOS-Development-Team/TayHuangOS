@@ -17,10 +17,19 @@
 
 #define GDT_SIZE (16)
 
-//GDT表
+/**
+ * @brief GDT
+ * 
+ */
 EXTERN PUBLIC struct desc_struct GDT[GDT_SIZE];
-//指针
+/**
+ * @brief GDTR GDT指针
+ * 
+ */
 EXTERN PUBLIC struct gdt_ptr gdtr;
 
-//初始化函数
+/**
+ * @brief 初始化GDT
+ * 
+ */
 PUBLIC void init_gdt(void);
