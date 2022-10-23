@@ -8,7 +8,7 @@ ASM_SRC := handler
 
 LIBS_C_SRC := ctype string tostring
 INIT_C_SRC := gdt intterup
-C_SRC := main printf logging \
+C_SRC := main printf logging heap \
 		 $(call extract, $(LIBS_C_SRC), libs) \
 		 $(call extract, $(INIT_C_SRC), init)
 C_FLAGS := -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
