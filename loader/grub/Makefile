@@ -1,10 +1,14 @@
+include $(SCRIPTDIR)/util.mk
+
 # 汇编
 
 ASM_SRC :=
 
 # C
 
-C_SRC := main
+LIBS_C_SRC := ctype string tostring
+C_SRC := main printf logging \
+		 $(call extract, $(LIBS_C_SRC), libs)
 C_FLAGS := -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\

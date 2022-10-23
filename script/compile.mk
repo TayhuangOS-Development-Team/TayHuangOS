@@ -43,7 +43,3 @@ define link
 	$(MKDIR) $(dir $(1))
 	$(LD) $(LD_FLAGS) -T $(LD_SRCIPT) -o $(1) $(2) --start-group $(LIBRARIES) --end-group
 endef
-
-define extract
-	$(foreach src, $(1), $(2)/$(src))
-endef

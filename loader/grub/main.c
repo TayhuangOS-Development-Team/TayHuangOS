@@ -13,6 +13,7 @@
 #include <libs/multiboot2.h>
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
+#include <logging.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
@@ -109,5 +110,7 @@ IMPL void entry(void) {
     *(word*)(0xB8006) = 0x0C35;
     *(word*)(0xB8008) = 0x0C31;
     *(word*)(0xB800A) = 0x0C34;
+    init_serial();
+    LINFO("LOADER", "HELLO, WORLD!");
     while (true);
 }
