@@ -14,32 +14,49 @@
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
 
-// GRUB 2 API
-IMPL("GRUB2") 
-// 程序头结构
-struct tayhuang_header {
-    // GRUB 2头
+/**
+ * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
+ * 应GRUB2要求实现
+ * 
+ */
+IMPL struct tayhuang_header {
+    /**
+     * @brief Mulitiboot2 头
+     * 
+     */
     struct multiboot_header header;
-    // 启用VBE
+    //若启用VBE
 #ifdef VBE_ENABLE
-    // 屏幕信息
+    /**
+     * @brief 屏幕信息
+     * 
+     */
     struct multiboot_header_tag_framebuffer framebuffer;
-    // 对齐
+    /**
+     * @brief 保留位 仅供对齐
+     * 
+     */
     multiboot_uint32_t reserved0;
 #endif
-    // GRUB 2尾
+    /**
+     * @brief Mulitiboot2 尾巴
+     * 
+     */
     struct multiboot_header_tag end;
-} __attribute__((packed));
+} 
+//按字节对齐
+__attribute__((packed));
 
-// Grub2 API
-IMPL("GRUB2") 
-// 将这个头放在.multiboot段下
-struct tayhuang_header TAYHUANG_HEADER 
+/**
+ * @brief Tayhuang OS GRUB 2 Boot Loader 程序头
+ * 应GRUB2要求实现
+ * 放在.multiboot段下
+ */
+IMPL struct tayhuang_header TAYHUANG_HEADER 
 //将这个头放在.multiboot段下
 __attribute__((section(".multiboot")))
-// 程序头内容 
 = {
-    //GRUB 2头
+    // Multiboot 2 头
     .header = {
         .magic    = MULTIBOOT2_HEADER_MAGIC,
         .architecture = MULTIBOOT_ARCHITECTURE_I386,
@@ -48,9 +65,20 @@ __attribute__((section(".multiboot")))
     },
     //启用VBE
 #ifdef VBE_ENABLE
-    //屏幕基本信息
+    /**
+     * @brief 屏幕宽
+     * 
+     */
     #define FRAMEBUFFER_WIDTH 1024
+    /**
+     * @brief 屏幕高
+     * 
+     */
     #define FRAMEBUFFER_HEIGHT 768
+    /**
+     * @brief 像素位深
+     * 
+     */
     #define FRAMEBUFFER_BPP 24
     //屏幕信息
     .framebuffer = {
@@ -62,7 +90,7 @@ __attribute__((section(".multiboot")))
         .depth = FRAMEBUFFER_BPP
     },
 #endif
-    //GRUB 2尾
+    // Multiboot 2 尾
     .end = {
         .type = MULTIBOOT_HEADER_TAG_END,
         .flags = 0,
@@ -70,10 +98,11 @@ __attribute__((section(".multiboot")))
     }
 };
 
-//ELF 要求入口点
-IMPL("elf")
-//入口点 
-void entry(void) {
+/**
+ * @brief GRUB 2 Loader 入口点
+ * 
+ */
+IMPL void entry(void) {
     *(word*)(0xB8000) = 0x0C31;
     *(word*)(0xB8002) = 0x0C31;
     *(word*)(0xB8004) = 0x0C34;

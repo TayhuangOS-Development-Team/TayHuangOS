@@ -12,20 +12,73 @@
 
 #pragma once
 
-#define PUBLIC                                        //公共
-#define API(source) extern                            //API函数
-#define IMPL(source)                                  //实现API
-#define PRIVATE static                                //私有
-#define EXTERN extern                                 //extern
-#define VOLATILE volatile                             //volatile
-#define NORETURN                                      //不返回
-#define DISCARDED                                     //废弃的
-#define NONNULL                                       //不为空
-#define NULLABLE(meaning)                             //可空的
-#define UNREACHABLE                                   //不可到达的
-#define AUTOMATIC                                     //原子的
-#define INLINE static inline                          //内连的
-#define ASSEMBLY(file, line)                          //用汇编实现的
-#define RETVAL(value, meaning)                        //返回值
-#define ARCHITECT(architect)                          //基于某个架构的
-#define IMPL_BY_USERS                                 //由使用者实现
+/**
+ * @brief 公共的
+ * 
+ */
+#define PUBLIC                                        
+/**
+ * @brief API函数声明
+ * 
+ */
+#define API extern
+/**
+ * @brief API函数实现
+ * 
+ */
+#define IMPL                                          
+/**
+ * @brief 私有的
+ * 
+ */
+#define PRIVATE static                                
+/**
+ * @brief 声明
+ * 
+ */
+#define EXTERN extern                                 
+/**
+ * @brief 易变的
+ * 
+ */
+#define VOLATILE volatile                             
+/**
+ * @brief 不返回的
+ * 
+ */
+#define NORETURN                                      
+/**
+ * @brief 不可为空的
+ * 
+ */
+#define NONNULL                                       
+/**
+ * @brief 可为空的
+ * 
+ */
+#define NULLABLE                                      
+/**
+ * @brief 不可到达的
+ * 
+ */
+#define UNREACHABLE                                   
+/**
+ * @brief 原子操作
+ * 
+ */
+#define AUTOMATIC                                     
+/**
+ * @brief 内连函数
+ * 
+ */
+#define INLINE static inline                          
+/**
+ * @brief 由汇编实现
+ * 
+ */
+#define ASSEMBLY                               
+/**
+ * @brief 某个架构特有的
+ * 
+ */
+#define ARCHITECTURE_BASED                          
