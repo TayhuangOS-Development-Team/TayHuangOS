@@ -2,12 +2,12 @@ include $(SCRIPTDIR)/util.mk
 
 # 汇编
 
-ASM_SRC :=
+ASM_SRC := handler
 
 # C
 
 LIBS_C_SRC := ctype string tostring
-C_SRC := main printf logging \
+C_SRC := main printf logging intterup gdt \
 		 $(call extract, $(LIBS_C_SRC), libs)
 C_FLAGS := -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \

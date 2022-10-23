@@ -1,3 +1,5 @@
+#pragma once
+
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
 #include <stdarg.h>

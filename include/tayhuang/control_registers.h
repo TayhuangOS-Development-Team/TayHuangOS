@@ -362,77 +362,190 @@ ARCHITECTURE_BASED typedef struct {
     qword reserved : 16;
 } efer_t;
 
+#define EFER_MSR 0xC0000080
+
+#ifndef LOADER32BIT
+#define bits qword
+#else
+#define bits dword
+#endif
+
 /**
  * @brief 设置cr0
  * x86-64架构
  * 
  * @param cr0 cr0寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC void __set_cr0(int cr0);
+ARCHITECTURE_BASED INLINE PUBLIC void __set_cr0(bits cr0) {
+    asmv ("movq %0, %%cr0" : : "r"(cr0));
+}
 /**
  * @brief 获得cr0
  * x86-64架构
  * 
  * @return cr0寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC int __get_cr0(void);
+ARCHITECTURE_BASED INLINE PUBLIC bits __get_cr0(void) {
+    bits cr0;
+    asmv ("movq %%cr0, %0" : "=r"(cr0));
+    return cr0;
+}
 /**
  * @brief 设置cr2
  * x86-64架构
  * 
  * @param cr2 cr2寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC void __set_cr2(int cr2);
+ARCHITECTURE_BASED INLINE PUBLIC void __set_cr2(bits cr2) {
+    asmv ("movq %0, %%cr2" : : "r"(cr2));
+}
 /**
  * @brief 获得cr2
  * x86-64架构
  * 
  * @return cr2寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC int __get_cr2(void);
+ARCHITECTURE_BASED INLINE PUBLIC bits __get_cr2(void) {
+    bits cr2;
+    asmv ("movq %%cr2, %0" : "=r"(cr2));
+    return cr2;
+}
 /**
  * @brief 设置cr3
  * x86-64架构
  * 
  * @param cr3 cr3寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC void __set_cr3(int cr3);
+ARCHITECTURE_BASED INLINE PUBLIC void __set_cr3(bits cr3) {
+    asmv ("movq %0, %%cr3" : : "r"(cr3));
+}
 /**
  * @brief 获得cr3
  * x86-64架构
  * 
  * @return cr3寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC int __get_cr3(void);
+ARCHITECTURE_BASED INLINE PUBLIC bits __get_cr3(void) {
+    bits cr3;
+    asmv ("movq %%cr3, %0" : "=r"(cr3));
+    return cr3;
+}
 /**
  * @brief 设置cr4
  * x86-64架构
  * 
  * @param cr4 cr4寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC void __set_cr4(int cr4);
+ARCHITECTURE_BASED INLINE PUBLIC void __set_cr4(bits cr4) {
+    asmv ("movq %0, %%cr4" : : "D"(cr4));
+}
 /**
  * @brief 获得cr4
  * x86-64架构
  * 
  * @return cr4寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC int __get_cr4(void);
+ARCHITECTURE_BASED INLINE PUBLIC bits __get_cr4(void) {
+    bits cr4;
+    asmv ("movq %%cr4, %0" : "=r"(cr4));
+    return cr4;
+}
+
+#ifndef LOADER32BIT
+/**
+ * @brief 设置msr
+ * x86-64架构
+ * 
+ * @param msr MSR序号
+ * @param val 值
+ */
+ARCHITECTURE_BASED INLINE PUBLIC void __set_msr(dword msr, qword val) {
+    dword high32 = val >> 32;
+    dword low32 = val & 0xFFFFFFFF;
+    asmv ("\
+movq %0, %%rcx \n\
+movq %1, %%rdx \n\
+movq %2, %%rax \n\
+wrmsr \n\
+" 
+: : "r"(msr), "r"(high32), "r"(low32)
+: "rcx", "rdx", "rax");
+}
+/**
+ * @brief 获得msr
+ * x86-64架构
+ * 
+ * @return msr寄存器值 
+ */
+ARCHITECTURE_BASED INLINE PUBLIC bits __get_msr(dword msr) {
+    dword high32;
+    dword low32;
+    asmv ("\
+movq %2, %%rcx \n\
+rdmsr \n\
+movq %%rdx, %0 \n\
+movq %%rax, %1 \n\
+" 
+: "=r"(high32), "=r"(low32) : "r"(msr) 
+: "rcx", "rdx", "rax");
+    return ((qword)high32) << 32 | (low32 & 0xFFFFFFFF);
+}
+#else
+
+/**
+ * @brief 设置msr
+ * x86-64架构
+ * 
+ * @param msr MSR序号
+ * @param val 值
+ */
+ARCHITECTURE_BASED INLINE PUBLIC void __set_msr(dword msr, dword val) {
+    asmv ("\
+movl %0, %%ecx \n\
+movl %1, %%edx \n\
+xorl %%eax, %%eax \n\
+wrmsr \n\
+" 
+: : "r"(msr), "r"(val)
+: "ecx", "edx", "eax");
+}
+/**
+ * @brief 获得msr
+ * x86-64架构
+ * 
+ * @return msr寄存器值 
+ */
+ARCHITECTURE_BASED INLINE PUBLIC bits __get_msr(dword msr) {
+    dword val;
+    asmv ("\
+movl %1, %%ecx \n\
+rdmsr \n\
+movl %%eax, %0 \n\
+" 
+: "=r"(val) : "r"(msr) 
+: "ecx", "edx", "eax");
+    return val;
+}
+#endif
+
 /**
  * @brief 设置efer
  * x86-64架构
  * 
  * @param efer efer寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC void __set_efer(int efer);
+ARCHITECTURE_BASED INLINE PUBLIC void __set_efer(bits efer) {
+    __set_msr(EFER_MSR, efer);
+}
 /**
  * @brief 获得efer
  * x86-64架构
  * 
  * @return efer寄存器值 
  */
-API ASSEMBLY ARCHITECTURE_BASED PUBLIC int __get_efer(void);
-
+ARCHITECTURE_BASED INLINE PUBLIC qword __get_efer(void) {
+    return __get_msr(EFER_MSR);
+}
 
 /**
  * @brief 设置cr0
@@ -441,7 +554,7 @@ API ASSEMBLY ARCHITECTURE_BASED PUBLIC int __get_efer(void);
  * @param cr0 cr0寄存器值 
  */
 ARCHITECTURE_BASED INLINE void set_cr0(cr0_t cr0) {
-    __set_cr0(*(int *)&cr0);
+    __set_cr0(*(bits *)&cr0);
 }
 
 /**
@@ -451,7 +564,7 @@ ARCHITECTURE_BASED INLINE void set_cr0(cr0_t cr0) {
  * @return cr0寄存器值 
  */
 ARCHITECTURE_BASED INLINE cr0_t get_cr0(void) {
-    int cr0 = __get_cr0();
+    bits cr0 = __get_cr0();
     return *(cr0_t *)&cr0;
 }
 
@@ -462,7 +575,7 @@ ARCHITECTURE_BASED INLINE cr0_t get_cr0(void) {
  * @param cr2 cr2寄存器值 
  */
 ARCHITECTURE_BASED INLINE void set_cr2(cr2_t cr2) {
-    __set_cr2(*(int *)&cr2);
+    __set_cr2(*(bits *)&cr2);
 }
 
 /**
@@ -472,7 +585,7 @@ ARCHITECTURE_BASED INLINE void set_cr2(cr2_t cr2) {
  * @return cr2寄存器值 
  */
 ARCHITECTURE_BASED INLINE cr2_t get_cr2(void) {
-    int cr2 = __get_cr2();
+    bits cr2 = __get_cr2();
     return *(cr2_t *)&cr2;
 }
 
@@ -483,7 +596,7 @@ ARCHITECTURE_BASED INLINE cr2_t get_cr2(void) {
  * @param cr3 cr3寄存器值 
  */
 ARCHITECTURE_BASED INLINE void set_cr3(cr3_t cr3) {
-    __set_cr3(*(int *)&cr3);
+    __set_cr3(*(bits *)&cr3);
 }
 
 /**
@@ -493,7 +606,7 @@ ARCHITECTURE_BASED INLINE void set_cr3(cr3_t cr3) {
  * @return cr3寄存器值 
  */
 ARCHITECTURE_BASED INLINE cr3_t get_cr3(void) {
-    int cr3 = __get_cr3();
+    bits cr3 = __get_cr3();
     return *(cr3_t *)&cr3;
 }
 
@@ -504,7 +617,7 @@ ARCHITECTURE_BASED INLINE cr3_t get_cr3(void) {
  * @param cr4 cr4寄存器值 
  */
 ARCHITECTURE_BASED INLINE void set_cr4(cr4_t cr4) {
-    __set_cr4(*(int *)&cr4);
+    __set_cr4(*(bits *)&cr4);
 }
 
 /**
@@ -514,7 +627,7 @@ ARCHITECTURE_BASED INLINE void set_cr4(cr4_t cr4) {
  * @return cr4寄存器值 
  */
 ARCHITECTURE_BASED INLINE cr4_t get_cr4(void) {
-    int cr4 = __get_cr4();
+    bits cr4 = __get_cr4();
     return *(cr4_t *)&cr4;
 }
 
@@ -525,7 +638,7 @@ ARCHITECTURE_BASED INLINE cr4_t get_cr4(void) {
  * @param efer efer寄存器值 
  */
 ARCHITECTURE_BASED INLINE void set_efer(efer_t efer) {
-    __set_efer(*(int *)&efer);
+    __set_efer(*(bits *)&efer);
 }
 
 /**
@@ -535,6 +648,6 @@ ARCHITECTURE_BASED INLINE void set_efer(efer_t efer) {
  * @return efer寄存器值 
  */
 ARCHITECTURE_BASED INLINE efer_t get_efer(void) {
-    int efer = __get_efer();
+    bits efer = __get_efer();
     return *(efer_t *)&efer;
 }

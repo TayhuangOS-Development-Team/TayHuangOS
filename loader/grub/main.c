@@ -14,6 +14,8 @@
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
 #include <logging.h>
+#include <gdt.h>
+#include <intterup.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
@@ -104,13 +106,31 @@ __attribute__((section(".multiboot")))
  * 
  */
 IMPL void entry(void) {
+    register int magic __asm__("eax"); //Loader 魔数 存放在eax
+    struct multiboot_tag *multiboot_info; //multiboot info 存放在ebx
+    asmv ("movl %%ebx, %0" : "=g"(multiboot_info));
+
+    if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
+        while (true);
+    }
+
+    // 设置栈指针
+    asmv ("movl $0x2008000, %esp");
+
+    init_gdt();
+    init_idt();
+    init_pic();
+
+    asmv("sti");
+
+    init_serial();
+
     *(word*)(0xB8000) = 0x0C31;
     *(word*)(0xB8002) = 0x0C31;
     *(word*)(0xB8004) = 0x0C34;
     *(word*)(0xB8006) = 0x0C35;
     *(word*)(0xB8008) = 0x0C31;
     *(word*)(0xB800A) = 0x0C34;
-    init_serial();
     LINFO("LOADER", "HELLO, WORLD!");
     while (true);
 }
