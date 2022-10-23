@@ -11,11 +11,14 @@
  */
 
 #include <libs/multiboot2.h>
+
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
+
+#include <init/gdt.h>
+#include <init/intterup.h>
+
 #include <logging.h>
-#include <gdt.h>
-#include <intterup.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
@@ -102,10 +105,21 @@ __attribute__((section(".multiboot")))
 };
 
 /**
+ * @brief GRUB2 Loader 主函数
+ * 
+ * @param multiboot_info multiboot info
+ */
+IMPL NORETURN void main(struct multiboot_tag *multiboot_info) {
+    LINFO ("GRUB2 Loader", "Initialized");
+
+    while (true);
+}
+
+/**
  * @brief GRUB 2 Loader 入口点
  * 
  */
-IMPL void entry(void) {
+IMPL NORETURN void entry(void) {
     register int magic __asm__("eax"); //Loader 魔数 存放在eax
     struct multiboot_tag *multiboot_info; //multiboot info 存放在ebx
     asmv ("movl %%ebx, %0" : "=g"(multiboot_info));
@@ -124,13 +138,6 @@ IMPL void entry(void) {
     asmv("sti");
 
     init_serial();
-
-    *(word*)(0xB8000) = 0x0C31;
-    *(word*)(0xB8002) = 0x0C31;
-    *(word*)(0xB8004) = 0x0C34;
-    *(word*)(0xB8006) = 0x0C35;
-    *(word*)(0xB8008) = 0x0C31;
-    *(word*)(0xB800A) = 0x0C34;
-    LINFO("LOADER", "HELLO, WORLD!");
-    while (true);
+    
+    main(multiboot_info);
 }

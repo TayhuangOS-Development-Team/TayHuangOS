@@ -7,8 +7,10 @@ ASM_SRC := handler
 # C
 
 LIBS_C_SRC := ctype string tostring
-C_SRC := main printf logging intterup gdt \
-		 $(call extract, $(LIBS_C_SRC), libs)
+INIT_C_SRC := gdt intterup
+C_SRC := main printf logging \
+		 $(call extract, $(LIBS_C_SRC), libs) \
+		 $(call extract, $(INIT_C_SRC), init)
 C_FLAGS := -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\

@@ -12,7 +12,7 @@
 
 
 
-#include <intterup.h>
+#include <init/intterup.h>
 
 #include <tayhuang/ports.h>
 #include <tayhuang/io.h>
