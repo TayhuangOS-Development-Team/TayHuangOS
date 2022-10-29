@@ -25,14 +25,14 @@
  * @brief 初始化堆
  * 
  */
-void mm_init(void);
+PUBLIC void mm_init(void);
 /**
  * @brief 分配内存
  * 
  * @param size 要求大小
  * @return 分配的内存地址 NULL表示没有合适内存
  */
-NULLABLE void *malloc(int size);
+PUBLIC NULLABLE void *malloc(int size);
 /**
  * @brief 释放内存
  * 
@@ -40,4 +40,4 @@ NULLABLE void *malloc(int size);
  * 
  * @param addr 要释放的内存地址
  */
-void free(NONNULL void *addr);
+PUBLIC void free(NONNULL void *addr);

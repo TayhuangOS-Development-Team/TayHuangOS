@@ -32,4 +32,14 @@ typedef b32 reg32_t; //32位寄存器
 typedef b64 reg64_t; //64位寄存器
 typedef void *handle_t; //处理器
 
+#ifdef LOADER32BIT
+typedef b32 __standard_size__;
+#else
+typedef b64 __standard_size__;
+#endif
+
 #define asmv asm volatile //简写
+
+typedef __standard_size__ phy_addr_t;
+typedef __standard_size__ lin_addr_t;
+typedef __standard_size__ size_t;

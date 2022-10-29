@@ -494,7 +494,7 @@ movq %%rax, %1 \n\
 
 /**
  * @brief 设置msr
- * x86-64架构
+ * x86架构
  * 
  * @param msr MSR序号
  * @param val 值
@@ -511,7 +511,7 @@ wrmsr \n\
 }
 /**
  * @brief 获得msr
- * x86-64架构
+ * x86架构
  * 
  * @return msr寄存器值 
  */
