@@ -12,6 +12,7 @@
 
 #include <init/gdt.h>
 #include <tayhuang/io.h>
+#include <tayhuang/control_registers.h>
 
 struct desc_struct GDT[GDT_SIZE];
 
@@ -28,4 +29,6 @@ PUBLIC void init_gdt(void) {
     gdtr.len = sizeof (GDT) - 1;
     asmv ("lgdtl %0" : : "m"(gdtr)); //加载GDT
     stds(2 << 3);
+
+    flush_cs(1 << 3);
 }

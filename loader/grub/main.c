@@ -112,6 +112,8 @@ __attribute__((section(".multiboot")))
  */
 IMPL NORETURN void main(struct multiboot_tag *multiboot_info) {
     LINFO ("GRUB2 Loader", "Initialized");
+
+    asmv("ud2");
     while (true);
 }
 
@@ -133,6 +135,7 @@ IMPL NORETURN void entry(void) {
 
     //初始化
     init_gdt();
+
     init_idt();
     init_pic();
 

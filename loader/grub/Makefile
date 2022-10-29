@@ -2,7 +2,7 @@ include $(SCRIPTDIR)/util.mk
 
 # 汇编
 
-ASM_SRC := handler
+ASM_SRC := handler flush
 
 # C
 

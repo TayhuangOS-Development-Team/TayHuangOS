@@ -651,3 +651,12 @@ ARCHITECTURE_BASED INLINE efer_t get_efer(void) {
     bits efer = __get_efer();
     return *(efer_t *)&efer;
 }
+
+/**
+ * @brief 刷新CS
+ * 
+ * 需要自己实现
+ * 
+ * @param cs_sel CS选择子
+ */
+ARCHITECTURE_BASED ASSEMBLY void flush_cs(word cs_sel);
