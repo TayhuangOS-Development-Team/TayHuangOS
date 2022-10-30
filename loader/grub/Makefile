@@ -5,12 +5,13 @@ include $(SCRIPTDIR)/util.mk
 ASM_SRC := handler flush
 
 # C
-
+FS_C_SRC := disk
 LIBS_C_SRC := ctype string tostring
 INIT_C_SRC := gdt intterup
 C_SRC := main printf logging heap \
 		 $(call extract, $(LIBS_C_SRC), libs) \
-		 $(call extract, $(INIT_C_SRC), init)
+		 $(call extract, $(INIT_C_SRC), init) \
+		 $(call extract, $(FS_C_SRC), fs)
 C_FLAGS := -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\

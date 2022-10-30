@@ -14,12 +14,15 @@
 
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
+#include <tayhuang/ports.h>
 
 #include <init/gdt.h>
 #include <init/intterup.h>
 
 #include <logging.h>
 #include <heap.h>
+
+#include <fs/disk.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
@@ -78,7 +81,9 @@ __attribute__((section(".multiboot")))
      */
     #define FRAMEBUFFER_WIDTH 1024
     /**
-     * @brief 屏幕高
+     * @brief 
+     * 
+     */
      * 
      */
     #define FRAMEBUFFER_HEIGHT 768
@@ -113,16 +118,16 @@ __attribute__((section(".multiboot")))
 IMPL NORETURN void main(struct multiboot_tag *multiboot_info) {
     LINFO ("GRUB2 Loader", "Initialized");
 
-    int *a = malloc(4);
-    int *b = malloc(4);
-    LINFOF("!", "%p %p", a, b);
-    free(a);
-    int *c = malloc(4);
-    LINFOF("!", "%p %p %p", a, b, c);
-    free(b);
-    free(c);
-    int *d = malloc(8);
-    LINFOF("!", "%p", d);
+    disk_t *disk = open_disk(IDE0_BASE, IDE0_BASE2, false, 0);
+
+    LINFOF ("GRUB2 Loader", "serial: %s", disk->serial);
+    LINFOF ("GRUB2 Loader", "model: %s", disk->model);
+    LINFOF ("GRUB2 Loader", "disk sectors: %d", disk->disk_sector_number);
+    LINFOF ("GRUB2 Loader", "partition: %d", disk->partition + 1);
+    LINFOF ("GRUB2 Loader", "start: %d", disk->start_sector);
+    LINFOF ("GRUB2 Loader", "sectors: %d", disk->sector_number);
+
+    close_disk(disk);
     while (true);
 }
 

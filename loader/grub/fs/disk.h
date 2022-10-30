@@ -1,7 +1,7 @@
 /**
  * @file disk.h
  * @author theflysong (song_of_the_fly@163.com)
- * @brief 
+ * @brief 磁盘驱动
  * @version alpha-1.0.0
  * @date 2022-10-29
  * 
@@ -20,23 +20,80 @@
  * 
  */
 typedef struct {
-    int base_port;
-    bool master;
+    /**
+     * @brief 磁盘起始端口
+     * 
+     */
+    int base1;
+    /**
+     * @brief 磁盘起始端口2
+     * 
+     */
+    int base2;
+    /**
+     * @brief 序列号
+     * 
+     */
+    char serial[21];
+    /**
+     * @brief 型号
+     * 
+     */
+    char model[41];
+    /**
+     * @brief 磁盘扇区总数
+     * 
+     */
+    int disk_sector_number;
+    /**
+     * @brief 主/从磁盘
+     * 
+     */
+    bool slave;
+    //分区相关
+    /**
+     * @brief 扇区
+     * 
+     */
     int partition;
-    bool boot;
+    /**
+     * @brief 是否可启动
+     * 
+     */
+    bool bootable;
+    /**
+     * @brief 起始扇区号
+     * 
+     */
     int start_sector;
+    /**
+     * @brief 扇区总数
+     * 
+     */
     int sector_number;
+    /**
+     * @brief 分区类型
+     * 
+     */
+    byte system_id;
 } disk_t;
 
 /**
  * @brief 打开磁盘
  * 
- * @param base_port 磁盘起始端口
- * @param master 是否为主驱动器
+ * @param base1 磁盘起始端口
+ * @param base2 磁盘起始端口2
+ * @param slave 是否为从驱动器
  * @param partition 分区
  * @return 磁盘结构体
  */
-PUBLIC disk_t *open_disk(int base_port, bool master, int partition);
+PUBLIC disk_t *open_disk(int base1, int base2, bool slave, int partition);
+/**
+ * @brief 关闭磁盘
+ * 
+ * @param disk 磁盘
+ */
+PUBLIC void close_disk(disk_t *disk);
 /**
  * @brief 磁盘是否可用
  * 
@@ -54,9 +111,3 @@ PUBLIC bool is_avaliable(disk_t *disk);
  * @param buffer 缓存
  */
 PUBLIC void read_sector(disk_t *disk, int lba, int number, void *buffer);
-/**
- * @brief 关闭磁盘
- * 
- * @param disk 磁盘
- */
-PUBLIC void close_disk(disk_t *disk);

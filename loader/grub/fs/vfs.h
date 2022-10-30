@@ -1,7 +1,7 @@
 /**
  * @file vfs.h
  * @author theflysong (song_of_the_fly@163.com)
- * @brief 
+ * @brief VFS
  * @version alpha-1.0.0
  * @date 2022-10-29
  * 

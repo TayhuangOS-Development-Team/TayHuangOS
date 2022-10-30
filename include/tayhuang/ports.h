@@ -60,6 +60,21 @@
 //Port-A
 #define PORT_A (0x92)
 
+//IDE BASE1
+#define IDE_DATA              (0)
+#define IDE_ERROR             (1)
+#define IDE_FEATURES          (1)
+#define IDE_SECTOR_COUNTER    (2)
+#define IDE_LBA_LOW           (3)
+#define IDE_LBA_MID           (4)
+#define IDE_LBA_HIGH          (5)
+#define IDE_DEVICE            (6)
+#define IDE_STATUS            (7)
+#define IDE_COMMAND           (7)
+//IDE BASE2
+#define IDE_ALTERNATE_STATUS  (0)
+#define IDE_DEVICE_CONTROL    (0)
+
 //0号IDE通道
 #define IDE0_BASE             (0x1F0)
 #define IDE0_BASE2            (0x3F6)
