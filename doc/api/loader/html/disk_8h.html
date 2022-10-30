@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: fs/disk.h 文件参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_97b3d2b63ac216821c2d7a22ee0ab2b0.html">fs</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">类</a> &#124;
+<a href="#func-members">函数</a>  </div>
+  <div class="headertitle">
+<div class="title">disk.h 文件参考</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>磁盘驱动  
+<a href="#details">更多...</a></p>
+<div class="textblock"><code>#include &lt;tayhuang/types.h&gt;</code><br />
+<code>#include &lt;tayhuang/attributes.h&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+disk.h 的引用(Include)关系图:</div>
+<div class="dyncontent">
+<div class="center"><img src="disk_8h__incl.png" border="0" usemap="#fs_2disk_8h" alt=""/></div>
+</div>
+</div><div class="textblock"><div class="dynheader">
+此图展示该文件直接或间接的被哪些文件引用了:</div>
+<div class="dyncontent">
+<div class="center"><img src="disk_8h__dep__incl.png" border="0" usemap="#fs_2disk_8hdep" alt=""/></div>
+</div>
+</div>
+<p><a href="disk_8h_source.html">浏览源代码.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+类</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structdisk__t.html">disk_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">磁盘(把每个分区视作独立的硬盘)  <a href="structdisk__t.html#details">更多...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+函数</h2></td></tr>
+<tr class="memitem:ad4a103eb7676b84bad8800cbdd2ecdb3"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8h.html#ad4a103eb7676b84bad8800cbdd2ecdb3">open_disk</a> (int base1, int base2, bool slave, int partition)</td></tr>
+<tr class="memdesc:ad4a103eb7676b84bad8800cbdd2ecdb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">打开磁盘  <a href="disk_8h.html#ad4a103eb7676b84bad8800cbdd2ecdb3">更多...</a><br /></td></tr>
+<tr class="separator:ad4a103eb7676b84bad8800cbdd2ecdb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d7a531b046da7d98b67867acda16ca3"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8h.html#a2d7a531b046da7d98b67867acda16ca3">close_disk</a> (<a class="el" href="structdisk__t.html">disk_t</a> *disk)</td></tr>
+<tr class="memdesc:a2d7a531b046da7d98b67867acda16ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">关闭磁盘  <a href="disk_8h.html#a2d7a531b046da7d98b67867acda16ca3">更多...</a><br /></td></tr>
+<tr class="separator:a2d7a531b046da7d98b67867acda16ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e8c405a8369970c2d843275d40f0fa3"><td class="memItemLeft" align="right" valign="top">PUBLIC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8h.html#a6e8c405a8369970c2d843275d40f0fa3">is_avaliable</a> (<a class="el" href="structdisk__t.html">disk_t</a> *disk)</td></tr>
+<tr class="memdesc:a6e8c405a8369970c2d843275d40f0fa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">磁盘是否可用  <a href="disk_8h.html#a6e8c405a8369970c2d843275d40f0fa3">更多...</a><br /></td></tr>
+<tr class="separator:a6e8c405a8369970c2d843275d40f0fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60276650f9943cd184fda9ccb9164a97"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8h.html#a60276650f9943cd184fda9ccb9164a97">read_sector</a> (<a class="el" href="structdisk__t.html">disk_t</a> *disk, int lba, int number, void *buffer)</td></tr>
+<tr class="memdesc:a60276650f9943cd184fda9ccb9164a97"><td class="mdescLeft">&#160;</td><td class="mdescRight">读取扇区  <a href="disk_8h.html#a60276650f9943cd184fda9ccb9164a97">更多...</a><br /></td></tr>
+<tr class="separator:a60276650f9943cd184fda9ccb9164a97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>磁盘驱动 </p>
+<dl class="section author"><dt>作者</dt><dd>theflysong (<a href="#" onclick="location.href='mai'+'lto:'+'son'+'g_'+'of_'+'th'+'e_f'+'ly'+'@16'+'3.'+'com'; return false;">song_<span style="display: none;">.nosp@m.</span>of_t<span style="display: none;">.nosp@m.</span>he_fl<span style="display: none;">.nosp@m.</span>y@16<span style="display: none;">.nosp@m.</span>3.com</a>) </dd></dl>
+<dl class="section version"><dt>版本</dt><dd>alpha-1.0.0 </dd></dl>
+<dl class="section date"><dt>日期</dt><dd>2022-10-29</dd></dl>
+<dl class="section copyright"><dt>版权所有</dt><dd>Copyright (c) 2022 TayhuangOS Development Team SPDX-License-Identifier: LGPL-2.1-only </dd></dl>
+</div><h2 class="groupheader">函数说明</h2>
+<a id="a2d7a531b046da7d98b67867acda16ca3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d7a531b046da7d98b67867acda16ca3">&#9670;&nbsp;</a></span>close_disk()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC void close_disk </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td>
+          <td class="paramname"><em>disk</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>关闭磁盘 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disk</td><td>磁盘 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6e8c405a8369970c2d843275d40f0fa3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e8c405a8369970c2d843275d40f0fa3">&#9670;&nbsp;</a></span>is_avaliable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC bool is_avaliable </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td>
+          <td class="paramname"><em>disk</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>磁盘是否可用 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disk</td><td>磁盘 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>true 可用 </dd>
+<dd>
+false 不可用 </dd></dl>
+
+</div>
+</div>
+<a id="ad4a103eb7676b84bad8800cbdd2ecdb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4a103eb7676b84bad8800cbdd2ecdb3">&#9670;&nbsp;</a></span>open_disk()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="structdisk__t.html">disk_t</a>* open_disk </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>slave</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>partition</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>打开磁盘 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base1</td><td>磁盘起始端口 </td></tr>
+    <tr><td class="paramname">base2</td><td>磁盘起始端口2 </td></tr>
+    <tr><td class="paramname">slave</td><td>是否为从驱动器 </td></tr>
+    <tr><td class="paramname">partition</td><td>分区 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>磁盘结构体 </dd></dl>
+
+</div>
+</div>
+<a id="a60276650f9943cd184fda9ccb9164a97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60276650f9943cd184fda9ccb9164a97">&#9670;&nbsp;</a></span>read_sector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC void read_sector </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td>
+          <td class="paramname"><em>disk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>lba</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>number</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>读取扇区 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disk</td><td>磁盘对象 </td></tr>
+    <tr><td class="paramname">lba</td><td>扇区号 </td></tr>
+    <tr><td class="paramname">number</td><td>扇区数 </td></tr>
+    <tr><td class="paramname">buffer</td><td>缓存 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

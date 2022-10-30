@@ -38,6 +38,9 @@ LD_SRCIPT := grub.ld
 
 MODULENAME := grub
 
+# Doxygen
+DOXYGEN_CONFIG := DoxygenFile
+
 include $(SCRIPTDIR)/compile.mk
 
 OUTPUT := $(BINDIR)/grubld.bin
@@ -50,3 +53,6 @@ clean:
 
 image:
 	$(SUDO) $(COPY) $(OUTPUT) $(TAYHUANGOS_MOUNT_DIR)
+
+doc:
+	$(DOXYGEN) $(DOXYGEN_CONFIG)

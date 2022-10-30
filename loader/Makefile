@@ -16,3 +16,7 @@ image:
 #清空
 clean:
 	$(call cleanmod, grub)
+
+#文档
+doc:
+	$(call docmod, grub)

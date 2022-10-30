@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: _memblk结构体 参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-attribs">Public 属性</a> &#124;
+<a href="struct__memblk-members.html">所有成员列表</a>  </div>
+  <div class="headertitle">
+<div class="title">_memblk结构体 参考</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>内存表项 64bit - 8B  
+ <a href="struct__memblk.html#details">更多...</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public 属性</h2></td></tr>
+<tr class="memitem:aeee9a04a11660990dacbf852d271b0fb"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#aeee9a04a11660990dacbf852d271b0fb">block_size</a>: 21</td></tr>
+<tr class="memdesc:aeee9a04a11660990dacbf852d271b0fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">块大小  <a href="struct__memblk.html#aeee9a04a11660990dacbf852d271b0fb">更多...</a><br /></td></tr>
+<tr class="separator:aeee9a04a11660990dacbf852d271b0fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefcb9057098ff4eb321c7b4d546c0b30"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#aefcb9057098ff4eb321c7b4d546c0b30">busy</a>: 1</td></tr>
+<tr class="memdesc:aefcb9057098ff4eb321c7b4d546c0b30"><td class="mdescLeft">&#160;</td><td class="mdescRight">可用  <a href="struct__memblk.html#aefcb9057098ff4eb321c7b4d546c0b30">更多...</a><br /></td></tr>
+<tr class="separator:aefcb9057098ff4eb321c7b4d546c0b30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eb36f16221be875c179d9922799c513"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#a1eb36f16221be875c179d9922799c513">next_free_offset</a>: 21</td></tr>
+<tr class="memdesc:a1eb36f16221be875c179d9922799c513"><td class="mdescLeft">&#160;</td><td class="mdescRight">下个空闲块偏移  <a href="struct__memblk.html#a1eb36f16221be875c179d9922799c513">更多...</a><br /></td></tr>
+<tr class="separator:a1eb36f16221be875c179d9922799c513"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfe556e762e3ad62e3ec5fcf34187d42"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#adfe556e762e3ad62e3ec5fcf34187d42">last_free_offset</a>: 21</td></tr>
+<tr class="memdesc:adfe556e762e3ad62e3ec5fcf34187d42"><td class="mdescLeft">&#160;</td><td class="mdescRight">上个空闲块偏移  <a href="struct__memblk.html#adfe556e762e3ad62e3ec5fcf34187d42">更多...</a><br /></td></tr>
+<tr class="separator:adfe556e762e3ad62e3ec5fcf34187d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>内存表项 64bit - 8B </p>
+</div><h2 class="groupheader">类成员变量说明</h2>
+<a id="aeee9a04a11660990dacbf852d271b0fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeee9a04a11660990dacbf852d271b0fb">&#9670;&nbsp;</a></span>block_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">b32 _memblk::block_size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>块大小 </p>
+
+</div>
+</div>
+<a id="aefcb9057098ff4eb321c7b4d546c0b30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefcb9057098ff4eb321c7b4d546c0b30">&#9670;&nbsp;</a></span>busy</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool _memblk::busy</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>可用 </p>
+
+</div>
+</div>
+<a id="adfe556e762e3ad62e3ec5fcf34187d42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfe556e762e3ad62e3ec5fcf34187d42">&#9670;&nbsp;</a></span>last_free_offset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">b32 _memblk::last_free_offset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>上个空闲块偏移 </p>
+
+</div>
+</div>
+<a id="a1eb36f16221be875c179d9922799c513"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1eb36f16221be875c179d9922799c513">&#9670;&nbsp;</a></span>next_free_offset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">b32 _memblk::next_free_offset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>下个空闲块偏移 </p>
+
+</div>
+</div>
+<hr/>该结构体的文档由以下文件生成:<ul>
+<li><a class="el" href="heap_8c.html">heap.c</a></li>
+</ul>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

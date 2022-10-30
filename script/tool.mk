@@ -38,6 +38,7 @@ FDISK := fdisk
 LOOP_SETUP := losetup
 CHMOD := chmod
 AR := $(COMPILER_PREFIX)-ar
+DOXYGEN := doxygen
 
 ifeq ($(ARCHITECTURE), x86_64)
 	QEMU := qemu-system-x86_64

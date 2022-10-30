@@ -165,3 +165,7 @@ build_and_run: all run
 .PHONY: build_and_debug
 build_and_debug: all debug
 	$(ECHO) "done"
+
+.PHONY: doc
+doc:
+	$(CD) loader && $(MAKE) doc

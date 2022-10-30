@@ -1,0 +1,781 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: fs/vfs.h 文件参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_97b3d2b63ac216821c2d7a22ee0ab2b0.html">fs</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#typedef-members">类型定义</a> &#124;
+<a href="#func-members">函数</a>  </div>
+  <div class="headertitle">
+<div class="title">vfs.h 文件参考</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>VFS  
+<a href="#details">更多...</a></p>
+<div class="textblock"><code>#include &lt;<a class="el" href="disk_8h_source.html">fs/disk.h</a>&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+vfs.h 的引用(Include)关系图:</div>
+<div class="dyncontent">
+<div class="center"><img src="vfs_8h__incl.png" border="0" usemap="#fs_2vfs_8h" alt=""/></div>
+</div>
+</div>
+<p><a href="vfs_8h_source.html">浏览源代码.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+类型定义</h2></td></tr>
+<tr class="memitem:a04869525957df4a1112f42464d5ef9a9"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a></td></tr>
+<tr class="memdesc:a04869525957df4a1112f42464d5ef9a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">文件系统  <a href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">更多...</a><br /></td></tr>
+<tr class="separator:a04869525957df4a1112f42464d5ef9a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4157bda4fb623539926c15a914e53a8f"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a></td></tr>
+<tr class="memdesc:a4157bda4fb623539926c15a914e53a8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">dnode - directory node 目录节点  <a href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">更多...</a><br /></td></tr>
+<tr class="separator:a4157bda4fb623539926c15a914e53a8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25db2e451d6e5d65c4325fc7303579b6"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a></td></tr>
+<tr class="memdesc:a25db2e451d6e5d65c4325fc7303579b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">fnode - file node 文件节点  <a href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">更多...</a><br /></td></tr>
+<tr class="separator:a25db2e451d6e5d65c4325fc7303579b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1515fd196a94771a042ecc1ecc6a0739"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a></td></tr>
+<tr class="memdesc:a1515fd196a94771a042ecc1ecc6a0739"><td class="mdescLeft">&#160;</td><td class="mdescRight">bnode - block node 块节点  <a href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">更多...</a><br /></td></tr>
+<tr class="separator:a1515fd196a94771a042ecc1ecc6a0739"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+函数</h2></td></tr>
+<tr class="memitem:ae20c2be80d2df742637bc5fe37b713be"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#ae20c2be80d2df742637bc5fe37b713be">open_fs</a> (<a class="el" href="structdisk__t.html">disk_t</a> disk)</td></tr>
+<tr class="memdesc:ae20c2be80d2df742637bc5fe37b713be"><td class="mdescLeft">&#160;</td><td class="mdescRight">打开文件系统  <a href="vfs_8h.html#ae20c2be80d2df742637bc5fe37b713be">更多...</a><br /></td></tr>
+<tr class="separator:ae20c2be80d2df742637bc5fe37b713be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83c42efff8aa70825826e3b30cbb2214"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a83c42efff8aa70825826e3b30cbb2214">close_fs</a> (<a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *fs)</td></tr>
+<tr class="memdesc:a83c42efff8aa70825826e3b30cbb2214"><td class="mdescLeft">&#160;</td><td class="mdescRight">关闭文件系统  <a href="vfs_8h.html#a83c42efff8aa70825826e3b30cbb2214">更多...</a><br /></td></tr>
+<tr class="separator:a83c42efff8aa70825826e3b30cbb2214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0712a1b0d1149b02a9a832b7bac54f96"><td class="memItemLeft" align="right" valign="top">PUBLIC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a0712a1b0d1149b02a9a832b7bac54f96">get_fs_size</a> (<a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *fs)</td></tr>
+<tr class="memdesc:a0712a1b0d1149b02a9a832b7bac54f96"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得文件系统大小  <a href="vfs_8h.html#a0712a1b0d1149b02a9a832b7bac54f96">更多...</a><br /></td></tr>
+<tr class="separator:a0712a1b0d1149b02a9a832b7bac54f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a994c57eebfdd262f4c78eeb94d988ac5"><td class="memItemLeft" align="right" valign="top">const PUBLIC char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a994c57eebfdd262f4c78eeb94d988ac5">get_fs_type</a> (<a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *fs)</td></tr>
+<tr class="memdesc:a994c57eebfdd262f4c78eeb94d988ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得文件系统类型  <a href="vfs_8h.html#a994c57eebfdd262f4c78eeb94d988ac5">更多...</a><br /></td></tr>
+<tr class="separator:a994c57eebfdd262f4c78eeb94d988ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e723f91dd51bf90dd547a91874f90a2"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a0e723f91dd51bf90dd547a91874f90a2">get_root_dir</a> (<a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *fs)</td></tr>
+<tr class="memdesc:a0e723f91dd51bf90dd547a91874f90a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得根目录  <a href="vfs_8h.html#a0e723f91dd51bf90dd547a91874f90a2">更多...</a><br /></td></tr>
+<tr class="separator:a0e723f91dd51bf90dd547a91874f90a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86acc6acaea1a76bfcdb2b86b61144d5"><td class="memItemLeft" align="right" valign="top">PUBLIC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a86acc6acaea1a76bfcdb2b86b61144d5">is_last_dnode</a> (<a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *dir)</td></tr>
+<tr class="memdesc:a86acc6acaea1a76bfcdb2b86b61144d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">是否为该层中最后的目录节点  <a href="vfs_8h.html#a86acc6acaea1a76bfcdb2b86b61144d5">更多...</a><br /></td></tr>
+<tr class="separator:a86acc6acaea1a76bfcdb2b86b61144d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2416cd6b3637c5046d7d478caa44042"><td class="memItemLeft" align="right" valign="top">PUBLIC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#af2416cd6b3637c5046d7d478caa44042">is_leaf_dnode</a> (<a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *dir)</td></tr>
+<tr class="memdesc:af2416cd6b3637c5046d7d478caa44042"><td class="mdescLeft">&#160;</td><td class="mdescRight">是否为叶子目录节点(即文件)  <a href="vfs_8h.html#af2416cd6b3637c5046d7d478caa44042">更多...</a><br /></td></tr>
+<tr class="separator:af2416cd6b3637c5046d7d478caa44042"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8748f9f84b6bedb6a3eef60291dce250"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a8748f9f84b6bedb6a3eef60291dce250">get_dir_file</a> (<a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *dir)</td></tr>
+<tr class="memdesc:a8748f9f84b6bedb6a3eef60291dce250"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得目录节点对应的文件节点  <a href="vfs_8h.html#a8748f9f84b6bedb6a3eef60291dce250">更多...</a><br /></td></tr>
+<tr class="separator:a8748f9f84b6bedb6a3eef60291dce250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa18c29825904d4173f32f7ac8c3dbf8c"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#aa18c29825904d4173f32f7ac8c3dbf8c">get_next_dnode</a> (<a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *dir)</td></tr>
+<tr class="memdesc:aa18c29825904d4173f32f7ac8c3dbf8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得该层的下一个目录节点  <a href="vfs_8h.html#aa18c29825904d4173f32f7ac8c3dbf8c">更多...</a><br /></td></tr>
+<tr class="separator:aa18c29825904d4173f32f7ac8c3dbf8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9913b272cf49d12f7989668880af154a"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a9913b272cf49d12f7989668880af154a">get_child_dnode</a> (<a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *dir)</td></tr>
+<tr class="memdesc:a9913b272cf49d12f7989668880af154a"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得该目录节点的起始子节点  <a href="vfs_8h.html#a9913b272cf49d12f7989668880af154a">更多...</a><br /></td></tr>
+<tr class="separator:a9913b272cf49d12f7989668880af154a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e30ecb60d2ba4ff95d851e72e311bfc"><td class="memItemLeft" align="right" valign="top">const PUBLIC char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a5e30ecb60d2ba4ff95d851e72e311bfc">get_dnode_name</a> (<a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *dir)</td></tr>
+<tr class="memdesc:a5e30ecb60d2ba4ff95d851e72e311bfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得目录节点名  <a href="vfs_8h.html#a5e30ecb60d2ba4ff95d851e72e311bfc">更多...</a><br /></td></tr>
+<tr class="separator:a5e30ecb60d2ba4ff95d851e72e311bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b218becc14bbfc320b898ea7c08227b"><td class="memItemLeft" align="right" valign="top">const PUBLIC char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a9b218becc14bbfc320b898ea7c08227b">get_file_name</a> (<a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *file)</td></tr>
+<tr class="memdesc:a9b218becc14bbfc320b898ea7c08227b"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得文件名  <a href="vfs_8h.html#a9b218becc14bbfc320b898ea7c08227b">更多...</a><br /></td></tr>
+<tr class="separator:a9b218becc14bbfc320b898ea7c08227b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b0feb935b1c8884a27f2405d577bfb0"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a0b0feb935b1c8884a27f2405d577bfb0">get_first_block</a> (<a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *file)</td></tr>
+<tr class="memdesc:a0b0feb935b1c8884a27f2405d577bfb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得文件起始块节点  <a href="vfs_8h.html#a0b0feb935b1c8884a27f2405d577bfb0">更多...</a><br /></td></tr>
+<tr class="separator:a0b0feb935b1c8884a27f2405d577bfb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59d2ac97868fbf8d34a1b86070b01b6d"><td class="memItemLeft" align="right" valign="top">PUBLIC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a59d2ac97868fbf8d34a1b86070b01b6d">get_file_size</a> (<a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *file)</td></tr>
+<tr class="memdesc:a59d2ac97868fbf8d34a1b86070b01b6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得文件大小  <a href="vfs_8h.html#a59d2ac97868fbf8d34a1b86070b01b6d">更多...</a><br /></td></tr>
+<tr class="separator:a59d2ac97868fbf8d34a1b86070b01b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac84f1de35410b3d21371a3fd84f78054"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#ac84f1de35410b3d21371a3fd84f78054">get_file_data</a> (<a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *file, void *buffer)</td></tr>
+<tr class="memdesc:ac84f1de35410b3d21371a3fd84f78054"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得文件数据  <a href="vfs_8h.html#ac84f1de35410b3d21371a3fd84f78054">更多...</a><br /></td></tr>
+<tr class="separator:ac84f1de35410b3d21371a3fd84f78054"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1949552a168a98cfbf333dffc7eefd3a"><td class="memItemLeft" align="right" valign="top">PUBLIC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a1949552a168a98cfbf333dffc7eefd3a">get_block_size</a> (<a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *block)</td></tr>
+<tr class="memdesc:a1949552a168a98cfbf333dffc7eefd3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得块大小  <a href="vfs_8h.html#a1949552a168a98cfbf333dffc7eefd3a">更多...</a><br /></td></tr>
+<tr class="separator:a1949552a168a98cfbf333dffc7eefd3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac784d8869388a0a18122d4bd6b2dfd87"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#ac784d8869388a0a18122d4bd6b2dfd87">get_block_data</a> (<a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *block, void *buffer)</td></tr>
+<tr class="memdesc:ac784d8869388a0a18122d4bd6b2dfd87"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得块数据  <a href="vfs_8h.html#ac784d8869388a0a18122d4bd6b2dfd87">更多...</a><br /></td></tr>
+<tr class="separator:ac784d8869388a0a18122d4bd6b2dfd87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e5c47912828e571d0959dbb6a5fb6ee"><td class="memItemLeft" align="right" valign="top">PUBLIC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a7e5c47912828e571d0959dbb6a5fb6ee">is_last_bnode</a> (<a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *block)</td></tr>
+<tr class="memdesc:a7e5c47912828e571d0959dbb6a5fb6ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">是否为最后一个块节点  <a href="vfs_8h.html#a7e5c47912828e571d0959dbb6a5fb6ee">更多...</a><br /></td></tr>
+<tr class="separator:a7e5c47912828e571d0959dbb6a5fb6ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56c5855025fec63787ecb887ce01149f"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vfs_8h.html#a56c5855025fec63787ecb887ce01149f">get_next_block</a> (<a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *block)</td></tr>
+<tr class="memdesc:a56c5855025fec63787ecb887ce01149f"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得下个块节点  <a href="vfs_8h.html#a56c5855025fec63787ecb887ce01149f">更多...</a><br /></td></tr>
+<tr class="separator:a56c5855025fec63787ecb887ce01149f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>VFS </p>
+<dl class="section author"><dt>作者</dt><dd>theflysong (<a href="#" onclick="location.href='mai'+'lto:'+'son'+'g_'+'of_'+'th'+'e_f'+'ly'+'@16'+'3.'+'com'; return false;">song_<span style="display: none;">.nosp@m.</span>of_t<span style="display: none;">.nosp@m.</span>he_fl<span style="display: none;">.nosp@m.</span>y@16<span style="display: none;">.nosp@m.</span>3.com</a>) </dd></dl>
+<dl class="section version"><dt>版本</dt><dd>alpha-1.0.0 </dd></dl>
+<dl class="section date"><dt>日期</dt><dd>2022-10-29</dd></dl>
+<dl class="section copyright"><dt>版权所有</dt><dd>Copyright (c) 2022 TayhuangOS Development Team SPDX-License-Identifier: LGPL-2.1-only </dd></dl>
+</div><h2 class="groupheader">类型定义说明</h2>
+<a id="a1515fd196a94771a042ecc1ecc6a0739"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1515fd196a94771a042ecc1ecc6a0739">&#9670;&nbsp;</a></span>bnode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void <a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>bnode - block node 块节点 </p>
+
+</div>
+</div>
+<a id="a4157bda4fb623539926c15a914e53a8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4157bda4fb623539926c15a914e53a8f">&#9670;&nbsp;</a></span>dnode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void <a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>dnode - directory node 目录节点 </p>
+
+</div>
+</div>
+<a id="a25db2e451d6e5d65c4325fc7303579b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25db2e451d6e5d65c4325fc7303579b6">&#9670;&nbsp;</a></span>fnode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void <a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>fnode - file node 文件节点 </p>
+
+</div>
+</div>
+<a id="a04869525957df4a1112f42464d5ef9a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04869525957df4a1112f42464d5ef9a9">&#9670;&nbsp;</a></span>fs_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void <a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>文件系统 </p>
+
+</div>
+</div>
+<h2 class="groupheader">函数说明</h2>
+<a id="a83c42efff8aa70825826e3b30cbb2214"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83c42efff8aa70825826e3b30cbb2214">&#9670;&nbsp;</a></span>close_fs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC void close_fs </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *&#160;</td>
+          <td class="paramname"><em>fs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>关闭文件系统 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fs</td><td>文件系统 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac784d8869388a0a18122d4bd6b2dfd87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac784d8869388a0a18122d4bd6b2dfd87">&#9670;&nbsp;</a></span>get_block_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC void get_block_data </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *&#160;</td>
+          <td class="paramname"><em>block</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得块数据 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">block</td><td>块节点 </td></tr>
+    <tr><td class="paramname">buffer</td><td>缓存 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1949552a168a98cfbf333dffc7eefd3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1949552a168a98cfbf333dffc7eefd3a">&#9670;&nbsp;</a></span>get_block_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC size_t get_block_size </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *&#160;</td>
+          <td class="paramname"><em>block</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得块大小 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">block</td><td>块节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>块大小 </dd></dl>
+
+</div>
+</div>
+<a id="a9913b272cf49d12f7989668880af154a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9913b272cf49d12f7989668880af154a">&#9670;&nbsp;</a></span>get_child_dnode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a>* get_child_dnode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得该目录节点的起始子节点 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>目录节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>起始子节点 </dd></dl>
+
+</div>
+</div>
+<a id="a8748f9f84b6bedb6a3eef60291dce250"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8748f9f84b6bedb6a3eef60291dce250">&#9670;&nbsp;</a></span>get_dir_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a>* get_dir_file </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得目录节点对应的文件节点 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>目录节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>文件节点 </dd></dl>
+
+</div>
+</div>
+<a id="a5e30ecb60d2ba4ff95d851e72e311bfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e30ecb60d2ba4ff95d851e72e311bfc">&#9670;&nbsp;</a></span>get_dnode_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const PUBLIC char* get_dnode_name </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得目录节点名 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>目录节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>目录节点名 </dd></dl>
+
+</div>
+</div>
+<a id="ac84f1de35410b3d21371a3fd84f78054"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac84f1de35410b3d21371a3fd84f78054">&#9670;&nbsp;</a></span>get_file_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC void get_file_data </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *&#160;</td>
+          <td class="paramname"><em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得文件数据 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">file</td><td>文件节点 </td></tr>
+    <tr><td class="paramname">buffer</td><td>缓存 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9b218becc14bbfc320b898ea7c08227b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b218becc14bbfc320b898ea7c08227b">&#9670;&nbsp;</a></span>get_file_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const PUBLIC char* get_file_name </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *&#160;</td>
+          <td class="paramname"><em>file</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得文件名 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">file</td><td>文件节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>文件名 </dd></dl>
+
+</div>
+</div>
+<a id="a59d2ac97868fbf8d34a1b86070b01b6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59d2ac97868fbf8d34a1b86070b01b6d">&#9670;&nbsp;</a></span>get_file_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC size_t get_file_size </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *&#160;</td>
+          <td class="paramname"><em>file</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得文件大小 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">file</td><td>文件节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>文件大小 </dd></dl>
+
+</div>
+</div>
+<a id="a0b0feb935b1c8884a27f2405d577bfb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b0feb935b1c8884a27f2405d577bfb0">&#9670;&nbsp;</a></span>get_first_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a>* get_first_block </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a25db2e451d6e5d65c4325fc7303579b6">fnode</a> *&#160;</td>
+          <td class="paramname"><em>file</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得文件起始块节点 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">file</td><td>文件节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>起始块节点 </dd></dl>
+
+</div>
+</div>
+<a id="a0712a1b0d1149b02a9a832b7bac54f96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0712a1b0d1149b02a9a832b7bac54f96">&#9670;&nbsp;</a></span>get_fs_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC size_t get_fs_size </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *&#160;</td>
+          <td class="paramname"><em>fs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得文件系统大小 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fs</td><td>文件系统 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>文件系统大小 </dd></dl>
+
+</div>
+</div>
+<a id="a994c57eebfdd262f4c78eeb94d988ac5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a994c57eebfdd262f4c78eeb94d988ac5">&#9670;&nbsp;</a></span>get_fs_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const PUBLIC char* get_fs_type </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *&#160;</td>
+          <td class="paramname"><em>fs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得文件系统类型 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fs</td><td>文件系统 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>文件系统类型 </dd></dl>
+
+</div>
+</div>
+<a id="a56c5855025fec63787ecb887ce01149f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56c5855025fec63787ecb887ce01149f">&#9670;&nbsp;</a></span>get_next_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a>* get_next_block </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *&#160;</td>
+          <td class="paramname"><em>block</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得下个块节点 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">block</td><td>块节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>下个块节点 </dd></dl>
+
+</div>
+</div>
+<a id="aa18c29825904d4173f32f7ac8c3dbf8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa18c29825904d4173f32f7ac8c3dbf8c">&#9670;&nbsp;</a></span>get_next_dnode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a>* get_next_dnode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得该层的下一个目录节点 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>目录节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>下一个目录节点 </dd></dl>
+
+</div>
+</div>
+<a id="a0e723f91dd51bf90dd547a91874f90a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e723f91dd51bf90dd547a91874f90a2">&#9670;&nbsp;</a></span>get_root_dir()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a>* get_root_dir </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a> *&#160;</td>
+          <td class="paramname"><em>fs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获得根目录 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fs</td><td>文件系统 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>根目录 </dd></dl>
+
+</div>
+</div>
+<a id="a7e5c47912828e571d0959dbb6a5fb6ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e5c47912828e571d0959dbb6a5fb6ee">&#9670;&nbsp;</a></span>is_last_bnode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC bool is_last_bnode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a1515fd196a94771a042ecc1ecc6a0739">bnode</a> *&#160;</td>
+          <td class="paramname"><em>block</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>是否为最后一个块节点 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">block</td><td>块节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>true 是最后一个块节点 </dd>
+<dd>
+false 不是最后一个块节点 </dd></dl>
+
+</div>
+</div>
+<a id="a86acc6acaea1a76bfcdb2b86b61144d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86acc6acaea1a76bfcdb2b86b61144d5">&#9670;&nbsp;</a></span>is_last_dnode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC bool is_last_dnode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>是否为该层中最后的目录节点 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>目录节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>true 是该层中最后的目录节点 </dd>
+<dd>
+false 不是该层中最后的目录节点 </dd></dl>
+
+</div>
+</div>
+<a id="af2416cd6b3637c5046d7d478caa44042"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2416cd6b3637c5046d7d478caa44042">&#9670;&nbsp;</a></span>is_leaf_dnode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC bool is_leaf_dnode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="vfs_8h.html#a4157bda4fb623539926c15a914e53a8f">dnode</a> *&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>是否为叶子目录节点(即文件) </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>目录节点 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>true 是该层中叶子目录节点(即文件) </dd>
+<dd>
+false 不是该层中叶子目录节点(即目录) </dd></dl>
+
+</div>
+</div>
+<a id="ae20c2be80d2df742637bc5fe37b713be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae20c2be80d2df742637bc5fe37b713be">&#9670;&nbsp;</a></span>open_fs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="vfs_8h.html#a04869525957df4a1112f42464d5ef9a9">fs_t</a>* open_fs </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdisk__t.html">disk_t</a>&#160;</td>
+          <td class="paramname"><em>disk</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>打开文件系统 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disk</td><td>磁盘 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>文件系统对象 </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

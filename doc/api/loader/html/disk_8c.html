@@ -1,0 +1,628 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: fs/disk.c 文件参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_97b3d2b63ac216821c2d7a22ee0ab2b0.html">fs</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#define-members">宏定义</a> &#124;
+<a href="#func-members">函数</a>  </div>
+  <div class="headertitle">
+<div class="title">disk.c 文件参考</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>磁盘驱动  
+<a href="#details">更多...</a></p>
+<div class="textblock"><code>#include &lt;<a class="el" href="disk_8h_source.html">fs/disk.h</a>&gt;</code><br />
+<code>#include &lt;tayhuang/ports.h&gt;</code><br />
+<code>#include &lt;tayhuang/io.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="heap_8h_source.html">heap.h</a>&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+disk.c 的引用(Include)关系图:</div>
+<div class="dyncontent">
+<div class="center"><img src="disk_8c__incl.png" border="0" usemap="#fs_2disk_8c" alt=""/></div>
+</div>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+宏定义</h2></td></tr>
+<tr class="memitem:a5ecf478ead212669de4b5fa7a25e5aea"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a5ecf478ead212669de4b5fa7a25e5aea">DRQ_MASK</a>&#160;&#160;&#160;(0x8)</td></tr>
+<tr class="memdesc:a5ecf478ead212669de4b5fa7a25e5aea"><td class="mdescLeft">&#160;</td><td class="mdescRight">DRQ - 数据已准备  <a href="disk_8c.html#a5ecf478ead212669de4b5fa7a25e5aea">更多...</a><br /></td></tr>
+<tr class="separator:a5ecf478ead212669de4b5fa7a25e5aea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1756efebd567c063f8a5c230e47d53d9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a1756efebd567c063f8a5c230e47d53d9">BUSY_MASK</a>&#160;&#160;&#160;(0x80)</td></tr>
+<tr class="memdesc:a1756efebd567c063f8a5c230e47d53d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">BUST - 忙  <a href="disk_8c.html#a1756efebd567c063f8a5c230e47d53d9">更多...</a><br /></td></tr>
+<tr class="separator:a1756efebd567c063f8a5c230e47d53d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d19baff12415486088caa92201e9424"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a9d19baff12415486088caa92201e9424">ATA_IDENTIFY</a>&#160;&#160;&#160;(0xEC)</td></tr>
+<tr class="memdesc:a9d19baff12415486088caa92201e9424"><td class="mdescLeft">&#160;</td><td class="mdescRight">探测磁盘命令  <a href="disk_8c.html#a9d19baff12415486088caa92201e9424">更多...</a><br /></td></tr>
+<tr class="separator:a9d19baff12415486088caa92201e9424"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a061cf4fd71859d6355aea5be3bae767a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a061cf4fd71859d6355aea5be3bae767a">ATA_READ</a>&#160;&#160;&#160;(0x20)</td></tr>
+<tr class="memdesc:a061cf4fd71859d6355aea5be3bae767a"><td class="mdescLeft">&#160;</td><td class="mdescRight">读取命令  <a href="disk_8c.html#a061cf4fd71859d6355aea5be3bae767a">更多...</a><br /></td></tr>
+<tr class="separator:a061cf4fd71859d6355aea5be3bae767a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9db7293a305876780951cb7b84d4ad4e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a9db7293a305876780951cb7b84d4ad4e">MSDOS_PT_OFFSET</a>&#160;&#160;&#160;(0x01BE)</td></tr>
+<tr class="separator:a9db7293a305876780951cb7b84d4ad4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac00a1cb1deac9c44180b56f3768f9454"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#ac00a1cb1deac9c44180b56f3768f9454">MAKE_DEVICE_REG</a>(mode,  device,  lba)</td></tr>
+<tr class="memdesc:ac00a1cb1deac9c44180b56f3768f9454"><td class="mdescLeft">&#160;</td><td class="mdescRight">设备寄存器  <a href="disk_8c.html#ac00a1cb1deac9c44180b56f3768f9454">更多...</a><br /></td></tr>
+<tr class="separator:ac00a1cb1deac9c44180b56f3768f9454"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+函数</h2></td></tr>
+<tr class="memitem:a3c5f339edf375c547c87790487e757ed"><td class="memItemLeft" align="right" valign="top">INLINE void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a3c5f339edf375c547c87790487e757ed">relax_ide</a> (int base1)</td></tr>
+<tr class="memdesc:a3c5f339edf375c547c87790487e757ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">等待一会儿  <a href="disk_8c.html#a3c5f339edf375c547c87790487e757ed">更多...</a><br /></td></tr>
+<tr class="separator:a3c5f339edf375c547c87790487e757ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad44f6b0a063345da3c85ad09115d854d"><td class="memItemLeft" align="right" valign="top">INLINE void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#ad44f6b0a063345da3c85ad09115d854d">wait_drq</a> (int base1)</td></tr>
+<tr class="memdesc:ad44f6b0a063345da3c85ad09115d854d"><td class="mdescLeft">&#160;</td><td class="mdescRight">等待DRQ  <a href="disk_8c.html#ad44f6b0a063345da3c85ad09115d854d">更多...</a><br /></td></tr>
+<tr class="separator:ad44f6b0a063345da3c85ad09115d854d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4849f5879657bfffd9320fce549b15f"><td class="memItemLeft" align="right" valign="top">INLINE void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#aa4849f5879657bfffd9320fce549b15f">wait_for_free</a> (int base1)</td></tr>
+<tr class="memdesc:aa4849f5879657bfffd9320fce549b15f"><td class="mdescLeft">&#160;</td><td class="mdescRight">等待 !BUSY  <a href="disk_8c.html#aa4849f5879657bfffd9320fce549b15f">更多...</a><br /></td></tr>
+<tr class="separator:aa4849f5879657bfffd9320fce549b15f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9de50d31b8958d0685f9ce142bd0507"><td class="memItemLeft" align="right" valign="top">PRIVATE void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#ad9de50d31b8958d0685f9ce142bd0507">__identify_disk__</a> (int base1, int base2, bool slave, void *buffer)</td></tr>
+<tr class="memdesc:ad9de50d31b8958d0685f9ce142bd0507"><td class="mdescLeft">&#160;</td><td class="mdescRight">获取硬盘信息  <a href="disk_8c.html#ad9de50d31b8958d0685f9ce142bd0507">更多...</a><br /></td></tr>
+<tr class="separator:ad9de50d31b8958d0685f9ce142bd0507"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f06ed15a41045cc56b1e70caaa475d5"><td class="memItemLeft" align="right" valign="top">PRIVATE void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a4f06ed15a41045cc56b1e70caaa475d5">__read_sector__</a> (int base1, int base2, bool slave, int lba, int number, void *buffer)</td></tr>
+<tr class="memdesc:a4f06ed15a41045cc56b1e70caaa475d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">读取扇区  <a href="disk_8c.html#a4f06ed15a41045cc56b1e70caaa475d5">更多...</a><br /></td></tr>
+<tr class="separator:a4f06ed15a41045cc56b1e70caaa475d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4a103eb7676b84bad8800cbdd2ecdb3"><td class="memItemLeft" align="right" valign="top">PUBLIC <a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#ad4a103eb7676b84bad8800cbdd2ecdb3">open_disk</a> (int base1, int base2, bool slave, int partition)</td></tr>
+<tr class="memdesc:ad4a103eb7676b84bad8800cbdd2ecdb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">打开磁盘  <a href="disk_8c.html#ad4a103eb7676b84bad8800cbdd2ecdb3">更多...</a><br /></td></tr>
+<tr class="separator:ad4a103eb7676b84bad8800cbdd2ecdb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d7a531b046da7d98b67867acda16ca3"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a2d7a531b046da7d98b67867acda16ca3">close_disk</a> (<a class="el" href="structdisk__t.html">disk_t</a> *disk)</td></tr>
+<tr class="memdesc:a2d7a531b046da7d98b67867acda16ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">关闭磁盘  <a href="disk_8c.html#a2d7a531b046da7d98b67867acda16ca3">更多...</a><br /></td></tr>
+<tr class="separator:a2d7a531b046da7d98b67867acda16ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e8c405a8369970c2d843275d40f0fa3"><td class="memItemLeft" align="right" valign="top">PUBLIC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a6e8c405a8369970c2d843275d40f0fa3">is_avaliable</a> (<a class="el" href="structdisk__t.html">disk_t</a> *disk)</td></tr>
+<tr class="memdesc:a6e8c405a8369970c2d843275d40f0fa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">磁盘是否可用  <a href="disk_8c.html#a6e8c405a8369970c2d843275d40f0fa3">更多...</a><br /></td></tr>
+<tr class="separator:a6e8c405a8369970c2d843275d40f0fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60276650f9943cd184fda9ccb9164a97"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="disk_8c.html#a60276650f9943cd184fda9ccb9164a97">read_sector</a> (<a class="el" href="structdisk__t.html">disk_t</a> *disk, int lba, int number, void *buffer)</td></tr>
+<tr class="memdesc:a60276650f9943cd184fda9ccb9164a97"><td class="mdescLeft">&#160;</td><td class="mdescRight">读取扇区  <a href="disk_8c.html#a60276650f9943cd184fda9ccb9164a97">更多...</a><br /></td></tr>
+<tr class="separator:a60276650f9943cd184fda9ccb9164a97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>磁盘驱动 </p>
+<dl class="section author"><dt>作者</dt><dd>theflysong (<a href="#" onclick="location.href='mai'+'lto:'+'son'+'g_'+'of_'+'th'+'e_f'+'ly'+'@16'+'3.'+'com'; return false;">song_<span style="display: none;">.nosp@m.</span>of_t<span style="display: none;">.nosp@m.</span>he_fl<span style="display: none;">.nosp@m.</span>y@16<span style="display: none;">.nosp@m.</span>3.com</a>) </dd></dl>
+<dl class="section version"><dt>版本</dt><dd>alpha-1.0.0 </dd></dl>
+<dl class="section date"><dt>日期</dt><dd>2022-10-30</dd></dl>
+<dl class="section copyright"><dt>版权所有</dt><dd>Copyright (c) 2022 TayhuangOS Development Team SPDX-License-Identifier: LGPL-2.1-only </dd></dl>
+</div><h2 class="groupheader">宏定义说明</h2>
+<a id="a9d19baff12415486088caa92201e9424"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d19baff12415486088caa92201e9424">&#9670;&nbsp;</a></span>ATA_IDENTIFY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ATA_IDENTIFY&#160;&#160;&#160;(0xEC)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>探测磁盘命令 </p>
+
+</div>
+</div>
+<a id="a061cf4fd71859d6355aea5be3bae767a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a061cf4fd71859d6355aea5be3bae767a">&#9670;&nbsp;</a></span>ATA_READ</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ATA_READ&#160;&#160;&#160;(0x20)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>读取命令 </p>
+
+</div>
+</div>
+<a id="a1756efebd567c063f8a5c230e47d53d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1756efebd567c063f8a5c230e47d53d9">&#9670;&nbsp;</a></span>BUSY_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BUSY_MASK&#160;&#160;&#160;(0x80)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>BUST - 忙 </p>
+
+</div>
+</div>
+<a id="a5ecf478ead212669de4b5fa7a25e5aea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ecf478ead212669de4b5fa7a25e5aea">&#9670;&nbsp;</a></span>DRQ_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DRQ_MASK&#160;&#160;&#160;(0x8)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>DRQ - 数据已准备 </p>
+
+</div>
+</div>
+<a id="ac00a1cb1deac9c44180b56f3768f9454"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac00a1cb1deac9c44180b56f3768f9454">&#9670;&nbsp;</a></span>MAKE_DEVICE_REG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAKE_DEVICE_REG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mode, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">device, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lba&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>值:</b><div class="fragment"><div class="line">    (\</div>
+<div class="line">    ((mode) &lt;&lt; 6) |\</div>
+<div class="line">    ((device) &lt;&lt; 4) |\</div>
+<div class="line">    (lba &amp; 0xF) |\</div>
+<div class="line">    (0xA0)\</div>
+<div class="line">    )</div>
+</div><!-- fragment -->
+<p>设备寄存器 </p>
+
+</div>
+</div>
+<a id="a9db7293a305876780951cb7b84d4ad4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9db7293a305876780951cb7b84d4ad4e">&#9670;&nbsp;</a></span>MSDOS_PT_OFFSET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MSDOS_PT_OFFSET&#160;&#160;&#160;(0x01BE)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">函数说明</h2>
+<a id="ad9de50d31b8958d0685f9ce142bd0507"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9de50d31b8958d0685f9ce142bd0507">&#9670;&nbsp;</a></span>__identify_disk__()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRIVATE void __identify_disk__ </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>slave</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获取硬盘信息 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base1</td><td>起始端口1 </td></tr>
+    <tr><td class="paramname">base2</td><td>起始端口2 </td></tr>
+    <tr><td class="paramname">slave</td><td>主从位 </td></tr>
+    <tr><td class="paramname">buffer</td><td>缓存 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4f06ed15a41045cc56b1e70caaa475d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f06ed15a41045cc56b1e70caaa475d5">&#9670;&nbsp;</a></span>__read_sector__()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRIVATE void __read_sector__ </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>slave</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>lba</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>number</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>读取扇区 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base1</td><td>起始端口1 </td></tr>
+    <tr><td class="paramname">base2</td><td>起始端口2 </td></tr>
+    <tr><td class="paramname">slave</td><td>主从位 </td></tr>
+    <tr><td class="paramname">lba</td><td>扇区号 </td></tr>
+    <tr><td class="paramname">number</td><td>扇区数 </td></tr>
+    <tr><td class="paramname">buffer</td><td>缓存 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2d7a531b046da7d98b67867acda16ca3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d7a531b046da7d98b67867acda16ca3">&#9670;&nbsp;</a></span>close_disk()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC void close_disk </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td>
+          <td class="paramname"><em>disk</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>关闭磁盘 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disk</td><td>磁盘 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6e8c405a8369970c2d843275d40f0fa3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e8c405a8369970c2d843275d40f0fa3">&#9670;&nbsp;</a></span>is_avaliable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC bool is_avaliable </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td>
+          <td class="paramname"><em>disk</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>磁盘是否可用 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disk</td><td>磁盘 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>true 可用 </dd>
+<dd>
+false 不可用 </dd></dl>
+
+</div>
+</div>
+<a id="ad4a103eb7676b84bad8800cbdd2ecdb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4a103eb7676b84bad8800cbdd2ecdb3">&#9670;&nbsp;</a></span>open_disk()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC <a class="el" href="structdisk__t.html">disk_t</a>* open_disk </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>slave</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>partition</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>打开磁盘 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base1</td><td>磁盘起始端口 </td></tr>
+    <tr><td class="paramname">base2</td><td>磁盘起始端口2 </td></tr>
+    <tr><td class="paramname">slave</td><td>是否为从驱动器 </td></tr>
+    <tr><td class="paramname">partition</td><td>分区 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>磁盘结构体 </dd></dl>
+
+</div>
+</div>
+<a id="a60276650f9943cd184fda9ccb9164a97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60276650f9943cd184fda9ccb9164a97">&#9670;&nbsp;</a></span>read_sector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PUBLIC void read_sector </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdisk__t.html">disk_t</a> *&#160;</td>
+          <td class="paramname"><em>disk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>lba</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>number</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>读取扇区 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disk</td><td>磁盘对象 </td></tr>
+    <tr><td class="paramname">lba</td><td>扇区号 </td></tr>
+    <tr><td class="paramname">number</td><td>扇区数 </td></tr>
+    <tr><td class="paramname">buffer</td><td>缓存 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3c5f339edf375c547c87790487e757ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c5f339edf375c547c87790487e757ed">&#9670;&nbsp;</a></span>relax_ide()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">INLINE void relax_ide </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base1</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>等待一会儿 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base1</td><td>起始端口 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad44f6b0a063345da3c85ad09115d854d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad44f6b0a063345da3c85ad09115d854d">&#9670;&nbsp;</a></span>wait_drq()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">INLINE void wait_drq </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base1</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>等待DRQ </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base1</td><td>起始端口 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa4849f5879657bfffd9320fce549b15f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4849f5879657bfffd9320fce549b15f">&#9670;&nbsp;</a></span>wait_for_free()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">INLINE void wait_for_free </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>base1</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>等待 !BUSY </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base1</td><td>起始端口 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

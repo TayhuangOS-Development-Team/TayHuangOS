@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: heap.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">heap.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="heap_8h.html">浏览该文件的文档.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;tayhuang/attributes.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;tayhuang/types.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="heap_8h.html#a1b45302695680930829cac31d65e41e1">   22</a></span>&#160;<span class="preprocessor">#define HEAP_SIZE (524288)</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;PUBLIC <span class="keywordtype">void</span> <a class="code" href="heap_8h.html#ae7fc6a5e04e3e53c9959df4bd417959d">mm_init</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;PUBLIC NULLABLE <span class="keywordtype">void</span> *<a class="code" href="heap_8h.html#a7aee2761cc950788f9cfa202dd44706b">malloc</a>(<span class="keywordtype">int</span> size);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;PUBLIC <span class="keywordtype">void</span> <a class="code" href="heap_8h.html#a7e69f90016df8f9419edd637127a02ae">free</a>(NONNULL <span class="keywordtype">void</span> *addr);</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aheap_8h_html_a7e69f90016df8f9419edd637127a02ae"><div class="ttname"><a href="heap_8h.html#a7e69f90016df8f9419edd637127a02ae">free</a></div><div class="ttdeci">PUBLIC void free(NONNULL void *addr)</div><div class="ttdoc">释放内存</div></div>
+<div class="ttc" id="aheap_8h_html_ae7fc6a5e04e3e53c9959df4bd417959d"><div class="ttname"><a href="heap_8h.html#ae7fc6a5e04e3e53c9959df4bd417959d">mm_init</a></div><div class="ttdeci">PUBLIC void mm_init(void)</div><div class="ttdoc">初始化堆</div><div class="ttdef"><b>Definition:</b> heap.c:62</div></div>
+<div class="ttc" id="aheap_8h_html_a7aee2761cc950788f9cfa202dd44706b"><div class="ttname"><a href="heap_8h.html#a7aee2761cc950788f9cfa202dd44706b">malloc</a></div><div class="ttdeci">PUBLIC NULLABLE void * malloc(int size)</div><div class="ttdoc">分配内存</div><div class="ttdef"><b>Definition:</b> heap.c:191</div></div>
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

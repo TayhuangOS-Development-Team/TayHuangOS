@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: fs/disk.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_97b3d2b63ac216821c2d7a22ee0ab2b0.html">fs</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">disk.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="disk_8h.html">浏览该文件的文档.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;tayhuang/types.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;tayhuang/attributes.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structdisk__t.html">   22</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="structdisk__t.html#a5a9caf81541071411d93c734caa3642d">   27</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structdisk__t.html#a5a9caf81541071411d93c734caa3642d">base1</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="structdisk__t.html#af86d3836cc6e7e64d09913106b090682">   32</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structdisk__t.html#af86d3836cc6e7e64d09913106b090682">base2</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="structdisk__t.html#a8dd8189c38900f11b06a24fd522f6673">   37</a></span>&#160;    <span class="keywordtype">char</span> serial[21];</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structdisk__t.html#ab9e70ffc45609109e33af78c56df5ccb">   42</a></span>&#160;    <span class="keywordtype">char</span> model[41];</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="structdisk__t.html#a4ed71aed3e258eca02f07349ab1bb7b5">   47</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structdisk__t.html#a4ed71aed3e258eca02f07349ab1bb7b5">disk_sector_number</a>;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structdisk__t.html#a9fd24fe4bd487849957c9a69b2729f99">   52</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="structdisk__t.html#a9fd24fe4bd487849957c9a69b2729f99">slave</a>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">//分区相关</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structdisk__t.html#ab1a77953f8e1ab10606282fa4c5a1b63">   58</a></span>&#160;<span class="comment"></span>    <span class="keywordtype">int</span> <a class="code" href="structdisk__t.html#ab1a77953f8e1ab10606282fa4c5a1b63">partition</a>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="structdisk__t.html#a93aae4aad7135ceaf017b3265acad1ef">   63</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="structdisk__t.html#a93aae4aad7135ceaf017b3265acad1ef">bootable</a>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="structdisk__t.html#a555bdab87e1e370847fd3094b872b7d4">   68</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structdisk__t.html#a555bdab87e1e370847fd3094b872b7d4">start_sector</a>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="structdisk__t.html#a6994808e3139c5da6ef445385876e85d">   73</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structdisk__t.html#a6994808e3139c5da6ef445385876e85d">sector_number</a>;</div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="structdisk__t.html#a8af6c4952ee31af96b4ae05cd14a2823">   78</a></span>&#160;    <span class="keywordtype">byte</span> <a class="code" href="structdisk__t.html#a8af6c4952ee31af96b4ae05cd14a2823">system_id</a>;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;} <a class="code" href="structdisk__t.html">disk_t</a>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;PUBLIC <a class="code" href="structdisk__t.html">disk_t</a> *<a class="code" href="disk_8h.html#ad4a103eb7676b84bad8800cbdd2ecdb3">open_disk</a>(<span class="keywordtype">int</span> base1, <span class="keywordtype">int</span> base2, <span class="keywordtype">bool</span> slave, <span class="keywordtype">int</span> partition);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;PUBLIC <span class="keywordtype">void</span> <a class="code" href="disk_8h.html#a2d7a531b046da7d98b67867acda16ca3">close_disk</a>(<a class="code" href="structdisk__t.html">disk_t</a> *disk);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;PUBLIC <span class="keywordtype">bool</span> <a class="code" href="disk_8h.html#a6e8c405a8369970c2d843275d40f0fa3">is_avaliable</a>(<a class="code" href="structdisk__t.html">disk_t</a> *disk);</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;PUBLIC <span class="keywordtype">void</span> <a class="code" href="disk_8h.html#a60276650f9943cd184fda9ccb9164a97">read_sector</a>(<a class="code" href="structdisk__t.html">disk_t</a> *disk, <span class="keywordtype">int</span> lba, <span class="keywordtype">int</span> number, <span class="keywordtype">void</span> *buffer);</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="adisk_8h_html_a60276650f9943cd184fda9ccb9164a97"><div class="ttname"><a href="disk_8h.html#a60276650f9943cd184fda9ccb9164a97">read_sector</a></div><div class="ttdeci">PUBLIC void read_sector(disk_t *disk, int lba, int number, void *buffer)</div><div class="ttdoc">读取扇区</div><div class="ttdef"><b>Definition:</b> disk.c:227</div></div>
+<div class="ttc" id="astructdisk__t_html_a8af6c4952ee31af96b4ae05cd14a2823"><div class="ttname"><a href="structdisk__t.html#a8af6c4952ee31af96b4ae05cd14a2823">disk_t::system_id</a></div><div class="ttdeci">byte system_id</div><div class="ttdoc">分区类型</div><div class="ttdef"><b>Definition:</b> disk.h:78</div></div>
+<div class="ttc" id="astructdisk__t_html_a9fd24fe4bd487849957c9a69b2729f99"><div class="ttname"><a href="structdisk__t.html#a9fd24fe4bd487849957c9a69b2729f99">disk_t::slave</a></div><div class="ttdeci">bool slave</div><div class="ttdoc">主/从磁盘</div><div class="ttdef"><b>Definition:</b> disk.h:52</div></div>
+<div class="ttc" id="adisk_8h_html_ad4a103eb7676b84bad8800cbdd2ecdb3"><div class="ttname"><a href="disk_8h.html#ad4a103eb7676b84bad8800cbdd2ecdb3">open_disk</a></div><div class="ttdeci">PUBLIC disk_t * open_disk(int base1, int base2, bool slave, int partition)</div><div class="ttdoc">打开磁盘</div><div class="ttdef"><b>Definition:</b> disk.c:179</div></div>
+<div class="ttc" id="astructdisk__t_html_a6994808e3139c5da6ef445385876e85d"><div class="ttname"><a href="structdisk__t.html#a6994808e3139c5da6ef445385876e85d">disk_t::sector_number</a></div><div class="ttdeci">int sector_number</div><div class="ttdoc">扇区总数</div><div class="ttdef"><b>Definition:</b> disk.h:73</div></div>
+<div class="ttc" id="astructdisk__t_html_a4ed71aed3e258eca02f07349ab1bb7b5"><div class="ttname"><a href="structdisk__t.html#a4ed71aed3e258eca02f07349ab1bb7b5">disk_t::disk_sector_number</a></div><div class="ttdeci">int disk_sector_number</div><div class="ttdoc">磁盘扇区总数</div><div class="ttdef"><b>Definition:</b> disk.h:47</div></div>
+<div class="ttc" id="astructdisk__t_html_a5a9caf81541071411d93c734caa3642d"><div class="ttname"><a href="structdisk__t.html#a5a9caf81541071411d93c734caa3642d">disk_t::base1</a></div><div class="ttdeci">int base1</div><div class="ttdoc">磁盘起始端口</div><div class="ttdef"><b>Definition:</b> disk.h:27</div></div>
+<div class="ttc" id="adisk_8h_html_a6e8c405a8369970c2d843275d40f0fa3"><div class="ttname"><a href="disk_8h.html#a6e8c405a8369970c2d843275d40f0fa3">is_avaliable</a></div><div class="ttdeci">PUBLIC bool is_avaliable(disk_t *disk)</div><div class="ttdoc">磁盘是否可用</div><div class="ttdef"><b>Definition:</b> disk.c:223</div></div>
+<div class="ttc" id="astructdisk__t_html_a555bdab87e1e370847fd3094b872b7d4"><div class="ttname"><a href="structdisk__t.html#a555bdab87e1e370847fd3094b872b7d4">disk_t::start_sector</a></div><div class="ttdeci">int start_sector</div><div class="ttdoc">起始扇区号</div><div class="ttdef"><b>Definition:</b> disk.h:68</div></div>
+<div class="ttc" id="adisk_8h_html_a2d7a531b046da7d98b67867acda16ca3"><div class="ttname"><a href="disk_8h.html#a2d7a531b046da7d98b67867acda16ca3">close_disk</a></div><div class="ttdeci">PUBLIC void close_disk(disk_t *disk)</div><div class="ttdoc">关闭磁盘</div><div class="ttdef"><b>Definition:</b> disk.c:219</div></div>
+<div class="ttc" id="astructdisk__t_html_a93aae4aad7135ceaf017b3265acad1ef"><div class="ttname"><a href="structdisk__t.html#a93aae4aad7135ceaf017b3265acad1ef">disk_t::bootable</a></div><div class="ttdeci">bool bootable</div><div class="ttdoc">是否可启动</div><div class="ttdef"><b>Definition:</b> disk.h:63</div></div>
+<div class="ttc" id="astructdisk__t_html_ab1a77953f8e1ab10606282fa4c5a1b63"><div class="ttname"><a href="structdisk__t.html#ab1a77953f8e1ab10606282fa4c5a1b63">disk_t::partition</a></div><div class="ttdeci">int partition</div><div class="ttdoc">扇区</div><div class="ttdef"><b>Definition:</b> disk.h:58</div></div>
+<div class="ttc" id="astructdisk__t_html"><div class="ttname"><a href="structdisk__t.html">disk_t</a></div><div class="ttdoc">磁盘(把每个分区视作独立的硬盘)</div><div class="ttdef"><b>Definition:</b> disk.h:22</div></div>
+<div class="ttc" id="astructdisk__t_html_af86d3836cc6e7e64d09913106b090682"><div class="ttname"><a href="structdisk__t.html#af86d3836cc6e7e64d09913106b090682">disk_t::base2</a></div><div class="ttdeci">int base2</div><div class="ttdoc">磁盘起始端口2</div><div class="ttdef"><b>Definition:</b> disk.h:32</div></div>
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

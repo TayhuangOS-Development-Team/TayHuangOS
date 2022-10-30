@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: multiboot_tag_framebuffer结构体 参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-attribs">Public 属性</a> &#124;
+<a href="structmultiboot__tag__framebuffer-members.html">所有成员列表</a>  </div>
+  <div class="headertitle">
+<div class="title">multiboot_tag_framebuffer结构体 参考</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p><code>#include &lt;<a class="el" href="multiboot2_8h_source.html">multiboot2.h</a>&gt;</code></p>
+<div class="dynheader">
+multiboot_tag_framebuffer 的协作图:</div>
+<div class="dyncontent">
+<div class="center"><img src="structmultiboot__tag__framebuffer__coll__graph.png" border="0" usemap="#multiboot__tag__framebuffer_coll__map" alt="Collaboration graph"/></div>
+<center><span class="legend">[<a href="graph_legend.html">图例</a>]</span></center></div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public 属性</h2></td></tr>
+<tr class="memitem:aa08ac999e6f190bc67387683f2d1ff76"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structmultiboot__tag__framebuffer__common.html">multiboot_tag_framebuffer_common</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmultiboot__tag__framebuffer.html#aa08ac999e6f190bc67387683f2d1ff76">common</a></td></tr>
+<tr class="separator:aa08ac999e6f190bc67387683f2d1ff76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f926f36c704d6b48e9fad527d9a8d5d"><td class="memItemLeft" >union {</td></tr>
+<tr class="memitem:a6d2563698cf01eb6756c05e8d10e2bfe"><td class="memItemLeft" >&#160;&#160;&#160;struct {</td></tr>
+<tr class="memitem:a41d39075d4d6e4d9586112cfd9982000"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="multiboot2_8h.html#a3a11e3c2b5e0617736a05343aa5795b3">multiboot_uint16_t</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#a4a0a5680e13d7d8b0b7137fa1a362614">framebuffer_palette_num_colors</a></td></tr>
+<tr class="separator:a41d39075d4d6e4d9586112cfd9982000"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3c17bdd51358da5cfb6ca5b50f5eba6"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;struct <a class="el" href="structmultiboot__color.html">multiboot_color</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#afe56e0e2526924aada4895fb57783cad">framebuffer_palette</a> [0]</td></tr>
+<tr class="separator:ab3c17bdd51358da5cfb6ca5b50f5eba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d2563698cf01eb6756c05e8d10e2bfe"><td class="memItemLeft" valign="top">&#160;&#160;&#160;}&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="separator:a6d2563698cf01eb6756c05e8d10e2bfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef3bfcca79731c166037db284b2767f8"><td class="memItemLeft" >&#160;&#160;&#160;struct {</td></tr>
+<tr class="memitem:ac993de38fb7fa14c43d306110a8be794"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#abd92ac68f90673fdf6f5492b4ef84db3">framebuffer_red_field_position</a></td></tr>
+<tr class="separator:ac993de38fb7fa14c43d306110a8be794"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a483e05f347384b049fae056ae3c3b700"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#a960868f946b04a3cbed0aeaf072bc515">framebuffer_red_mask_size</a></td></tr>
+<tr class="separator:a483e05f347384b049fae056ae3c3b700"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0c77ca2e3d85b7d4b93e9e68c9ec0f2"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#adc30070505f91ffed39fb5474eee227f">framebuffer_green_field_position</a></td></tr>
+<tr class="separator:aa0c77ca2e3d85b7d4b93e9e68c9ec0f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd23a4933c8a485d6784a9522901b9df"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#ae04612d778d7b5396864ce8380421ee6">framebuffer_green_mask_size</a></td></tr>
+<tr class="separator:acd23a4933c8a485d6784a9522901b9df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a880373f432eb64485a36c053f9226ae8"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#a38e088824ac3a333408e49cc9faa4fe4">framebuffer_blue_field_position</a></td></tr>
+<tr class="separator:a880373f432eb64485a36c053f9226ae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeec473872396942f048978dcf7bfb06b"><td class="memItemLeft" >&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a>&#160;&#160;&#160;<a class="el" href="structmultiboot__tag__framebuffer.html#a9d39dddc3f93276d0503ac5e7f3b7d90">framebuffer_blue_mask_size</a></td></tr>
+<tr class="separator:aeec473872396942f048978dcf7bfb06b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef3bfcca79731c166037db284b2767f8"><td class="memItemLeft" valign="top">&#160;&#160;&#160;}&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="separator:aef3bfcca79731c166037db284b2767f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f926f36c704d6b48e9fad527d9a8d5d"><td class="memItemLeft" valign="top">};&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="separator:a4f926f36c704d6b48e9fad527d9a8d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">类成员变量说明</h2>
+<a id="a4f926f36c704d6b48e9fad527d9a8d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f926f36c704d6b48e9fad527d9a8d5d">&#9670;&nbsp;</a></span>@1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">union { ... } </td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa08ac999e6f190bc67387683f2d1ff76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa08ac999e6f190bc67387683f2d1ff76">&#9670;&nbsp;</a></span>common</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structmultiboot__tag__framebuffer__common.html">multiboot_tag_framebuffer_common</a> multiboot_tag_framebuffer::common</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a38e088824ac3a333408e49cc9faa4fe4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38e088824ac3a333408e49cc9faa4fe4">&#9670;&nbsp;</a></span>framebuffer_blue_field_position</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a> multiboot_tag_framebuffer::framebuffer_blue_field_position</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9d39dddc3f93276d0503ac5e7f3b7d90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d39dddc3f93276d0503ac5e7f3b7d90">&#9670;&nbsp;</a></span>framebuffer_blue_mask_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a> multiboot_tag_framebuffer::framebuffer_blue_mask_size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adc30070505f91ffed39fb5474eee227f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc30070505f91ffed39fb5474eee227f">&#9670;&nbsp;</a></span>framebuffer_green_field_position</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a> multiboot_tag_framebuffer::framebuffer_green_field_position</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae04612d778d7b5396864ce8380421ee6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae04612d778d7b5396864ce8380421ee6">&#9670;&nbsp;</a></span>framebuffer_green_mask_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a> multiboot_tag_framebuffer::framebuffer_green_mask_size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afe56e0e2526924aada4895fb57783cad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe56e0e2526924aada4895fb57783cad">&#9670;&nbsp;</a></span>framebuffer_palette</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structmultiboot__color.html">multiboot_color</a> multiboot_tag_framebuffer::framebuffer_palette[0]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4a0a5680e13d7d8b0b7137fa1a362614"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a0a5680e13d7d8b0b7137fa1a362614">&#9670;&nbsp;</a></span>framebuffer_palette_num_colors</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="multiboot2_8h.html#a3a11e3c2b5e0617736a05343aa5795b3">multiboot_uint16_t</a> multiboot_tag_framebuffer::framebuffer_palette_num_colors</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abd92ac68f90673fdf6f5492b4ef84db3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd92ac68f90673fdf6f5492b4ef84db3">&#9670;&nbsp;</a></span>framebuffer_red_field_position</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a> multiboot_tag_framebuffer::framebuffer_red_field_position</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a960868f946b04a3cbed0aeaf072bc515"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a960868f946b04a3cbed0aeaf072bc515">&#9670;&nbsp;</a></span>framebuffer_red_mask_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="multiboot2_8h.html#a037f602538fccf97e90021c19fdfc047">multiboot_uint8_t</a> multiboot_tag_framebuffer::framebuffer_red_mask_size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<hr/>该结构体的文档由以下文件生成:<ul>
+<li>libs/<a class="el" href="multiboot2_8h_source.html">multiboot2.h</a></li>
+</ul>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

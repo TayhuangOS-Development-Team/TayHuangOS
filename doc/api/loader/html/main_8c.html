@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.17"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tayhuang OS: main.c 文件参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Tayhuang OS
+   </div>
+   <div id="projectbrief">A Personal Only-For-Learn Sytem</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">类</a> &#124;
+<a href="#func-members">函数</a> &#124;
+<a href="#var-members">变量</a>  </div>
+  <div class="headertitle">
+<div class="title">main.c 文件参考</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>GRUB 2 Loader 入口  
+<a href="#details">更多...</a></p>
+<div class="textblock"><code>#include &lt;libs/multiboot2.h&gt;</code><br />
+<code>#include &lt;tayhuang/attributes.h&gt;</code><br />
+<code>#include &lt;tayhuang/types.h&gt;</code><br />
+<code>#include &lt;tayhuang/ports.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="gdt_8h_source.html">init/gdt.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="intterup_8h_source.html">init/intterup.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="logging_8h_source.html">logging.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="heap_8h_source.html">heap.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="disk_8h_source.html">fs/disk.h</a>&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+main.c 的引用(Include)关系图:</div>
+<div class="dyncontent">
+<div class="center"><img src="main_8c__incl.png" border="0" usemap="#main_8c" alt=""/></div>
+</div>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+类</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtayhuang__header.html">tayhuang_header</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tayhuang OS GRUB 2 Boot Loader 程序头结构 应GRUB2要求实现  <a href="structtayhuang__header.html#details">更多...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+函数</h2></td></tr>
+<tr class="memitem:a18e8156d7ce76643c0c4f0c00caa16b1"><td class="memItemLeft" align="right" valign="top">IMPL struct <a class="el" href="structtayhuang__header.html">tayhuang_header</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a18e8156d7ce76643c0c4f0c00caa16b1">__attribute__</a> ((packed))</td></tr>
+<tr class="separator:a18e8156d7ce76643c0c4f0c00caa16b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a843687c8f0049be14ed81b000f358617"><td class="memItemLeft" align="right" valign="top">IMPL struct <a class="el" href="structtayhuang__header.html">tayhuang_header</a> TAYHUANG_HEADER&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a843687c8f0049be14ed81b000f358617">__attribute__</a> ((section(&quot;.multiboot&quot;)))</td></tr>
+<tr class="memdesc:a843687c8f0049be14ed81b000f358617"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tayhuang OS GRUB 2 Boot Loader 程序头 应GRUB2要求实现 放在.multiboot段下  <a href="main_8c.html#a843687c8f0049be14ed81b000f358617">更多...</a><br /></td></tr>
+<tr class="separator:a843687c8f0049be14ed81b000f358617"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0b72869d87f5553d3dd3dc6c98273ea"><td class="memItemLeft" align="right" valign="top">IMPL NORETURN void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#ab0b72869d87f5553d3dd3dc6c98273ea">main</a> (struct multiboot_tag *multiboot_info)</td></tr>
+<tr class="memdesc:ab0b72869d87f5553d3dd3dc6c98273ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">GRUB2 Loader 主函数  <a href="main_8c.html#ab0b72869d87f5553d3dd3dc6c98273ea">更多...</a><br /></td></tr>
+<tr class="separator:ab0b72869d87f5553d3dd3dc6c98273ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a6ed1d11be215f21bb4d67d8308df73"><td class="memItemLeft" align="right" valign="top">IMPL NORETURN void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a8a6ed1d11be215f21bb4d67d8308df73">entry</a> (void)</td></tr>
+<tr class="memdesc:a8a6ed1d11be215f21bb4d67d8308df73"><td class="mdescLeft">&#160;</td><td class="mdescRight">GRUB 2 Loader 入口点  <a href="main_8c.html#a8a6ed1d11be215f21bb4d67d8308df73">更多...</a><br /></td></tr>
+<tr class="separator:a8a6ed1d11be215f21bb4d67d8308df73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+变量</h2></td></tr>
+<tr class="memitem:a6fbef348e6bc5a763c2ddf749b07f200"><td class="memItemLeft" align="right" valign="top">struct multiboot_header&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a6fbef348e6bc5a763c2ddf749b07f200">header</a></td></tr>
+<tr class="memdesc:a6fbef348e6bc5a763c2ddf749b07f200"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mulitiboot2 头  <a href="main_8c.html#a6fbef348e6bc5a763c2ddf749b07f200">更多...</a><br /></td></tr>
+<tr class="separator:a6fbef348e6bc5a763c2ddf749b07f200"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65cdf8212a468bd72d96a565ccd79250"><td class="memItemLeft" align="right" valign="top">struct multiboot_header_tag&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a65cdf8212a468bd72d96a565ccd79250">end</a></td></tr>
+<tr class="memdesc:a65cdf8212a468bd72d96a565ccd79250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mulitiboot2 尾巴  <a href="main_8c.html#a65cdf8212a468bd72d96a565ccd79250">更多...</a><br /></td></tr>
+<tr class="separator:a65cdf8212a468bd72d96a565ccd79250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>GRUB 2 Loader 入口 </p>
+<dl class="section author"><dt>作者</dt><dd>theflysong (<a href="#" onclick="location.href='mai'+'lto:'+'son'+'g_'+'of_'+'th'+'e_f'+'ly'+'@16'+'3.'+'com'; return false;">song_<span style="display: none;">.nosp@m.</span>of_t<span style="display: none;">.nosp@m.</span>he_fl<span style="display: none;">.nosp@m.</span>y@16<span style="display: none;">.nosp@m.</span>3.com</a>) </dd></dl>
+<dl class="section version"><dt>版本</dt><dd>alpha-1.0.0 </dd></dl>
+<dl class="section date"><dt>日期</dt><dd>2022-10-22</dd></dl>
+<dl class="section copyright"><dt>版权所有</dt><dd>Copyright (c) 2022 TayhuangOS Development Team SPDX-License-Identifier: LGPL-2.1-only </dd></dl>
+</div><h2 class="groupheader">函数说明</h2>
+<a id="a18e8156d7ce76643c0c4f0c00caa16b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18e8156d7ce76643c0c4f0c00caa16b1">&#9670;&nbsp;</a></span>__attribute__() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">IMPL struct <a class="el" href="structtayhuang__header.html">tayhuang_header</a> __attribute__ </td>
+          <td>(</td>
+          <td class="paramtype">(packed)&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a843687c8f0049be14ed81b000f358617"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a843687c8f0049be14ed81b000f358617">&#9670;&nbsp;</a></span>__attribute__() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">IMPL struct <a class="el" href="structtayhuang__header.html">tayhuang_header</a> TAYHUANG_HEADER __attribute__ </td>
+          <td>(</td>
+          <td class="paramtype">(section(&quot;.multiboot&quot;))&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tayhuang OS GRUB 2 Boot Loader 程序头 应GRUB2要求实现 放在.multiboot段下 </p>
+
+</div>
+</div>
+<a id="a8a6ed1d11be215f21bb4d67d8308df73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a6ed1d11be215f21bb4d67d8308df73">&#9670;&nbsp;</a></span>entry()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">IMPL NORETURN void entry </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>GRUB 2 Loader 入口点 </p>
+
+</div>
+</div>
+<a id="ab0b72869d87f5553d3dd3dc6c98273ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0b72869d87f5553d3dd3dc6c98273ea">&#9670;&nbsp;</a></span>main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">IMPL NORETURN void main </td>
+          <td>(</td>
+          <td class="paramtype">struct multiboot_tag *&#160;</td>
+          <td class="paramname"><em>multiboot_info</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>GRUB2 Loader 主函数 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">multiboot_info</td><td>multiboot info </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">变量说明</h2>
+<a id="a65cdf8212a468bd72d96a565ccd79250"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65cdf8212a468bd72d96a565ccd79250">&#9670;&nbsp;</a></span>end</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct multiboot_header_tag end</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mulitiboot2 尾巴 </p>
+
+</div>
+</div>
+<a id="a6fbef348e6bc5a763c2ddf749b07f200"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fbef348e6bc5a763c2ddf749b07f200">&#9670;&nbsp;</a></span>header</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct multiboot_header header</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mulitiboot2 头 </p>
+
+</div>
+</div>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.17
+</small></address>
+</body>
+</html>

@@ -26,15 +26,19 @@ export OBJECTSDIR BINDIR CURDIR
 
 
 define buildmod
-	$(CD) $(1) ; $(MAKE) build
+	$(CD) $(1) && $(MAKE) build
 endef
 
 define imagemod
-	$(CD) $(1) ; $(MAKE) image
+	$(CD) $(1) && $(MAKE) image
 endef
 
 define cleanmod
-	$(CD) $(1) ; $(MAKE) clean
+	$(CD) $(1) && $(MAKE) clean
 endef
 
-.PHONY: build image clean
+define docmod
+	$(CD) $(1) && $(MAKE) doc
+endef
+
+.PHONY: build image clean doc

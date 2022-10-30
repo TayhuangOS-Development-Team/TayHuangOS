@@ -1,0 +1,11 @@
+digraph "tayhuang_header"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="tayhuang_header",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Tayhuang OS GRUB 2 Boot Loader 程序头结构 应GRUB2要求实现"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" end" ,fontname="Helvetica"];
+  Node2 [label="multiboot_header_tag",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structmultiboot__header__tag.html",tooltip=" "];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" header" ,fontname="Helvetica"];
+  Node3 [label="multiboot_header",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structmultiboot__header.html",tooltip=" "];
+}
