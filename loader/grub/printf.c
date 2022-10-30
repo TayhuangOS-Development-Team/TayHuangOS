@@ -131,7 +131,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
             case 'E': flag |= FLAG_UPPER;
             case 'e': print_type = PRINT_TY_EXPONENT; break;
             case 'P': flag |= FLAG_UPPER;
-            case 'p': flag |= FLAG_FILL_ZERO; flag |= FLAG_PREFIX; width = 16; print_type = PRINT_TY_HEX; break;
+            case 'p': flag |= FLAG_FILL_ZERO; flag |= FLAG_PREFIX; width = 8; print_type = PRINT_TY_HEX; break;
             default: print_type = -1; break;
             }
 
@@ -172,7 +172,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
                 uitoa(val, _buffer, 8);
             }
             case PRINT_TY_HEX: { //十六进制
-                unsigned long long val = va_arg(args, unsigned long long);
+                unsigned int val = va_arg(args, unsigned int);
                 uitoa(val, _buffer, 16);
                 if (flag & FLAG_UPPER) {
                     for (int i = 0 ; i < strlen(_buffer) ; i ++) {

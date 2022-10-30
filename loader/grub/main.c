@@ -112,6 +112,17 @@ __attribute__((section(".multiboot")))
  */
 IMPL NORETURN void main(struct multiboot_tag *multiboot_info) {
     LINFO ("GRUB2 Loader", "Initialized");
+
+    int *a = malloc(4);
+    int *b = malloc(4);
+    LINFOF("!", "%p %p", a, b);
+    free(a);
+    int *c = malloc(4);
+    LINFOF("!", "%p %p %p", a, b, c);
+    free(b);
+    free(c);
+    int *d = malloc(8);
+    LINFOF("!", "%p", d);
     while (true);
 }
 
