@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['heap_2ec_207',['heap.c',['../heap_8c.html',1,'']]],
-  ['heap_2eh_208',['heap.h',['../heap_8h.html',1,'']]]
+  ['gdt_2ec_256',['gdt.c',['../gdt_8c.html',1,'']]],
+  ['gdt_2eh_257',['gdt.h',['../gdt_8h.html',1,'']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['offset_662',['offset',['../structmultiboot__tag__apm.html#ae9d788171dfbf0f540c37aee20c96eb3',1,'multiboot_tag_apm']]]
+  ['root_5fdir_424',['root_dir',['../struct__vfs__t.html#a65125f4955f6fab6f9c4f170676dfb31',1,'_vfs_t']]]
 ];

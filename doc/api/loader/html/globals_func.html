@@ -76,6 +76,9 @@ $(function() {
 : <a class="el" href="logging_8c.html#ad2dfda374bea0fdcf9ac542416b04ca7">logging.c</a>
 , <a class="el" href="logging_8h.html#ad2dfda374bea0fdcf9ac542416b04ca7">logging.h</a>
 </li>
+<li>__open_fs()
+: <a class="el" href="vfs_8c.html#a00f6ca75f7e1a3533da8a58950e72462">vfs.c</a>
+</li>
 <li>__read_sector__()
 : <a class="el" href="disk_8c.html#a4f06ed15a41045cc56b1e70caaa475d5">disk.c</a>
 </li>
@@ -112,7 +115,8 @@ $(function() {
 , <a class="el" href="disk_8h.html#a2d7a531b046da7d98b67867acda16ca3">disk.h</a>
 </li>
 <li>close_fs()
-: <a class="el" href="vfs_8h.html#a83c42efff8aa70825826e3b30cbb2214">vfs.h</a>
+: <a class="el" href="vfs_8c.html#a80b6a939afa1d00fc3b0227d5230a39a">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a80b6a939afa1d00fc3b0227d5230a39a">vfs.h</a>
 </li>
 <li>control_protection_exception()
 : <a class="el" href="intterup_8h.html#afe7cccb33060b7c7277a4e352052880b">intterup.h</a>
@@ -156,12 +160,12 @@ $(function() {
 
 
 <h3><a id="index_f"></a>- f -</h3><ul>
-<li>find_last_free()
-: <a class="el" href="heap_8c.html#af1e5fa38126938eb7c529bdf3b4c95ef">heap.c</a>
-</li>
 <li>free()
 : <a class="el" href="heap_8c.html#af6180f71f8bdb5103d3a90cb73289f12">heap.c</a>
 , <a class="el" href="heap_8h.html#a7e69f90016df8f9419edd637127a02ae">heap.h</a>
+</li>
+<li>fs_funcs()
+: <a class="el" href="vfs_8c.html#ac8871178b8ca4e204a94b8ae25d51080">vfs.c</a>
 </li>
 </ul>
 
@@ -171,53 +175,55 @@ $(function() {
 : <a class="el" href="intterup_8h.html#a9b45607b726601ea1a8f2f4111c14d10">intterup.h</a>
 </li>
 <li>get_block_data()
-: <a class="el" href="vfs_8h.html#ac784d8869388a0a18122d4bd6b2dfd87">vfs.h</a>
-</li>
-<li>get_block_size()
-: <a class="el" href="vfs_8h.html#a1949552a168a98cfbf333dffc7eefd3a">vfs.h</a>
+: <a class="el" href="vfs_8c.html#acc39722679c8304c51458df6d33fe188">vfs.c</a>
+, <a class="el" href="vfs_8h.html#acc39722679c8304c51458df6d33fe188">vfs.h</a>
 </li>
 <li>get_child_dnode()
-: <a class="el" href="vfs_8h.html#a9913b272cf49d12f7989668880af154a">vfs.h</a>
+: <a class="el" href="vfs_8c.html#a4ebdeed80880235cc08f3cf8ee6577d5">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a4ebdeed80880235cc08f3cf8ee6577d5">vfs.h</a>
 </li>
 <li>get_dir_file()
-: <a class="el" href="vfs_8h.html#a8748f9f84b6bedb6a3eef60291dce250">vfs.h</a>
+: <a class="el" href="vfs_8c.html#a0e8fec56ea3ac7f9a574096f3535fbd7">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a0e8fec56ea3ac7f9a574096f3535fbd7">vfs.h</a>
 </li>
-<li>get_dnode_name()
-: <a class="el" href="vfs_8h.html#a5e30ecb60d2ba4ff95d851e72e311bfc">vfs.h</a>
+<li>get_fat32_fs_size()
+: <a class="el" href="fat32_8c.html#af6d77b9a6fdc1c8ef6be6f05befe398f">fat32.c</a>
+, <a class="el" href="fat32_8h.html#af6d77b9a6fdc1c8ef6be6f05befe398f">fat32.h</a>
 </li>
 <li>get_file_data()
-: <a class="el" href="vfs_8h.html#ac84f1de35410b3d21371a3fd84f78054">vfs.h</a>
-</li>
-<li>get_file_name()
-: <a class="el" href="vfs_8h.html#a9b218becc14bbfc320b898ea7c08227b">vfs.h</a>
-</li>
-<li>get_file_size()
-: <a class="el" href="vfs_8h.html#a59d2ac97868fbf8d34a1b86070b01b6d">vfs.h</a>
+: <a class="el" href="vfs_8c.html#aa12cae080ed2e49e1afa6115f2cb6573">vfs.c</a>
+, <a class="el" href="vfs_8h.html#aa12cae080ed2e49e1afa6115f2cb6573">vfs.h</a>
 </li>
 <li>get_first_block()
-: <a class="el" href="vfs_8h.html#a0b0feb935b1c8884a27f2405d577bfb0">vfs.h</a>
+: <a class="el" href="vfs_8c.html#a58977e99b97654827916c606981f1ff7">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a58977e99b97654827916c606981f1ff7">vfs.h</a>
+</li>
+<li>get_fs_magic()
+: <a class="el" href="vfs_8c.html#ae38b40df4633c1674986e6a3cb0cf664">vfs.c</a>
 </li>
 <li>get_fs_size()
-: <a class="el" href="vfs_8h.html#a0712a1b0d1149b02a9a832b7bac54f96">vfs.h</a>
+: <a class="el" href="vfs_8c.html#a5c4bd2396afd36430909d2aef5e7cf4f">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a5c4bd2396afd36430909d2aef5e7cf4f">vfs.h</a>
 </li>
 <li>get_fs_type()
-: <a class="el" href="vfs_8h.html#a994c57eebfdd262f4c78eeb94d988ac5">vfs.h</a>
-</li>
-<li>get_last_free_block()
-: <a class="el" href="heap_8c.html#a1fca7851fdd03990ee89baa265bdb6f7">heap.c</a>
+: <a class="el" href="vfs_8c.html#a006c4f2fcb4f5db1746c3c7d2419496b">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a006c4f2fcb4f5db1746c3c7d2419496b">vfs.h</a>
 </li>
 <li>get_next_block()
-: <a class="el" href="vfs_8h.html#a56c5855025fec63787ecb887ce01149f">vfs.h</a>
-, <a class="el" href="heap_8c.html#a5d4ac3f308049036a2e550e522ee40f9">heap.c</a>
+: <a class="el" href="heap_8c.html#a191cd8cd07c6b444b1ac9b62799f0454">heap.c</a>
+, <a class="el" href="vfs_8c.html#a6645aebb7f4bcdd922ad997c7623e9a5">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a6645aebb7f4bcdd922ad997c7623e9a5">vfs.h</a>
 </li>
 <li>get_next_dnode()
-: <a class="el" href="vfs_8h.html#aa18c29825904d4173f32f7ac8c3dbf8c">vfs.h</a>
+: <a class="el" href="vfs_8c.html#a975d2d7ff1f909e25b7f537e848db4c0">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a975d2d7ff1f909e25b7f537e848db4c0">vfs.h</a>
 </li>
-<li>get_next_free_block()
-: <a class="el" href="heap_8c.html#a9968b20e4088ee1fa4748c120ebd9d07">heap.c</a>
+<li>get_parent_dnode()
+: <a class="el" href="vfs_8h.html#ab25b7d7e5bc8e0b541430618eb5dbef2">vfs.h</a>
 </li>
 <li>get_root_dir()
-: <a class="el" href="vfs_8h.html#a0e723f91dd51bf90dd547a91874f90a2">vfs.h</a>
+: <a class="el" href="vfs_8c.html#ae3af04ccc2fd37407a3036db370eaa9a">vfs.c</a>
+, <a class="el" href="vfs_8h.html#ae3af04ccc2fd37407a3036db370eaa9a">vfs.h</a>
 </li>
 <li>get_valid_size()
 : <a class="el" href="heap_8c.html#a9a5b5dbefa57986a50f1c8ae1b0a1b89">heap.c</a>
@@ -315,14 +321,9 @@ $(function() {
 : <a class="el" href="disk_8c.html#a6e8c405a8369970c2d843275d40f0fa3">disk.c</a>
 , <a class="el" href="disk_8h.html#a6e8c405a8369970c2d843275d40f0fa3">disk.h</a>
 </li>
-<li>is_last_bnode()
-: <a class="el" href="vfs_8h.html#a7e5c47912828e571d0959dbb6a5fb6ee">vfs.h</a>
-</li>
-<li>is_last_dnode()
-: <a class="el" href="vfs_8h.html#a86acc6acaea1a76bfcdb2b86b61144d5">vfs.h</a>
-</li>
-<li>is_leaf_dnode()
-: <a class="el" href="vfs_8h.html#af2416cd6b3637c5046d7d478caa44042">vfs.h</a>
+<li>is_fat32_fs()
+: <a class="el" href="fat32_8c.html#a4a5552c393f3659f771be69de2a1c192">fat32.c</a>
+, <a class="el" href="fat32_8h.html#a4a5552c393f3659f771be69de2a1c192">fat32.h</a>
 </li>
 </ul>
 
@@ -387,8 +388,13 @@ $(function() {
 : <a class="el" href="disk_8c.html#ad4a103eb7676b84bad8800cbdd2ecdb3">disk.c</a>
 , <a class="el" href="disk_8h.html#ad4a103eb7676b84bad8800cbdd2ecdb3">disk.h</a>
 </li>
+<li>open_fat32_fs()
+: <a class="el" href="fat32_8c.html#a078e9b4a2f4bde0b0a28876631642289">fat32.c</a>
+, <a class="el" href="fat32_8h.html#a078e9b4a2f4bde0b0a28876631642289">fat32.h</a>
+</li>
 <li>open_fs()
-: <a class="el" href="vfs_8h.html#ae20c2be80d2df742637bc5fe37b713be">vfs.h</a>
+: <a class="el" href="vfs_8c.html#a99089282c21e25fdfde2777648ec7a1e">vfs.c</a>
+, <a class="el" href="vfs_8h.html#a99089282c21e25fdfde2777648ec7a1e">vfs.h</a>
 </li>
 <li>overflow()
 : <a class="el" href="intterup_8h.html#a5c23e56439d3f55326cf4f457ad6faf5">intterup.h</a>
@@ -397,6 +403,15 @@ $(function() {
 
 
 <h3><a id="index_p"></a>- p -</h3><ul>
+<li>packvb()
+: <a class="el" href="vfs_8c.html#a657184b2e68f1c7c083a9a964aa8e06c">vfs.c</a>
+</li>
+<li>packvd()
+: <a class="el" href="vfs_8c.html#a9b9fc6e5c7bfaf224d980a9067509554">vfs.c</a>
+</li>
+<li>packvf()
+: <a class="el" href="vfs_8c.html#a0c7dde7afc5b37627be88bde49020477">vfs.c</a>
+</li>
 <li>page_fault()
 : <a class="el" href="intterup_8h.html#a5564823d5770d3597091a9d1868a4cf7">intterup.h</a>
 </li>

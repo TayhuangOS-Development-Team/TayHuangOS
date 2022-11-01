@@ -92,11 +92,7 @@ heap.c 的引用(Include)关系图:</div>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 宏定义</h2></td></tr>
-<tr class="memitem:a47de1e65fe2cf14f4f8cea2cd6170a43"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a47de1e65fe2cf14f4f8cea2cd6170a43">CALC_ADDR</a>(base,  offset)&#160;&#160;&#160;(((void*)base) + offset)</td></tr>
-<tr class="separator:a47de1e65fe2cf14f4f8cea2cd6170a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c1816ca2fd046392e32bdc026ff8a02"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a4c1816ca2fd046392e32bdc026ff8a02">CALC_OFF</a>(low,  high)&#160;&#160;&#160;(((void*)high) - ((void*)low))</td></tr>
-<tr class="separator:a4c1816ca2fd046392e32bdc026ff8a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1993202507ed098618c83de40d3a2bc1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a1993202507ed098618c83de40d3a2bc1">HEAP_TOP</a>&#160;&#160;&#160;<a class="el" href="heap_8c.html#a47de1e65fe2cf14f4f8cea2cd6170a43">CALC_ADDR</a>(<a class="el" href="heap_8c.html#ab42fed582adbf99cd54832ee4710847f">HEAP</a>, <a class="el" href="heap_8h.html#a1b45302695680930829cac31d65e41e1">HEAP_SIZE</a>)</td></tr>
+<tr class="memitem:a1993202507ed098618c83de40d3a2bc1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a1993202507ed098618c83de40d3a2bc1">HEAP_TOP</a>&#160;&#160;&#160;(<a class="el" href="heap_8c.html#ab42fed582adbf99cd54832ee4710847f">HEAP</a> + <a class="el" href="heap_8h.html#a1b45302695680930829cac31d65e41e1">HEAP_SIZE</a>)</td></tr>
 <tr class="separator:a1993202507ed098618c83de40d3a2bc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abec6590c7c43f2a519cf5746887ce252"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#abec6590c7c43f2a519cf5746887ce252">LEAST_BLOCK_SIZE</a>&#160;&#160;&#160;(16)</td></tr>
 <tr class="memdesc:abec6590c7c43f2a519cf5746887ce252"><td class="mdescLeft">&#160;</td><td class="mdescRight">最低块大小  <a href="heap_8c.html#abec6590c7c43f2a519cf5746887ce252">更多...</a><br /></td></tr>
@@ -117,21 +113,14 @@ heap.c 的引用(Include)关系图:</div>
 <tr class="memitem:ae7fc6a5e04e3e53c9959df4bd417959d"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#ae7fc6a5e04e3e53c9959df4bd417959d">mm_init</a> (void)</td></tr>
 <tr class="memdesc:ae7fc6a5e04e3e53c9959df4bd417959d"><td class="mdescLeft">&#160;</td><td class="mdescRight">初始化堆  <a href="heap_8c.html#ae7fc6a5e04e3e53c9959df4bd417959d">更多...</a><br /></td></tr>
 <tr class="separator:ae7fc6a5e04e3e53c9959df4bd417959d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9968b20e4088ee1fa4748c120ebd9d07"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a9968b20e4088ee1fa4748c120ebd9d07">get_next_free_block</a> (<a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *block)</td></tr>
-<tr class="memdesc:a9968b20e4088ee1fa4748c120ebd9d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得下个空闲内存块  <a href="heap_8c.html#a9968b20e4088ee1fa4748c120ebd9d07">更多...</a><br /></td></tr>
-<tr class="separator:a9968b20e4088ee1fa4748c120ebd9d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d4ac3f308049036a2e550e522ee40f9"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a5d4ac3f308049036a2e550e522ee40f9">get_next_block</a> (<a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *block)</td></tr>
-<tr class="memdesc:a5d4ac3f308049036a2e550e522ee40f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得下个内存块  <a href="heap_8c.html#a5d4ac3f308049036a2e550e522ee40f9">更多...</a><br /></td></tr>
-<tr class="separator:a5d4ac3f308049036a2e550e522ee40f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fca7851fdd03990ee89baa265bdb6f7"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a1fca7851fdd03990ee89baa265bdb6f7">get_last_free_block</a> (<a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *block)</td></tr>
-<tr class="memdesc:a1fca7851fdd03990ee89baa265bdb6f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">获得上个内存块  <a href="heap_8c.html#a1fca7851fdd03990ee89baa265bdb6f7">更多...</a><br /></td></tr>
-<tr class="separator:a1fca7851fdd03990ee89baa265bdb6f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6e84b955eb679ff1bc57e4128fd33dd"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#ae6e84b955eb679ff1bc57e4128fd33dd">lookup_free_block</a> (size_t expectation)</td></tr>
 <tr class="memdesc:ae6e84b955eb679ff1bc57e4128fd33dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">寻找合适空闲块  <a href="heap_8c.html#ae6e84b955eb679ff1bc57e4128fd33dd">更多...</a><br /></td></tr>
 <tr class="separator:ae6e84b955eb679ff1bc57e4128fd33dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a633fb9d70d26955dbf787633ad146db7"><td class="memItemLeft" align="right" valign="top">INLINE bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a633fb9d70d26955dbf787633ad146db7">should_split</a> (<a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *block, size_t expectation)</td></tr>
 <tr class="memdesc:a633fb9d70d26955dbf787633ad146db7"><td class="mdescLeft">&#160;</td><td class="mdescRight">是否应该分割内存块  <a href="heap_8c.html#a633fb9d70d26955dbf787633ad146db7">更多...</a><br /></td></tr>
 <tr class="separator:a633fb9d70d26955dbf787633ad146db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a191cd8cd07c6b444b1ac9b62799f0454"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a191cd8cd07c6b444b1ac9b62799f0454">get_next_block</a> (<a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *last)</td></tr>
+<tr class="separator:a191cd8cd07c6b444b1ac9b62799f0454"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd4f843b2d2def8e5372355cf484b4a4"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#acd4f843b2d2def8e5372355cf484b4a4">split_block</a> (<a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *origin, size_t expectation)</td></tr>
 <tr class="memdesc:acd4f843b2d2def8e5372355cf484b4a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">分割内存块  <a href="heap_8c.html#acd4f843b2d2def8e5372355cf484b4a4">更多...</a><br /></td></tr>
 <tr class="separator:acd4f843b2d2def8e5372355cf484b4a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,9 +133,6 @@ heap.c 的引用(Include)关系图:</div>
 <tr class="memitem:afdcb258fef07a0bbfb2c92bb90f31308"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#afdcb258fef07a0bbfb2c92bb90f31308">merge_block</a> (<a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *front, <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *back)</td></tr>
 <tr class="memdesc:afdcb258fef07a0bbfb2c92bb90f31308"><td class="mdescLeft">&#160;</td><td class="mdescRight">合并内存块  <a href="heap_8c.html#afdcb258fef07a0bbfb2c92bb90f31308">更多...</a><br /></td></tr>
 <tr class="separator:afdcb258fef07a0bbfb2c92bb90f31308"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1e5fa38126938eb7c529bdf3b4c95ef"><td class="memItemLeft" align="right" valign="top">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#af1e5fa38126938eb7c529bdf3b4c95ef">find_last_free</a> (void)</td></tr>
-<tr class="memdesc:af1e5fa38126938eb7c529bdf3b4c95ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">寻找最后一个空闲块  <a href="heap_8c.html#af1e5fa38126938eb7c529bdf3b4c95ef">更多...</a><br /></td></tr>
-<tr class="separator:af1e5fa38126938eb7c529bdf3b4c95ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6180f71f8bdb5103d3a90cb73289f12"><td class="memItemLeft" align="right" valign="top">PUBLIC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#af6180f71f8bdb5103d3a90cb73289f12">free</a> (void *addr)</td></tr>
 <tr class="separator:af6180f71f8bdb5103d3a90cb73289f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -161,12 +147,14 @@ heap.c 的引用(Include)关系图:</div>
 <tr class="memitem:abbe792bb2cf67584b86443440a194f46"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#abbe792bb2cf67584b86443440a194f46">busy</a></td></tr>
 <tr class="memdesc:abbe792bb2cf67584b86443440a194f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">可用  <a href="heap_8c.html#abbe792bb2cf67584b86443440a194f46">更多...</a><br /></td></tr>
 <tr class="separator:abbe792bb2cf67584b86443440a194f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97b5cd8802d8bd34aebacf633fb7ca93"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a97b5cd8802d8bd34aebacf633fb7ca93">next_free_offset</a></td></tr>
-<tr class="memdesc:a97b5cd8802d8bd34aebacf633fb7ca93"><td class="mdescLeft">&#160;</td><td class="mdescRight">下个空闲块偏移  <a href="heap_8c.html#a97b5cd8802d8bd34aebacf633fb7ca93">更多...</a><br /></td></tr>
-<tr class="separator:a97b5cd8802d8bd34aebacf633fb7ca93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25c0d36e03700d8ca7cb2418ba015f6b"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a25c0d36e03700d8ca7cb2418ba015f6b">last_free_offset</a></td></tr>
-<tr class="memdesc:a25c0d36e03700d8ca7cb2418ba015f6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">上个空闲块偏移  <a href="heap_8c.html#a25c0d36e03700d8ca7cb2418ba015f6b">更多...</a><br /></td></tr>
-<tr class="separator:a25c0d36e03700d8ca7cb2418ba015f6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad7fea429c398d8a0f254396f3a239b3"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__memblk.html">_memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#aad7fea429c398d8a0f254396f3a239b3">next_free</a></td></tr>
+<tr class="memdesc:aad7fea429c398d8a0f254396f3a239b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">下个空闲块  <a href="heap_8c.html#aad7fea429c398d8a0f254396f3a239b3">更多...</a><br /></td></tr>
+<tr class="separator:aad7fea429c398d8a0f254396f3a239b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabd64069ae66f7ce74ad82a597a87496"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__memblk.html">_memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#aabd64069ae66f7ce74ad82a597a87496">last_free</a></td></tr>
+<tr class="memdesc:aabd64069ae66f7ce74ad82a597a87496"><td class="mdescLeft">&#160;</td><td class="mdescRight">上个空闲块  <a href="heap_8c.html#aabd64069ae66f7ce74ad82a597a87496">更多...</a><br /></td></tr>
+<tr class="separator:aabd64069ae66f7ce74ad82a597a87496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0da951bf72c3047c79dacf0f7b4fd39b"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__memblk.html">_memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heap_8c.html#a0da951bf72c3047c79dacf0f7b4fd39b">last_blk</a></td></tr>
+<tr class="separator:a0da951bf72c3047c79dacf0f7b4fd39b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
 <div class="textblock"><p>堆 </p>
@@ -175,62 +163,6 @@ heap.c 的引用(Include)关系图:</div>
 <dl class="section date"><dt>日期</dt><dd>2022-10-23</dd></dl>
 <dl class="section copyright"><dt>版权所有</dt><dd>Copyright (c) 2022 TayhuangOS Development Team SPDX-License-Identifier: LGPL-2.1-only </dd></dl>
 </div><h2 class="groupheader">宏定义说明</h2>
-<a id="a47de1e65fe2cf14f4f8cea2cd6170a43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47de1e65fe2cf14f4f8cea2cd6170a43">&#9670;&nbsp;</a></span>CALC_ADDR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CALC_ADDR</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">base, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">offset&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;(((void*)base) + offset)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a4c1816ca2fd046392e32bdc026ff8a02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c1816ca2fd046392e32bdc026ff8a02">&#9670;&nbsp;</a></span>CALC_OFF</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CALC_OFF</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">low, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">high&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;(((void*)high) - ((void*)low))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a1993202507ed098618c83de40d3a2bc1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1993202507ed098618c83de40d3a2bc1">&#9670;&nbsp;</a></span>HEAP_TOP</h2>
 
@@ -238,7 +170,7 @@ heap.c 的引用(Include)关系图:</div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define HEAP_TOP&#160;&#160;&#160;<a class="el" href="heap_8c.html#a47de1e65fe2cf14f4f8cea2cd6170a43">CALC_ADDR</a>(<a class="el" href="heap_8c.html#ab42fed582adbf99cd54832ee4710847f">HEAP</a>, <a class="el" href="heap_8h.html#a1b45302695680930829cac31d65e41e1">HEAP_SIZE</a>)</td>
+          <td class="memname">#define HEAP_TOP&#160;&#160;&#160;(<a class="el" href="heap_8c.html#ab42fed582adbf99cd54832ee4710847f">HEAP</a> + <a class="el" href="heap_8h.html#a1b45302695680930829cac31d65e41e1">HEAP_SIZE</a>)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -295,27 +227,6 @@ heap.c 的引用(Include)关系图:</div>
 
 </div>
 </div>
-<a id="af1e5fa38126938eb7c529bdf3b4c95ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1e5fa38126938eb7c529bdf3b4c95ef">&#9670;&nbsp;</a></span>find_last_free()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a>* find_last_free </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>寻找最后一个空闲块 </p>
-<dl class="section return"><dt>返回</dt><dd>最后一个空闲块 </dd></dl>
-
-</div>
-</div>
 <a id="af6180f71f8bdb5103d3a90cb73289f12"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af6180f71f8bdb5103d3a90cb73289f12">&#9670;&nbsp;</a></span>free()</h2>
 
@@ -334,35 +245,8 @@ heap.c 的引用(Include)关系图:</div>
 
 </div>
 </div>
-<a id="a1fca7851fdd03990ee89baa265bdb6f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1fca7851fdd03990ee89baa265bdb6f7">&#9670;&nbsp;</a></span>get_last_free_block()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a>* get_last_free_block </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td>
-          <td class="paramname"><em>block</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>获得上个内存块 </p>
-<dl class="params"><dt>参数</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">block</td><td>当前块 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>返回</dt><dd>上个内存块 </dd></dl>
-
-</div>
-</div>
-<a id="a5d4ac3f308049036a2e550e522ee40f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d4ac3f308049036a2e550e522ee40f9">&#9670;&nbsp;</a></span>get_next_block()</h2>
+<a id="a191cd8cd07c6b444b1ac9b62799f0454"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a191cd8cd07c6b444b1ac9b62799f0454">&#9670;&nbsp;</a></span>get_next_block()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -371,47 +255,11 @@ heap.c 的引用(Include)关系图:</div>
           <td class="memname">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a>* get_next_block </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td>
-          <td class="paramname"><em>block</em></td><td>)</td>
+          <td class="paramname"><em>last</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>获得下个内存块 </p>
-<dl class="params"><dt>参数</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">block</td><td>当前块 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>返回</dt><dd>下个内存块 </dd></dl>
-
-</div>
-</div>
-<a id="a9968b20e4088ee1fa4748c120ebd9d07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9968b20e4088ee1fa4748c120ebd9d07">&#9670;&nbsp;</a></span>get_next_free_block()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">INLINE <a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a>* get_next_free_block </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="heap_8c.html#a6d37cf966a0907734480ce6177fd9cad">memblk</a> *&#160;</td>
-          <td class="paramname"><em>block</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>获得下个空闲内存块 </p>
-<dl class="params"><dt>参数</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">block</td><td>当前块 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>返回</dt><dd>下个空闲内存块 </dd></dl>
 
 </div>
 </div>
@@ -723,35 +571,49 @@ false 不应该 </dd></dl>
 
 </div>
 </div>
-<a id="a25c0d36e03700d8ca7cb2418ba015f6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a25c0d36e03700d8ca7cb2418ba015f6b">&#9670;&nbsp;</a></span>last_free_offset</h2>
+<a id="a0da951bf72c3047c79dacf0f7b4fd39b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0da951bf72c3047c79dacf0f7b4fd39b">&#9670;&nbsp;</a></span>last_blk</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">b32 last_free_offset</td>
+          <td class="memname">struct <a class="el" href="struct__memblk.html">_memblk</a>* last_blk</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>上个空闲块偏移 </p>
-
 </div>
 </div>
-<a id="a97b5cd8802d8bd34aebacf633fb7ca93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97b5cd8802d8bd34aebacf633fb7ca93">&#9670;&nbsp;</a></span>next_free_offset</h2>
+<a id="aabd64069ae66f7ce74ad82a597a87496"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabd64069ae66f7ce74ad82a597a87496">&#9670;&nbsp;</a></span>last_free</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">b32 next_free_offset</td>
+          <td class="memname">struct <a class="el" href="struct__memblk.html">_memblk</a>* last_free</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>下个空闲块偏移 </p>
+<p>上个空闲块 </p>
+
+</div>
+</div>
+<a id="aad7fea429c398d8a0f254396f3a239b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad7fea429c398d8a0f254396f3a239b3">&#9670;&nbsp;</a></span>next_free</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="struct__memblk.html">_memblk</a>* next_free</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>下个空闲块 </p>
 
 </div>
 </div>

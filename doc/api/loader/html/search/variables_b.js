@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['sector_5fnumber_349',['sector_number',['../structdisk__t.html#a6994808e3139c5da6ef445385876e85d',1,'disk_t']]],
-  ['serial_350',['serial',['../structdisk__t.html#a8dd8189c38900f11b06a24fd522f6673',1,'disk_t']]],
-  ['slave_351',['slave',['../structdisk__t.html#a9fd24fe4bd487849957c9a69b2729f99',1,'disk_t']]],
-  ['start_5fsector_352',['start_sector',['../structdisk__t.html#a555bdab87e1e370847fd3094b872b7d4',1,'disk_t']]],
-  ['system_5fid_353',['system_id',['../structdisk__t.html#a8af6c4952ee31af96b4ae05cd14a2823',1,'disk_t']]]
+  ['name_419',['name',['../structdnode__result.html#aff1a016ec278337e75199bdcacc03713',1,'dnode_result::name()'],['../struct__vfnode.html#a62825847ae76ee8f5709825a2efd10a8',1,'_vfnode::name()'],['../struct__vdnode.html#ac7078097ad52734637a40198c2769eb6',1,'_vdnode::name()']]],
+  ['next_420',['next',['../struct__vbnode.html#aaed3ffd4f0219578673704f291a9fa2d',1,'_vbnode::next()'],['../struct__vdnode.html#a6770802803453eacb4a100c35740d562',1,'_vdnode::next()']]],
+  ['next_5ffree_421',['next_free',['../struct__memblk.html#a789352878f9db950206099f31ec6eb82',1,'_memblk::next_free()'],['../heap_8c.html#aad7fea429c398d8a0f254396f3a239b3',1,'next_free():&#160;heap.c']]]
 ];

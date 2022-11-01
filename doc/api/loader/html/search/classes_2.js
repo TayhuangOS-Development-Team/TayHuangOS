@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['tayhuang_5fheader_202',['tayhuang_header',['../structtayhuang__header.html',1,'']]]
+  ['disk_5ft_247',['disk_t',['../structdisk__t.html',1,'']]],
+  ['dnode_5fresult_248',['dnode_result',['../structdnode__result.html',1,'']]]
 ];

@@ -51,12 +51,14 @@ PUBLIC void lwarn(const char *file, int line, const char *name, const char *fmt,
 PUBLIC void lerror(const char *file, int line, const char *name, const char *fmt, ...);
 PUBLIC void lfatal(const char *file, int line, const char *name, const char *fmt, ...);
 
+// 格式化日志
 #define LOGF(name, type, fmt, ...) log(__FILE__, __LINE__, name, type, fmt, __VA_ARGS__)
 #define LINFOF(name, fmt, ...) linfo(__FILE__, __LINE__, name, fmt, __VA_ARGS__)
 #define LWARNF(name, fmt, ...) lwarn(__FILE__, __LINE__, name, fmt, __VA_ARGS__)
 #define LERRORF(name, fmt, ...) lerror(__FILE__, __LINE__, name, fmt, __VA_ARGS__)
 #define LFATALF(name, fmt, ...) lfatal(__FILE__, __LINE__, name, fmt, __VA_ARGS__)
 
+// 非格式化日志
 #define LOG(name, type, fmt) log(__FILE__, __LINE__, name, type, fmt)
 #define LINFO(name, fmt) linfo(__FILE__, __LINE__, name, fmt)
 #define LWARN(name, fmt) lwarn(__FILE__, __LINE__, name, fmt)

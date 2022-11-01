@@ -831,6 +831,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ./fs \
                          ./init \
+                         ./fs/fs \
                          ./
 
 # This tag can be used to specify the character encoding of the source files

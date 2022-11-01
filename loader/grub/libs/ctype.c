@@ -1,17 +1,13 @@
-/* 
+/**
+ * @file ctype.c
+ * @author theflysong (song_of_the_fly@163.com)
+ * @brief 标准库ctype实现
+ * @version alpha-1.0.0
+ * @date 2022-10-31
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: theflysong
- *
- * ctype.h
- *
- * 标准库ctype实现
- *
+ * 
  */
 
 #include <ctype.h>

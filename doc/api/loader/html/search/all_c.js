@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['next_5ffree_5foffset_142',['next_free_offset',['../struct__memblk.html#a1eb36f16221be875c179d9922799c513',1,'_memblk::next_free_offset()'],['../heap_8c.html#a97b5cd8802d8bd34aebacf633fb7ca93',1,'next_free_offset():&#160;heap.c']]],
-  ['non_5fmaskable_5finterrup_143',['non_maskable_interrup',['../intterup_8h.html#a44a2fc259fa45c973822d254a3d92e4d',1,'intterup.h']]]
+  ['name_168',['name',['../structdnode__result.html#aff1a016ec278337e75199bdcacc03713',1,'dnode_result::name()'],['../struct__vfnode.html#a62825847ae76ee8f5709825a2efd10a8',1,'_vfnode::name()'],['../struct__vdnode.html#ac7078097ad52734637a40198c2769eb6',1,'_vdnode::name()']]],
+  ['next_169',['next',['../struct__vbnode.html#aaed3ffd4f0219578673704f291a9fa2d',1,'_vbnode::next()'],['../struct__vdnode.html#a6770802803453eacb4a100c35740d562',1,'_vdnode::next()']]],
+  ['next_5ffree_170',['next_free',['../struct__memblk.html#a789352878f9db950206099f31ec6eb82',1,'_memblk::next_free()'],['../heap_8c.html#aad7fea429c398d8a0f254396f3a239b3',1,'next_free():&#160;heap.c']]],
+  ['non_5fmaskable_5finterrup_171',['non_maskable_interrup',['../intterup_8h.html#a44a2fc259fa45c973822d254a3d92e4d',1,'intterup.h']]]
 ];

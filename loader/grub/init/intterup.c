@@ -225,6 +225,8 @@ PUBLIC void init_idt(void) {
     //初始化IDT
     idtr.address = IDT;
     idtr.size = sizeof(IDT) - 1;
+    //初始化描述符
     _int_idt_descs();
+    //加载IDT
     asmv ("lidtl %0" : : "m"(idtr));
 }

@@ -72,21 +72,28 @@ $(function() {
 
 <p>内存表项 64bit - 8B  
  <a href="struct__memblk.html#details">更多...</a></p>
+<div class="dynheader">
+_memblk 的协作图:</div>
+<div class="dyncontent">
+<div class="center"><img src="struct__memblk__coll__graph.png" border="0" usemap="#__memblk_coll__map" alt="Collaboration graph"/></div>
+<center><span class="legend">[<a href="graph_legend.html">图例</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public 属性</h2></td></tr>
-<tr class="memitem:aeee9a04a11660990dacbf852d271b0fb"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#aeee9a04a11660990dacbf852d271b0fb">block_size</a>: 21</td></tr>
+<tr class="memitem:aeee9a04a11660990dacbf852d271b0fb"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#aeee9a04a11660990dacbf852d271b0fb">block_size</a>: 31</td></tr>
 <tr class="memdesc:aeee9a04a11660990dacbf852d271b0fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">块大小  <a href="struct__memblk.html#aeee9a04a11660990dacbf852d271b0fb">更多...</a><br /></td></tr>
 <tr class="separator:aeee9a04a11660990dacbf852d271b0fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefcb9057098ff4eb321c7b4d546c0b30"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#aefcb9057098ff4eb321c7b4d546c0b30">busy</a>: 1</td></tr>
 <tr class="memdesc:aefcb9057098ff4eb321c7b4d546c0b30"><td class="mdescLeft">&#160;</td><td class="mdescRight">可用  <a href="struct__memblk.html#aefcb9057098ff4eb321c7b4d546c0b30">更多...</a><br /></td></tr>
 <tr class="separator:aefcb9057098ff4eb321c7b4d546c0b30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1eb36f16221be875c179d9922799c513"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#a1eb36f16221be875c179d9922799c513">next_free_offset</a>: 21</td></tr>
-<tr class="memdesc:a1eb36f16221be875c179d9922799c513"><td class="mdescLeft">&#160;</td><td class="mdescRight">下个空闲块偏移  <a href="struct__memblk.html#a1eb36f16221be875c179d9922799c513">更多...</a><br /></td></tr>
-<tr class="separator:a1eb36f16221be875c179d9922799c513"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfe556e762e3ad62e3ec5fcf34187d42"><td class="memItemLeft" align="right" valign="top">b32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#adfe556e762e3ad62e3ec5fcf34187d42">last_free_offset</a>: 21</td></tr>
-<tr class="memdesc:adfe556e762e3ad62e3ec5fcf34187d42"><td class="mdescLeft">&#160;</td><td class="mdescRight">上个空闲块偏移  <a href="struct__memblk.html#adfe556e762e3ad62e3ec5fcf34187d42">更多...</a><br /></td></tr>
-<tr class="separator:adfe556e762e3ad62e3ec5fcf34187d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a789352878f9db950206099f31ec6eb82"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__memblk.html">_memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#a789352878f9db950206099f31ec6eb82">next_free</a></td></tr>
+<tr class="memdesc:a789352878f9db950206099f31ec6eb82"><td class="mdescLeft">&#160;</td><td class="mdescRight">下个空闲块  <a href="struct__memblk.html#a789352878f9db950206099f31ec6eb82">更多...</a><br /></td></tr>
+<tr class="separator:a789352878f9db950206099f31ec6eb82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c3a089956df48eb6d91a3d20eb24e48"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__memblk.html">_memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#a4c3a089956df48eb6d91a3d20eb24e48">last_free</a></td></tr>
+<tr class="memdesc:a4c3a089956df48eb6d91a3d20eb24e48"><td class="mdescLeft">&#160;</td><td class="mdescRight">上个空闲块  <a href="struct__memblk.html#a4c3a089956df48eb6d91a3d20eb24e48">更多...</a><br /></td></tr>
+<tr class="separator:a4c3a089956df48eb6d91a3d20eb24e48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d8eba66c1a1cb95540b335b682fbb87"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__memblk.html">_memblk</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__memblk.html#a4d8eba66c1a1cb95540b335b682fbb87">last_blk</a></td></tr>
+<tr class="separator:a4d8eba66c1a1cb95540b335b682fbb87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
 <div class="textblock"><p>内存表项 64bit - 8B </p>
@@ -123,35 +130,49 @@ Public 属性</h2></td></tr>
 
 </div>
 </div>
-<a id="adfe556e762e3ad62e3ec5fcf34187d42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adfe556e762e3ad62e3ec5fcf34187d42">&#9670;&nbsp;</a></span>last_free_offset</h2>
+<a id="a4d8eba66c1a1cb95540b335b682fbb87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d8eba66c1a1cb95540b335b682fbb87">&#9670;&nbsp;</a></span>last_blk</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">b32 _memblk::last_free_offset</td>
+          <td class="memname">struct <a class="el" href="struct__memblk.html">_memblk</a>* _memblk::last_blk</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>上个空闲块偏移 </p>
-
 </div>
 </div>
-<a id="a1eb36f16221be875c179d9922799c513"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1eb36f16221be875c179d9922799c513">&#9670;&nbsp;</a></span>next_free_offset</h2>
+<a id="a4c3a089956df48eb6d91a3d20eb24e48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c3a089956df48eb6d91a3d20eb24e48">&#9670;&nbsp;</a></span>last_free</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">b32 _memblk::next_free_offset</td>
+          <td class="memname">struct <a class="el" href="struct__memblk.html">_memblk</a>* _memblk::last_free</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>下个空闲块偏移 </p>
+<p>上个空闲块 </p>
+
+</div>
+</div>
+<a id="a789352878f9db950206099f31ec6eb82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a789352878f9db950206099f31ec6eb82">&#9670;&nbsp;</a></span>next_free</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="struct__memblk.html">_memblk</a>* _memblk::next_free</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>下个空闲块 </p>
 
 </div>
 </div>

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['heap_5fsize_377',['HEAP_SIZE',['../heap_8h.html#a1b45302695680930829cac31d65e41e1',1,'heap.h']]],
-  ['heap_5ftop_378',['HEAP_TOP',['../heap_8c.html#a1993202507ed098618c83de40d3a2bc1',1,'heap.c']]]
+  ['idt_5fsize_467',['IDT_SIZE',['../intterup_8h.html#a6eb438cc75ca0a7284346ea8b3f94999',1,'intterup.h']]]
 ];

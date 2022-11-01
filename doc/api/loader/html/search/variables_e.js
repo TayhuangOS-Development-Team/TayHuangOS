@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['part_663',['part',['../structmultiboot__tag__bootdev.html#ac34809553805874feb470308a2baa1e1',1,'multiboot_tag_bootdev']]],
-  ['partition_664',['partition',['../structdisk__t.html#ab1a77953f8e1ab10606282fa4c5a1b63',1,'disk_t']]],
-  ['pointer_665',['pointer',['../structmultiboot__tag__efi32.html#a4b1ffdc97a86618a45839931345edca4',1,'multiboot_tag_efi32::pointer()'],['../structmultiboot__tag__efi64.html#a23a86b6bf37df565a7435fecc0a21a71',1,'multiboot_tag_efi64::pointer()'],['../structmultiboot__tag__efi32__ih.html#a079f7f841628eb85cffc6dead1074474',1,'multiboot_tag_efi32_ih::pointer()'],['../structmultiboot__tag__efi64__ih.html#a8eeb1be420c7ef3a932cb747937d9897',1,'multiboot_tag_efi64_ih::pointer()']]],
-  ['preference_666',['preference',['../structmultiboot__header__tag__relocatable.html#ac509d86587d7dd64a03ea53c267117c8',1,'multiboot_header_tag_relocatable']]]
+  ['sector_5fnumber_425',['sector_number',['../structdisk__t.html#a6994808e3139c5da6ef445385876e85d',1,'disk_t']]],
+  ['serial_426',['serial',['../structdisk__t.html#a8dd8189c38900f11b06a24fd522f6673',1,'disk_t']]],
+  ['size_427',['size',['../structfs__result.html#a7b6088e1c7cac3069b9efd0bd0d1577d',1,'fs_result::size()'],['../structbnode__result.html#aefd0b381b0c5b94dfa17daeeb4e51c6d',1,'bnode_result::size()'],['../struct__vbnode.html#a8311feddd7b2aff0f527ed763eb2afed',1,'_vbnode::size()'],['../struct__vfnode.html#a33784f33a91f9bdfb9228df6a2069e27',1,'_vfnode::size()']]],
+  ['slave_428',['slave',['../structdisk__t.html#a9fd24fe4bd487849957c9a69b2729f99',1,'disk_t']]],
+  ['start_5fsector_429',['start_sector',['../structdisk__t.html#a555bdab87e1e370847fd3094b872b7d4',1,'disk_t']]],
+  ['system_5fid_430',['system_id',['../structdisk__t.html#a8af6c4952ee31af96b4ae05cd14a2823',1,'disk_t']]]
 ];

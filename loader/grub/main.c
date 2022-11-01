@@ -23,6 +23,7 @@
 #include <heap.h>
 
 #include <fs/disk.h>
+#include <fs/vfs.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
@@ -127,6 +128,16 @@ IMPL NORETURN void main(struct multiboot_tag *multiboot_info) {
     LINFOF ("GRUB2 Loader", "start: %d", disk->start_sector);
     LINFOF ("GRUB2 Loader", "sectors: %d", disk->sector_number);
 
+    vfs_t *fs = open_fs(disk);
+
+    if (fs->fs == NULL) {
+        LERROR ("GRUB2 Loader", "Unsupported FS!");
+        // while (true);
+    }
+
+    LINFOF ("GRUB2 Loader", "fs: %s", fs->fs_type);
+
+    close_fs(fs);
     close_disk(disk);
     while (true);
 }

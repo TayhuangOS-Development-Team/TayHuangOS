@@ -1,14 +1,5 @@
 var searchData=
 [
-  ['least_5fblock_5fsize_380',['LEAST_BLOCK_SIZE',['../heap_8c.html#abec6590c7c43f2a519cf5746887ce252',1,'heap.c']]],
-  ['lerror_381',['LERROR',['../logging_8h.html#a4c36ffb2a8551e7fd6862d4ab44bb429',1,'logging.h']]],
-  ['lerrorf_382',['LERRORF',['../logging_8h.html#a37c00918be0543064d0012b392ecf4f1',1,'logging.h']]],
-  ['lfatal_383',['LFATAL',['../intterup_8c.html#a77168d498ebd25190a5c3a83b9c1b9fe',1,'logging.h']]],
-  ['lfatalf_384',['LFATALF',['../logging_8h.html#a0371d92a45bba634cb4f03da658b9a07',1,'logging.h']]],
-  ['linfo_385',['LINFO',['../logging_8h.html#a0707c5fe357a308031ab09bf53584f42',1,'logging.h']]],
-  ['linfof_386',['LINFOF',['../logging_8h.html#a2b9db771d68befedb3d8f591b1ac4443',1,'logging.h']]],
-  ['log_387',['LOG',['../logging_8h.html#ace9e601919ee9e947adeb06798c56839',1,'logging.h']]],
-  ['logf_388',['LOGF',['../logging_8h.html#a77cf863f4dfec415922f30af46cf31c1',1,'logging.h']]],
-  ['lwarn_389',['LWARN',['../logging_8h.html#a84176bec6f1afb0a3d5c787755ee5cf5',1,'logging.h']]],
-  ['lwarnf_390',['LWARNF',['../logging_8h.html#a69300a71f2a80b0ba6407652a9026f6c',1,'logging.h']]]
+  ['make_5fdevice_5freg_479',['MAKE_DEVICE_REG',['../disk_8c.html#ac00a1cb1deac9c44180b56f3768f9454',1,'disk.c']]],
+  ['msdos_5fpt_5foffset_480',['MSDOS_PT_OFFSET',['../disk_8c.html#a9db7293a305876780951cb7b84d4ad4e',1,'disk.c']]]
 ];

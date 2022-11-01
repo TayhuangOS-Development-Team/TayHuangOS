@@ -185,7 +185,8 @@ PUBLIC disk_t *open_disk(int base1, int base2, bool slave, int partition) {
     disk->slave = slave;
     disk->partition = partition;
     // 缓冲
-    void *buffer = malloc(512);
+    char _buffer[512];
+    void *buffer = _buffer;
     // 探测
     __identify_disk__(base1, base2, slave, buffer);
     // 复制序列号
@@ -211,8 +212,6 @@ PUBLIC disk_t *open_disk(int base1, int base2, bool slave, int partition) {
     disk->system_id = *(byte *)(buffer + offset + 4);
     disk->start_sector = *(dword *)(buffer + offset + 8);
     disk->sector_number = *(dword *)(buffer + offset + 12);
-    // 释放缓存
-    free(buffer);
     return disk;
 }
 

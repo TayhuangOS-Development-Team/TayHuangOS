@@ -34,4 +34,7 @@ digraph "main.c"
   Node12 [label="fs/disk.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$disk_8h.html",tooltip="磁盘驱动"];
   Node12 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node12 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="fs/vfs.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$vfs_8h.html",tooltip="VFS"];
+  Node13 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

@@ -5,7 +5,7 @@ include $(SCRIPTDIR)/util.mk
 ASM_SRC := handler flush
 
 # C
-FS_C_SRC := disk vfs
+FS_C_SRC := disk vfs fs/fat32
 LIBS_C_SRC := ctype string tostring
 INIT_C_SRC := gdt intterup
 C_SRC := main printf logging heap \

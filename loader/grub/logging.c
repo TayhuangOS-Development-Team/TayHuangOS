@@ -36,32 +36,42 @@ PUBLIC void init_serial(void) {
 }
 
 PUBLIC void write_serial_char(char ch) {
+    // 等待可以写入
     while ((inb(SERIAL_STATUS) & 0x20) == 0);
+    // 发送
     outb(SERIAL_SEND, ch);
 }
 
 PUBLIC void write_serial_str(const char *str) {
+    // 还未结束
     while (*str != '\0') {
+        // 写入
         write_serial_char(*str);
+        // 指针指向下个字符
         str ++;
     }
 }
 
 PUBLIC void __log(const char *position, const char *name, const char *type, const char *msg) {
+    // 输出日志发送者信息
     write_serial_char('(');
     write_serial_str(name);
     write_serial_char(';');
     write_serial_str(position);
     write_serial_char(')');
+    // 输出日志类型
     write_serial_char('[');
     write_serial_str(type);
     write_serial_char(']');
+    // 输出日志信息
     write_serial_str(msg);
+    // 换行
     write_serial_char('\n');
 }
 
 PUBLIC void _log(const char *file, int line, const char *name, const int type, const char *fmt, va_list args) {
     const char *typename;
+    // 选择日志类型
     switch (type) {
     case INFO: typename = "INFO"; break;
     case WARN: typename = "WARN"; break;
@@ -69,10 +79,13 @@ PUBLIC void _log(const char *file, int line, const char *name, const int type, c
     case FATAL: typename = "FATAL"; break;
     default: typename = "UNKNOWN"; break;
     }
+    // 格式化发送位置
     char position[64];
     sprintf(position, "%s:%d", file, line);
     char buffer[256];
+    // 打印到缓存中
     vsprintf(buffer, fmt, args);
+    // 发送
     __log(position, name, typename, buffer);
 }
 
@@ -80,10 +93,13 @@ PUBLIC void log(const char *file, int line, const char *name, const char *typena
     va_list args;
     va_start(args, fmt);
 
+    // 格式化发送位置
     char position[64];
     sprintf(position, "%s:%d", file, line);
     char buffer[256];
+    // 打印到缓存中
     vsprintf(buffer, fmt, args);
+    // 发送
     __log(position, name, typename, buffer);
 
     va_end(args);

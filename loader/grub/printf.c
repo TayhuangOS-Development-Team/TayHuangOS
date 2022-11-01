@@ -16,12 +16,14 @@
 #include <tool/tostring.h>
 
 PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
+    // 输出标志
     #define FLAG_SIGN 1
     #define FLAG_LEFT_ALIGN 2
     #define FLAG_FILL_ZERO 4
     #define FLAG_PREFIX 8
     #define FLAG_UPPER 16
 
+    // 输出类型
     #define PRINT_TY_INT 0
     #define PRINT_TY_UNSIGNED 1
     #define PRINT_TY_FLOAT 2
@@ -31,6 +33,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
     #define PRINT_TY_CHAR 6
     #define PRINT_TY_STRING 7
 
+    // 输出质量
     #define QUAL_SHORT 0
     #define QUAL_NORMAL 1
     #define QUAL_LONG 2
@@ -48,12 +51,14 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
         else {
             format ++;
 
+            // 输出%号
             if (*format == '%') {
                 *buffer = '%';
                 buffer ++;
                 format ++;
                 continue;
             }
+            // 格式化输出信息
             byte flag = 0;
             int width = 0;
             int precision = 0;
@@ -232,6 +237,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
                 buffer ++;
             }
 
+            // 复制到缓存中
             strcpy(buffer, _buffer);
             buffer += strlen(_buffer);
         }
@@ -243,6 +249,7 @@ PUBLIC int vsprintf(char *buffer, const char *format, va_list args) {
     //返回输出的字符的长度(不包括\0)
     return buffer - original - 1;
 
+    // 取消宏定义
     #undef PRINT_TY_INT
     #undef PRINT_TY_UNSIGNED
     #undef PRINT_TY_FLOAT
