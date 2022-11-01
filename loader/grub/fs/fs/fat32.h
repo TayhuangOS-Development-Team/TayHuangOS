@@ -14,6 +14,24 @@
 
 #include <fs/vfs.h>
 
+/**
+ * @brief 是否为fat32文件系统
+ * 
+ * @param pbr 分区引导记录
+ * @return true 是
+ * @return false 不是
+ */
 PUBLIC bool is_fat32_fs(void *pbr);
+/**
+ * @brief 打开fat32文件系统
+ * 
+ * @param pbr 分区引导记录
+ * @return fat32文件系统
+ */
 PUBLIC fs_t *open_fat32_fs(void *pbr);
-PUBLIC size_t get_fat32_fs_size(void);
+/**
+ * @brief 关闭fat32文件系统
+ * 
+ * @param fs fat32文件系统
+ */
+PUBLIC void close_fat32_fs(fs_t *fs);

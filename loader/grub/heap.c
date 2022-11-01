@@ -129,6 +129,12 @@ INLINE bool should_split(memblk *block, size_t expectation) {
     return true;
 }
 
+/**
+ * @brief 获得下一个块
+ * 
+ * @param last 上一个块
+ * @return 下一个块 
+ */
 INLINE memblk *get_next_block(memblk *last) {
     void *addr = ((void *)last) + last->block_size;
     if (addr >= (void *)HEAP_TOP) {
@@ -162,10 +168,12 @@ INLINE memblk *split_block(memblk *origin, size_t expectation) {
     
     origin->next_free = rest_blk;
 
+    // 更新下一个空闲块的上一个空闲块
     if (rest_blk->next_free != NULL) {
         rest_blk->next_free->last_free = rest_blk;
     }
 
+    // 更新下一个块的上一个块
     if (get_next_block(rest_blk) != NULL) {
         get_next_block(rest_blk)->last_blk = rest_blk;
     }
@@ -186,7 +194,8 @@ PUBLIC void *malloc(int size) {
     //上下块
     memblk *lastblk = freeblk->last_free;
     memblk *nextblk = freeblk->next_free;
-
+    
+    //出队
     lastblk->next_free = nextblk;
     nextblk->last_free = lastblk;
 
@@ -230,6 +239,7 @@ INLINE bool should_merge(memblk *front, memblk *back) {
  * @return 合并后的内存块
  */
 INLINE memblk *merge_block(memblk *front, memblk *back) {
+    // back有一个空闲块
     if (back->next_free != NULL) {
         front->next_free = back->next_free;
         back->next_free->last_free = front;
@@ -238,6 +248,7 @@ INLINE memblk *merge_block(memblk *front, memblk *back) {
         front->next_free = NULL;
     }
 
+    // back有下一个块
     if (get_next_block(back) != NULL) {
         get_next_block(back)->last_blk = front;
     }
@@ -258,7 +269,7 @@ PUBLIC void free(void *addr) {
         LERROR("GRUB2 Loader MM", "Try to free avaliable space");
         return;
     }
-    //寻找shang一个可用块
+    //寻找上一个可用块
     memblk *lastblk = blk->last_blk;
     while (lastblk != NULL) {
         if (! lastblk->busy) {
@@ -267,19 +278,22 @@ PUBLIC void free(void *addr) {
         lastblk = lastblk->last_blk;
     }
 
+    //意外情况
     if (lastblk == NULL) {
         LERROR("GRUB2 Loader MM", "Last block shouldn't be NULL");
         return;
     } 
 
-    //有下一个可用块
-    //获得上一个可用块
+    //获得下一个可用块
     memblk *nextblk = lastblk->next_free; 
     
+    //入队
     lastblk->next_free = blk;
     blk->last_free = lastblk;
 
     blk->next_free = nextblk;
+
+    //有下一个块
     if (nextblk != NULL) {
         nextblk->last_free = blk;
     }

@@ -38,60 +38,69 @@ INLINE fs_func_table *fs_funcs(fs_t *fs) {
     return *(fs_func_table **)(fs);
 }
 
+/**
+ * @brief 打开文件系统结果
+ * 
+ */
 typedef struct {
     fs_t *fs;
     const char *type;
-    size_t size;
 } fs_result;
 
 /**
- * @brief 
+ * @brief 打开文件系统
  * 
  * @param pbr 分区引导记录
- * @return
+ * @return 文件系统结果
  */
 PRIVATE fs_result __open_fs(void *pbr) {
+    // FAT32
     if (is_fat32_fs(pbr)) {
         return (fs_result) {
             .fs = open_fat32_fs(pbr), 
-            .type = "FAT32",
-            .size = get_fat32_fs_size()
+            .type = "FAT32"
         };
     }
+    // Unknown
     return (fs_result) {
         .fs = NULL,
-        .type = "Unknown",
-        .size = 0
+        .type = "Unknown"
     };
 }
 
 PUBLIC vfs_t *open_fs(disk_t *disk) {
     char _pbr[512];
     void *pbr = _pbr;
+    // 获取PBR
     read_sector(disk, 0, 1, pbr);
     vfs_t *vfs = malloc(sizeof(vfs));
+    //打开FS
     fs_result result = __open_fs(pbr);
     vfs->fs = result.fs;
     vfs->fs_type = result.type; 
-    vfs->fs_size = sizeof(vfs_t) + result.size;
     return vfs;
 }
 
 PUBLIC void close_fs(vfs_t *fs) {
     if (fs->fs != NULL) {
-        fs_funcs(fs->fs)->close_fs(fs);
+        fs_funcs(fs->fs)->close_fs(fs->fs);
     }
     free(fs);
-}
-
-PUBLIC size_t get_fs_size(vfs_t *fs) {
-    return fs->fs_size;
 }
 
 PUBLIC const char *get_fs_type(vfs_t *fs) {
     return fs->fs_type;
 }
 
+/**
+ * @brief fnode -> vfnode
+ * 
+ * @param fs 文件系统
+ * @param file 文件节点
+ * @param size 文件大小
+ * @param name 文件名
+ * @return vfnode
+ */
 INLINE vfnode *packvf(vfs_t *fs, fnode *file, size_t size, char *name) {
     vfnode *vf = malloc(sizeof(vfnode));
     vf->file = file;
@@ -101,6 +110,19 @@ INLINE vfnode *packvf(vfs_t *fs, fnode *file, size_t size, char *name) {
     return vf;
 }
 
+/**
+ * @brief dnode -> vdnode
+ * 
+ * @param fs 文件系统
+ * @param dir 目录节点
+ * @param is_last 是否为最后一个目录
+ * @param is_leaf 是否为叶子节点(文件)
+ * @param is_root 是否为根目录
+ * @param name 目录名
+ * @param size 目录文件大小
+ * @param file 目录文件节点
+ * @return vdnode
+ */
 INLINE vdnode *packvd(vfs_t *fs, dnode *dir, bool is_last, bool is_leaf, bool is_root,
                      char *name, size_t size, fnode *file) {
     vdnode *vd = malloc(sizeof(vdnode));
@@ -115,6 +137,15 @@ INLINE vdnode *packvd(vfs_t *fs, dnode *dir, bool is_last, bool is_leaf, bool is
     return vd;
 }
 
+/**
+ * @brief bnode -> vbnode
+ * 
+ * @param fs 文件系统
+ * @param block 块节点
+ * @param size 块大小
+ * @param is_last 是否为最后一个块
+ * @return vbnode
+ */
 INLINE vbnode *packvb(vfs_t *fs, bnode *block, size_t size, bool is_last) {
     vbnode *vb = malloc(sizeof(vbnode));
     vb->block = block;
@@ -175,28 +206,38 @@ PUBLIC vbnode *get_first_block(vfnode *file) {
 }
 
 PUBLIC void get_file_data(vfnode *file, void *buffer) {
+    // 起始文件数据块
     vbnode *block = get_first_block(file);
     size_t remain_sz = file->size;
 
+    // 依照块大小创建缓存
     void *buf = malloc(block->size);
     size_t buf_sz = block->size;
 
     size_t offset = 0;
+    // 最后一个块 / 已经读完
     while (! (block->is_last && remain_sz > 0)) {
+        // 缓存大小不够
         if (block->size > buf_sz) {
+            // 释放再分配
             free (buf);
             buf = malloc(block->size);
             buf_sz = block->size;
         }
         
+        //获得块数据
         get_block_data(block, buf);
+        //获得需要拷贝的大小
         size_t cp_sz = remain_sz > buf_sz ? buf_sz : remain_sz;
+        //复制
         memcpy(buffer + offset, buf, cp_sz);
+        //修改指针
         offset += cp_sz;
         remain_sz -= cp_sz;
     }
-}
 
+    free (buf);
+}
 
 PUBLIC void get_block_data(vbnode *block, void *buffer) {
     fs_funcs(block->fs->fs)->get_block_data(block->fs->fs, block->block, buffer);

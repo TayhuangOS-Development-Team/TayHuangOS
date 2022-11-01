@@ -73,6 +73,11 @@ typedef void fnode;
  * 
  */
 typedef void dnode;
+
+/**
+ * @brief dnode返回值结构体
+ * 
+ */
 typedef struct {
     dnode *dir;
     bool is_last;
@@ -83,6 +88,10 @@ typedef struct {
     size_t filesz;
 } dnode_result;
 
+/**
+ * @brief bnode返回值结构体
+ * 
+ */
 typedef struct {
     bnode *block;
     size_t size;
@@ -104,8 +113,16 @@ typedef struct {
     void (*get_block_data)(fs_t *fs, bnode *block, void *buffer);
 } fs_func_table;
 
+/**
+ * @brief VFS
+ * 
+ */
 typedef struct _vfs_t vfs_t;
 
+/**
+ * @brief VFS块节点
+ * 
+ */
 struct _vbnode {
     bnode *block;
     vfs_t *fs;
@@ -113,8 +130,16 @@ struct _vbnode {
     bool is_last;
     size_t size;
 };
+/**
+ * @brief VFS块节点
+ * 
+ */
 typedef struct _vbnode vbnode;
 
+/**
+ * @brief VFS文件节点
+ * 
+ */
 struct _vfnode {
     fnode *file;
     vfs_t *fs;
@@ -122,8 +147,16 @@ struct _vfnode {
     char *name;
     size_t size;
 };
+/**
+ * @brief VFS文件节点
+ * 
+ */
 typedef struct _vfnode vfnode;
 
+/**
+ * @brief VFS目录节点
+ * 
+ */
 struct _vdnode {
     dnode *dir;
     vfs_t *fs;
@@ -136,12 +169,20 @@ struct _vdnode {
     bool is_root;
     char *name;
 };
+/**
+ * @brief VFS目录节点
+ * 
+ */
 typedef struct _vdnode vdnode;
+
+/**
+ * @brief VFS
+ * 
+ */
 struct _vfs_t {
     fs_t *fs;
     vdnode *root_dir;
     const char *fs_type;
-    size_t fs_size;
 };
 
 /**
@@ -157,13 +198,6 @@ PUBLIC vfs_t *open_fs(disk_t *disk);
  * @param fs 文件系统
  */
 PUBLIC void close_fs(vfs_t *fs);
-/**
- * @brief 获得文件系统大小
- * 
- * @param fs 文件系统
- * @return 文件系统大小 
- */
-PUBLIC size_t get_fs_size(vfs_t *fs);
 /**
  * @brief 获得文件系统类型
  * 
@@ -201,10 +235,10 @@ PUBLIC vdnode *get_next_dnode(vdnode *dir);
  */
 PUBLIC vdnode *get_child_dnode(vdnode *dir);
 /**
- * @brief
+ * @brief 获得父节点
  * 
- * @param dir 
- * @return 
+ * @param dir 目录节点
+ * @return 父节点
  */
 PUBLIC vdnode *get_parent_dnode(vdnode *dir);
 
