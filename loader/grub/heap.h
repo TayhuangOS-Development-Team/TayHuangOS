@@ -32,7 +32,7 @@ PUBLIC void mm_init(void);
  * @param size 要求大小
  * @return 分配的内存地址 NULL表示没有合适内存
  */
-PUBLIC NULLABLE void *malloc(int size);
+PUBLIC NULLABLE void *malloc(size_t size);
 /**
  * @brief 释放内存
  * 

@@ -59,6 +59,15 @@ int strlen(const char *str) {
     return 0x7FFFFFFF - cnt - 1;
 }
 
+int wstrlen(const wchar_t *str) {
+    int size = 0;
+    while (*str != L'\0') {
+        size ++;
+        str ++;
+    }
+    return size;
+}
+
 char *strcpy(void *dst, const char *src) {
     // 挨个复制
     char *r = dst;

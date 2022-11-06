@@ -42,11 +42,32 @@ PUBLIC void write_serial_char(char ch) {
     outb(SERIAL_SEND, ch);
 }
 
+/**
+ * @brief 向串口写字符
+ * 
+ */
+PUBLIC void write_serial_wchar(wchar ch) {
+    // 等待可以写入
+    while ((inb(SERIAL_STATUS) & 0x20) == 0);
+    // 发送
+    outd(SERIAL_SEND, ch);
+}
+
 PUBLIC void write_serial_str(const char *str) {
     // 还未结束
     while (*str != '\0') {
         // 写入
         write_serial_char(*str);
+        // 指针指向下个字符
+        str ++;
+    }
+}
+
+PUBLIC void write_serial_wstr(const wchar *str) {
+    // 还未结束
+    while (*str != L'\0') {
+        // 写入
+        write_serial_wchar(*str);
         // 指针指向下个字符
         str ++;
     }

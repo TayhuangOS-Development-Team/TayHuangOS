@@ -14,6 +14,7 @@
 #pragma once
 
 #include <tayhuang/attributes.h>
+#include <tayhuang/types.h>
 #include <stdarg.h>
 
 /**
@@ -27,10 +28,20 @@ PUBLIC void init_serial(void);
  */
 PUBLIC void write_serial_char(char ch);
 /**
+ * @brief 向串口写字符
+ * 
+ */
+PUBLIC void write_serial_wchar(wchar ch);
+/**
  * @brief 向串口写字符串
  * 
  */
 PUBLIC void write_serial_str(const char *str);
+/**
+ * @brief 向串口写字符串
+ * 
+ */
+PUBLIC void write_serial_wstr(const wchar *str);
 
 /**
  * @brief 日志类型

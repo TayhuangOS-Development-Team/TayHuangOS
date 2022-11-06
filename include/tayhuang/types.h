@@ -31,6 +31,8 @@ typedef b16 reg16_t; //16位寄存器
 typedef b32 reg32_t; //32位寄存器
 typedef b64 reg64_t; //64位寄存器
 typedef void *handle_t; //处理器
+typedef wchar_t wchar; // wide char
+typedef char nchar; // narrow char
 
 #ifdef LOADER32BIT
 typedef b32 __standard_size__;

@@ -56,12 +56,6 @@
  */
 typedef void fs_t;
 /**
- * @brief bnode - block node
- * 块节点
- * 
- */
-typedef void bnode;
-/**
  * @brief fnode - file node
  * 文件节点
  * 
@@ -83,20 +77,10 @@ typedef struct {
     bool is_last;
     bool is_leaf;
     bool is_root;
-    char *name;
+    wchar *name;
     fnode *file;
     size_t filesz;
 } dnode_result;
-
-/**
- * @brief bnode返回值结构体
- * 
- */
-typedef struct {
-    bnode *block;
-    size_t size;
-    bool is_last;
-} bnode_result;
 
 /**
  * @brief 文件系统函数表
@@ -108,9 +92,7 @@ typedef struct {
     dnode_result (*get_root)(fs_t *fs);
     dnode_result (*get_next_dnode)(fs_t *fs, dnode *dir);
     dnode_result (*get_child_dnode)(fs_t *fs, dnode *dir);
-    bnode_result (*get_first_block)(fs_t *fs, fnode *file);
-    bnode_result (*get_next_block)(fs_t *fs, bnode *block);
-    void (*get_block_data)(fs_t *fs, bnode *block, void *buffer);
+    void (*get_file_data)(fs_t *fs, fnode *file, void *buffer);
 } fs_func_table;
 
 /**
@@ -120,31 +102,17 @@ typedef struct {
 typedef struct _vfs_t vfs_t;
 
 /**
- * @brief VFS块节点
- * 
- */
-struct _vbnode {
-    bnode *block;
-    vfs_t *fs;
-    struct _vbnode *next;
-    bool is_last;
-    size_t size;
-};
-/**
- * @brief VFS块节点
- * 
- */
-typedef struct _vbnode vbnode;
-
-/**
  * @brief VFS文件节点
  * 
  */
 struct _vfnode {
     fnode *file;
     vfs_t *fs;
-    vbnode *first_block;
-    char *name;
+    /**
+     * @brief 文件名
+     * 
+     */
+    wchar *name;
     size_t size;
 };
 /**
@@ -167,7 +135,6 @@ struct _vdnode {
     bool is_last;
     bool is_leaf;
     bool is_root;
-    char *name;
 };
 /**
  * @brief VFS目录节点
@@ -241,14 +208,6 @@ PUBLIC vdnode *get_child_dnode(vdnode *dir);
  * @return 父节点
  */
 PUBLIC vdnode *get_parent_dnode(vdnode *dir);
-
-/**
- * @brief 获得文件起始块节点
- * 
- * @param file 文件节点
- * @return 起始块节点
- */
-PUBLIC vbnode *get_first_block(vfnode *file);
 /**
  * @brief 获得文件数据
  * 
@@ -256,18 +215,3 @@ PUBLIC vbnode *get_first_block(vfnode *file);
  * @param buffer 缓存
  */
 PUBLIC void get_file_data(vfnode *file, void *buffer);
-
-/**
- * @brief 获得块数据
- * 
- * @param block 块节点
- * @param buffer 缓存
- */
-PUBLIC void get_block_data(vbnode *block, void *buffer);
-/**
- * @brief 获得下个块节点
- * 
- * @param block 块节点
- * @return 下个块节点
- */
-PUBLIC vbnode *get_next_block(vbnode *block);

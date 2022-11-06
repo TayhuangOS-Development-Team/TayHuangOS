@@ -18,6 +18,7 @@
 
 int strcmp(const char *str1, const char *str2); //比较两个字符串，相同返回0, str1 > str2 返回 1, str1 < str2 返回-1
 int strlen(const char *str); //计算str长度
+int wstrlen(const wchar_t *str); //计算str长度
 char *strcpy(void *dst, const char *src); //复制字符串src至字符串dst
 
 #ifndef LOADER32BIT

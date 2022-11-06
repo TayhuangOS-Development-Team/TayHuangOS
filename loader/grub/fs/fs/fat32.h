@@ -25,13 +25,21 @@ PUBLIC bool is_fat32_fs(void *pbr);
 /**
  * @brief 打开fat32文件系统
  * 
+ * @param disk 磁盘
  * @param pbr 分区引导记录
  * @return fat32文件系统
  */
-PUBLIC fs_t *open_fat32_fs(void *pbr);
+PUBLIC fs_t *open_fat32_fs(disk_t *disk, void *pbr);
 /**
  * @brief 关闭fat32文件系统
  * 
  * @param fs fat32文件系统
  */
 PUBLIC void close_fat32_fs(fs_t *fs);
+/**
+ * @brief 获得根目录
+ * 
+ * @param fs 文件系统
+ * @return 根目录
+ */
+PUBLIC dnode_result get_fat32_root(fs_t *fs);

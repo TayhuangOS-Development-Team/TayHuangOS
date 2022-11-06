@@ -17,6 +17,7 @@
 
 #include <heap.h>
 #include <string.h>
+#include <logging.h>
 
 /**
  * @brief DRQ - 数据已准备
