@@ -18,113 +18,139 @@
 
 #include <logging.h>
 
+/**
+ * @brief 堆
+ * 
+ */
 PRIVATE byte HEAP[HEAP_SIZE];
 
-//一个段的信息
-struct __seg_t {
+/**
+ * @brief 块信息
+ * 
+ */
+struct __block_t {
+    /**
+     * @brief 大小
+     * 
+     */
     size_t size : 31;
+    /**
+     * @brief 是否使用过
+     * 
+     */
     bool used : 1;
-    struct __seg_t *next;
-    struct __seg_t *last;
-    //地址
+    /**
+     * @brief 下个块
+     * 
+     */
+    struct __block_t *next;
+    /**
+     * @brief 上个块
+     * 
+     */
+    struct __block_t *last;
+    /**
+     * @brief 地址
+     * 
+     */
     char addr[0]; 
 } __attribute__((packed));
 
-typedef struct __seg_t seg_t;
+typedef struct __block_t block_t;
 
-//分配单元 (32字节对齐(加上seg_t后))
+//分配单元 (16字节对齐(加上block_t后))
 #define MIN_SEG_SIZE (16)
 
 //初始化 mm
 PUBLIC void mm_init(void) {
-    seg_t *start_seg = (seg_t *)HEAP; 
+    block_t *start_block = (block_t *)HEAP; 
 
-    start_seg->size = HEAP_SIZE;
-    start_seg->used = false;
-    start_seg->next = NULL;
-    start_seg->last = NULL;
+    start_block->size = HEAP_SIZE;
+    start_block->used = false;
+    start_block->next = NULL;
+    start_block->last = NULL;
 }
 
-PRIVATE seg_t *do_combine(seg_t *seg) {
-    if ((seg->next != NULL) && (! seg->next->used)) {
-        void *last_addr = seg;
-        void *next_addr = seg->next;
-        if (last_addr + seg->size == next_addr) {
-            seg->size += seg->next->size;
-            seg->next = seg->next->next;
-            if (seg->next != NULL) {
-                seg->next->last = seg;
+PRIVATE block_t *do_combine(block_t *block) {
+    if ((block->next != NULL) && (! block->next->used)) {
+        void *last_addr = block;
+        void *next_addr = block->next;
+        if (last_addr + block->size == next_addr) {
+            block->size += block->next->size;
+            block->next = block->next->next;
+            if (block->next != NULL) {
+                block->next->last = block;
             }
         }
     }
 
-    if ((seg->last != NULL) && (! seg->last->used)) {
-        void *last_addr = seg->last;
-        void *next_addr = seg;
-        if (last_addr + seg->last->size == next_addr) {
-            seg->last->size += seg->size;
-            seg->last->next = seg->next;
-            if (seg->next != NULL) {
-                seg->next->last = seg->last;
+    if ((block->last != NULL) && (! block->last->used)) {
+        void *last_addr = block->last;
+        void *next_addr = block;
+        if (last_addr + block->last->size == next_addr) {
+            block->last->size += block->size;
+            block->last->next = block->next;
+            if (block->next != NULL) {
+                block->next->last = block->last;
             }
-            return seg->last;
+            return block->last;
         }
     }
 
-    return seg;
+    return block;
 }
 
 PUBLIC NULLABLE void *malloc(size_t size) {
-    size += sizeof(seg_t);
+    size += sizeof(block_t);
 
     //修正大小
     size_t fixed_size = (size + (MIN_SEG_SIZE - 1)) & ~(MIN_SEG_SIZE - 1);
 
-    seg_t *cur_seg = (seg_t *)HEAP;
+    block_t *cur_block = (block_t *)HEAP;
 
-    while ((cur_seg->size < fixed_size || cur_seg->used) && cur_seg->next != NULL) {
-        cur_seg = cur_seg->next;
+    while ((cur_block->size < fixed_size || cur_block->used) && cur_block->next != NULL) {
+        cur_block = cur_block->next;
     }
 
-    if ((cur_seg->size < fixed_size) || (cur_seg->used)) {
+    if ((cur_block->size < fixed_size) || (cur_block->used)) {
         LERROR ("GRUB2 Loader", "No more heap!");
         return NULL;
     }
 
-    if ((cur_seg->size - fixed_size) >= MIN_SEG_SIZE) {
+    if ((cur_block->size - fixed_size) >= MIN_SEG_SIZE) {
         //进行分割
-        seg_t *new_seg = (seg_t *)(((void *)cur_seg) + fixed_size);
-        //新段大小
-        new_seg->size = cur_seg->size - fixed_size; 
+        block_t *new_block = (block_t *)(((void *)cur_block) + fixed_size);
+        //新块大小
+        new_block->size = cur_block->size - fixed_size; 
         //插入
-        new_seg->next = cur_seg->next;
+        new_block->next = cur_block->next;
 
-        if (cur_seg->next != NULL) {
-            cur_seg->next->last = new_seg;
+        if (cur_block->next != NULL) {
+            cur_block->next->last = new_block;
         }
         
         //未使用
-        new_seg->used = false;
-        new_seg->last = cur_seg;
+        new_block->used = false;
+        new_block->last = cur_block;
 
-        //用来段的大小
-        cur_seg->size = fixed_size;
-        cur_seg->next = new_seg;
-        cur_seg->used = true;
+        //当前块的大小
+        cur_block->size = fixed_size;
+        cur_block->next = new_block;
+        cur_block->used = true;
     }
     else {
-        cur_seg->used = true;
+        cur_block->used = true;
     }
 
     //返回地址
-    return (void *)cur_seg->addr;
+    return (void *)cur_block->addr;
 }
 
 PUBLIC void free(NONNULL void *ptr) {
-    seg_t *seg = (seg_t *)(ptr - sizeof(seg_t));
+    block_t *block = (block_t *)(ptr - sizeof(block_t));
     //设置可用
-    seg->used = false; 
+    block->used = false; 
 
     //合并
-    do_combine(seg);
+    do_combine(block);
 }

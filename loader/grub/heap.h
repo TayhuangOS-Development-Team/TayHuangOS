@@ -16,10 +16,10 @@
 #include <tayhuang/types.h>
 
 /**
- * @brief 堆大小(512KB)
+ * @brief 堆大小(2 MB)
  * 
  */
-#define HEAP_SIZE (524288)
+#define HEAP_SIZE (0x200000)
 
 /**
  * @brief 初始化堆

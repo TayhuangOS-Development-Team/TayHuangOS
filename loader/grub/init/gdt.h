@@ -15,14 +15,18 @@
 #include <tayhuang/attributes.h>
 #include <tayhuang/descs.h>
 
+/**
+ * @brief GDT大小
+ * 
+ */
 #define GDT_SIZE (16)
 
-/**
- * @brief GDT
+/** 
+ * @brief GDT 
  * 
  */
 EXTERN PUBLIC struct desc_struct GDT[GDT_SIZE];
-/**
+/** 
  * @brief GDTR GDT指针
  * 
  */
