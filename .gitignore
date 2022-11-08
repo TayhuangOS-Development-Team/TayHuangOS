@@ -9,4 +9,4 @@ tayhuangOS.img
 tayhuangBoot.img
 bx_enh_dbg.ini
 configs/times.txt
-./doc/
+./doc/*
