@@ -87,13 +87,13 @@ typedef struct {
  * @param partition 分区
  * @return 磁盘结构体
  */
-PUBLIC disk_t *open_disk(int base1, int base2, bool slave, int partition);
+PUBLIC CONSTRUCTOR disk_t *open_disk(int base1, int base2, bool slave, int partition);
 /**
  * @brief 关闭磁盘
  * 
  * @param disk 磁盘
  */
-PUBLIC void close_disk(disk_t *disk);
+PUBLIC DECONSTRUCTOR void close_disk(disk_t *disk);
 /**
  * @brief 磁盘是否可用
  * 

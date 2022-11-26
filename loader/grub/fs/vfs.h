@@ -3,7 +3,7 @@
  * @author theflysong (song_of_the_fly@163.com)
  * @brief VFS
  * @version alpha-1.0.0
- * @date 2022-11-08
+ * @date 2022-10-29
  * 
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
@@ -12,170 +12,167 @@
 
 #pragma once
 
-#include <tayhuang/attributes.h>
-#include <tayhuang/types.h>
 #include <fs/disk.h>
 
 /**
- * @brief 文件系统
+ * @brief inode额外信息
  * 
  */
-typedef void fs_t;
+typedef void iext_t;
 /**
- * @brief inode
+ * @brief fs额外信息
  * 
  */
-typedef void inode;
+typedef void fsext_t;
 
 /**
- * @brief VFS虚拟文件系统
+ * @brief VFS
+ * 
+ */
+struct _vfs_t;
+/**
+ * @brief VFS
  * 
  */
 typedef struct _vfs_t vfs_t;
 
 /**
- * @brief 虚拟文件系统文件
+ * @brief inode
  * 
  */
-typedef struct _vfile_t {
-    /**
-     * @brief 文件系统
-     * 
-     */
-    vfs_t *fs;
-    /**
-     * @brief inode
-     * 
-     */
-    inode *node;
-    /**
-     * @brief 大小
-     * 
-     */
-    size_t size;
+typedef struct _inode_t {
     /**
      * @brief 文件名
      * 
      */
     wchar *name;
     /**
-     * @brief 是否为最后一个文件
+     * @brief 兄弟文件(为NULL说明是最后一个)
      * 
      */
-    bool is_last;
+    struct _inode_t *next;
+    /**
+     * @brief 父文件(为NULL说明是根目录)
+     * 
+     */
+    struct _inode_t *parent;
+    /**
+     * @brief 子文件
+     * 
+     */
+    NULLABLE struct _inode_t *child;
     /**
      * @brief 是否为目录
      * 
      */
     bool is_directory;
     /**
-     * @brief 下个文件
+     * @brief 文件大小
      * 
      */
-    NULLABLE struct _vfile_t *nextfile;
+    size_t filesize;
     /**
-     * @brief 子文件
+     * @brief inode附加信息
      * 
      */
-    NULLABLE struct _vfile_t *childfile;
-    /**
-     * @brief 父文件
-     * 
-     */
-    NONNULL struct _vfile_t *parentfile;
-} vfile_t;
+    iext_t *inode;
+} inode_t;
 
-/**
- * @brief 读取文件
- * 
- * @param file 文件
- * @param buffer 缓存
- */
-PUBLIC void read_file(NONNULL vfile_t *file, NONNULL void *buffer);
-/**
- * @brief 写入文件
- * 
- * @param file 文件
- * @param buffer 缓存
- * @param size 文件大小
- */
-PUBLIC void write_file(NONNULL vfile_t *file, NONNULL void *buffer, size_t size);
-/**
- * @brief 释放vfile对象
- * 
- * @param file vfile对象
- */
-PUBLIC void free_vfile(NONNULL vfile_t *file);
-/**
- * @brief 获得下个文件
- * 
- * @param file 当前文件
- * @return 下个文件
- */
-NULLABLE PUBLIC vfile_t *get_next_file(vfile_t *file);
-/**
- * @brief 获得子文件
- * 
- * @param file 当前文件
- * @return 子文件
- */
-NULLABLE PUBLIC vfile_t *get_child_file(vfile_t *file);
-
-/**
- * @brief 文件系统操作
- * 每一个不同的FS都要填满这个结构体并将其指针加入到下方FSOP数组中
- */
 typedef struct {
     /**
-     * @brief 判断是否为对应文件系统
+     * @brief 检测文件系统
      * 
      */
-    bool *(*check_fs)(void *pbr);
+    bool (*check_fs)(void *pbr);
     /**
      * @brief 打开文件系统
      * 
      */
-    fs_t *(*open_fs)(disk_t *disk, void *pbr);
-    /**
-     * @brief 释放文件系统
-     * 
-     */
-    void (*free_fs)(fs_t *fs);
+    CONSTRUCTOR vfs_t *(*open_fs)(disk_t *disk, void *pbr);
     /**
      * @brief 获得根目录
      * 
      */
-    vfile_t *(*get_root)(fs_t *fs);
+    inode_t *(*get_root)(THIS vfs_t *fs);
     /**
-     * @brief 获得下一个文件
+     * @brief 加载子文件
      * 
      */
-    vfile_t *(*get_next_file)(fs_t *fs, vfile_t *file);
+    inode_t *(*load_child)(THIS vfs_t *fs, inode_t *last);
     /**
-     * @brief 获得子文件
+     * @brief 获得文件数据(只读)
      * 
      */
-    vfile_t *(*get_child_file)(fs_t *fs, vfile_t *file);
+    void *(*readfile)(THIS vfs_t *fs, inode_t *file);
     /**
-     * @brief 读文件
+     * @brief 清除拓展信息
      * 
      */
-    void (*read_file)(fs_t *fs, vfile_t *file, void *buffer);
+    DECONSTRUCTOR void (*terminate_iext)(THIS inode_t *inode);
     /**
-     * @brief 读文件
+     * @brief 清除拓展信息
      * 
      */
-    void (*write_file)(fs_t *fs, vfile_t *file, void *buffer, size_t size);
-} fs_operation;
+    DECONSTRUCTOR void (*terminate_fsext)(THIS vfs_t *fs);
+} superop_t;
 
 /**
- * @brief 文件系统操作组数
+ * @brief VFS
  * 
  */
-#define FSOPGROUP_NUM (16)
+struct _vfs_t {
+    /**
+     * @brief 根目录
+     * 
+     */
+    NONNULL inode_t *root;
+    /**
+     * @brief 文件系统类型
+     * 
+     */
+    const char *fs_type;
+    /**
+     * @brief 硬盘
+     * 
+     */
+    disk_t *disk;
+    /**
+     * @brief 文件系统
+     * 
+     */
+    fsext_t *fs;
+    /**
+     * @brief 文件系统超级操作
+     * 
+     */
+    superop_t *sop;
+};
 
 /**
- * @brief 文件系统操作组数组
+ * @brief 打开文件系统
  * 
+ * @param disk 硬盘
+ * @return 文件系统
  */
-EXTERN fs_operation *FSOPGROUPS[FSOPGROUP_NUM];
+PUBLIC CONSTRUCTOR vfs_t *open_fs(disk_t disk);
+/**
+ * @brief 获得子文件
+ * 
+ * @param parent 父文件
+ * @return 子文件
+ */
+PUBLIC inode_t *get_child(THIS inode_t *parent);
+/**
+ * @brief 获得文件数据
+ * 
+ * @param file 文件
+ * @param buffer 缓存
+ * @param size 缓存大小
+ */
+PUBLIC void readfile(THIS inode_t *file, void *buffer, size_t size);
+/**
+ * @brief 关闭文件系统
+ * 
+ * @param fs 文件系统
+ */
+PUBLIC DECONSTRUCTOR void close_fs(vfs_t *fs);

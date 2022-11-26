@@ -82,3 +82,18 @@
  * 
  */
 #define ARCHITECTURE_BASED                          
+/**
+ * @brief this指针
+ * 
+ */
+#define THIS                         
+/**
+ * @brief 构造函数
+ * 
+ */
+#define CONSTRUCTOR                
+/**
+ * @brief 析构函数
+ * 
+ */
+#define DECONSTRUCTOR

@@ -831,7 +831,6 @@ WARN_LOGFILE           =
 
 INPUT                  = ./ \
                          ./fs/ \
-                         ./fs/fs/ \
                          ./init/ \
                          ./libs/
 

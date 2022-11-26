@@ -47,7 +47,7 @@ PUBLIC void write_serial_wstr(const wchar *str);
  * @brief 日志类型
  * 
  */
-enum {
+enum LOGGING_TYPE {
     INFO = 0, //信息
     WARN,     //警告
     ERROR,    //错误
