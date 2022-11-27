@@ -76,6 +76,11 @@ typedef struct _inode_t {
      * 
      */
     iext_t *inode;
+    /**
+     * @brief 文件系统
+     * 
+     */
+    vfs_t *fs;
 } inode_t;
 
 typedef struct {
@@ -154,7 +159,7 @@ struct _vfs_t {
  * @param disk 硬盘
  * @return 文件系统
  */
-PUBLIC CONSTRUCTOR vfs_t *open_fs(disk_t disk);
+PUBLIC CONSTRUCTOR vfs_t *open_fs(disk_t *disk);
 /**
  * @brief 获得子文件
  * 
