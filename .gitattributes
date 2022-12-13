@@ -1,0 +1,14 @@
+Makefile eol=lf
+*.sh eol=lf
+*.py eol=lf
+*.c eol=lf
+*.cpp eol=lf
+*.h eol=lf
+*.mk eol=lf
+*.ld eol=lf
+DoxygenConfig eol=lf
+*.asm eol=lf
+*.md eol=lf
+*.S eol=lf
+grub.cfg eol=lf
+*.svg eol=lf
