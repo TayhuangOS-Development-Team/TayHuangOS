@@ -12,20 +12,22 @@
 
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
+#include <new>
 
 /**
  * @brief GRUB 2 Loader 入口点
  * 
  */
 EXPORT IMPL NORETURN void entry(void) {
-    *(short*)(0xB8000) = 0x0C40;
-    *(short*)(0xB8002) = 0x0C41;
-    *(short*)(0xB8004) = 0x0C42;
-    *(short*)(0xB8006) = 0x0C43;
+    short *VGA = new ((void*)0xB8000) short[100];
+    VGA[0] = 0x0C40;
+    VGA[1] = 0x0C41;
+    VGA[2] = 0x0C42;
+    VGA[3] = 0x0C43;
     int *p = new int;
     *p = 0x20;
     int *q = new int;
     *q = 0x25;
-    *(short*)(0xB8008) = 0x0C00 + ((*p + *q) & 0xFF);
+    VGA[4] = 0x0C00 + ((*p + *q) & 0xFF);
     while (true);
 }
