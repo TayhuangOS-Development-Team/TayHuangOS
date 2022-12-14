@@ -4,15 +4,19 @@
  * @brief 标准库头文件string.h
  * @version alpha-1.0.0
  * @date 2022-10-22
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 
 
 #pragma once
+
+#include <__header.h>
+
+__C_HEADER_START;
 
 #include <stddef.h>
 
@@ -98,7 +102,7 @@ static inline int strncmp(const char *cs,const char *ct, int count){
     "jl 4f\n\t"
     "negl %%eax\n"
     "4:"
-    :"=a" (__res) : "D" (cs), "S" (ct),"C" (count)  
+    :"=a" (__res) : "D" (cs), "S" (ct),"C" (count)
     );
     return __res;
 }
@@ -347,3 +351,5 @@ static inline void *memchr(const void *cs, char c, int count) {
 }
 
 #endif
+
+__C_HEADER_END;

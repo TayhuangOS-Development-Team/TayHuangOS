@@ -4,15 +4,19 @@
  * @brief 基础类型
  * @version alpha-1.0.0
  * @date 2022-10-22
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 
 
 #pragma once
+
+#include <__header.h>
+
+__C_HEADER_START;
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -45,3 +49,5 @@ typedef b64 __standard_size__;
 typedef __standard_size__ phy_addr_t;
 typedef __standard_size__ lin_addr_t;
 typedef __standard_size__ size_t;
+
+__C_HEADER_END;

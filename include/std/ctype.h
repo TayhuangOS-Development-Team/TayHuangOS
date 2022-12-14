@@ -14,6 +14,10 @@
 
 #pragma once
 
+#include <__header.h>
+
+__C_HEADER_START;
+
 /*
  * ctype函数的宏实现
  * 因为是利用宏, 所以可能会引发问题 如__isaplha(getchar())
@@ -37,18 +41,20 @@
 #define __toupper(ch) (__islower(ch) ? (ch - 'a' + 'A') : (ch))
 
 /* ctype函数 */
-int isspace(int ch);
-int isupper(int ch);
-int islower(int ch);
-int isalpha(int ch);
-int isdigit(int ch);
-int isalnum(int ch);
-int isblank(int ch);
-int iscntrl(int ch);
-int isprint(int ch);
-int isgraph(int ch);
-int ispunct(int ch);
-int isxdigit(int ch);
-int isodigit(int ch);
-int tolower(int ch);
-int toupper(int ch);
+EXPORT int isspace(int ch);
+EXPORT int isupper(int ch);
+EXPORT int islower(int ch);
+EXPORT int isalpha(int ch);
+EXPORT int isdigit(int ch);
+EXPORT int isalnum(int ch);
+EXPORT int isblank(int ch);
+EXPORT int iscntrl(int ch);
+EXPORT int isprint(int ch);
+EXPORT int isgraph(int ch);
+EXPORT int ispunct(int ch);
+EXPORT int isxdigit(int ch);
+EXPORT int isodigit(int ch);
+EXPORT int tolower(int ch);
+EXPORT int toupper(int ch);
+
+__C_HEADER_END;

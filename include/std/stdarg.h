@@ -4,16 +4,19 @@
  * @brief 标准库头文件stdarg.h
  * @version alpha-1.0.0
  * @date 2022-10-22
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 
 
 #pragma once
 
+#include <__header.h>
+
+__C_HEADER_START;
 
 #ifdef ARCH_x86_64
 
@@ -50,3 +53,5 @@ typedef char *va_list;
 #define va_end(lst) (lst = ((va_list)0))
 
 #endif
+
+__C_HEADER_END;

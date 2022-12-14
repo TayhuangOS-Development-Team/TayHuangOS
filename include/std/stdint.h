@@ -4,15 +4,19 @@
  * @brief 标准库头文件 stdint.h
  * @version alpha-1.0.0
  * @date 2022-10-22
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 
 
 #pragma once
+
+#include <__header.h>
+
+__C_HEADER_START;
 
 #ifdef __INT8_TYPE__
 typedef __INT8_TYPE__ int8_t;
@@ -38,3 +42,5 @@ typedef __UINT32_TYPE__ uint32_t;
 #ifdef __UINT64_TYPE__
 typedef __UINT64_TYPE__ uint64_t;
 #endif
+
+__C_HEADER_END;

@@ -1,7 +1,7 @@
 /**
- * @file main.c
+ * @file multiboot.c
  * @author theflysong (song_of_the_fly@163.com)
- * @brief GRUB 2 Loader 入口
+ * @brief Multiboot
  * @version alpha-1.0.0
  * @date 2022-10-22
  * 
@@ -10,20 +10,10 @@
  * 
  */
 
+#pragma once
+
 #include <libs/multiboot2.h>
-
 #include <tayhuang/attributes.h>
-#include <tayhuang/types.h>
-#include <tayhuang/ports.h>
-
-#include <init/gdt.h>
-#include <init/intterup.h>
-
-#include <logging.h>
-#include <heap.h>
-
-#include <fs/disk.h>
-#include <fs/vfs.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
@@ -110,56 +100,3 @@ __attribute__((section(".multiboot")))
         .size = sizeof (struct multiboot_header_tag)
     }
 };
-
-/**
- * @brief GRUB2 Loader 主函数
- * 
- * @param multiboot_info multiboot info
- */
-IMPL NORETURN void main(struct multiboot_tag *multiboot_info) {
-    LINFO ("GRUB2 Loader", "Initialized");
-
-    disk_t *disk = open_disk(IDE0_BASE, IDE0_BASE2, false, 0);
-
-    LINFOF ("GRUB2 Loader", "serial: %s", disk->serial);
-    LINFOF ("GRUB2 Loader", "model: %s", disk->model);
-    LINFOF ("GRUB2 Loader", "disk sectors: %d", disk->disk_sector_number);
-    LINFOF ("GRUB2 Loader", "partition: %d", disk->partition + 1);
-    LINFOF ("GRUB2 Loader", "start: %d", disk->start_sector);
-    LINFOF ("GRUB2 Loader", "sectors: %d", disk->sector_number);
-
-    close_disk(disk);
-    while (true);
-}
-
-/**
- * @brief GRUB 2 Loader 入口点
- * 
- */
-IMPL NORETURN void entry(void) {
-    register int magic __asm__("eax"); //Loader 魔数 存放在eax
-    struct multiboot_tag *multiboot_info; //multiboot info 存放在ebx
-    asmv ("movl %%ebx, %0" : "=g"(multiboot_info));
-
-    if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
-        while (true);
-    }
-
-    // 设置栈指针
-    asmv ("movl $0x2008000, %esp");
-
-    //初始化
-    init_gdt();
-
-    init_idt();
-    init_pic();
-
-    asmv("sti");
-
-    init_serial();
-
-    mm_init();
-    
-    //进入主函数
-    main(multiboot_info);
-}

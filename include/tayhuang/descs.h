@@ -3,6 +3,12 @@
 
 #pragma once
 
+#include <__header.h>
+
+__C_HEADER_START;
+
+
+
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
 
@@ -168,3 +174,5 @@ struct tss {
 	word reserved3;
 	word iopb;
 } __attribute__((packed));
+
+__C_HEADER_END;

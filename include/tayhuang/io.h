@@ -4,16 +4,22 @@
  * @brief IO相关
  * @version alpha-1.0.0
  * @date 2022-10-23
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 
 
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
+
+#include <__header.h>
+
+__C_HEADER_START;
+
+
 
 INLINE byte inb(word port) { //in字节
     byte data;
@@ -100,3 +106,5 @@ INLINE sreg_t rdss(void) { //读取ss值
 INLINE void stss(sreg_t reg) {
     asmv("movw %0, %%ss" : : "rm"(reg));
 }
+
+__C_HEADER_END;

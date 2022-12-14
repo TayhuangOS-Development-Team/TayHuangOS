@@ -9,14 +9,15 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  * 
  */
-
-
-
 #pragma once
 
-void assertion_failure(const char *expression, const char *file, const char *base_file, int line);
-void panic_failure(const char *expression, const char *file, const char *base_file, int line);
-void panic(const char *format, ...);
+#include <__header.h>
+
+__C_HEADER_START;
+
+EXPORT void assertion_failure(const char *expression, const char *file, const char *base_file, int line);
+EXPORT void panic_failure(const char *expression, const char *file, const char *base_file, int line);
+EXPORT void panic(const char *format, ...);
 
 #ifdef NDEBUG
     #define assert(expression) ((void)0)
@@ -27,3 +28,5 @@ void panic(const char *format, ...);
     #define panic_assert(expression) if (! (expression)) \
         panic_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
 #endif
+
+__C_HEADER_END;

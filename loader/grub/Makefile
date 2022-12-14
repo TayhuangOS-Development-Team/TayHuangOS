@@ -2,21 +2,15 @@ include $(SCRIPTDIR)/util.mk
 
 # 汇编
 
-ASM_SRC := handler flush
+ASM_SRC :=
 
 # C
-FS_C_SRC := disk vfs
-LIBS_C_SRC := ctype string tostring
-INIT_C_SRC := gdt intterup
-C_SRC := main printf logging heap \
-		 $(call extract, $(LIBS_C_SRC), libs) \
-		 $(call extract, $(INIT_C_SRC), init) \
-		 $(call extract, $(FS_C_SRC), fs)
+C_SRC := multiboot heap
 C_FLAGS := -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
-C_INCLUDE := -I"$(ROOTDIR)/include/std/" -I"$(ROOTDIR)/include" -I"$(LOADERDIR)/grub"
+C_INCLUDE := -I"$(LOADERDIR)/grub"
 C_DEFS := $(ARCHDEF_C) -DLOADER32BIT
 
 ifeq ($(VBE_MODE), ENABLE)
@@ -25,10 +19,13 @@ endif
 
 # C++
 
-CPP_SRC := 
-CPP_FLAGS :=
-CPP_INCLUDE :=
-CPP_DEFS :=
+CPP_SRC := main libs/cpp_abi
+CPP_FLAGS := -m32 -mregparm=1 -Wall -fno-rtti -fno-exceptions -march=i386 -mfpmath=387\
+		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
+ 		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\
+		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+CPP_INCLUDE := -I"$(LOADERDIR)/grub"
+CPP_DEFS := $(ARCHDEF_C) -DLOADER32BIT
 
 # LD
 
@@ -40,6 +37,9 @@ MODULENAME := grub
 
 # Doxygen
 DOXYGEN_CONFIG := DoxygenFile
+
+include $(ROOTDIR)/include/std/include.mk
+include $(ROOTDIR)/include/tayhuang/include.mk
 
 include $(SCRIPTDIR)/compile.mk
 

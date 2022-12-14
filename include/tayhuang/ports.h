@@ -4,15 +4,21 @@
  * @brief 基础端口
  * @version alpha-1.0.0
  * @date 2022-10-22
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 
 
 #pragma once
+
+#include <__header.h>
+
+__C_HEADER_START;
+
+
 
 //PIC
 #define M_PIC_BASE    (0x20)
@@ -138,3 +144,5 @@
 
 //Delay Port
 #define DELAY_PORT (0x80)
+
+__C_HEADER_END;

@@ -4,10 +4,10 @@
  * @brief 分页
  * @version alpha-1.0.0
  * @date 2022-10-22
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 
@@ -16,6 +16,12 @@
 
 #include <tayhuang/attributes.h>
 #include <tayhuang/types.h>
+
+#include <__header.h>
+
+__C_HEADER_START;
+
+
 
 #define MEMUNIT_SZ (4096) //内存单元大小
 
@@ -86,3 +92,5 @@ typedef struct {
     word avl : 11;
     bool xd : 1;
 } PTE;
+
+__C_HEADER_END;
