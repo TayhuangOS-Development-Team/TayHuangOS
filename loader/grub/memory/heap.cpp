@@ -10,7 +10,7 @@
  * 
  */
 
-#include <heap.h>
+#include <memory/heap.h>
 
 #define HEAP_SIZE (512 * 1024) //512 KB
 

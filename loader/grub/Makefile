@@ -5,7 +5,7 @@ include $(SCRIPTDIR)/util.mk
 ASM_SRC :=
 
 # C
-C_SRC := multiboot heap
+C_SRC :=
 C_FLAGS := -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\
@@ -18,12 +18,15 @@ ifeq ($(VBE_MODE), ENABLE)
 endif
 
 # C++
-
-CPP_SRC := main libs/cpp_abi
+MEMORY_CPP_SRC := heap buffer
+LIBS_CPP_SRC := multiboot cpp_abi
+CPP_SRC := main \
+		$(call extract, $(LIBS_CPP_SRC), libs/)\
+		$(call extract, $(MEMORY_CPP_SRC), memory/)
 CPP_FLAGS := -m32 -mregparm=1 -Wall -fno-rtti -fno-exceptions -march=i386 -mfpmath=387\
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\
-		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-tree-scev-cprop -Os -Wno-pointer-arith
 CPP_INCLUDE := -I"$(LOADERDIR)/grub"
 CPP_DEFS := $(ARCHDEF_C) -DLOADER32BIT
 

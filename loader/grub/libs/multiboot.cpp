@@ -10,8 +10,6 @@
  * 
  */
 
-#pragma once
-
 #include <libs/multiboot2.h>
 #include <tayhuang/attributes.h>
 

@@ -10,7 +10,7 @@
  * 
  */
 
-#include <heap.h>
+#include <memory/heap.h>
 
 IMPL void *operator new(size_t size) {
     return malloc(size);
@@ -26,4 +26,7 @@ IMPL void operator delete(void *p) {
 
 IMPL void operator delete[](void *p) {
     free(p);
+}
+
+IMPL extern "C" void __cxa_pure_virtual() {
 }
