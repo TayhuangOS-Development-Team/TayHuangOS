@@ -14,36 +14,14 @@
 # 
 #
 
-# 需要定义 ASM_SRC 
-# 需要定义 MODULENAME 
-# 需要定义 C_SRC C_FLAGS C_INCLUDE C_DEFS
-# 需要定义 CPP_SRC CPP_FLAGS CPP_INCLUDE CPP_DEFS
-# 需要定义 LD_FLAGS LIBRARIES LD_SRCIPT 
-
 include $(SCRIPTDIR)/module.mk
-include $(SCRIPTDIR)/tool.mk
+include $(SCRIPTDIR)/tools/c_tools.mk
+include $(SCRIPTDIR)/tools/cpp_tools.mk
+include $(SCRIPTDIR)/tools/gas_tools.mk
+include $(SCRIPTDIR)/tools/ld_tools.mk
+include $(SCRIPTDIR)/tools/nasm_tools.mk
+include $(SCRIPTDIR)/tools/tool.mk
 
-OBJECTS := $(foreach obj, $(ASM_SRC), $(OBJECTSDIR)/$(obj).o) \
-           $(foreach obj, $(C_SRC), $(OBJECTSDIR)/$(obj).o) \
-		   $(foreach obj, $(CPP_SRC), $(OBJECTSDIR)/$(obj).o)
-
-$(OBJECTSDIR)/%.o : %.cpp
-	$(MKDIR) $(dir $@)
-	$(GPP) -c $(CPP_FLAGS) $(CPP_INCLUDE) $(CPP_DEFS) -o $@ $^
-
-$(OBJECTSDIR)/%.o : %.c
-	$(MKDIR) $(dir $@)
-	$(GCC) -c $(C_FLAGS) $(C_INCLUDE) $(C_DEFS) -o $@ $^
-
-$(OBJECTSDIR)/%.o : %.S
-	$(MKDIR) $(dir $@)
-	$(GAS) -o $@ $^
-
-$(OBJECTSDIR)/%.o : %.asm
-	$(MKDIR) $(dir $@)
-	$(ASM) $^ -f elf -o $@
-	
-define link
-	$(MKDIR) $(dir $(1))
-	$(LD) $(LD_FLAGS) -T $(LD_SRCIPT) -o $(1) $(2) --start-group $(LIBRARIES) --end-group
+define make_objects
+	$(foreach obj, $(1), $(OBJECTSDIR)/$(obj).o)
 endef

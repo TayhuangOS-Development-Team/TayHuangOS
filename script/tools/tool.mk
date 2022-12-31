@@ -8,7 +8,7 @@
 # 
 # 作者: theflysong 383494
 # 
-# module.mk
+# tool.mk
 # 
 # 工具
 # 
@@ -17,12 +17,7 @@
 include $(SCRIPTDIR)/config.mk
 
 MKDIR := mkdir -p -v
-GCC := $(COMPILER_PREFIX)-gcc
-GPP := $(COMPILER_PREFIX)-g++
-ASM := nasm
-GAS := $(COMPILER_PREFIX)-as
 RM := rm
-LD := $(COMPILER_PREFIX)-ld
 DD := dd
 _MKFS := mkfs
 GRUB_INSTALL := grub-install
@@ -58,7 +53,7 @@ ifeq ($(FILESYSTEM), fat32)
 	MKFS := $(_MKFS).msdos -F 32 -n "TayhuangOS" -v -f 2
 endif
 
-export GCC GPP ASM GAS RM MKDIR LD DD _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CD COPY OBJCOPY FDISK AR
+export RM MKDIR DD _MKFS FILESYSTEM MKFS GRUB_INSTALL SUDO MOUNT UMOUNT ECHO CD COPY OBJCOPY FDISK AR
 
 RAW_ICON := $(BINDIR)/tayicon.raw
 TAYHUANG_ICON := $(ROOTDIR)/TayhuangOS.png
