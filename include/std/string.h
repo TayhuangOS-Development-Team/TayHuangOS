@@ -17,6 +17,7 @@
 // memset
 static inline void memset(void *dst, int val, size_t sz) {
     unsigned long long _val = val;
+// 字符串设置指令
     __asm__ __volatile__ ("\
 cld\n\
 rep\n\
@@ -25,6 +26,7 @@ stosb" : : "c"(sz), "a"(_val), "D"(dst));
 
 // memcpy
 static inline void memcpy(void *dst, const void *src, size_t sz) {
+// 字符串复制指令
     __asm__ __volatile__ ("\
 cld\n\
 rep\n\
@@ -34,16 +36,23 @@ movsb" : : "c"(sz), "S"(src), "D"(dst));
 // 比较字符串
 static inline int strcmp(const char *str1, const char *str2) {
 	int ret = 0;
+	// 挨个匹配
 	do {
 		ret = *(str1) - *(str2);
+		// 移动指针
+		str1 ++;
+		str2 ++;
 	} while (*str1 != 0 && *str2 != 0 && ret == 0);
+	// 根据ret符号获得比较结果
 	if (ret < 0) return -1;
 	else if (ret > 0) return 1;
+	// 相等
 	return 0;
 }
 
 //计算str长度
 static inline int strlen(const char *str) {
+	// 将cnt设置为INT_MAX 通过cnt的减少量获得str的长度
 	int cnt = 0x7FFFFFFF;
     //使用字符串扫描指令
     __asm__ ("\
@@ -56,8 +65,10 @@ static inline int strlen(const char *str) {
 // 复制字符串
 static inline char *strcpy(void *dst, const char *src) {
 	char *_dst = (char *)dst;
+	// 挨个复制
 	while (*src != 0) {
 		*_dst = *src;
+		// 移动指针
 		_dst ++;
 		src ++;
 	}
@@ -66,31 +77,41 @@ static inline char *strcpy(void *dst, const char *src) {
 
 // 查找字符
 static inline char *strchr(const char *str, char ch) {
+	// 挨个查找
 	while (*str != 0) {
 		if (*str == ch) {
 			return str;
 		}
 	}
+	// 未查找到对应字符
 	return NULL;
 }
 
 // 匹配字符串(前count个字符)
 static inline int strncmp(const char *str1, const char *str2, int count){
 	int ret = 0;
+	// 挨个匹配
 	do {
 		ret = *(str1) - *(str2);
+		// 移动指针
+		str1 ++;
+		str2 ++;
 		count --;
 	} while (*str1 != 0 && *str2 != 0 && ret == 0 && count > 0);
+	// 根据ret符号获得比较结果
 	if (ret < 0) return -1;
 	else if (ret > 0) return 1;
+	// 相等
 	return 0;
 }
 
 // 复制字符串(前count个字符)
 static inline char *strncpy(char *dst, const char *src, int count) {
 	char *_dst = (char *)dst;
+	// 挨个复制
 	while (*src != 0 && count > 0) {
 		*_dst = *src;
+		// 移动指针
 		_dst ++;
 		src ++;
 		count --;
@@ -101,8 +122,10 @@ static inline char *strncpy(char *dst, const char *src, int count) {
 // 查找字符(末次出现)
 static inline char *strrchr(const char *str, char ch){
 	char *ret = NULL;
+	// 挨个查找
 	while (*str != 0) {
 		if (*str == ch) {
+			// 覆盖上次的结果
 			ret = str;
 		}
 	}
@@ -110,14 +133,18 @@ static inline char *strrchr(const char *str, char ch){
 }
 
 // 返回str从开头开始连续在accept中出现过的字符的个数
+// 时间复杂度O(S+A)
 static inline int strspn(const char *str, const char *accept) {
+	// 记录accept中的字符
 	char map[128] = {};
 	while (*accept != 0) {
+		//将accept中出现过的字符在map中标记
 		map[*accept] = 1;
 		accept ++;
 	}
 	int cnt = 0;
 	while (*str != 0) {
+		// 查表
 		if (! map[*str]) {
 			break;
 		}
@@ -127,14 +154,18 @@ static inline int strspn(const char *str, const char *accept) {
 }
 
 // 返回str从开头开始连续没在accept中出现过的字符的个数
+// 时间复杂度O(S+A)
 static inline int strcspn(const char *str, const char *accept) {
+	// 记录accept中的字符
 	char map[128] = {};
 	while (*accept != 0) {
+		//将accept中出现过的字符在map中标记
 		map[*accept] = 1;
 		accept ++;
 	}
 	int cnt = 0;
 	while (*str != 0) {
+		// 查表
 		if (map[*str]) {
 			break;
 		}
@@ -150,9 +181,12 @@ static inline char *strpbrk(const char *str, const char *accept) {
 
 // 将src拼接在dst上
 static inline char *strcat(char *dst, const char *src) {
+	// 获取dst结尾指针
 	char *cat_pos = dst + strlen(dst);
+	// 挨个复制
 	while (*src != 0) {
 		*cat_pos = *src;
+		// 移动指针
 		cat_pos ++;
 		src ++;
 	}
@@ -161,9 +195,12 @@ static inline char *strcat(char *dst, const char *src) {
 
 // 将src的前count个字符拼接在dst上
 static inline char *strncat(char *dst, const char *src, int count) {
+	// 获取dst结尾指针
 	char *cat_pos = dst + strlen(dst);
+	// 挨个复制
 	while (*src != 0 && count > 0) {
 		*cat_pos = *src;
+		// 移动指针
 		cat_pos ++;
 		src ++;
 		count --;
@@ -174,12 +211,15 @@ static inline char *strncat(char *dst, const char *src, int count) {
 // 分割字符串
 // TMD这玩意谁tmd爱写谁tmd写去
 static inline char *strtok(char *str, const char *split) {
+	//摆烂啦哈哈哈哈不写啦
 	return NULL;
 }
 
 // 从src中复制size个字节到dst中
 static inline void *memmove(void *dst, const void *src, int size) {
+	// 判断是正向复制还是反向复制
 	if (dst < src) {
+		// 正向复制
 		__asm__("\
 	cld\n\
 	rep\n\
@@ -187,6 +227,7 @@ static inline void *memmove(void *dst, const void *src, int size) {
 		);
 	}
 	else {
+		// 反向复制
 		__asm__("\
 	std\n\
 	rep\n\
@@ -200,23 +241,31 @@ static inline void *memmove(void *dst, const void *src, int size) {
 static inline int memcmp(const void *str1, const void *str2, int count) {
 	int ret = 0;
 	const char *_str1 = str1, *_str2 = str2;
+	// 挨个比较
 	do {
 		ret = *(_str1) - *(_str2);
+		// 移动指针
+		str1 ++;
+		str2 ++;
 		count --;
 	} while (ret == 0 && count > 0);
+	// 根据ret符号获得比较结果
 	if (ret < 0) return -1;
 	else if (ret > 0) return 1;
+	// 相等
 	return 0;
 }
 
 // 在内存的前count个字节中查找ch
 static inline void *memchr(const void *str, char ch, int count) {
 	const char *_str = str;
+	// 挨个查找
 	while (count > 0) {
 		if (*_str == ch) {
 			return _str;
 		}
 		count --;
 	}
+	// 未查找到
 	return NULL;
 }

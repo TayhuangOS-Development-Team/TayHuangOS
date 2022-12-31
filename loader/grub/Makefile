@@ -6,7 +6,7 @@ include $(SCRIPTDIR)/util.mk
 NASM_SRC :=
 
 LIBS_C_SRC := multiboot2
-C_SRC := main \
+C_SRC := main heap \
 	$(call extract, $(LIBS_C_SRC), libs)
 
 CPP_SRC := 
@@ -16,8 +16,8 @@ C_FLAGS += -c -m32 -mregparm=1 -Wall -Wno-int-conversion -Wstrict-prototypes -ma
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\
 		   -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-tree-scev-cprop -Os
-C_INCLUDE += -I"$(CUR_DIR)" -I"$(ROOTDIR)/include/std/" -I"$(TPDIR)/include/"
-C_DEFS += $(ARCHDEF_C) -DLOADER32BIT
+C_INCLUDE += -I"$(CUR_DIR)" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/include/std/" -I"$(TPDIR)/include/"
+C_DEFS += $(ARCHDEF_C) -DBITS=32
 ifeq ($(VBE_MODE), ENABLE)
 	C_DEFS += -DVBE_ENABLE
 endif
@@ -28,8 +28,8 @@ CPP_FLAGS += -c -m32 -mregparm=1 -Wall -fno-rtti -fno-exceptions -march=i386 -mf
 		     -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		     -mno-mmx -mno-sse -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone\
 		     -mpreferred-stack-boundary=2 -fno-toplevel-reorder -fno-tree-scev-cprop -Os -Wno-pointer-arith
-CPP_INCLUDE += -I"$(CUR_DIR)" -I"$(ROOTDIR)/include/std/" -I"$(TPDIR)/include/"
-CPP_DEFS += $(ARCHDEF_C) -DLOADER32BIT
+CPP_INCLUDE += -I"$(CUR_DIR)" -I"$(ROOTDIR)/include/" -I"$(ROOTDIR)/include/std/" -I"$(TPDIR)/include/"
+CPP_DEFS += $(ARCHDEF_C) -DBITS=32
 CPP_FLAGS += $(call make_cpp_flags)
 
 # LD

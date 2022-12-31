@@ -1,0 +1,50 @@
+{
+    "fileHeaderComment.parameter":{
+        "*":{
+            "author": "ttt",
+            "lic_spdx":[
+                " SPDX-License-Identifier: LGPL-2.1-only"
+            ],
+            "lic_tayhuang": [
+                " -------------------------------*-TayhuangOS-*-----------------------------------",
+                " ",
+                "    Copyright (C) ${year}, ${year} TayhuangOS Development Team",
+                " ",
+                " --------------------------------------------------------------------------------",
+                " ",
+                " 作者: ${author}",
+                " ",
+                " ${filename}",
+                " ",
+                " 在此处键入描述",
+                " "
+            ]
+        }
+    },
+    "fileHeaderComment.template":{
+        "header":[
+            "${commentbegin}",
+            "${commentprefix}${lic_spdx}",
+            "${commentprefix}${lic_tayhuang}",
+            "${commentend}",
+            "",
+            "",
+            ""
+        ]
+    },
+    "C_Cpp.default.systemIncludePath": [
+        "${workspaceFolder}/"
+    ],
+    "doxdocgen.file.copyrightTag": [
+        "@copyright Copyright (c) 2022 TayhuangOS Development Team",
+        "SPDX-License-Identifier: LGPL-2.1-only"
+    ],
+    "doxdocgen.file.versionTag": "@version alpha-1.0.0",
+    "doxdocgen.generic.authorName": "ttt",
+    "doxdocgen.generic.authorEmail": "ttt",
+    "files.associations": {
+        "*.S": "gas",
+        "*.h": "c",
+        "*.c": "c"
+    }
+}

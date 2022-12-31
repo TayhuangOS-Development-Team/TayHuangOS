@@ -12,6 +12,10 @@
 
 #include <stdbool.h>
 
+/**
+ * @brief 入口函数
+ * 
+ */
 void entry(void) {
     *(short*)(0xB8000) = 0x0C40;
     *(short*)(0xB8002) = 0x0C41;

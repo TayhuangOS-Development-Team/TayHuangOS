@@ -1,0 +1,96 @@
+{
+    "configurations": [
+        {
+            "name": "All",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64",
+                "BITS=64"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Loader",
+            "includePath": [
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/third_party/include/",
+                "${workspaceFolder}/loader/grub/" 
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "BITS=32"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Module",
+            "includePath": [
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/third_party/include/",
+                "${workspaceFolder}/libs/libkmod/",
+                "${workspaceFolder}/libs/libfifo/",
+                "${workspaceFolder}/libs/libgips/",
+                "${workspaceFolder}/module/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64",
+                "BITS=64"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Kernel",
+            "includePath": [
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/third_party/include/",
+                "${workspaceFolder}/kernel/"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64",
+                "BITS=64"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
