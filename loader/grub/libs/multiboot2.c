@@ -10,7 +10,7 @@
  * 
  */
 
-#include <libs/multiboot2.h>
+#include <multiboot2.h>
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构

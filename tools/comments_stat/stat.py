@@ -19,7 +19,7 @@
 
 import os
 
-look_dirs = ['./kernel/', './libs/', './loader/', './module/', './include/']
+look_dirs = ['./include/', './loader/']
     
 level = 0
 

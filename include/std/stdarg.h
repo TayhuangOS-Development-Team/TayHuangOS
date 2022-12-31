@@ -1,21 +1,14 @@
-/* 
+/**
+ * @file stdarg.h
+ * @author theflysong (song_of_the_fly@163.com)
+ * @brief stdarg.h 参考自linux
+ * @version alpha-1.0.0
+ * @date 2022-12-31
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: theflysong
- *
- * stdarg.h
- *
- * 标准库 stdarg.h 头文件
- * 参考自linux
- *
+ * 
  */
-
-
 
 #pragma once
 

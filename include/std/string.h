@@ -1,20 +1,14 @@
-/* 
+/**
+ * @file string.h
+ * @author theflysong (song_of_the_fly@163.com) Yoyoooo
+ * @brief string.h
+ * @version alpha-1.0.0
+ * @date 2022-12-31
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *   Copyright (C) 2021, 2021 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: theflysong Yoyoooo
- *
- * string.h
- *
- * 标准库string.h的头文件
- *
+ * 
  */
-
-
 
 #pragma once
 

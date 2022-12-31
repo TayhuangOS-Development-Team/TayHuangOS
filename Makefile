@@ -20,9 +20,10 @@
 
 ROOTDIR := $(shell pwd)
 SCRIPTDIR := $(ROOTDIR)/script/
+TPDIR := $(ROOTDIR)/third_party/
 CUR_DIR := $(ROOTDIR)
 
-export ROOTDIR SCRIPTDIR CUR_DIR
+export ROOTDIR SCRIPTDIR TPDIR CUR_DIR
 
 include $(SCRIPTDIR)/config.mk
 include $(SCRIPTDIR)/version.mk
