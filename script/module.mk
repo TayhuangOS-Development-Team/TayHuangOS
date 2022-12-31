@@ -16,13 +16,16 @@
 
 # 需要定义 MODULENAME
 
+ifndef (HAS_INCLUDE_MODULE)
+HAS_INCLUDE_MODULE := true
+
 include $(SCRIPTDIR)/directory.mk
 include $(SCRIPTDIR)/tools/tool.mk
 
-OBJECTSDIR := $(OBJECTSDIR)/$(MODULENAME)/
-BINDIR := $(BINDIR)/$(MODULENAME)/
-CURDIR := $(ROOTDIR)/$(MODULENAME)/
-export OBJECTSDIR BINDIR CURDIR
+OBJECTSDIR := $(OBJECTSDIR)/$(MODULENAME)
+BINDIR := $(BINDIR)/$(MODULENAME)
+CUR_DIR := $(CUR_DIR)/$(MODULENAME)
+export OBJECTSDIR BINDIR CUR_DIR
 
 define buildmod
 	$(foreach mod, $(1), $(CD) $(mod) && $(MAKE) build)
@@ -41,3 +44,5 @@ define docmod
 endef
 
 .PHONY: build image clean doc
+
+endif

@@ -14,6 +14,9 @@
 # 
 #
 
+ifndef (HAS_INCLUDE_TOOLS_C)
+HAS_INCLUDE_TOOLS_C := true
+
 include $(SCRIPTDIR)/tools/tool.mk
 
 C_COMPILER := $(COMPILER_PREFIX)-gcc
@@ -35,3 +38,5 @@ endef
 $(OBJECTSDIR)/%.o : %.c
 	$(MKDIR) $(dir $@)
 	$(call c_compile, $^, $@)
+
+endif

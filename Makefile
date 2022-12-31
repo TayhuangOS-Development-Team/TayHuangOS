@@ -20,8 +20,9 @@
 
 ROOTDIR := $(shell pwd)
 SCRIPTDIR := $(ROOTDIR)/script/
+CUR_DIR := $(ROOTDIR)
 
-export ROOTDIR SCRIPTDIR
+export ROOTDIR SCRIPTDIR CUR_DIR
 
 include $(SCRIPTDIR)/config.mk
 include $(SCRIPTDIR)/version.mk

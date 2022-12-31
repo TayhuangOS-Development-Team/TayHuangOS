@@ -14,6 +14,9 @@
 # 
 #
 
+ifndef (HAS_INCLUDE_TOOLS_CPP)
+HAS_INCLUDE_TOOLS_CPP := true
+
 include $(SCRIPTDIR)/tools/tool.mk
 
 CPP_COMPILER := $(COMPILER_PREFIX)-g++
@@ -35,3 +38,5 @@ endef
 $(OBJECTSDIR)/%.o : %.cpp
 	$(MKDIR) $(dir $@)
 	$(call cpp_compile, $^, $@)
+
+endif

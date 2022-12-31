@@ -14,6 +14,9 @@
 # 
 #
 
+ifndef (HAS_INCLUDE_TOOL)
+HAS_INCLUDE_TOOL := true
+
 include $(SCRIPTDIR)/config.mk
 
 MKDIR := mkdir -p -v
@@ -62,3 +65,5 @@ PNG_CONV := $(TOOLS_DIR)/png_converter/converter.py
 COUNTER := $(TOOLS_DIR)/build_counter/counter.py
 COMMENTS_STAT := $(TOOLS_DIR)/comments_stat/stat.py
 GET_LOOP := $(TOOLS_DIR)/get_loop_devices/get_loop.sh
+
+endif

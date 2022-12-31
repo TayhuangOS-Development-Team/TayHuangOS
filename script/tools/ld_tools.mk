@@ -14,6 +14,9 @@
 # 
 #
 
+ifndef (HAS_INCLUDE_TOOLS_LD)
+HAS_INCLUDE_TOOLS_LD := true
+
 include $(SCRIPTDIR)/tools/tool.mk
 
 LD_COMPILER := $(COMPILER_PREFIX)-ld
@@ -29,3 +32,5 @@ define link
 	$(MKDIR) $(dir $(2))
 	$(LD_COMPILER) $(LD_FLAGS) -o $(2) $(1) --start-group $(LIBRARIES) --end-group
 endef
+
+endif

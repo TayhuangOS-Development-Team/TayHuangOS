@@ -14,6 +14,9 @@
 # 
 #
 
+ifndef (HAS_INCLUDE_TOOLS_NASM)
+HAS_INCLUDE_TOOLS_NASM := true
+
 include $(SCRIPTDIR)/tools/tool.mk
 
 NASM_COMPILER := nasm
@@ -30,3 +33,5 @@ endef
 $(OBJECTSDIR)/%.o : %.asm
 	$(MKDIR) $(dir $@)
 	$(call nasm_compile, $^, $@)
+
+endif

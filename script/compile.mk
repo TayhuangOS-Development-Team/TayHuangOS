@@ -14,6 +14,9 @@
 # 
 #
 
+ifndef (HAS_INCLUDE_COMPILE)
+HAS_INCLUDE_COMPILE := true
+
 include $(SCRIPTDIR)/module.mk
 include $(SCRIPTDIR)/tools/c_tools.mk
 include $(SCRIPTDIR)/tools/cpp_tools.mk
@@ -25,3 +28,5 @@ include $(SCRIPTDIR)/tools/tool.mk
 define make_objects
 	$(foreach obj, $(1), $(OBJECTSDIR)/$(obj).o)
 endef
+
+endif

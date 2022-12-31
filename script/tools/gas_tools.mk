@@ -14,6 +14,9 @@
 # 
 #
 
+ifndef (HAS_INCLUDE_TOOLS_GAS)
+HAS_INCLUDE_TOOLS_GAS := true
+
 include $(SCRIPTDIR)/tools/tool.mk
 
 GAS_COMPILER := $(COMPILER_PREFIX)-as
@@ -26,3 +29,5 @@ endef
 $(OBJECTSDIR)/%.o : %.S
 	$(MKDIR) $(dir $@)
 	$(call gas_compile, $^, $@)
+
+endif
