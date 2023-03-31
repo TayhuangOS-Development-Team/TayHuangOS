@@ -1,9 +1,9 @@
 /**
- * @file marks.h
+ * @file heap.h
  * @author theflysong (song_of_the_fly@163.com)
- * @brief 一些标记
+ * @brief GDT - API
  * @version alpha-1.0.0
- * @date 2023-3-31
+ * @date 2022-12-31
  * 
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
@@ -12,22 +12,19 @@
 
 #pragma once
 
-/**
- * @brief api实现
- */
-#define IMPL(api)
+#include <tay/desc.h>
 
 /**
- * @brief api接口
+ * @brief GDT
  */
-#define API(api)
+extern descriptor_t GDT[64];
 
 /**
- * @brief 私有的
+ * @brief GDTR
  */
-#define PRIVATE
+extern dptr_t GDTR;
 
 /**
- * @brief 初始化器
+ * @brief 初始化GDT
  */
-#define INITIALIZER
+void init_gdt(void) INITIALIZER;

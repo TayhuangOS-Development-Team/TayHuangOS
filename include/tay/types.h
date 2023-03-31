@@ -15,6 +15,7 @@
 #include <tay/marks.h>
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef uint8_t byte; //字节
 typedef uint16_t word; //字

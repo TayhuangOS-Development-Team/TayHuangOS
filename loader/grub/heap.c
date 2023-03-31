@@ -17,12 +17,12 @@ static byte __HEAP__[HEAP_SIZE];
 
 static byte *__heap_ptr__ = __HEAP__;
 
-void *malloc(size_t size) {
+void *malloc(size_t size) IMPL("C-std") {
     void *ret = __heap_ptr__;
     __heap_ptr__ += size;
     return ret;
 }
 
-void free(void *ptr) {
+void free(void *ptr) IMPL("C-std") {
     // 空实现
 }

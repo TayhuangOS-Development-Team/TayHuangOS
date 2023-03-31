@@ -12,6 +12,8 @@
 
 #include <tay/types.h>
 
+#include <init/gdt.h>
+
 #include <stdbool.h>
 
 /**
@@ -19,9 +21,11 @@
  * 
  */
 void main(void) IMPL("C") {
-    *(short*)(0xB8000) = 0x0C40;
-    *(short*)(0xB8002) = 0x0C41;
-    *(short*)(0xB8004) = 0x0C42;
-    *(short*)(0xB8006) = 0x0C43;
+    init_gdt();
+
+    *(short*)(0xB8000) = 0x0C41;
+    *(short*)(0xB8002) = 0x0C42;
+    *(short*)(0xB8004) = 0x0C43;
+    *(short*)(0xB8006) = 0x0C44;
     while (true);
 }

@@ -6,8 +6,10 @@ include $(SCRIPTDIR)/util.mk
 NASM_SRC :=
 
 LIBS_C_SRC := multiboot2
+INIT_C_SRC := gdt
 C_SRC := main heap \
-	$(call extract, $(LIBS_C_SRC), libs)
+	$(call extract, $(LIBS_C_SRC), libs)\
+	$(call extract, $(INIT_C_SRC), init)
 
 CPP_SRC := 
 

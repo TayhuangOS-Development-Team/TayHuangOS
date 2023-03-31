@@ -12,7 +12,8 @@
 
 #pragma once
 
-#include <std/stddef.h>
+#include <tay/types.h>
+#include <stddef.h>
 
 /**
  * @brief 堆大小
@@ -25,11 +26,11 @@
  * @param size 请求的内存大小
  * @return void* 内存指针
  */
-void *malloc(size_t size);
+void *malloc(size_t size) IMPL("C-std");
 
 /**
  * @brief 释放内存
  * 
  * @param ptr 需要释放的内存指针
  */
-void free(void *ptr);
+void free(void *ptr) IMPL("C-std");
