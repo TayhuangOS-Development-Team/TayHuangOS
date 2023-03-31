@@ -10,6 +10,8 @@
  * 
  */
 
+#include <tay/types.h>
+
 #include <multiboot2.h>
 
 /**
@@ -17,7 +19,7 @@
  * 应GRUB2要求实现
  * 
  */
-struct tayhuang_header {
+struct tayhuang_header IMPL("grub2") {
     /**
      * @brief Mulitiboot2 头
      * 
@@ -46,11 +48,27 @@ struct tayhuang_header {
 __attribute__((packed));
 
 /**
+    * @brief 屏幕宽
+    * 
+    */
+#define FRAMEBUFFER_WIDTH 1024
+/**
+    * @brief 屏幕高
+    * 
+    */
+#define FRAMEBUFFER_HEIGHT 768
+/**
+    * @brief 像素位深
+    * 
+    */
+#define FRAMEBUFFER_BPP 24
+
+/**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头
  * 应GRUB2要求实现
  * 放在.multiboot段下
  */
-struct tayhuang_header TAYHUANG_HEADER 
+struct tayhuang_header TAYHUANG_HEADER IMPL("grub2")
 //将这个头放在.multiboot段下
 __attribute__((section(".multiboot")))
 = {
@@ -63,21 +81,6 @@ __attribute__((section(".multiboot")))
     },
     //启用VBE
 #ifdef VBE_ENABLE
-    /**
-     * @brief 屏幕宽
-     * 
-     */
-    #define FRAMEBUFFER_WIDTH 1024
-    /**
-     * @brief 
-     * 
-     */
-    #define FRAMEBUFFER_HEIGHT 768
-    /**
-     * @brief 像素位深
-     * 
-     */
-    #define FRAMEBUFFER_BPP 24
     //屏幕信息
     .framebuffer = {
         .type = MULTIBOOT_HEADER_TAG_FRAMEBUFFER,

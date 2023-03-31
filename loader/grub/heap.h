@@ -1,7 +1,7 @@
 /**
  * @file heap.h
  * @author theflysong (song_of_the_fly@163.com)
- * @brief 堆
+ * @brief 堆 - API
  * @version alpha-1.0.0
  * @date 2022-12-31
  * 
@@ -14,6 +14,9 @@
 
 #include <std/stddef.h>
 
+/**
+ * @brief 堆大小
+ */
 #define HEAP_SIZE (512 * 1024)
 
 /**

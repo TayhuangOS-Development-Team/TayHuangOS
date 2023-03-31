@@ -1,7 +1,7 @@
 /**
  * @file heap.c
  * @author theflysong (song_of_the_fly@163.com)
- * @brief 堆
+ * @brief 堆 - 简易实现
  * @version alpha-1.0.0
  * @date 2022-12-31
  * 
@@ -14,6 +14,7 @@
 #include <tay/types.h>
 
 static byte __HEAP__[HEAP_SIZE];
+
 static byte *__heap_ptr__ = __HEAP__;
 
 void *malloc(size_t size) {
@@ -23,5 +24,5 @@ void *malloc(size_t size) {
 }
 
 void free(void *ptr) {
-    // 没想到吧我摆烂了嘿嘿
+    // 空实现
 }

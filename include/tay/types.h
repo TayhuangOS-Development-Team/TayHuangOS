@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <tay/marks.h>
+
 #include <stdint.h>
 
 typedef uint8_t byte; //字节
@@ -37,3 +39,5 @@ typedef b64 generic_bits;
 
 typedef b16 sreg_t; //段寄存器
 typedef generic_bits reg_t; //寄存器
+
+typedef generic_bits gbits_t;

@@ -10,13 +10,15 @@
  * 
  */
 
+#include <tay/types.h>
+
 #include <stdbool.h>
 
 /**
  * @brief 入口函数
  * 
  */
-void entry(void) {
+void main(void) IMPL("C") {
     *(short*)(0xB8000) = 0x0C40;
     *(short*)(0xB8002) = 0x0C41;
     *(short*)(0xB8004) = 0x0C42;
