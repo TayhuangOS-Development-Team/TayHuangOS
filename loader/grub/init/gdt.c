@@ -24,10 +24,10 @@ static void init_code_desc(void) PRIVATE {
     raw_desc_t code = {};
 
     code.base = 0;
-    code.limit = 0xFFFFF;
+    code.limit = 0xFFFFF; // flat-model
 
     code.dpl = DPL0;
-    code.type = DTYPE_XRCODE;
+    code.type = DTYPE_XRCODE; // execute-readable
 
     code.system    = true; // data/code segment
     code.present   = false;
@@ -43,7 +43,7 @@ static void init_data_desc(void) PRIVATE {
     raw_desc_t data = {};
 
     data.base = 0;
-    data.limit = 0xFFFFF;
+    data.limit = 0xFFFFF; // flat-model
 
     data.dpl = DPL0;
     data.type = DTYPE_RWDATA;
@@ -58,10 +58,50 @@ static void init_data_desc(void) PRIVATE {
     GDT[2] = build_descriptor(data);
 }
 
+static void init_kercode_desc(void) PRIVATE {
+    raw_desc_t kercode = {};
+
+    kercode.base = 0;
+    kercode.limit = 0xFFFFF; // flat-model
+
+    kercode.dpl = DPL0;
+    kercode.type = DTYPE_XRCODE; // execute-readable
+
+    kercode.system    = true; // data/code segment
+    kercode.present   = false;
+    kercode.avl       = false;
+    kercode.lm        = true; // 64bit
+    kercode.db        = true;
+    kercode.granulity = true;
+
+    GDT[8] = build_descriptor(kercode);
+}
+
+static void init_kerdata_desc(void) PRIVATE {
+    raw_desc_t kerdata = {};
+
+    kerdata.base = 0;
+    kerdata.limit = 0xFFFFF; // flat-model
+
+    kerdata.dpl = DPL0;
+    kerdata.type = DTYPE_RWDATA; //read-write
+
+    kerdata.system    = true; // data/code segment
+    kerdata.present   = false;
+    kerdata.avl       = false;
+    kerdata.lm        = true; // 64bit
+    kerdata.db        = true;
+    kerdata.granulity = true;
+
+    GDT[9] = build_descriptor(kerdata);
+}
+
 void init_gdt(void) INITIALIZER {
     init_empty_desc();
     init_code_desc();
     init_data_desc();
+    init_kercode_desc();
+    init_kerdata_desc();
 
     GDTR.size = sizeof (GDT);
     GDTR.address = GDT;

@@ -17,30 +17,25 @@
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
  * 应GRUB2要求实现
- * 
  */
 struct tayhuang_header IMPL("grub2") {
     /**
      * @brief Mulitiboot2 头
-     * 
      */
     struct multiboot_header header;
     //若启用VBE
 #ifdef VBE_ENABLE
     /**
      * @brief 屏幕信息
-     * 
      */
     struct multiboot_header_tag_framebuffer framebuffer;
     /**
      * @brief 保留位 仅供对齐
-     * 
      */
     multiboot_uint32_t reserved0;
 #endif
     /**
-     * @brief Mulitiboot2 尾巴
-     * 
+     * @brief Mulitiboot2 尾
      */
     struct multiboot_header_tag end;
 } 
@@ -48,20 +43,29 @@ struct tayhuang_header IMPL("grub2") {
 __attribute__((packed));
 
 /**
-    * @brief 屏幕宽
-    * 
-    */
+ * @brief 屏幕宽
+ */
 #define FRAMEBUFFER_WIDTH 1024
+
 /**
-    * @brief 屏幕高
-    * 
-    */
+ * @brief 屏幕高
+ */
 #define FRAMEBUFFER_HEIGHT 768
+
 /**
-    * @brief 像素位深
-    * 
-    */
+ * @brief 像素位深 
+ */
 #define FRAMEBUFFER_BPP 24
+
+/**
+ * @brief 架构 
+ */
+#define ARCHITECTURE MULTIBOOT_ARCHITECTURE_I386
+
+/**
+ * @brief 校验码 
+ */
+#define CHECKSUM -(MULTIBOOT2_HEADER_MAGIC + ARCHITECTURE + sizeof(struct tayhuang_header))
 
 /**
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头
@@ -75,9 +79,9 @@ __attribute__((section(".multiboot")))
     // Multiboot 2 头
     .header = {
         .magic    = MULTIBOOT2_HEADER_MAGIC,
-        .architecture = MULTIBOOT_ARCHITECTURE_I386,
+        .architecture = ARCHITECTURE,
         .header_length = sizeof (struct tayhuang_header),
-        .checksum = -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + sizeof(struct tayhuang_header)),
+        .checksum = CHECKSUM
     },
     //启用VBE
 #ifdef VBE_ENABLE

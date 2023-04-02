@@ -59,10 +59,10 @@ enum {
 };
 
 typedef struct {
-	b32 limit;
-	b32 base;
-	b16 dpl;
-	b16 type;
+	dword limit;
+	dword base;
+	word dpl;
+	word type;
 	bool system; // =0 => system ; =1 => data/code
 	bool present;
 	bool avl;
@@ -72,19 +72,19 @@ typedef struct {
 } raw_desc_t;
 
 struct desc_struct {
-	b16	 limit0;
-	b16	 base0;
-	b16	 base1 : 8;
-	b16 type : 4;
+	word	 limit0;
+	word	 base0;
+	word	 base1 : 8;
+	word type : 4;
 	bool system: 1;
-	b16  dpl: 2;
+	word  dpl: 2;
 	bool present: 1;
-	b16	 limit1: 4;
+	word	 limit1: 4;
 	bool avl: 1;
 	bool lm: 1;
 	bool db: 1;
 	bool granulity: 1;
-	b16 base2: 8;
+	word base2: 8;
 } __attribute__((packed));
 
 typedef struct desc_struct descriptor_t;
@@ -119,83 +119,64 @@ struct desc_ptr {
 
 typedef struct desc_ptr dptr_t;
 
-#ifndef LOADER32BIT
-
 struct tss_struct {
-	b16	limit0;
-	b16	base0;
+	word	 limit0;
+	word	 base0;
 
-	b16	base1 : 8, type : 5, dpl : 2;
-	bool p : 1;
-	b16	limit1 : 4, zero0 : 3;
+	byte	 base1 : 8;
+	byte   type : 5;
+	byte   dpl : 2;
+	bool present : 1;
+	byte	 limit1 : 4;
+	byte   reserved0 : 3;
 	bool g : 1;
-	b16 base2 : 8;
-	b32	base3;
-	b32	zero1;
-} __attribute__((packed));//引用自linux
-
-#else
-
-struct tss_struct {
-	b16	limit0;
-	b16	base0;
-
-	b16	base1 : 8, type : 5, dpl : 2;
-	bool p : 1;
-	b16	limit1 : 4, zero0 : 3;
-	bool g : 1;
-	b16 base2 : 8;
-} __attribute__((packed));//引用自linux
-
+	word  base2 : 8;
+#if BITS == 64
+	dword	 base3;
+	dword	 reserved1;
 #endif
+} __attribute__((packed));
 
-typedef struct tss_struct tss_desc;
+typedef struct tss_struct tss_descriptor_t;
 
-struct idt_bits {
-	b16		ist	: 3,
-			zero	: 5,
-			type	: 5,
-			dpl	: 2;
-	bool	p	: 1;
-} __attribute__((packed));//引用自linux
+struct idt_attr {
+	byte ist       : 3;
+	byte reserved  : 5;
+	byte type      : 5;
+	byte dpl       : 2;
+	bool present : 1;
+} __attribute__((packed));
+
+typedef struct idt_attr idt_attr_t;
 
 struct idt_data {
-	dword	vector;
-	dword	segment;
-	struct idt_bits	bits;
-	const void	*addr;
-};//引用自linux
+	dword	       vector;
+	dword	       segment;
+	idt_attr_t attr;
+	const void *addr;
+};
 
-#ifndef LOADER32BIT
-
-struct _gate_struct {
-	b16		offset_low;
-	b16		segment;
-	struct idt_bits	bits;
-	b16		offset_middle;
-    b32		offset_high;
-	b32		reserved;
-} __attribute__((packed));//引用自linux
-
-#else
-
-struct _gate_struct {
-	b16		offset_low;
-	b16		segment;
-	struct idt_bits	bits;
-	b16		offset_middle;
-} __attribute__((packed));//引用自linux
-
+struct gate_struct {
+	word	   offset0;
+	word	   segment;
+	idt_attr_t bits;
+	word	   offset1;
+#if BITS == 64
+    dword	   offset2;
+	dword	   reserved;
 #endif
+} __attribute__((packed));
 
-typedef struct _gate_struct gate_desc;
+typedef struct _ate_struct gate_descriptor_t;
 
 struct tss {
 	dword reserved0;
+	// RSP
 	qword rsp0;
 	qword rsp1;
 	qword rsp2;
 	qword reserved1;
+	// IST
 	qword ist1;
 	qword ist2;
 	qword ist3;
@@ -204,6 +185,7 @@ struct tss {
 	qword ist6;
 	qword ist7;
 	qword reserved2;
-	word reserved3;
-	word iopb;
+	word  reserved3;
+	// IO Permission Bitmap
+	word  iopb;
 } __attribute__((packed));
