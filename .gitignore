@@ -3,6 +3,7 @@
 !setup/config.mk
 bios/
 build/
+!script/*
 bochsrc.bxrc
 bochsrc
 tayhuangOS.img

@@ -10,6 +10,9 @@ doc:
 ifeq ($(BUILD_LOADER), true)
 	$(CD) loader && $(MAKE) doc
 endif
+ifeq ($(BUILD_LIBS), true)
+	$(CD) libs && $(MAKE) doc
+endif
 
 $(RAW_ICON): $(TAYHUANG_ICON)
 	$(PNG_CONV) $(TAYHUANG_ICON) $(RAW_ICON)

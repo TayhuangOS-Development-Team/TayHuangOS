@@ -1,0 +1,11 @@
+MODULENAME := libs
+include $(SCRIPTDIR)/module.mk
+
+build:
+	$(call buildmod, ulogger)
+
+clean:
+	$(call cleanmod, ulogger)
+
+doc:
+	$(call docmod, ulogger)

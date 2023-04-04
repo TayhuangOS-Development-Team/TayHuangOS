@@ -22,6 +22,7 @@ include $(SCRIPTDIR)/tools/c_tools.mk
 include $(SCRIPTDIR)/tools/cpp_tools.mk
 include $(SCRIPTDIR)/tools/gas_tools.mk
 include $(SCRIPTDIR)/tools/ld_tools.mk
+include $(SCRIPTDIR)/tools/ar_tools.mk
 include $(SCRIPTDIR)/tools/nasm_tools.mk
 include $(SCRIPTDIR)/tools/tool.mk
 

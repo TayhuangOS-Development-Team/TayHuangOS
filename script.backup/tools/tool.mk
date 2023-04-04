@@ -17,8 +17,6 @@
 ifndef (HAS_INCLUDE_TOOL)
 HAS_INCLUDE_TOOL := true
 
-include $(SCRIPTDIR)/config.mk
-
 MKDIR := mkdir -p -v
 RM := rm
 DD := dd
