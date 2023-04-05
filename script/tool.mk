@@ -1,0 +1,19 @@
+mkdir := mkdir
+rm := rm
+dd := dd
+mkfs := mkfs
+grub-install := grub-install
+sudo := sudo
+mount := mount
+umount := umount
+echo := echo
+cd := cd
+copy := cp
+chmod := chmod
+doxygen := doxygen
+loop_setup := losetup
+fdisk := fdisk
+
+png-converter := $(path-tools)/png_converter/converter.py
+comments-stat := $(path-tools)/comments_stat/stat.py
+get-loop := $(path-tools)/get_loop_devices/get_loop.sh
