@@ -1,9 +1,18 @@
 include $(global-env)
 include $(path-script)/env/local.mk
 
-$(warning $(path-e))
-$(warning $(path-d))
-
 include $(path-script)/build/build.mk
 include $(path-script)/build/misc.mk
 include $(path-script)/build/asm.mk
+include $(path-script)/build/c.mk
+include $(path-script)/build/ld.mk
+include $(path-script)/build/arch.mk
+include $(path-script)/build/compilers.mk
+
+ifeq ($(mode), k)
+
+$(target): $(build-objects)
+	$(call prepare, $@, $^)
+	$(call ld-link, $@, $^)
+# kernel
+endif

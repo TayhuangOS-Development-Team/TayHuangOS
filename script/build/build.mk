@@ -1,23 +1,22 @@
 # 目标模式(内核k 模块m 静态库s 动态库l)
-mode :=
+mode ?=
 
 # obj文件
-objects :=
+objects ?=
 
 # 目标
-targets :=
+target ?=
 
 # 库列表
-libraries :=
+libraries ?=
+
+# 源文件目录
+dir-src ?=
+
+# 目标文件目录
+dir-obj ?=
+
+build-objects := $(foreach obj, $(objects), $(dir-obj)/$(obj))
 
 # 架构(x86 x86_64)
 architecture ?= x86
-
-# 架构特殊标志
-ifeq ($(architecture), x86)
-c_flags += -m32 -mregparm=1 -mpreferred-stack-boundary=4 -march=i386 -mfpmath=387
-else ifeq  ($(architecture), x86_64)
-c_flags += -m64
-endif
-
-$(warning $(c_flags))

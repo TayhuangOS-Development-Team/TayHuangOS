@@ -3,9 +3,6 @@ flags-asm  ?=
 defs-asm ?=
 include-asm ?=
 
-compiler-asm ?= $(prefix-compiler)as
-
-%.o : %.S
-	$(compiler-asm) -o $@ $(flags-asm) $(defs-asm) $(include-asm) $^
-
-$(warning $(compiler-asm))
+$(dir-obj)/%.o : $(dir-src)/%.S
+	$(call prepare, $@)
+	$(compiler-asm) -c -o $@ $(flags-asm) $(defs-asm) $(include-asm) $^
