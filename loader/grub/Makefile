@@ -32,4 +32,4 @@ args := $(args-ld) $(args-c)
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 
 build:
-	$(MAKE) -f $(path-script)/build/Makefile.build global-env=$(global-env) mode=k target=$(target) objects="$(objects)" $(dir) $(args) $(target)
+	$(MAKE) -f $(path-script)/build/Makefile.build global-env=$(global-env) architecture=x86 mode=k target=$(target) objects="$(objects)" $(dir) $(args) $(target)

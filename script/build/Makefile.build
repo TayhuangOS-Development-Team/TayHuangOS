@@ -2,7 +2,8 @@ include $(global-env)
 include $(path-script)/env/local.mk
 
 include $(path-script)/build/build.mk
-include $(path-script)/build/misc.mk
+include $(path-script)/tool.mk
+include $(path-script)/util.mk
 include $(path-script)/build/asm.mk
 include $(path-script)/build/c.mk
 include $(path-script)/build/ld.mk

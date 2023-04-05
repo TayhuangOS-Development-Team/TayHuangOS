@@ -1,36 +1,27 @@
-# #设置环境
-# .PHONY: setup_workspace
-# setup_workspace:
-# 	if [ ! -d "$(TAYHUANGOS_MOUNT_DIR)" ];then \
-# 		$(SUDO) $(MKDIR) $(TAYHUANGOS_MOUNT_DIR); \
-# 	else \
-# 		$(ECHO) "mount directory already created"; \
-# 	fi;
-# 	$(DD) if=/dev/zero of=$(TAYHUANGOS_IMG) bs=512 count=$(IMAGE_SECTORS)
+# 设置环境
+.PHONY: setup_workspace
+setup_workspace:
+	$(call if_mkdir, $(path-mount))
+	$(dd) if=/dev/zero of=$(path-img) bs=512 count=$(image-sectors)
 
-# 	$(MKDIR) $(BUILDDIR)
-# 	$(MKDIR) $(OBJECTSDIR)
-# 	$(MKDIR) $(BINDIR)
+	$(fdisk) $(path-img)
+	-$(MAKE) setup_losetup
 
-# 	$(FDISK) $(TAYHUANGOS_IMG)
-# 	-$(MAKE) setup_workspace_losetup_
+	-$(sudo) $(loop_setup) -d $(loop-b)
+	$(sudo) $(loop_setup) -d $(loop-a)
 
-# 	-$(SUDO) $(LOOP_SETUP) -d $(LOOPB)	#losetup LOOPA失败不会影响LOOPB
-# 	$(SUDO) $(LOOP_SETUP) -d $(LOOPA)
+	$(sudo) $(chmod) +x $(png-converter)
+	$(sudo) $(chmod) +x $(comments-stat)
 
-# 	$(SUDO) $(CHMOD) +x $(PNG_CONV)
-# 	$(SUDO) $(CHMOD) +x $(COUNTER)
-# 	$(SUDO) $(CHMOD) +x $(COMMENTS_STAT)
-
-# .PHONY: setup_workspace_losetup_
-# setup_workspace_losetup_:
-# 	$(SUDO) $(LOOP_SETUP) $(LOOPA) $(TAYHUANGOS_IMG)
-# 	$(SUDO) $(LOOP_SETUP) $(LOOPB) $(TAYHUANGOS_IMG) -o $(KERNEL_PARTITION_OFFSET)
+.PHONY: setup_losetup
+setup_losetup:
+	$(sudo) $(loop_setup) $(loop-a) $(path-img)
+	$(sudo) $(loop_setup) $(loop-b) $(path-img) -o $(offset-kernel)
 	
-# 	$(SUDO) $(MKFS) $(LOOPB)
-# 	$(SUDO) $(MOUNT) $(LOOPB) $(TAYHUANGOS_MOUNT_DIR)
+	$(sudo) $(mkfs-fs) $(loop-b)
+	$(sudo) $(mount) $(loop-b) $(path-mount)
 
-# 	#TODO:添加UEFI支持
-# 	-$(SUDO) $(GRUB_INSTALL) --target=i386-pc --root-directory=$(TAYHUANGOS_MOUNT_DIR) --no-floppy --modules="$(GRUB_MODULES)" $(LOOPA)
+	#TODO:添加UEFI支持
+	-$(sudo) $(grub-install-target) --root-directory=$(path-mount) --no-floppy --modules="$(grub-modules)" $(loop-a)
 
-# 	$(SUDO) $(UMOUNT) $(TAYHUANGOS_MOUNT_DIR)
+	$(sudo) $(umount) $(path-mount)
