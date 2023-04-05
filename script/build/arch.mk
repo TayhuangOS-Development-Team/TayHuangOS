@@ -8,4 +8,6 @@ endif
 
 arch-include ?= x86.mk
 
+defs-c += -D__ARCHITECTURE__=$(architecture)
+
 include $(path-script)/build/arch/$(arch-include)

@@ -1,0 +1,1 @@
+objects += libs/multiboot2.o

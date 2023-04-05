@@ -1,0 +1,1 @@
+objects += init/gdt.o

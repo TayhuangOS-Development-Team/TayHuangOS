@@ -1,5 +1,5 @@
 # 标志位
-flags-c  ?=
+flags-c ?=
 defs-c ?=
 include-c ?=
 

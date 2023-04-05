@@ -9,10 +9,11 @@ include $(path-script)/build/ld.mk
 include $(path-script)/build/arch.mk
 include $(path-script)/build/compilers.mk
 
+# kernel
 ifeq ($(mode), k)
 
 $(target): $(build-objects)
 	$(call prepare, $@, $^)
 	$(call ld-link, $@, $^)
-# kernel
+
 endif

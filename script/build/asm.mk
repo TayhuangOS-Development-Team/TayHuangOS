@@ -1,5 +1,5 @@
 # 标志位
-flags-asm  ?=
+flags-asm ?=
 defs-asm ?=
 include-asm ?=
 
