@@ -1,0 +1,18 @@
+include $(global-env)
+include $(path-script)/env/local.mk
+
+include $(path-script)/image/image.mk
+include $(path-script)/tool.mk
+include $(path-script)/util.mk
+
+.PHONY: start-image, end-image do-image
+start-image:
+	$(sudo) $(loop-setup) $(loop) $(path-img) -o 1048576
+	$(sudo) $(mount) $(loop) $(path-mount)
+
+end-image:
+	-$(sudo) $(umount) $(path-mount)
+	-$(sudo) $(loop-setup) -d $(loop)
+
+do-image:
+	$(sudo) $(copy) $(target) $(path-mount)/$(path)

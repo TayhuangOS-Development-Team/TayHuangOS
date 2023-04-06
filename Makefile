@@ -23,4 +23,13 @@ path-bin := ./build/bin/
 path-objects := ./build/objects/
 
 build:
-	$(MAKE) -f ./loader/grub/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
+	$(MAKE) -f $(path-e)/loader/grub/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
+
+image:
+	$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) loop=$(loop-b) start-image
+	-$(MAKE) __image
+	$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) loop=$(loop-b) end-image
+
+__image:
+	$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) target=$(path-e)/configs/grub.cfg path=/boot/grub/ do-image
+	$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) target=$(path-e)/build/bin/grub/grubld.bin path=/ do-image

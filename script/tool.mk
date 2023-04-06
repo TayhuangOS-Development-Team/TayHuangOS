@@ -11,7 +11,7 @@ cd := cd
 copy := cp
 chmod := chmod
 doxygen := doxygen
-loop_setup := losetup
+loop-setup := losetup
 fdisk := fdisk
 
 png-converter := $(path-tools)/png_converter/converter.py
