@@ -21,7 +21,7 @@ flags-c := -Wall -Wno-int-conversion -Wstrict-prototypes \
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-include-c := -I./include/ -I./include/std/ -I$(path-d) -I./third_party/include/
+include-c := -I$(path-include) -I$(path-include)/std/ -I$(path-d) -I./third_party/include/
 
 defs-c :=
 
