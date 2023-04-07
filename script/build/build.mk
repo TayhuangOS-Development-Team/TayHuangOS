@@ -10,6 +10,8 @@ target ?=
 # 库列表
 libraries ?=
 
+libraries-ld := $(foreach lib, $(libraries), -l$(lib))
+
 # 源文件目录
 dir-src ?=
 

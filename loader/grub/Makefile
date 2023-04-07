@@ -21,13 +21,13 @@ flags-c := -Wall -Wno-int-conversion -Wstrict-prototypes \
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-include-c := -I$(path-include) -I$(path-include)/std/ -I$(path-d) -I./third_party/include/
+include-c := -I$(path-include) -I$(path-include)/std/ -I$(path-include)/libs/ -I$(path-d) -I./third_party/include/
 
 defs-c :=
 
 args-c := defs-c="$(defs-c)" include-c="$(include-c)" flags-c="$(flags-c)"
 
-args := $(args-ld) $(args-c)
+args := $(args-ld) $(args-c) libraries=ulogger
 
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 

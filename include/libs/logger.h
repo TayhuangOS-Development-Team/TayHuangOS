@@ -11,3 +11,7 @@
  */
 
 #pragma once
+
+typedef void(*ulogger_output_t)(const char *);
+
+void init_ulogger(ulogger_output_t output, const char *name);

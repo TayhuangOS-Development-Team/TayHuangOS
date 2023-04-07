@@ -23,8 +23,9 @@ path-bin := ./build/bin/
 path-objects := ./build/objects/
 
 build:
-	$(MAKE) -f $(path-e)/loader/grub/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
 	$(MAKE) -f $(path-e)/libs/ulogger/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
+	
+	$(MAKE) -f $(path-e)/loader/grub/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
 
 image:
 	$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) loop=$(loop-b) start-image

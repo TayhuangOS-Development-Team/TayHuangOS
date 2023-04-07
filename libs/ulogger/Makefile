@@ -4,8 +4,8 @@ include $(path-script)/env/local.mk
 
 .PHONY: build
 
-target-x86 := $(path-bin)/libs/x86/ulogger.a
-target-x86_64 := $(path-bin)/libs/x86_64/ulogger.a
+target-x86 := $(path-bin)/libs/x86/libulogger.a
+target-x86_64 := $(path-bin)/libs/x86_64/libulogger.a
 
 objects := logger.o
 

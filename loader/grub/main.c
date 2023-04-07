@@ -16,6 +16,15 @@
 
 #include <stdbool.h>
 
+#include <libs/logger.h>
+
+void test(const char * str) {
+    *(char*)(0xB8012) = 0x0C;
+    *(char*)(0xB8013) = *str;
+    *(char*)(0xB8023) = 0x0C;
+    *(char*)(0xB8024) = *str;
+}
+
 /**
  * @brief 入口函数
  * 
@@ -27,5 +36,7 @@ void main(void) IMPL("C") {
     *(short*)(0xB8002) = 0x0C42;
     *(short*)(0xB8004) = 0x0C43;
     *(short*)(0xB8006) = 0x0C44;
+
+    init_ulogger(test, "233");
     while (true);
 }
