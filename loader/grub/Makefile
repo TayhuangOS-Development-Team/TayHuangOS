@@ -27,7 +27,7 @@ defs-c :=
 
 args-c := defs-c="$(defs-c)" include-c="$(include-c)" flags-c="$(flags-c)"
 
-args := $(args-ld) $(args-c) libraries=ulogger
+args := $(args-ld) $(args-c) libraries=primlib
 
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 

@@ -23,7 +23,7 @@ path-bin := ./build/bin/
 path-objects := ./build/objects/
 
 build:
-	$(MAKE) -f $(path-e)/libs/ulogger/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
+	$(MAKE) -f $(path-e)/libs/primlib/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
 	
 	$(MAKE) -f $(path-e)/loader/grub/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
 

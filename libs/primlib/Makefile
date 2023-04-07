@@ -4,8 +4,8 @@ include $(path-script)/env/local.mk
 
 .PHONY: build
 
-target-x86 := $(path-bin)/libs/x86/libulogger.a
-target-x86_64 := $(path-bin)/libs/x86_64/libulogger.a
+target-x86 := $(path-bin)/libs/x86/libprimlib.a
+target-x86_64 := $(path-bin)/libs/x86_64/libprimlib.a
 
 objects := logger.o
 
@@ -22,8 +22,8 @@ args-c := defs-c="$(defs-c)" include-c="$(include-c)" flags-c="$(flags-c)"
 
 args := $(args-c)
 
-dir-x86 := dir-obj="$(path-objects)/ulogger/x86/" dir-src="$(path-d)"
-dir-x86_64 := dir-obj="$(path-objects)/ulogger/x86_64/" dir-src="$(path-d)"
+dir-x86 := dir-obj="$(path-objects)/primlib/x86/" dir-src="$(path-d)"
+dir-x86_64 := dir-obj="$(path-objects)/primlib/x86_64/" dir-src="$(path-d)"
 
 build:
 	$(MAKE) -f $(path-script)/build/Makefile.build global-env=$(global-env) architecture=x86 mode=s target=$(target-x86) objects="$(objects)" $(dir-x86) $(args) $(target-x86)
