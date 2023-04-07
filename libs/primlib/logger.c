@@ -10,8 +10,8 @@
  * 
  */
 
-#include <logger.h>
+#include <primlib/logger.h>
 
-void init_ulogger(ulogger_output_t output, const char *name) {
+void init_ulogger(prim_output_func output, const char *name) {
     output(name);
 }

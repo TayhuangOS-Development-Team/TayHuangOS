@@ -12,6 +12,12 @@
 
 #pragma once
 
-typedef void(*ulogger_output_t)(const char *);
+#include <primlib/prim_io.h>
 
-void init_ulogger(ulogger_output_t output, const char *name);
+/**
+ * @brief 初始化 ulogger
+ * 
+ * @param output 输出函数
+ * @param name 程序名
+ */
+void init_ulogger(prim_output_func output, const char *name);

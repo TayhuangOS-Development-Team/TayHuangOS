@@ -25,6 +25,7 @@
             "includePath": [
                 "${workspaceFolder}/include/",
                 "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/include/libs/",
                 "${workspaceFolder}/third_party/include/",
                 "${workspaceFolder}/loader/grub/" 
             ],
@@ -82,6 +83,53 @@
                 "_UNICODE",
                 "ARCH_x86_64",
                 "BITS=64"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Module",
+            "includePath": [
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/third_party/include/",
+                "${workspaceFolder}/libs/libkmod/",
+                "${workspaceFolder}/libs/libfifo/",
+                "${workspaceFolder}/libs/libgips/",
+                "${workspaceFolder}/module/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARCH_x86_64",
+                "BITS=64"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Libs",
+            "includePath": [
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/std/",
+                "${workspaceFolder}/include/libs/",
+                "${workspaceFolder}/third_party/include/"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
             ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "gnu11",

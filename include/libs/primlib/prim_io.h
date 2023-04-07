@@ -1,0 +1,85 @@
+/**
+ * @file prim_io.h
+ * @author theflysong (song_of_the_fly@163.com)
+ * @brief primitive io - API
+ * @version alpha-1.0.0
+ * @date 2023-04-08
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
+ * SPDX-License-Identifier: LGPL-2.1-only
+ * 
+ */
+
+#pragma once
+
+#include <stdarg.h>
+
+/**
+ * @brief 输出函数
+ */
+typedef void(*prim_output_func)(const char *);
+
+/**
+ * @brief 输入函数
+ */
+typedef char(*prim_getchar_func)(void);
+
+/**
+ * @brief 使用func输出
+ * 
+ * @param func 输出函数
+ * @param fmt 格式化字符串
+ * @param args 参数
+ * @return 输出字符数 
+ */
+int vpprintf(prim_output_func func, const char *fmt, va_list args);
+
+/**
+ * @brief 输出到buffer中
+ * 
+ * @param buffer 缓存
+ * @param fmt 格式化字符串
+ * @param args 参数
+ * @return 输出字符数 
+ */
+int vsprintf(char *buffer, const char *fmt, va_list args);
+
+/**
+ * @brief 使用func输出
+ * 
+ * @param func 输出函数
+ * @param fmt 格式化字符串
+ * @param ... 参数
+ * @return 输出字符数
+ */
+int pprintf(prim_output_func func, const char *fmt, ...);
+
+/**
+ * @brief 输出到buffer中
+ * 
+ * @param buffer 缓存
+ * @param fmt 格式化字符串
+ * @param ... 参数
+ * @return 输出字符数 
+ */
+int sprintf(char *buffer, const char *fmt, ...);
+
+/**
+ * @brief 使用func输入
+ * 
+ * @param func 输入函数
+ * @param fmt 格式化字符串
+ * @param args 参数
+ * @return 输入字符数 
+ */
+int vpscanf(prim_getchar_func func, const char *fmt, va_list args);
+
+/**
+ * @brief 使用func输入
+ * 
+ * @param func 输入函数
+ * @param fmt 格式化字符串
+ * @param ... 参数
+ * @return 输入字符数 
+ */
+int pscanf(prim_getchar_func func, const char *fmt, ...);

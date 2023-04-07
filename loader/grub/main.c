@@ -16,7 +16,7 @@
 
 #include <stdbool.h>
 
-#include <libs/logger.h>
+#include <primlib/logger.h>
 
 void test(const char * str) {
     *(char*)(0xB8012) = 0x0C;

@@ -7,7 +7,7 @@ include $(path-script)/env/local.mk
 target-x86 := $(path-bin)/libs/x86/libprimlib.a
 target-x86_64 := $(path-bin)/libs/x86_64/libprimlib.a
 
-objects := logger.o
+objects := logger.o prim_io.o
 
 flags-c := -Wall -Wno-int-conversion -Wstrict-prototypes \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
