@@ -1,6 +1,7 @@
 include $(global-env)
 
 include $(path-script)/env/local.mk
+include $(path-script)/helper.mk
 
 .PHONY: build
 
@@ -32,4 +33,4 @@ args := $(args-ld) $(args-c) libraries=primlib
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 
 build:
-	$(MAKE) -f $(path-script)/build/Makefile.build global-env=$(global-env) architecture=x86 mode=k target=$(target) objects="$(objects)" $(dir) $(args) $(target)
+	$(MAKE) $(builder-k-x86)=$(target) objects="$(objects)" $(dir) $(args) $(target)

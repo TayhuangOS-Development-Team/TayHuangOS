@@ -2,6 +2,8 @@ include $(global-env)
 
 include $(path-script)/env/local.mk
 
+include $(path-script)/helper.mk
+
 .PHONY: build
 
 target-x86 := $(path-bin)/libs/x86/libprimlib.a
@@ -26,5 +28,5 @@ dir-x86 := dir-obj="$(path-objects)/primlib/x86/" dir-src="$(path-d)"
 dir-x86_64 := dir-obj="$(path-objects)/primlib/x86_64/" dir-src="$(path-d)"
 
 build:
-	$(MAKE) -f $(path-script)/build/Makefile.build global-env=$(global-env) architecture=x86 mode=s target=$(target-x86) objects="$(objects)" $(dir-x86) $(args) $(target-x86)
-	$(MAKE) -f $(path-script)/build/Makefile.build global-env=$(global-env) architecture=x86_64 mode=s target=$(target-x86_64) objects="$(objects)" $(dir-x86_64) $(args) $(target-x86_64)
+	$(MAKE) $(builder-s-x86)=$(target-x86) objects="$(objects)" $(dir-x86) $(args) $(target-x86)
+	$(MAKE) $(builder-s-x86_64)=$(target-x86_64) objects="$(objects)" $(dir-x86_64) $(args) $(target-x86_64)

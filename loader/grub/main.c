@@ -19,10 +19,8 @@
 #include <primlib/logger.h>
 
 void test(const char * str) {
-    *(char*)(0xB8012) = 0x0C;
-    *(char*)(0xB8013) = *str;
-    *(char*)(0xB8023) = 0x0C;
     *(char*)(0xB8024) = *str;
+    *(char*)(0xB8025) = 0x0C;
 }
 
 /**
