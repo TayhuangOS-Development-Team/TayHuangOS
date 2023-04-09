@@ -80,7 +80,7 @@ static inline char *strchr(const char *str, char ch) {
 	// 挨个查找
 	while (*str != 0) {
 		if (*str == ch) {
-			return str;
+			return (char *)str;
 		}
 	}
 	// 未查找到对应字符
@@ -126,7 +126,7 @@ static inline char *strrchr(const char *str, char ch){
 	while (*str != 0) {
 		if (*str == ch) {
 			// 覆盖上次的结果
-			ret = str;
+			ret = (char *)str;
 		}
 	}
 	return ret;
@@ -137,15 +137,15 @@ static inline char *strrchr(const char *str, char ch){
 static inline int strspn(const char *str, const char *accept) {
 	// 记录accept中的字符
 	char map[128] = {};
-	while (*accept != 0) {
+	while ((int)*accept != 0) {
 		//将accept中出现过的字符在map中标记
-		map[*accept] = 1;
+		map[(int)*accept] = 1;
 		accept ++;
 	}
 	int cnt = 0;
 	while (*str != 0) {
 		// 查表
-		if (! map[*str]) {
+		if (! map[(int)*str]) {
 			break;
 		}
 		cnt ++;
@@ -158,15 +158,15 @@ static inline int strspn(const char *str, const char *accept) {
 static inline int strcspn(const char *str, const char *accept) {
 	// 记录accept中的字符
 	char map[128] = {};
-	while (*accept != 0) {
+	while ((int)*accept != 0) {
 		//将accept中出现过的字符在map中标记
-		map[*accept] = 1;
+		map[(int)*accept] = 1;
 		accept ++;
 	}
 	int cnt = 0;
 	while (*str != 0) {
 		// 查表
-		if (map[*str]) {
+		if (map[(int)*str]) {
 			break;
 		}
 		cnt ++;
@@ -176,7 +176,7 @@ static inline int strcspn(const char *str, const char *accept) {
 
 // 返回str在accept中出现过的第一个字符的指针
 static inline char *strpbrk(const char *str, const char *accept) {
-	return str + strcspn(str, accept);
+	return ((char *)str) + strcspn(str, accept);
 }
 
 // 将src拼接在dst上
@@ -258,7 +258,7 @@ static inline int memcmp(const void *str1, const void *str2, int count) {
 
 // 在内存的前count个字节中查找ch
 static inline void *memchr(const void *str, char ch, int count) {
-	const char *_str = str;
+	char *_str = (char *)str;
 	// 挨个查找
 	while (count > 0) {
 		if (*_str == ch) {

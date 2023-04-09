@@ -16,12 +16,9 @@
 
 #include <stdbool.h>
 
-#include <primlib/logger.h>
+#include <capi.h>
 
-void test(const char * str) {
-    *(char*)(0xB8024) = *str;
-    *(char*)(0xB8025) = 0x0C;
-}
+#include <primlib/logger.h>
 
 /**
  * @brief 入口函数
@@ -30,11 +27,6 @@ void test(const char * str) {
 void main(void) IMPL("C") {
     init_gdt();
 
-    *(short*)(0xB8000) = 0x0C41;
-    *(short*)(0xB8002) = 0x0C42;
-    *(short*)(0xB8004) = 0x0C43;
-    *(short*)(0xB8006) = 0x0C44;
-
-    init_ulogger(test, "233");
+    init_ulogger(puts, "GRUB Loader");
     while (true);
 }

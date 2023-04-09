@@ -7,7 +7,7 @@ include $(path-script)/helper.mk
 
 target := $(path-bin)/grub/grubld.bin
 
-objects := main.o heap.o
+objects := main.o capi.o
 
 subdirs := init/ libs/
 
@@ -33,4 +33,4 @@ args := $(args-ld) $(args-c) libraries=primlib
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 
 build:
-	$(MAKE) $(builder-k-x86)=$(target) objects="$(objects)" $(dir) $(args) $(target)
+	$(q)$(MAKE) $(builder-k-x86)=$(target) objects="$(objects)" $(dir) $(args) $(target)

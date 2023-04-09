@@ -1,27 +1,27 @@
 # 设置环境
 .PHONY: setup-workspace
 setup-workspace:
-	$(call if_mkdir, $(path-mount))
-	$(dd) if=/dev/zero of=$(path-img) bs=512 count=$(image-sectors)
+	$(q)$(call if_mkdir, $(path-mount))
+	$(q)$(dd) if=/dev/zero of=$(path-img) bs=512 count=$(image-sectors)
 
-	$(fdisk) $(path-img)
-	-$(MAKE) setup-losetup
+	$(q)$(fdisk) $(path-img)
+	-$(q)$(MAKE) setup-losetup
 
-	-$(sudo) $(loop-setup) -d $(loop-b)
-	$(sudo) $(loop-setup) -d $(loop-a)
+	-$(q)$(sudo) $(loop-setup) -d $(loop-b)
+	$(q)$(sudo) $(loop-setup) -d $(loop-a)
 
-	$(sudo) $(chmod) +x $(png-converter)
-	$(sudo) $(chmod) +x $(comments-stat)
+	$(q)$(sudo) $(chmod) +x $(png-converter)
+	$(q)$(sudo) $(chmod) +x $(comments-stat)
 
 .PHONY: setup-losetup
 setup-losetup:
-	$(sudo) $(loop-setup) $(loop-a) $(path-img)
-	$(sudo) $(loop-setup) $(loop-b) $(path-img) -o $(offset-kernel)
+	$(q)$(sudo) $(loop-setup) $(loop-a) $(path-img)
+	$(q)$(sudo) $(loop-setup) $(loop-b) $(path-img) -o $(offset-kernel)
 	
-	$(sudo) $(mkfs-fs) $(loop-b)
-	$(sudo) $(mount) $(loop-b) $(path-mount)
+	$(q)$(sudo) $(mkfs-fs) $(loop-b)
+	$(q)$(sudo) $(mount) $(loop-b) $(path-mount)
 
 	#TODO:添加UEFI支持
-	-$(sudo) $(grub-install-target) --root-directory=$(path-mount) --no-floppy --modules="$(grub-modules)" $(loop-a)
+	-$(q)$(sudo) $(grub-install-target) --root-directory=$(path-mount) --no-floppy --modules="$(grub-modules)" $(loop-a)
 
-	$(sudo) $(umount) $(path-mount)
+	$(q)$(sudo) $(umount) $(path-mount)

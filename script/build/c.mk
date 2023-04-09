@@ -5,4 +5,4 @@ include-c ?=
 
 $(dir-obj)/%.o : $(dir-src)/%.c
 	$(call prepare, $@)
-	$(compiler-c) -c -o $@ $(flags-c) $(defs-c) $(include-c) $^
+	$(q)$(compiler-c) -c -o $@ $(flags-c) $(defs-c) $(include-c) $^

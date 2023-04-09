@@ -13,6 +13,9 @@ include $(path-script)/build/ar.mk
 include $(path-script)/build/arch.mk
 include $(path-script)/build/compilers.mk
 
+
+.PHONY: $(target)
+
 # kernel
 ifeq ($(mode), k)
 

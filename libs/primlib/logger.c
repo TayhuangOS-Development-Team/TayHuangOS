@@ -11,7 +11,8 @@
  */
 
 #include <primlib/logger.h>
+#include <primlib/prim_io.h>
 
 void init_ulogger(prim_output_func output, const char *name) {
-    output(name);
+    pprintf(output, "[ULogger/INFO]Initializing Logger for [%s].\n", name);
 }

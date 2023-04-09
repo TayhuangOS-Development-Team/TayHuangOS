@@ -5,4 +5,4 @@ include-asm ?=
 
 $(dir-obj)/%.o : $(dir-src)/%.S
 	$(call prepare, $@)
-	$(compiler-asm) -c -o $@ $(flags-asm) $(defs-asm) $(include-asm) $^
+	$(q)$(compiler-asm) -c -o $@ $(flags-asm) $(defs-asm) $(include-asm) $^

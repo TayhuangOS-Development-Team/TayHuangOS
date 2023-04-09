@@ -2,5 +2,5 @@
 flags-ar ?= rcs
 
 define ar-link
-	$(compiler-ar) $(flags-ar) $(1) $(2)
+	$(q)$(compiler-ar) $(flags-ar) $(1) $(2)
 endef

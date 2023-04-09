@@ -5,3 +5,5 @@ path-mount := /mnt/tayhuangOS/
 path-img := $(path-e)/tayhuangOS.img
 path-lib := $(path-e)/libs/
 path-include := $(path-e)/include/
+
+q := @
