@@ -7,7 +7,7 @@ include $(path-script)/helper.mk
 
 target := $(path-bin)/grub/grubld.bin
 
-objects := main.o capi.o
+objects := main.o
 
 subdirs := init/ libs/
 

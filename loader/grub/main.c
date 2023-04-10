@@ -16,7 +16,7 @@
 
 #include <stdbool.h>
 
-#include <capi.h>
+#include <libs/capi.h>
 
 #include <primlib/logger.h>
 

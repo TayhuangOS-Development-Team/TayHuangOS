@@ -12,53 +12,62 @@
 
 #include <primlib/tostring.h>
 
+// 数字表
 static const char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-char *itoa(int val, char *buffer, int base) {
-    char *save = buffer;
+char *uitoa(unsigned int val, char *buffer, int base) {
+    char *ret = buffer;
+    // 特殊情况
     if (val == 0) {
         *buffer = '0';
         buffer ++;
         *buffer = '\0';
-        return save;
+        return ret;
     }
+
+    char _buffer[12];
+    int cnt = 0;
+
+    // val仍大于0
+    while (val > 0) {
+        // 保存该位数字
+        _buffer[cnt] = digits[val % base];
+
+        cnt ++;
+
+        // 右移一个base进制位
+        val /= base;
+    }
+
+    // 恢复原顺序
+    for (int i = cnt - 1; i >=  0 ; i --) {
+        *buffer = _buffer[i];
+        buffer ++;
+    }
+
+    return ret;
+}
+
+char *itoa(int val, char *buffer, int base) {
+    // 保存起始位置
+    char *ret = buffer;
+
+    // 特殊情况判断
+    if (val == 0) {
+        *buffer = '0';
+        buffer ++;
+        *buffer = '\0';
+        return ret;
+    }
+
     if (val < 0) {
         *buffer = '-';
         buffer ++;
         val = -val;
     }
-    char _buffer[12];
-    int cnt = 0;
-    while (val > 0) {
-        _buffer[cnt] = digits[val % base];
-        cnt ++;
-        val /= base;
-    }
-    for (int i = cnt - 1; i >=  0 ; i --) {
-        *buffer = _buffer[i];
-        buffer ++;
-    }
-    return save;
-}
+    
+    // 正整数
+    uitoa(val, buffer, base);
 
-char *uitoa(unsigned int val, char *buffer, int base) {
-    char *save = buffer;
-    if (val == 0) {
-        *buffer = '0';
-        buffer ++;
-        *buffer = '\0';
-        return save;
-    }
-    char _buffer[12];
-    int cnt = 0;
-    while (val > 0) {
-        _buffer[cnt] = digits[val % base];
-        cnt ++;
-        val /= base;
-    }
-    for (int i = cnt - 1; i >=  0 ; i --) {
-        *buffer = _buffer[i];
-        buffer ++;
-    }
-    return save;
+    return ret;
 }
