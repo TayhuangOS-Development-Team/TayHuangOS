@@ -10,7 +10,7 @@
  * 
  */
 
-#include <capi.h>
+#include <libs/capi.h>
 #include <tay/types.h>
 
 static byte __HEAP__[HEAP_SIZE];

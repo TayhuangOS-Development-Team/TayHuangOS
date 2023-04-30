@@ -17,6 +17,7 @@
 #include <stdbool.h>
 
 #include <libs/capi.h>
+#include <libs/debug.h>
 
 #include <primlib/logger.h>
 
@@ -27,6 +28,7 @@
 void main(void) IMPL("C") {
     init_gdt();
 
-    init_ulogger(puts, "GRUB Loader");
+    init_serial();
+    init_ulogger(write_serial_str, "GRUB Loader");
     while (true);
 }

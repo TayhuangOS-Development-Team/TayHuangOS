@@ -13,6 +13,7 @@ chmod := chmod
 doxygen := doxygen
 loop-setup := losetup
 fdisk := fdisk
+qemu := qemu-system-x86_64
 
 png-converter := $(path-tools)/png_converter/converter.py
 comments-stat := $(path-tools)/comments_stat/stat.py

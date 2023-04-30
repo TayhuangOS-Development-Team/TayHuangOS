@@ -1,7 +1,7 @@
 # 设置环境
 .PHONY: setup-workspace
 setup-workspace:
-	$(q)$(call if_mkdir, $(path-mount))
+	$(q)$(call if_sudo_mkdir, $(path-mount))
 	$(q)$(dd) if=/dev/zero of=$(path-img) bs=512 count=$(image-sectors)
 
 	$(q)$(fdisk) $(path-img)

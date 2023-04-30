@@ -7,7 +7,11 @@ define if_exist
 endef
 
 define if_mkdir
-	$(call if_exist, $(1), $(q)$(sudo) $(mkdir) -p -v $(1), $(echo) "directory already created")
+	$(call if_exist, $(1), $(mkdir) -p -v $(1), $(echo) "directory already created")
+endef
+
+define if_sudo_mkdir
+	$(call if_exist, $(1), $(sudo) $(mkdir) -p -v $(1), $(echo) "directory already created")
 endef
 
 define prepare

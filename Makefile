@@ -16,11 +16,12 @@ include $(path-script)/env/local.mk
 include $(path-script)/tool.mk
 include $(path-script)/util.mk
 include $(path-script)/setup.mk
+include $(path-script)/run.mk
 
 .PHONY: build
 
-path-bin := ./build/bin/
-path-objects := ./build/objects/
+path-bin := $(path-e)/build/bin/
+path-objects := $(path-e)/build/objects/
 
 build:
 	$(q)$(MAKE) -f $(path-e)/libs/primlib/Makefile architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects) $@
