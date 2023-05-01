@@ -30,5 +30,7 @@ void main(void) IMPL("C") {
 
     init_serial();
     init_ulogger(write_serial_str, "GRUB Loader");
+
+    log_info("%d+%d=%d!", 5, 8, 5 + 8);
     while (true);
 }
