@@ -1,7 +1,7 @@
 /**
  * @file gdt.c
  * @author theflysong (song_of_the_fly@163.com)
- * @brief GDT - 实现
+ * @brief GDT
  * @version alpha-1.0.0
  * @date 2023-3-21
  * 
@@ -11,16 +11,23 @@
  */
 
 #include <init/gdt.h>
+#include <tay/io.h>
 
-descriptor_t GDT[64];
+#define EMPTY_IDX (0)
+#define CODE_IDX (2)
+#define DATA_IDX (3)
+#define KERCODE_IDX (8)
+#define KERDATA_IDX (9)
+
+desc_t GDT[64];
 dptr_t GDTR;
 
-static void init_empty_desc(void) PRIVATE {
+static void init_empty_desc(void) {
     raw_desc_t empty = {};
     GDT[0] = build_descriptor(empty);
 }
 
-static void init_code_desc(void) PRIVATE {
+static void init_code_desc(void) {
     raw_desc_t code = {};
 
     code.base = 0;
@@ -30,16 +37,16 @@ static void init_code_desc(void) PRIVATE {
     code.type = DTYPE_XRCODE; // execute-readable
 
     code.system    = true; // data/code segment
-    code.present   = false;
+    code.present   = true;
     code.avl       = false;
     code.lm        = false;
     code.db        = true;
     code.granulity = true;
 
-    GDT[1] = build_descriptor(code);
+    GDT[CODE_IDX] = build_descriptor(code);
 }
 
-static void init_data_desc(void) PRIVATE {
+static void init_data_desc(void) {
     raw_desc_t data = {};
 
     data.base = 0;
@@ -49,16 +56,16 @@ static void init_data_desc(void) PRIVATE {
     data.type = DTYPE_RWDATA;
 
     data.system    = true; // data/code segment
-    data.present   = false;
+    data.present   = true;
     data.avl       = false;
     data.lm        = false;
     data.db        = true;
     data.granulity = true;
 
-    GDT[2] = build_descriptor(data);
+    GDT[DATA_IDX] = build_descriptor(data);
 }
 
-static void init_kercode_desc(void) PRIVATE {
+static void init_kercode_desc(void) {
     raw_desc_t kercode = {};
 
     kercode.base = 0;
@@ -68,16 +75,16 @@ static void init_kercode_desc(void) PRIVATE {
     kercode.type = DTYPE_XRCODE; // execute-readable
 
     kercode.system    = true; // data/code segment
-    kercode.present   = false;
+    kercode.present   = true;
     kercode.avl       = false;
     kercode.lm        = true; // 64bit
     kercode.db        = true;
     kercode.granulity = true;
 
-    GDT[8] = build_descriptor(kercode);
+    GDT[KERCODE_IDX] = build_descriptor(kercode);
 }
 
-static void init_kerdata_desc(void) PRIVATE {
+static void init_kerdata_desc(void) {
     raw_desc_t kerdata = {};
 
     kerdata.base = 0;
@@ -87,23 +94,28 @@ static void init_kerdata_desc(void) PRIVATE {
     kerdata.type = DTYPE_RWDATA; //read-write
 
     kerdata.system    = true; // data/code segment
-    kerdata.present   = false;
+    kerdata.present   = true;
     kerdata.avl       = false;
     kerdata.lm        = true; // 64bit
     kerdata.db        = true;
     kerdata.granulity = true;
 
-    GDT[9] = build_descriptor(kerdata);
+    GDT[KERDATA_IDX] = build_descriptor(kerdata);
 }
 
-void init_gdt(void) INITIALIZER {
+void init_gdt(void) {
     init_empty_desc();
     init_code_desc();
     init_data_desc();
     init_kercode_desc();
     init_kerdata_desc();
 
-    GDTR.size = sizeof (GDT);
     GDTR.address = GDT;
+    GDTR.size = sizeof(GDT) - 1;
+
     asm volatile ("lgdt %0" : : "m"(GDTR)); //加载GDT
+
+    stds(DATA_IDX << 3);
+    stfs(DATA_IDX << 3);
+    stgs(DATA_IDX << 3);
 }

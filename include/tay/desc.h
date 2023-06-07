@@ -87,10 +87,10 @@ struct desc_struct {
 	word base2: 8;
 } __attribute__((packed));
 
-typedef struct desc_struct descriptor_t;
+typedef struct desc_struct desc_t;
 
-inline static descriptor_t build_descriptor(raw_desc_t raw) {
-	descriptor_t desc;
+inline static desc_t build_descriptor(raw_desc_t raw) {
+	desc_t desc;
 
 	desc.limit0 = raw.limit;
 	desc.limit1 = (raw.limit >> 16) & 0xF;
@@ -137,7 +137,7 @@ struct tss_struct {
 #endif
 } __attribute__((packed));
 
-typedef struct tss_struct tss_descriptor_t;
+typedef struct tss_struct tss_desc_t;
 
 struct idt_attr {
 	byte ist       : 3;
@@ -167,7 +167,42 @@ struct gate_struct {
 #endif
 } __attribute__((packed));
 
-typedef struct _ate_struct gate_descriptor_t;
+typedef struct gate_struct gate_desc_t;
+
+#if BITS == 32
+
+inline static gate_desc_t build_idt(byte type, void *ptr, byte privilege, int cs) {
+    dword base = (dword)ptr;
+	gate_desc_t desc = {};
+    desc.offset0 = base & 0xFFFF; //偏移
+    desc.segment = cs; //段
+    desc.bits.ist = 0;
+    desc.bits.reserved = 0;
+    desc.bits.type = type; //类型
+    desc.bits.dpl = privilege; //权限
+    desc.bits.present = true; //存在
+    desc.offset1 = base >> 16; //偏移
+	return desc;
+}
+
+#elif BITS == 64
+
+inline static gate_desc_t build_idt(byte type, void *ptr, byte privilege, int cs) {
+    dword base = (dword)ptr;
+	gate_desc_t desc = {};
+    desc.offset0 = base & 0xFFFF; //偏移
+    desc.segment = cs; //段
+    desc.bits.ist = 0;
+    desc.bits.reserved = 0;
+    desc.bits.type = type; //类型
+    desc.bits.dpl = privilege; //权限
+    desc.bits.present = true; //存在
+    desc.offset1 = (base >> 16) & 0xFFFF; //偏移
+    desc.offset2 = base >> 32; //偏移
+    desc.reserved = 0;
+}
+
+#endif
 
 struct tss {
 	dword reserved0;

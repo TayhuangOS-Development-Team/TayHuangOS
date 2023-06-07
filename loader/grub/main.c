@@ -1,7 +1,7 @@
 /**
  * @file main.c
  * @author theflysong (song_of_the_fly@163.com)
- * @brief Main所在文件
+ * @brief Loader主函数
  * @version alpha-1.0.0
  * @date 2022-12-31
  * 
@@ -13,6 +13,7 @@
 #include <tay/types.h>
 
 #include <init/gdt.h>
+#include <init/idt.h>
 
 #include <stdbool.h>
 
@@ -21,16 +22,30 @@
 
 #include <primlib/logger.h>
 
-/**
- * @brief 入口函数
- * 
- */
-void main(void) IMPL("C") {
+void initialize(void) {
     init_gdt();
 
     init_serial();
     init_ulogger(write_serial_str, "GRUB Loader");
 
-    log_info("%d+%d=%d!", 5, 8, 5 + 8);
+    init_pic();
+    init_idt();
+}
+
+void terminate(void) {
+}
+
+/**
+ * @brief 入口函数
+ * 
+ */
+void main(void) {
+    initialize();
+
+    asm volatile ("movl $4, %edi");
+    asm volatile ("sti");
+    asm volatile ("ljmp $0x80, $0x0000");
     while (true);
+    
+    terminate();
 }

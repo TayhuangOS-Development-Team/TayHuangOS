@@ -1,7 +1,7 @@
 /**
  * @file gdt.h
  * @author theflysong (song_of_the_fly@163.com)
- * @brief GDT - API
+ * @brief GDT
  * @version alpha-1.0.0
  * @date 2023-3-31
  * 
@@ -17,7 +17,7 @@
 /**
  * @brief GDT
  */
-extern descriptor_t GDT[64];
+extern desc_t GDT[64];
 
 /**
  * @brief GDTR
@@ -27,4 +27,4 @@ extern dptr_t GDTR;
 /**
  * @brief 初始化GDT
  */
-void init_gdt(void) INITIALIZER;
+void init_gdt(void);

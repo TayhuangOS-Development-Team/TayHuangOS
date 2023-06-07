@@ -28,7 +28,11 @@ defs-c :=
 
 args-c := defs-c="$(defs-c)" include-c="$(include-c)" flags-c="$(flags-c)"
 
-args := $(args-ld) $(args-c) libraries=primlib
+flags-asm :=
+
+args-asm := flags-asm="$(flags-asm)"
+
+args := $(args-ld) $(args-c) $(args-asm) libraries=primlib
 
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 

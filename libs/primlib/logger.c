@@ -21,7 +21,7 @@ static const char *logger_name = NULL;
 static prim_output_func ostream;
 
 void init_ulogger(prim_output_func output, const char *name) {
-    pprintf(output, "[ULogger/INFO]Initializing Logger for [%s].\n", name);
+    pprintf(output, "[ULogger/INFO]为[%s]初始化日志器中.\n", name);
 
     // 初始化
 

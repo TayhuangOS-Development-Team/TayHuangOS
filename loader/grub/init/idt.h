@@ -1,9 +1,9 @@
 /**
- * @file marks.h
+ * @file idt.h
  * @author theflysong (song_of_the_fly@163.com)
- * @brief 一些标记
+ * @brief IDT
  * @version alpha-1.0.0
- * @date 2023-3-31
+ * @date 2023-05-01
  * 
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
@@ -12,22 +12,24 @@
 
 #pragma once
 
-/**
- * @brief api实现
- */
-#define IMPL(api)
+#include <tay/desc.h>
 
 /**
- * @brief api接口
+ * @brief IDT
  */
-#define API(api)
+extern gate_desc_t IDT[256];
 
 /**
- * @brief 私有的
+ * @brief IDTR
  */
-#define PRIVATE
+extern dptr_t IDTR;
 
 /**
- * @brief 初始化器
+ * @brief 初始化PIC
  */
-#define INITIALIZER
+void init_pic(void);
+
+/**
+ * @brief 初始化IDT
+ */
+void init_idt(void);

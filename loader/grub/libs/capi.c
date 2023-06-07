@@ -1,7 +1,7 @@
 /**
  * @file capi.c
  * @author theflysong (song_of_the_fly@163.com)
- * @brief CAPI - 简易实现
+ * @brief CAPI
  * @version alpha-1.0.0
  * @date 2022-12-31
  * 
@@ -17,13 +17,13 @@ static byte __HEAP__[HEAP_SIZE];
 
 static byte *__heap_ptr__ = __HEAP__;
 
-void *malloc(size_t size) IMPL("C-std") {
+void *malloc(size_t size) {
     void *ret = __heap_ptr__;
     __heap_ptr__ += size;
     return ret;
 }
 
-void free(void *ptr) IMPL("C-std") {
+void free(void *ptr) {
     // 空实现
 }
 
@@ -37,7 +37,7 @@ static void putrawchar(char ch) {
     VIDEO_MEMORY[print_pos_x + print_pos_y * 80] = (((print_color & 0xFF) << 8) + (ch & 0xFF));
 }
 
-void putchar(char ch) IMPL("C-std") {
+void putchar(char ch) {
     switch (ch) {
         case '\r':
         case '\n': {
@@ -76,7 +76,7 @@ void putchar(char ch) IMPL("C-std") {
     }
 }
 
-void puts(const char *str) IMPL("C-std") {
+void puts(const char *str) {
     while (*str != '\0') {
         putchar(*str);
         str ++;
