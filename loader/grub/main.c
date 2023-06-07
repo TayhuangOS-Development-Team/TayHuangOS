@@ -44,7 +44,13 @@ void main(void) {
 
     asm volatile ("movl $4, %edi");
     asm volatile ("sti");
-    asm volatile ("ljmp $0x80, $0x0000");
+    // asm volatile ("int $0x22");
+    // asm volatile ("int $0x22");
+    // asm volatile ("int $0x22");
+    // asm volatile ("int $0x22");
+    // asm volatile ("int $0x22");
+    // asm volatile ("int $0x22");
+
     while (true);
     
     terminate();

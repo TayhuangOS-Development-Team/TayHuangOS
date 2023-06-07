@@ -218,3 +218,85 @@ security_exception:
     errcode_exception 30
 reserved8_excepetion:
     nonerrcode_exception 31
+
+//-------------------------------------------------
+
+.macro irq_handler vector
+    save_context
+
+    pushl %esp
+    movl $\vector, %eax
+
+    call primary_irq_handler
+
+    addl $4, %esp
+
+    restore_context
+    iret
+.endm
+
+.global irq0_handler
+.type   irq0_handler, @function
+.global irq1_handler
+.type   irq1_handler, @function
+.global irq2_handler
+.type   irq2_handler, @function
+.global irq3_handler
+.type   irq3_handler, @function
+.global irq4_handler
+.type   irq4_handler, @function
+.global irq5_handler
+.type   irq5_handler, @function
+.global irq6_handler
+.type   irq6_handler, @function
+.global irq7_handler
+.type   irq7_handler, @function
+.global irq8_handler
+.type   irq8_handler, @function
+.global irq9_handler
+.type   irq9_handler, @function
+.global irq10_handler
+.type   irq10_handler, @function
+.global irq11_handler
+.type   irq11_handler, @function
+.global irq12_handler
+.type   irq12_handler, @function
+.global irq13_handler
+.type   irq13_handler, @function
+.global irq14_handler
+.type   irq14_handler, @function
+.global irq15_handler
+.type   irq15_handler, @function
+
+irq0_handler:
+    irq_handler 0
+irq1_handler:
+    irq_handler 1
+irq2_handler:
+    irq_handler 2
+irq3_handler:
+    irq_handler 3
+irq4_handler:
+    irq_handler 4
+irq5_handler:
+    irq_handler 5
+irq6_handler:
+    irq_handler 6
+irq7_handler:
+    irq_handler 7
+irq8_handler:
+    irq_handler 8
+irq9_handler:
+    irq_handler 9
+irq10_handler:
+    irq_handler 10
+irq11_handler:
+    irq_handler 11
+irq12_handler:
+    irq_handler 12
+irq13_handler:
+    irq_handler 13
+irq14_handler:
+    irq_handler 14
+irq15_handler:
+    irq_handler 15

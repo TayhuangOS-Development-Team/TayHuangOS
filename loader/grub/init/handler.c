@@ -13,11 +13,85 @@
 #include <init/handler.h>
 #include <primlib/logger.h>
 #include <stddef.h>
+#include <tay/ports.h>
+#include <tay/io.h>
+
+//禁用/启用 IRQ
+static void disable_irq(int irq) {
+    if (irq < 8) {
+        //主片
+        byte i = inb(M_PIC_DATA); 
+        i |= (1 << irq);
+        outb(M_PIC_DATA, i);
+    }
+    else {
+        //从片
+        byte i = inb(S_PIC_DATA); 
+        i |= (1 << (irq - 8));
+        outb(S_PIC_DATA, i);
+    }
+}
+
+static void enable_irq(int irq) {
+    if (irq < 8) {
+        //主片
+        byte i = inb(M_PIC_DATA); 
+        i &= ~(1 << irq);
+        outb(M_PIC_DATA, i);
+    }
+    else {
+        //从片
+        byte i = inb(S_PIC_DATA); 
+        i &= ~(1 << (irq - 8));
+        outb(S_PIC_DATA, i);
+    }
+}
+
+#define PIC_EOI (0x20)
+
+//发送EOI
+static void send_eoi(int irq) {
+    if (irq > 8) {
+        //从片EOI
+        outb (S_PIC_CONTROL, PIC_EOI); 
+    }
+    //主片EOI
+    outb (M_PIC_CONTROL, PIC_EOI); 
+}
+
+static int ticks = 0;
+
+bool clock_handler(int irq, istack_t *stack) {
+    ticks ++;
+    log_info("Ticks=%d", ticks);
+
+    return false;
+}
+
+irq_handler_t irq_handlers[32] = {
+    [0] = clock_handler
+};
 
 void primary_irq_handler(int irq, istack_t *stack) {
-    log_info(">%d", irq);
-    while (true);
+    disable_irq(irq); 
+
+    //发送EOI
+    send_eoi(irq);
+
+    log_info("接收到IRQ=%02X", irq);
+
+    if (irq_handlers[irq] != NULL) {
+        if (! irq_handlers[irq](irq, stack)) {
+            log_error("解决IRQ=%02X失败!", irq);
+            return; //不再开启该中断
+        }
+    }
+
+    //启用同类中断接收
+    enable_irq(irq); 
 }
+
+//---------------------------------------------
 
 int errcode;
 

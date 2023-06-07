@@ -14,6 +14,10 @@
 
 #include <init/idt.h>
 
+/**
+ * @brief 堆栈结构
+ * 
+ */
 typedef struct {
     b32 edi,
         esi,
@@ -35,9 +39,31 @@ typedef struct {
         ss;
 } istack_t;
 
-void interrupt_handler(void);
+/**
+ * @brief 中断处理器
+ * 
+ */
+typedef bool(*irq_handler_t)(int irq, istack_t *stack);
+
+extern irq_handler_t irq_handlers[32];
+
+/**
+ * @brief IRQ主处理程序
+ * 
+ * @param irq irq号
+ * @param stack 堆栈
+ */
 void primary_irq_handler(int irq, istack_t *stack);
+
+/**
+ * @brief 异常主处理程序
+ * 
+ * @param errno 异常号
+ * @param stack 堆栈
+ */
 void primary_exception_handler(int errno, istack_t *stack);
+
+//------------------------------------------
 
 void divide_by_zero_error(void); //除以0
 void single_step_debug(void); //单步调试
@@ -71,3 +97,22 @@ void hypervisor_injection_exception(void); //VMM注入错误
 void vmm_communication_exception(void); //VMM交流错误
 void security_exception(void); //安全性错误
 void reserved8_excepetion(void); //
+
+//------------------------------------------
+
+void irq0_handler(void);
+void irq1_handler(void);
+void irq2_handler(void);
+void irq3_handler(void);
+void irq4_handler(void);
+void irq5_handler(void);
+void irq6_handler(void);
+void irq7_handler(void);
+void irq8_handler(void);
+void irq9_handler(void);
+void irq10_handler(void);
+void irq11_handler(void);
+void irq12_handler(void);
+void irq13_handler(void);
+void irq14_handler(void);
+void irq15_handler(void);

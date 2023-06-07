@@ -21,12 +21,16 @@
 gate_desc_t IDT[256];
 dptr_t IDTR;
 
+#define IRQ_START (32)
+
 void init_pic(void) {
     outb (M_PIC_CONTROL, 0x11);
     outb (S_PIC_CONTROL, 0x11); //ICW1
 
-    outb (M_PIC_DATA, 0);
-    outb (S_PIC_DATA, 8); //ICW2
+    // IRQ 0
+    outb (M_PIC_DATA, IRQ_START);
+    // IRQ 8
+    outb (S_PIC_DATA, IRQ_START + 8); //ICW2
 
     outb (M_PIC_DATA, 0x4);
     outb (S_PIC_DATA, 0x2); //ICW3
@@ -34,7 +38,8 @@ void init_pic(void) {
     outb (M_PIC_DATA, 0x1);
     outb (S_PIC_DATA, 0x1); //ICW4
 
-    outb (M_PIC_DATA, 0xFF); //OCW1
+    // disable all
+    outb (M_PIC_DATA, 0xFE); //OCW1
     outb (S_PIC_DATA, 0xFF);
 }
 
@@ -71,6 +76,23 @@ void init_idt(void) {
     IDT[0x1D] = build_idt(GTYPE_386_INT_GATE, vmm_communication_exception, 0, rdcs());
     IDT[0x1E] = build_idt(GTYPE_386_INT_GATE, security_exception, 0, rdcs());
     IDT[0x1F] = build_idt(GTYPE_386_INT_GATE, reserved8_excepetion, 0, rdcs());
+
+    IDT[IRQ_START + 0] = build_idt(GTYPE_386_INT_GATE, irq0_handler, 0, rdcs());
+    IDT[IRQ_START + 1] = build_idt(GTYPE_386_INT_GATE, irq1_handler, 0, rdcs());
+    IDT[IRQ_START + 2] = build_idt(GTYPE_386_INT_GATE, irq2_handler, 0, rdcs());
+    IDT[IRQ_START + 3] = build_idt(GTYPE_386_INT_GATE, irq3_handler, 0, rdcs());
+    IDT[IRQ_START + 4] = build_idt(GTYPE_386_INT_GATE, irq4_handler, 0, rdcs());
+    IDT[IRQ_START + 5] = build_idt(GTYPE_386_INT_GATE, irq5_handler, 0, rdcs());
+    IDT[IRQ_START + 6] = build_idt(GTYPE_386_INT_GATE, irq6_handler, 0, rdcs());
+    IDT[IRQ_START + 7] = build_idt(GTYPE_386_INT_GATE, irq7_handler, 0, rdcs());
+    IDT[IRQ_START + 8] = build_idt(GTYPE_386_INT_GATE, irq8_handler, 0, rdcs());
+    IDT[IRQ_START + 9] = build_idt(GTYPE_386_INT_GATE, irq9_handler, 0, rdcs());
+    IDT[IRQ_START + 10] = build_idt(GTYPE_386_INT_GATE, irq10_handler, 0, rdcs());
+    IDT[IRQ_START + 11] = build_idt(GTYPE_386_INT_GATE, irq11_handler, 0, rdcs());
+    IDT[IRQ_START + 12] = build_idt(GTYPE_386_INT_GATE, irq12_handler, 0, rdcs());
+    IDT[IRQ_START + 13] = build_idt(GTYPE_386_INT_GATE, irq13_handler, 0, rdcs());
+    IDT[IRQ_START + 14] = build_idt(GTYPE_386_INT_GATE, irq14_handler, 0, rdcs());
+    IDT[IRQ_START + 15] = build_idt(GTYPE_386_INT_GATE, irq15_handler, 0, rdcs());
     
     IDTR.address = IDT;
     IDTR.size = sizeof(IDT);
