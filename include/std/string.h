@@ -16,7 +16,7 @@
 
 // memset
 static inline void memset(void *dst, int val, size_t sz) {
-    unsigned long long _val = val;
+    int _val = val;
 // 字符串设置指令
     __asm__ __volatile__ ("\
 cld\n\

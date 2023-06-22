@@ -15,6 +15,14 @@
 // 数字表
 static const char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
+/**
+ * @brief 无符号整型转字符串
+ * 
+ * @param val 值
+ * @param buffer 缓存 
+ * @param base 进制
+ * @return 字符串
+ */
 char *uitoa(unsigned int val, char *buffer, int base) {
     char *ret = buffer;
     // 特殊情况
@@ -48,6 +56,14 @@ char *uitoa(unsigned int val, char *buffer, int base) {
     return ret;
 }
 
+/**
+ * @brief 整型转字符串
+ * 
+ * @param val 值
+ * @param buffer 缓存 
+ * @param base 进制
+ * @return 字符串
+ */
 char *itoa(int val, char *buffer, int base) {
     // 保存起始位置
     char *ret = buffer;

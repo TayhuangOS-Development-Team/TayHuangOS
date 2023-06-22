@@ -22,6 +22,10 @@
 
 #include <primlib/logger.h>
 
+/**
+ * @brief 初始化
+ * 
+ */
 void initialize(void) {
     init_gdt();
 
@@ -32,6 +36,10 @@ void initialize(void) {
     init_idt();
 }
 
+/**
+ * @brief 结束
+ * 
+ */
 void terminate(void) {
 }
 

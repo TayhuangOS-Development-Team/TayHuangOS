@@ -68,10 +68,20 @@ bool clock_handler(int irq, istack_t *stack) {
     return false;
 }
 
+/**
+ * @brief IRQ处理器
+ * 
+ */
 irq_handler_t irq_handlers[32] = {
     [0] = clock_handler
 };
 
+/**
+ * @brief IRQ主处理程序
+ * 
+ * @param irq irq号
+ * @param stack 堆栈
+ */
 void primary_irq_handler(int irq, istack_t *stack) {
     disable_irq(irq); 
 
@@ -167,6 +177,12 @@ static const exception_solution_t solution_list[] = {
     NULL
 };
 
+/**
+ * @brief 异常主处理程序
+ * 
+ * @param errno 异常号
+ * @param stack 堆栈
+ */
 void primary_exception_handler(int errno, istack_t *stack) {
     log_error("在%04X:%08X处发生错误:", stack->cs, stack->eip);
     log_error("%s", exception_msg[errno]);

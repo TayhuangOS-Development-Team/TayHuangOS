@@ -18,7 +18,7 @@ include $(path-script)/util.mk
 include $(path-script)/setup.mk
 include $(path-script)/run.mk
 
-.PHONY: build
+.PHONY: build image __image stat_code
 
 path-bin := $(path-e)/build/bin/
 path-objects := $(path-e)/build/objects/
@@ -36,3 +36,6 @@ image:
 __image:
 	$(q)$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) target=$(path-e)/configs/grub.cfg path=/boot/grub/ do-image
 	$(q)$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) target=$(path-e)/build/bin/grub/grubld.bin path=/ do-image
+
+stat_code:
+	$(q)$(comments-stat)

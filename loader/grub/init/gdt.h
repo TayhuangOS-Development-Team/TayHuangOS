@@ -16,15 +16,18 @@
 
 /**
  * @brief GDT
+ * 
  */
 extern desc_t GDT[64];
 
 /**
  * @brief GDTR
+ * 
  */
 extern dptr_t GDTR;
 
 /**
  * @brief 初始化GDT
+ * 
  */
 void init_gdt(void);

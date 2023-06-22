@@ -19,7 +19,16 @@
 #define KERCODE_IDX (8)
 #define KERDATA_IDX (9)
 
+/**
+ * @brief GDT
+ * 
+ */
 desc_t GDT[64];
+
+/**
+ * @brief GDTR
+ * 
+ */
 dptr_t GDTR;
 
 static void init_empty_desc(void) {
@@ -103,6 +112,10 @@ static void init_kerdata_desc(void) {
     GDT[KERDATA_IDX] = build_descriptor(kerdata);
 }
 
+/**
+ * @brief 初始化GDT
+ * 
+ */
 void init_gdt(void) {
     init_empty_desc();
     init_code_desc();

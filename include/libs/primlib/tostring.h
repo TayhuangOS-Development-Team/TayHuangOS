@@ -13,16 +13,6 @@
 #pragma once
 
 /**
- * @brief 整型转字符串
- * 
- * @param val 值
- * @param buffer 缓存 
- * @param base 进制
- * @return 字符串
- */
-char *itoa(int val, char *buffer, int base);
-
-/**
  * @brief 无符号整型转字符串
  * 
  * @param val 值
@@ -31,3 +21,13 @@ char *itoa(int val, char *buffer, int base);
  * @return 字符串 
  */
 char *uitoa(unsigned int val, char *buffer, int base);
+
+/**
+ * @brief 整型转字符串
+ * 
+ * @param val 值
+ * @param buffer 缓存 
+ * @param base 进制
+ * @return 字符串
+ */
+char *itoa(int val, char *buffer, int base);

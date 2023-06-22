@@ -18,11 +18,23 @@
 #include <tay/io.h>
 #include <tay/ports.h>
 
+/**
+ * @brief IDT
+ * 
+ */
 gate_desc_t IDT[256];
+/**
+ * @brief IDTR
+ * 
+ */
 dptr_t IDTR;
 
 #define IRQ_START (32)
 
+/**
+ * @brief 初始化PIC
+ * 
+ */
 void init_pic(void) {
     outb (M_PIC_CONTROL, 0x11);
     outb (S_PIC_CONTROL, 0x11); //ICW1
@@ -43,6 +55,10 @@ void init_pic(void) {
     outb (S_PIC_DATA, 0xFF);
 }
 
+/**
+ * @brief 初始化IDT
+ * 
+ */
 void init_idt(void) {
     IDT[0x00] = build_idt(GTYPE_386_INT_GATE, divide_by_zero_error, 0, rdcs());
     IDT[0x01] = build_idt(GTYPE_386_INT_GATE, single_step_debug, 0, rdcs());

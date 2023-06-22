@@ -17,6 +17,14 @@
 #include <ctype.h>
 #include <string.h>
 
+/**
+ * @brief 底层printf
+ * 
+ * @param buffer 输出缓冲
+ * @param fmt 格式化字符串
+ * @param args 参数
+ * @return 输出字符数 
+ */
 static int __llprintf(char *buffer, const char *fmt, va_list args) {
     #define FLAG_SIGN 1
     #define FLAG_LEFT_ALIGN 2
@@ -282,6 +290,14 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
     return 0;
 }
 
+/**
+ * @brief 使用func输出
+ * 
+ * @param func 输出函数
+ * @param fmt 格式化字符串
+ * @param args 参数
+ * @return 输出字符数 
+ */
 int vpprintf(prim_output_func func, const char *fmt, va_list args) {
     char buffer[512];
 
@@ -291,10 +307,26 @@ int vpprintf(prim_output_func func, const char *fmt, va_list args) {
     return ret;
 }
 
+/**
+ * @brief 输出到buffer中
+ * 
+ * @param buffer 缓存
+ * @param fmt 格式化字符串
+ * @param args 参数
+ * @return 输出字符数 
+ */
 int vsprintf(char *buffer, const char *fmt, va_list args) {
     return __llprintf(buffer, fmt, args);
 }
 
+/**
+ * @brief 使用func输出
+ * 
+ * @param func 输出函数
+ * @param fmt 格式化字符串
+ * @param ... 参数
+ * @return 输出字符数
+ */
 int pprintf(prim_output_func func, const char *fmt, ...) {
     va_list lst;
     va_start(lst, fmt);
@@ -305,6 +337,14 @@ int pprintf(prim_output_func func, const char *fmt, ...) {
     return ret;
 }
 
+/**
+ * @brief 输出到buffer中
+ * 
+ * @param buffer 缓存
+ * @param fmt 格式化字符串
+ * @param ... 参数
+ * @return 输出字符数 
+ */
 int sprintf(char *buffer, const char *fmt, ...)  {
     va_list lst;
     va_start(lst, fmt);
@@ -315,10 +355,26 @@ int sprintf(char *buffer, const char *fmt, ...)  {
     return ret;
 }
 
+/**
+ * @brief 使用func输入
+ * 
+ * @param func 输入函数
+ * @param fmt 格式化字符串
+ * @param args 参数
+ * @return 输入字符数 
+ */
 int vpscanf(prim_getchar_func func, const char *fmt, va_list args) {
     return 0;
 }
 
+/**
+ * @brief 使用func输入
+ * 
+ * @param func 输入函数
+ * @param fmt 格式化字符串
+ * @param ... 参数
+ * @return 输入字符数 
+ */
 int pscanf(prim_getchar_func func, const char *fmt, ...) {
     va_list lst;
     va_start(lst, fmt);

@@ -18,7 +18,7 @@
  * @brief Tayhuang OS GRUB 2 Boot Loader 程序头结构
  * 应GRUB2要求实现
  */
-struct tayhuang_header IMPL("grub2") {
+struct tayhuang_header {
     /**
      * @brief Mulitiboot2 头
      */
@@ -72,7 +72,7 @@ __attribute__((packed));
  * 应GRUB2要求实现
  * 放在.multiboot段下
  */
-struct tayhuang_header TAYHUANG_HEADER IMPL("grub2")
+struct tayhuang_header TAYHUANG_HEADER
 //将这个头放在.multiboot段下
 __attribute__((section(".multiboot")))
 = {
