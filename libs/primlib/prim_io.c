@@ -26,22 +26,23 @@
  * @return 输出字符数 
  */
 static int __llprintf(char *buffer, const char *fmt, va_list args) {
-    #define FLAG_SIGN 1
-    #define FLAG_LEFT_ALIGN 2
-    #define FLAG_FILL_ZERO 4
-    #define FLAG_PREFIX 8
-    #define FLAG_UPPER 16
+    // 标志
+    #define FLAG_SIGN 1 // 符号
+    #define FLAG_LEFT_ALIGN 2 // 左对齐
+    #define FLAG_FILL_ZERO 4 // 填充0
+    #define FLAG_PREFIX 8 // 前缀
+    #define FLAG_UPPER 16 // 大写
 
-    #define PRINT_TY_INT 0
-    #define PRINT_TY_UNSIGNED 1
-    #define PRINT_TY_OCT 2
-    #define PRINT_TY_HEX 3
-    #define PRINT_TY_CHAR 4
-    #define PRINT_TY_STRING 5
+    #define PRINT_TY_INT 0 // 整形
+    #define PRINT_TY_UNSIGNED 1 // 无符号整形
+    #define PRINT_TY_OCT 2 // 八进制
+    #define PRINT_TY_HEX 3 // 十六进制
+    #define PRINT_TY_CHAR 4 // 字符
+    #define PRINT_TY_STRING 5 // 字符串
 
-    #define QUAL_SHORT 0
-    #define QUAL_NORMAL 1
-    #define QUAL_LONG 2
+    #define QUAL_SHORT 0 // 短
+    #define QUAL_NORMAL 1 // 普通
+    #define QUAL_LONG 2 // 长
 
     char *original = buffer;
 
@@ -260,15 +261,19 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                 buffer ++;
             }
 
+            // 添加到buffer中
             strcpy(buffer, _buffer);
+            // 移动指针
             buffer += strlen(_buffer);
         }
     }
 
+    // 结束标记
     *buffer = '\0';
 
     return buffer - original;
 
+    // 取消定义
     #undef PRINT_TY_INT
     #undef PRINT_TY_UNSIGNED
     #undef PRINT_TY_FLOAT

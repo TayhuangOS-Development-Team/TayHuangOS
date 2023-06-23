@@ -17,6 +17,21 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 
+# The QUIET tag can be used to turn on/off the messages that are generated to
+# standard output by doxygen. If QUIET is set to YES this implies that the
+# messages are off.
+# The default value is: NO.
+
+QUIET                  = NO
+
+# The WARNINGS tag can be used to turn on/off the warning messages that are
+# generated to standard error (stderr) by doxygen. If WARNINGS is set to YES
+# this implies that the warnings are on.
+#
+# Tip: Turn warnings on while writing the documentation.
+# The default value is: YES.
+
+WARNINGS               = YES
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard patterns (like *.cpp and
@@ -32,14 +47,42 @@
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ./
+INPUT                  = ./libs/primlib/ \
+                         ./include/libs/primlib/ \
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ../../doc/api/libs/primlib
+OUTPUT_DIRECTORY       = ./doc/api/primlib
+
+# The PROJECT_NAME tag is a single word (or a sequence of words surrounded by
+# double-quotes, unless you are using Doxywizard) that should identify the
+# project for which the documentation is generated. This name is used in the
+# title of most generated pages and in a few other places.
+# The default value is: My Project.
+
+PROJECT_NAME           = "Primlib"
+
+# The PROJECT_NUMBER tag can be used to enter a project or revision number. This
+# could be handy for archiving the generated documentation or if some version
+# control system is used.
+
+PROJECT_NUMBER         =
+
+# Using the PROJECT_BRIEF tag one can provide an optional one line description
+# for a project that appears at the top of each page and should give viewer a
+# quick idea about the purpose of the project. Keep the description short.
+
+PROJECT_BRIEF          =
+
+# With the PROJECT_LOGO tag one can specify a logo or an icon that is included
+# in the documentation. The maximum height of the logo should not exceed 55
+# pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
+# the logo to the output directory.
+
+PROJECT_LOGO           =
 
 # If left blank the following patterns are tested:*.c, *.cc, *.cxx, *.cpp,
 # *.c++, *.java, *.ii, *.ixx, *.ipp, *.i++, *.inl, *.idl, *.ddl, *.odl, *.h,
@@ -75,34 +118,6 @@ EXCLUDE                =
 # The default value is: UTF-8.
 
 DOXYFILE_ENCODING      = UTF-8
-
-# The PROJECT_NAME tag is a single word (or a sequence of words surrounded by
-# double-quotes, unless you are using Doxywizard) that should identify the
-# project for which the documentation is generated. This name is used in the
-# title of most generated pages and in a few other places.
-# The default value is: My Project.
-
-PROJECT_NAME           = "Universal Primlib"
-
-# The PROJECT_NUMBER tag can be used to enter a project or revision number. This
-# could be handy for archiving the generated documentation or if some version
-# control system is used.
-
-PROJECT_NUMBER         =
-
-# Using the PROJECT_BRIEF tag one can provide an optional one line description
-# for a project that appears at the top of each page and should give viewer a
-# quick idea about the purpose of the project. Keep the description short.
-
-PROJECT_BRIEF          =
-
-# With the PROJECT_LOGO tag one can specify a logo or an icon that is included
-# in the documentation. The maximum height of the logo should not exceed 55
-# pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
-# the logo to the output directory.
-
-PROJECT_LOGO           =
-
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
 # will distribute the generated files over these directories. Enabling this
@@ -483,7 +498,7 @@ INLINE_SIMPLE_STRUCTS  = NO
 # types are typedef'ed and only the typedef is referenced, never the tag name.
 # The default value is: NO.
 
-TYPEDEF_HIDES_STRUCT   = NO
+TYPEDEF_HIDES_STRUCT   = YES
 
 # The size of the symbol lookup cache can be set using LOOKUP_CACHE_SIZE. This
 # cache is used to resolve symbols given their name and scope. Since this can be
@@ -534,7 +549,7 @@ EXTRACT_PACKAGE        = NO
 # included in the documentation.
 # The default value is: NO.
 
-EXTRACT_STATIC         = NO
+EXTRACT_STATIC         = YES
 
 # If the EXTRACT_LOCAL_CLASSES tag is set to YES, classes (and structs) defined
 # locally in source files will be included in the documentation. If set to NO,
@@ -799,22 +814,6 @@ CITE_BIB_FILES         =
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages
 #---------------------------------------------------------------------------
-
-# The QUIET tag can be used to turn on/off the messages that are generated to
-# standard output by doxygen. If QUIET is set to YES this implies that the
-# messages are off.
-# The default value is: NO.
-
-QUIET                  = NO
-
-# The WARNINGS tag can be used to turn on/off the warning messages that are
-# generated to standard error (stderr) by doxygen. If WARNINGS is set to YES
-# this implies that the warnings are on.
-#
-# Tip: Turn warnings on while writing the documentation.
-# The default value is: YES.
-
-WARNINGS               = YES
 
 # If the WARN_IF_UNDOCUMENTED tag is set to YES then doxygen will generate
 # warnings for undocumented members. If EXTRACT_ALL is set to YES then this flag
@@ -2255,7 +2254,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # set to NO
 # The default value is: YES.
 
-HAVE_DOT               = NO
+HAVE_DOT               = YES
 
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is allowed
 # to run in parallel. When set to 0 doxygen will base this on the number of
@@ -2372,7 +2371,7 @@ INCLUDED_BY_GRAPH      = YES
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-CALL_GRAPH             = NO
+CALL_GRAPH             = YES
 
 # If the CALLER_GRAPH tag is set to YES then doxygen will generate a caller
 # dependency graph for every global function or class method.
@@ -2384,7 +2383,7 @@ CALL_GRAPH             = NO
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-CALLER_GRAPH           = NO
+CALLER_GRAPH           = YES
 
 # If the GRAPHICAL_HIERARCHY tag is set to YES then doxygen will graphical
 # hierarchy of all classes instead of a textual one.

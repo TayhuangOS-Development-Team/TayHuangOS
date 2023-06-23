@@ -14,3 +14,7 @@ builder-k-x86_64 := -f $(path-script)/build/Makefile.build global-env=$(global-e
 builder-m-x86_64 := -f $(path-script)/build/Makefile.build global-env=$(global-env) mode=m architecture=x86_64 target
 builder-s-x86_64 := -f $(path-script)/build/Makefile.build global-env=$(global-env) mode=s architecture=x86_64 target
 builder-l-x86_64 := -f $(path-script)/build/Makefile.build global-env=$(global-env) mode=l architecture=x86_64 target
+
+imager := -f $(path-script)/image/Makefile.image global-env=$(global-env) target
+
+doc-generator := -f $(path-script)/gendoc/Makefile.doc global-env=$(global-env) config

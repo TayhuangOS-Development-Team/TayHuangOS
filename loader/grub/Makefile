@@ -3,7 +3,7 @@ include $(global-env)
 include $(path-script)/env/local.mk
 include $(path-script)/helper.mk
 
-.PHONY: build
+.PHONY: build gendoc
 
 target := $(path-bin)/grub/grubld.bin
 
@@ -38,3 +38,6 @@ dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 
 build:
 	$(q)$(MAKE) $(builder-k-x86)=$(target) objects="$(objects)" $(dir) $(args) $(target)
+
+gendoc:
+	$(q)$(MAKE) $(doc-generator)=$(path-d)/DoxygenFile $@

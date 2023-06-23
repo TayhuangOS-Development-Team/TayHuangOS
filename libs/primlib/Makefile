@@ -30,3 +30,6 @@ dir-x86_64 := dir-obj="$(path-objects)/primlib/x86_64/" dir-src="$(path-d)"
 build:
 	$(q)$(MAKE) $(builder-s-x86)=$(target-x86) objects="$(objects)" $(dir-x86) $(args) $(target-x86)
 	$(q)$(MAKE) $(builder-s-x86_64)=$(target-x86_64) objects="$(objects)" $(dir-x86_64) $(args) $(target-x86_64)
+
+gendoc:
+	$(q)$(MAKE) $(doc-generator)=$(path-d)/DoxygenFile $@

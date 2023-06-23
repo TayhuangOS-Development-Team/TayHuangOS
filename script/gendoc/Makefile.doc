@@ -1,0 +1,10 @@
+include $(global-env)
+include $(path-script)/env/local.mk
+
+include $(path-script)/gendoc/gendoc.mk
+include $(path-script)/tool.mk
+include $(path-script)/util.mk
+
+.PHONY: gendoc
+gendoc:
+	$(q)$(doxygen) $(config)

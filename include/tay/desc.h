@@ -14,6 +14,7 @@
 
 #include <tay/types.h>
 
+// 特权级
 enum {
 	DPL0 = 0,
 	DPL1 = 1,
@@ -27,6 +28,7 @@ enum {
 
 enum {
 	// DESCRIPTOR TYPES
+	// 数据段
 	DTYPE_RODATA                  = 0x0,
 	DTYPE_RODATA_ACCESSED         = 0x1,
 	DTYPE_RWDATA                  = 0x2,
@@ -35,6 +37,7 @@ enum {
 	DTYPE_RODATA_EXPDOWN_ACCESSED = 0x5,
 	DTYPE_RWDATA_EXPDOWN          = 0x6,
 	DTYPE_RWDATA_EXPDOWN_ACCESSED = 0x7,
+	// 代码段
 	DTYPE_XOCODE                  = 0x8,
 	DTYPE_XOCODE_ACCESSED         = 0x9,
 	DTYPE_XRCODE                  = 0xA,
@@ -44,6 +47,7 @@ enum {
 	DTYPE_XRCODE_CONF             = 0xE,
 	DTYPE_XRCODE_CONF_ACCESSED    = 0xF,
 	// GATE TYPES
+	// 286
 	GTYPE_286_TSS                 = 0x1,
 	GTYPE_LDT                     = 0x2,
 	GTYPE_286_TSS_BUSY            = 0x3,
@@ -51,6 +55,7 @@ enum {
 	GTYPE_TASK_GATE               = 0x5,
 	GTYPE_286_INT_GATE            = 0x6,
 	GTYPE_286_TRAP_GATE           = 0x7,
+	// 386
 	GTYPE_386_TSS                 = 0x9,
 	GTYPE_386_TSS_BUSY            = 0xB,
 	GTYPE_386_CALL_GATE           = 0xC,
@@ -58,6 +63,10 @@ enum {
 	GTYPE_386_TRAP_GATE           = 0xF
 };
 
+/**
+ * @brief 描述符(未处理)
+ * 
+ */
 typedef struct {
 	dword limit;
 	dword base;
@@ -71,15 +80,19 @@ typedef struct {
 	bool granulity;
 } raw_desc_t;
 
+/**
+ * @brief 描述符
+ * 
+ */
 struct desc_struct {
-	word	 limit0;
-	word	 base0;
-	word	 base1 : 8;
+	word limit0;
+	word base0;
+	word base1 : 8;
 	word type : 4;
 	bool system: 1;
-	word  dpl: 2;
+	word dpl: 2;
 	bool present: 1;
-	word	 limit1: 4;
+	word limit1: 4;
 	bool avl: 1;
 	bool lm: 1;
 	bool db: 1;
@@ -89,6 +102,12 @@ struct desc_struct {
 
 typedef struct desc_struct desc_t;
 
+/**
+ * @brief 处理描述符
+ * 
+ * @param raw 未处理描述符
+ * @return 已处理描述符
+ */
 inline static desc_t build_descriptor(raw_desc_t raw) {
 	desc_t desc;
 
@@ -112,6 +131,10 @@ inline static desc_t build_descriptor(raw_desc_t raw) {
 	return desc;
 }
 
+/**
+ * @brief 描述符表指针
+ * 
+ */
 struct desc_ptr {
 	word size;
 	qword address;
@@ -119,6 +142,10 @@ struct desc_ptr {
 
 typedef struct desc_ptr dptr_t;
 
+/**
+ * @brief TSS项
+ * 
+ */
 struct tss_struct {
 	word	 limit0;
 	word	 base0;
@@ -139,6 +166,10 @@ struct tss_struct {
 
 typedef struct tss_struct tss_desc_t;
 
+/**
+ * @brief IDT属性
+ * 
+ */
 struct idt_attr {
 	byte ist       : 3;
 	byte reserved  : 5;
@@ -149,13 +180,10 @@ struct idt_attr {
 
 typedef struct idt_attr idt_attr_t;
 
-struct idt_data {
-	dword	       vector;
-	dword	       segment;
-	idt_attr_t attr;
-	const void *addr;
-};
-
+/**
+ * @brief 门描述符
+ * 
+ */
 struct gate_struct {
 	word	   offset0;
 	word	   segment;
@@ -171,7 +199,16 @@ typedef struct gate_struct gate_desc_t;
 
 #if BITS == 32
 
-inline static gate_desc_t build_idt(byte type, void *ptr, byte privilege, int cs) {
+/**
+ * @brief 构建门描述符
+ * 
+ * @param type 类型
+ * @param ptr 地址
+ * @param privilege 特权级
+ * @param cs 代码段描述符
+ * @return 门描述符 
+ */
+inline static gate_desc_t build_gate(byte type, void *ptr, byte privilege, int cs) {
     dword base = (dword)ptr;
 	gate_desc_t desc = {};
     desc.offset0 = base & 0xFFFF; //偏移
@@ -187,7 +224,16 @@ inline static gate_desc_t build_idt(byte type, void *ptr, byte privilege, int cs
 
 #elif BITS == 64
 
-inline static gate_desc_t build_idt(byte type, void *ptr, byte privilege, int cs) {
+/**
+ * @brief 构建门描述符
+ * 
+ * @param type 类型
+ * @param ptr 地址
+ * @param privilege 特权级
+ * @param cs 代码段描述符
+ * @return 门描述符 
+ */
+inline static gate_desc_t build_gate(byte type, void *ptr, byte privilege, int cs) {
     dword base = (dword)ptr;
 	gate_desc_t desc = {};
     desc.offset0 = base & 0xFFFF; //偏移
@@ -204,6 +250,10 @@ inline static gate_desc_t build_idt(byte type, void *ptr, byte privilege, int cs
 
 #endif
 
+/**
+ * @brief 64位TSS
+ * 
+ */
 struct tss {
 	dword reserved0;
 	// RSP
