@@ -20,30 +20,30 @@
 static void disable_irq(int irq) {
     if (irq < 8) {
         //主片
-        byte i = inb(M_PIC_DATA); 
+        byte i = inb(M_PIC_BASE + PIC_DATA); 
         i |= (1 << irq);
-        outb(M_PIC_DATA, i);
+        outb(M_PIC_BASE + PIC_DATA, i);
     }
     else {
         //从片
-        byte i = inb(S_PIC_DATA); 
+        byte i = inb(S_PIC_BASE + PIC_DATA); 
         i |= (1 << (irq - 8));
-        outb(S_PIC_DATA, i);
+        outb(S_PIC_BASE + PIC_DATA, i);
     }
 }
 
 static void enable_irq(int irq) {
     if (irq < 8) {
         //主片
-        byte i = inb(M_PIC_DATA); 
+        byte i = inb(M_PIC_BASE + PIC_DATA); 
         i &= ~(1 << irq);
-        outb(M_PIC_DATA, i);
+        outb(M_PIC_BASE + PIC_DATA, i);
     }
     else {
         //从片
-        byte i = inb(S_PIC_DATA); 
+        byte i = inb(S_PIC_BASE + PIC_DATA); 
         i &= ~(1 << (irq - 8));
-        outb(S_PIC_DATA, i);
+        outb(S_PIC_BASE + PIC_DATA, i);
     }
 }
 
@@ -53,10 +53,10 @@ static void enable_irq(int irq) {
 static void send_eoi(int irq) {
     if (irq > 8) {
         //从片EOI
-        outb (S_PIC_CONTROL, PIC_EOI); 
+        outb (S_PIC_BASE + PIC_CONTROL, PIC_EOI); 
     }
     //主片EOI
-    outb (M_PIC_CONTROL, PIC_EOI); 
+    outb (M_PIC_BASE + PIC_CONTROL, PIC_EOI); 
 }
 
 static int ticks = 0;

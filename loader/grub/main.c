@@ -11,6 +11,7 @@
  */
 
 #include <tay/types.h>
+#include <tay/ports.h>
 
 #include <init/gdt.h>
 #include <init/idt.h>
@@ -21,6 +22,8 @@
 #include <libs/debug.h>
 
 #include <primlib/logger.h>
+
+#include <device/disk.h>
 
 /**
  * @brief 初始化
@@ -50,14 +53,11 @@ void terminate(void) {
 void main(void) {
     initialize();
 
-    asm volatile ("movl $4, %edi");
     asm volatile ("sti");
-    // asm volatile ("int $0x22");
-    // asm volatile ("int $0x22");
-    // asm volatile ("int $0x22");
-    // asm volatile ("int $0x22");
-    // asm volatile ("int $0x22");
-    // asm volatile ("int $0x22");
+    
+    disk_t *disk = load_disk(IDE0_BASE, IDE0_BASE2, false);
+    log_info("%s", disk->serial);
+    log_info("%s", disk->model);
 
     while (true);
     

@@ -33,23 +33,23 @@ dptr_t IDTR;
  * 
  */
 void init_pic(void) {
-    outb (M_PIC_CONTROL, 0x11);
-    outb (S_PIC_CONTROL, 0x11); //ICW1
+    outb (M_PIC_BASE + PIC_CONTROL, 0x11);
+    outb (S_PIC_BASE + PIC_CONTROL, 0x11); //ICW1
 
     // IRQ 0
-    outb (M_PIC_DATA, IRQ_START);
+    outb (M_PIC_BASE + PIC_DATA, IRQ_START);
     // IRQ 8
-    outb (S_PIC_DATA, IRQ_START + 8); //ICW2
+    outb (S_PIC_BASE + PIC_DATA, IRQ_START + 8); //ICW2
 
-    outb (M_PIC_DATA, 0x4);
-    outb (S_PIC_DATA, 0x2); //ICW3
+    outb (M_PIC_BASE + PIC_DATA, 0x4);
+    outb (S_PIC_BASE + PIC_DATA, 0x2); //ICW3
 
-    outb (M_PIC_DATA, 0x1);
-    outb (S_PIC_DATA, 0x1); //ICW4
+    outb (M_PIC_BASE + PIC_DATA, 0x1);
+    outb (S_PIC_BASE + PIC_DATA, 0x1); //ICW4
 
     // disable all
-    outb (M_PIC_DATA, 0xFE); //OCW1
-    outb (S_PIC_DATA, 0xFF);
+    outb (M_PIC_BASE + PIC_DATA, 0xFF); //OCW1
+    outb (S_PIC_BASE + PIC_DATA, 0xFF);
 }
 
 /**

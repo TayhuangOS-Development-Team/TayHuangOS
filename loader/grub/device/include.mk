@@ -1,1 +1,1 @@
-objects += device/udma.o
+objects += device/disk.o

@@ -12,22 +12,14 @@
 
 #pragma once
 
-/** 主PIC基端口 */
+/** 主PIC基址 */
 #define M_PIC_BASE         (0x20)
-/** 从PIC基端口 */
+/** 从PIC基址 */
 #define S_PIC_BASE         (0xA0)
 /** PIC控制端口偏移 */
-#define PIC_CONTROL_OFFSET (0)
+#define PIC_CONTROL (0)
 /** PIC数据端口偏移 */
-#define PIC_DATA_OFFSET    (1)
-/** 主PIC控制端口 */
-#define M_PIC_CONTROL      (M_PIC_BASE + PIC_CONTROL_OFFSET)
-/** 主PIC数据端口 */
-#define M_PIC_DATA         (M_PIC_BASE + PIC_DATA_OFFSET)
-/** 从PIC控制端口 */
-#define S_PIC_CONTROL      (S_PIC_BASE + PIC_CONTROL_OFFSET)
-/** 从PIC数据端口 */
-#define S_PIC_DATA         (S_PIC_BASE + PIC_DATA_OFFSET)
+#define PIC_DATA    (1)
 
 //CMOS RAM
 #define CMOS_RAM_BASE    (0x70)
@@ -64,40 +56,43 @@
 #define CO_CPU_E     (CO_CPU_BASE + 0xE)
 #define CO_CPU_F     (CO_CPU_BASE + 0xF)
 
-//Port-A
+/** Port-A */
 #define PORT_A (0x92)
 
-//0号IDE通道
+/** 0号IDE通道基址 */
 #define IDE0_BASE             (0x1F0)
+/** 0号IDE通道基址2 */
 #define IDE0_BASE2            (0x3F6)
-#define IDE0_DATA             (IDE0_BASE + 0)
-#define IDE0_ERROR            (IDE0_BASE + 1)
-#define IDE0_FEATURES         (IDE0_BASE + 1)
-#define IDE0_SECTOR_COUNTER   (IDE0_BASE + 2)
-#define IDE0_LBA_LOW          (IDE0_BASE + 3)
-#define IDE0_LBA_MID          (IDE0_BASE + 4)
-#define IDE0_LBA_HIGH         (IDE0_BASE + 5)
-#define IDE0_DEVICE           (IDE0_BASE + 6)
-#define IDE0_STATUS           (IDE0_BASE + 7)
-#define IDE0_COMMAND          (IDE0_BASE + 7)
-#define IDE0_ALTERNATE_STATUS (IDE0_BASE2 + 0)
-#define IDE0_DEVICE_CONTROL   (IDE0_BASE2 + 0)
 
-//1号IDE通道
+/** 1号IDE通道基址 */
 #define IDE1_BASE             (0x170)
+/** 1号IDE通道基址2 */
 #define IDE1_BASE2            (0x376)
-#define IDE1_DATA             (IDE1_BASE + 0)
-#define IDE1_ERROR            (IDE1_BASE + 1)
-#define IDE1_FEATURES         (IDE1_BASE + 1)
-#define IDE1_SECTOR_COUNTER   (IDE1_BASE + 2)
-#define IDE1_LBA_LOW          (IDE1_BASE + 3)
-#define IDE1_LBA_MID          (IDE1_BASE + 4)
-#define IDE1_LBA_HIGH         (IDE1_BASE + 5)
-#define IDE1_DEVICE           (IDE1_BASE + 6)
-#define IDE1_STATUS           (IDE1_BASE + 7)
-#define IDE1_COMMAND          (IDE1_BASE + 7)
-#define IDE1_ALTERNATE_STATUS (IDE1_BASE2 + 0)
-#define IDE1_DEVICE_CONTROL   (IDE1_BASE2 + 0)
+
+/** IDE通道数据端口偏移 */
+#define IDE_DATA             (0)
+/** IDE通道错误端口偏移 */
+#define IDE_ERROR            (1)
+/** IDE通道特征端口偏移 */
+#define IDE_FEATURES         (1)
+/** IDE通道扇区计数端口偏移 */
+#define IDE_SECTOR_COUNTER   (2)
+/** IDE通道LBA(低字节)端口偏移 */
+#define IDE_LBA_LOW          (3)
+/** IDE通道LBA(中字节)端口偏移 */
+#define IDE_LBA_MID          (4)
+/** IDE通道LBA(高字节)端口偏移 */
+#define IDE_LBA_HIGH         (5)
+/** IDE通道设备端口偏移 */
+#define IDE_DEVICE           (6)
+/** IDE通道状态端口偏移 */
+#define IDE_STATUS           (7)
+/** IDE通道命令端口偏移 */
+#define IDE_COMMAND          (7)
+/** IDE通道替换状态端口偏移 */
+#define IDE_ALTERNATE_STATUS (0)
+/** IDE通道设备控制端口偏移 */
+#define IDE_DEVICE_CONTROL   (0)
 
 //PIT
 #define PIT_BASE     (0x40)
