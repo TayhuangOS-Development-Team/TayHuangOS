@@ -33,8 +33,8 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
     #define FLAG_PREFIX 8 // 前缀
     #define FLAG_UPPER 16 // 大写
 
-    #define PRINT_TY_INT 0 // 整形
-    #define PRINT_TY_UNSIGNED 1 // 无符号整形
+    #define PRINT_TY_INT 0 // 整型
+    #define PRINT_TY_UNSIGNED 1 // 无符号整型
     #define PRINT_TY_OCT 2 // 八进制
     #define PRINT_TY_HEX 3 // 十六进制
     #define PRINT_TY_CHAR 4 // 字符
@@ -44,16 +44,20 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
     #define QUAL_NORMAL 1 // 普通
     #define QUAL_LONG 2 // 长
 
+    // 保存原指针
     char *original = buffer;
 
+    // fmt未结束
     while (*fmt) {
-        // 非格式化字符串
+        // 非格式化字符
         if (*fmt != '%') {
+            // 直接加入
             *buffer = *fmt;
             buffer ++;
             fmt ++;
         }
         else {
+            // 格式化
             fmt ++;
 
             // %%
@@ -80,7 +84,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                 case ' ': fmt ++; break;
                 case '0': flag |= FLAG_FILL_ZERO; fmt ++; break;
                 case '#': flag |= FLAG_PREFIX; fmt ++; break;
-                default: _break = true; break;
+                default: _break = true; break; //标记结束
                 }
                 if (_break) {
                     break;
@@ -91,6 +95,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
             // *说明放在可变参数表中
             if (*fmt == '*') {
                 width = va_arg(args, int);
+                // 负数说明左对齐
                 if (width < 0) {
                     width = -width;
                     flag |= FLAG_LEFT_ALIGN;
@@ -98,6 +103,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                 fmt ++;
             }
             else {
+                // 获取对齐宽度
                 while (isdigit(*fmt)) {
                     width = width * 10 + *fmt - '0';
                     fmt ++;
@@ -113,6 +119,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                     fmt ++;
                 }
                 else {
+                    // 获取精度
                     while (isdigit(*fmt)) {
                         precision = precision * 10 + *fmt - '0';
                         fmt ++;
@@ -131,12 +138,12 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
             case 'd': print_type = PRINT_TY_INT; break;
             case 'u': print_type = PRINT_TY_UNSIGNED; break;
             case 'o': print_type = PRINT_TY_OCT; break;
-            case 'X': flag |= FLAG_UPPER;
+            case 'X': flag |= FLAG_UPPER; // 大写十六进制
             case 'x': print_type = PRINT_TY_HEX; break;
             case 'c': print_type = PRINT_TY_CHAR; break;
             case 's': print_type = PRINT_TY_STRING; break;
-            case 'P': flag |= FLAG_UPPER;
-            case 'p': flag |= FLAG_FILL_ZERO; flag |= FLAG_PREFIX; width = 16; print_type = PRINT_TY_HEX; break;
+            case 'P': flag |= FLAG_UPPER; // 大写指针
+            case 'p': flag |= FLAG_FILL_ZERO; flag |= FLAG_PREFIX; width = 16; print_type = PRINT_TY_HEX; break; // 指针
             default: print_type = -1; break;
             }
 
@@ -152,13 +159,14 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
             char _buffer[120] = {};
 
             switch (print_type) {
-            // 整形
+            // 整型
             case PRINT_TY_INT: {
                 if (qualifier == QUAL_LONG ||
                     qualifier == QUAL_NORMAL ||
                     qualifier == QUAL_SHORT) {
 
                     int val = va_arg(args, int);
+                    // 小于0则取相反数并设置符号标记
                     if (val < 0) {
                         has_sign = true;
                         val = -val;
@@ -167,7 +175,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                 }
                 break;
             }
-            // 无符号整形
+            // 无符号整型
             case PRINT_TY_UNSIGNED: {
                 if (qualifier == QUAL_LONG ||
                     qualifier == QUAL_NORMAL ||
@@ -198,7 +206,9 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                     unsigned int val = va_arg(args, unsigned int);
                     uitoa(val, _buffer, 16);
                     
+                    // 若大写
                     if (flag & FLAG_UPPER) {
+                        // 遍历改为大写字母
                         for (int i = 0 ; i < strlen(_buffer) ; i ++) {
                             if (islower(_buffer[i])) {
                                 _buffer[i] = toupper(_buffer[i]);
@@ -228,14 +238,18 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
 
             // 符号标记
             if (flag & FLAG_SIGN) {
+                // 是否为负数
                 if (! has_sign) {
+                    // 添加正号
                     *buffer = '+';
                     buffer ++;
                     offset ++;
                 }
             }
 
+            // 是否为负数
             if (has_sign) {
+                // 添加负号
                 *buffer = '-';
                 buffer ++;
                 offset ++;
@@ -243,11 +257,13 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
 
             // 前缀
             if (flag & FLAG_PREFIX) {
+                // 八进制
                 if (print_type == PRINT_TY_OCT) {
                     *buffer = '0';
                     buffer ++;
                 }
                 else if (print_type == PRINT_TY_HEX) {
+                    // 十六进制
                     *buffer = '0';
                     buffer ++;
                     *buffer = flag & FLAG_UPPER ? 'X' : 'x';
@@ -255,9 +271,12 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                 }
             }
 
-            // 0填充
+            // 填充字符
+            char fillch = flag & FLAG_FILL_ZERO ? '0' : ' ';
+
+            // 填充
             for (int i = strlen(_buffer) + offset ; i < width ; i ++) {
-                *buffer = flag & FLAG_FILL_ZERO ? '0' : ' ';
+                *buffer = fillch;
                 buffer ++;
             }
 
@@ -273,7 +292,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
 
     return buffer - original;
 
-    // 取消定义
+    // 取消类型定义
     #undef PRINT_TY_INT
     #undef PRINT_TY_UNSIGNED
     #undef PRINT_TY_FLOAT
@@ -283,15 +302,18 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
     #undef PRINT_TY_CHAR
     #undef PRINT_TY_STRING
 
+    // 取消标记定义
     #undef FLAG_SIGN
     #undef FLAG_LEFT_ALIGN
     #undef FLAG_FILL_ZERO
     #undef FLAG_PREFIX
     #undef FLAG_UPPER
     
+    // 取消精度定义
     #undef QUAL_SHORT
     #undef QUAL_NORMAL
     #undef QUAL_LONG
+
     return 0;
 }
 
@@ -333,6 +355,7 @@ int vsprintf(char *buffer, const char *fmt, va_list args) {
  * @return 输出字符数
  */
 int pprintf(prim_output_func func, const char *fmt, ...) {
+    // 初始化可变参数
     va_list lst;
     va_start(lst, fmt);
 
@@ -351,6 +374,7 @@ int pprintf(prim_output_func func, const char *fmt, ...) {
  * @return 输出字符数 
  */
 int sprintf(char *buffer, const char *fmt, ...)  {
+    // 初始化可变参数
     va_list lst;
     va_start(lst, fmt);
 
@@ -369,6 +393,7 @@ int sprintf(char *buffer, const char *fmt, ...)  {
  * @return 输入字符数 
  */
 int vpscanf(prim_getchar_func func, const char *fmt, va_list args) {
+    // TODO
     return 0;
 }
 
@@ -381,6 +406,7 @@ int vpscanf(prim_getchar_func func, const char *fmt, va_list args) {
  * @return 输入字符数 
  */
 int pscanf(prim_getchar_func func, const char *fmt, ...) {
+    // 初始化可变参数
     va_list lst;
     va_start(lst, fmt);
 

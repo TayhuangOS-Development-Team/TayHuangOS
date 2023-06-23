@@ -15,28 +15,42 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef uint8_t byte; //字节
-typedef uint16_t word; //字
-typedef uint32_t dword; //双字
-typedef uint64_t qword; //四字
+/** 字节 */
+typedef uint8_t byte;
+/** 字 */
+typedef uint16_t word;
+/** 双字 */
+typedef uint32_t dword;
+/** 四字 */
+typedef uint64_t qword;
 
-typedef uint8_t b8; //8位
-typedef uint16_t b16; //16位
-typedef uint32_t b32; //32位
-typedef uint64_t b64; //64位
+/** 8位 */
+typedef uint8_t b8;
+/** 16位 */
+typedef uint16_t b16;
+/** 32位 */
+typedef uint32_t b32;
+/** 64位 */
+typedef uint64_t b64;
 
 // 获取机器位数
 #if BITS==16
-typedef b16 generic_bits;
+/** 机器位数 */
+typedef b16 machine_bits;
 #elif BITS==32
-typedef b32 generic_bits;
+/** 机器位数 */
+typedef b32 machine_bits;
 #elif BITS==64
-typedef b64 generic_bits;
+/** 机器位数 */
+typedef b64 machine_bits;
 #else
-typedef b64 generic_bits;
+/** 机器位数 */
+typedef b64 machine_bits;
 #endif
 
-typedef b16 sreg_t; //段寄存器
-typedef generic_bits reg_t; //寄存器
-
-typedef generic_bits gbits_t;
+/** 段寄存器 */
+typedef b16 sreg_t;
+/** 寄存器 */
+typedef machine_bits reg_t;
+/** 机器位数 */
+typedef machine_bits mbits_t;

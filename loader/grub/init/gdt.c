@@ -31,11 +31,19 @@ desc_t GDT[64];
  */
 dptr_t GDTR;
 
+/**
+ * @brief 初始化空描述符
+ * 
+ */
 static void init_empty_desc(void) {
     raw_desc_t empty = {};
     GDT[0] = build_descriptor(empty);
 }
 
+/**
+ * @brief 初始化代码段描述符
+ * 
+ */
 static void init_code_desc(void) {
     raw_desc_t code = {};
 

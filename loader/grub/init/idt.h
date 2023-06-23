@@ -14,16 +14,10 @@
 
 #include <tay/desc.h>
 
-/**
- * @brief IDT
- * 
- */
+/** IDT */
 extern gate_desc_t IDT[256];
 
-/**
- * @brief IDTR
- * 
- */
+/** IDTR */
 extern dptr_t IDTR;
 
 /**

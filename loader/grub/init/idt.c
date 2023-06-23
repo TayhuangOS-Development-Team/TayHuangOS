@@ -18,10 +18,7 @@
 #include <tay/io.h>
 #include <tay/ports.h>
 
-/**
- * @brief IDT
- * 
- */
+/** IDT */
 gate_desc_t IDT[256];
 /**
  * @brief IDTR

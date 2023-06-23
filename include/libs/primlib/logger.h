@@ -37,9 +37,13 @@ void __ll_log__(const char *name, const char *level, const char *msg);
  * 
  */
 typedef enum {
+    /** 信息 */
     INFO = 0,
+    /** 警告 */
     WARNING,
+    /** 错误 */
     ERROR,
+    /** 致命错误 */
     FATAL
 } log_level_t;
 

@@ -38,12 +38,17 @@ void panic_failure(const char *expression, const char *file, const char *base_fi
  */
 void panic(const char *format, ...);
 
+// 不开启DEBUG
 #ifdef NDEBUG
+    /** 断言 */
     #define assert(expression) ((void)0)
+    /** 崩溃断言 */
     #define panic_assert(expression) ((void)0)
 #else
+    /** 断言 */
     #define assert(expression) if (! (expression)) \
         assertion_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
+    /** 崩溃断言 */
     #define panic_assert(expression) if (! (expression)) \
         panic_failure(#expression, __FILE__, __BASE_FILE__, __LINE__)
 #endif

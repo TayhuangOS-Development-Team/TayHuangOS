@@ -14,16 +14,10 @@
 
 #include <tay/desc.h>
 
-/**
- * @brief GDT
- * 
- */
+/** GDT */
 extern desc_t GDT[64];
 
-/**
- * @brief GDTR
- * 
- */
+/** GDTR */
 extern dptr_t GDTR;
 
 /**

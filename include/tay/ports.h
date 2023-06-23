@@ -12,13 +12,22 @@
 
 #pragma once
 
-//PIC
-#define M_PIC_BASE    (0x20)
-#define S_PIC_BASE    (0xA0)
-#define M_PIC_CONTROL (M_PIC_BASE + 0)
-#define M_PIC_DATA    (M_PIC_BASE + 1)
-#define S_PIC_CONTROL (S_PIC_BASE + 0)
-#define S_PIC_DATA    (S_PIC_BASE + 1)
+/** 主PIC基端口 */
+#define M_PIC_BASE         (0x20)
+/** 从PIC基端口 */
+#define S_PIC_BASE         (0xA0)
+/** PIC控制端口偏移 */
+#define PIC_CONTROL_OFFSET (0)
+/** PIC数据端口偏移 */
+#define PIC_DATA_OFFSET    (1)
+/** 主PIC控制端口 */
+#define M_PIC_CONTROL      (M_PIC_BASE + PIC_CONTROL_OFFSET)
+/** 主PIC数据端口 */
+#define M_PIC_DATA         (M_PIC_BASE + PIC_DATA_OFFSET)
+/** 从PIC控制端口 */
+#define S_PIC_CONTROL      (S_PIC_BASE + PIC_CONTROL_OFFSET)
+/** 从PIC数据端口 */
+#define S_PIC_DATA         (S_PIC_BASE + PIC_DATA_OFFSET)
 
 //CMOS RAM
 #define CMOS_RAM_BASE    (0x70)

@@ -12,12 +12,17 @@
 
 #pragma once
 
-#define HUGE_VAL (__builtin_huge_val()) //巨大值
+/** 巨大值 */
+#define HUGE_VAL (__builtin_huge_val())
 
-#define CONSTANT_PI     (3.14159265358979323846) //圆周率
-#define CONSTANT_E      (2.71828182845904523536) //e
-#define CONSTANT_PHI    (0.61803398874989484820) //黄金分割比例
-#define CONSTANT_DELTA  (4.66920160910299067185) //费根鲍姆常数
+/** 圆周率 */
+#define CONSTANT_PI     (3.14159265358979323846)
+/** e */
+#define CONSTANT_E      (2.71828182845904523536)
+/** 黄金分割比例 */
+#define CONSTANT_PHI    (0.61803398874989484820)
+/** 费根鲍姆常数 */
+#define CONSTANT_DELTA  (4.66920160910299067185)
 
 double sin(double x); // 正弦
 double cos(double x); // 余弦

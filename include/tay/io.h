@@ -1,107 +1,193 @@
-/* 
+/**
+ * @file io.h
+ * @author theflysong (song_of_the_fly@163.com)
+ * @brief IO函数
+ * @version alpha-1.0.0
+ * @date 2023-06-23
+ * 
+ * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * -------------------------------*-TayhuangOS-*-----------------------------------
- *
- *   Copyright (C) 2022, 2022 TayhuangOS Development Team - All Rights Reserved
- *
- * --------------------------------------------------------------------------------
- *
- * 作者: theflysong
- *
- * io.h
- *
- * In&Out
- *
+ * 
  */
-
-
 
 #pragma once
 
 #include <tay/types.h>
 
-static inline byte inb(word port) { //in字节
+/**
+ * @brief 读字节
+ * 
+ * @param port 端口
+ * @return 读到的字节 
+ */
+inline static byte inb(word port) {
     byte data;
     asm volatile ("inb %1, %0" : "=a"(data) : "dN"(port));
     return data;
 }
 
-static inline void outb(word port, byte data) { //out字节
+/**
+ * @brief 写字节
+ * 
+ * @param port 端口
+ * @param data 数据
+ */
+inline static void outb(word port, byte data) {
     asm volatile ("outb %0, %1" : : "a"(data), "dN"(port));
 }
 
-static inline word inw(word port) { //in字
+/**
+ * @brief 读字
+ * 
+ * @param port 端口
+ * @return 读到的字 
+ */
+inline static word inw(word port) {
     word data;
     asm volatile ("inw %1, %0" : "=a"(data) : "dN"(port));
     return data;
 }
 
-static inline void outw(word port, word data) { //out字
+/**
+ * @brief 写字节
+ * 
+ * @param port 端口
+ * @param data 数据
+ */
+inline static void outw(word port, word data) {
     asm volatile ("outw %0, %1" : : "a"(data), "dN"(port));
 }
 
-static inline dword ind(word port) { //in双字
+/**
+ * @brief 读双字
+ * 
+ * @param port 端口
+ * @return 读到的双字 
+ */
+inline static dword ind(word port) {
     dword data;
     asm volatile ("inl %1, %0" : "=a"(data) : "dN"(port));
     return data;
 }
 
-static inline void outd(word port, dword data) { //out双字
+/**
+ * @brief 写双字
+ * 
+ * @param port 端口 
+ * @param data 数据
+ */
+inline static void outd(word port, dword data) {
     asm volatile ("outl %0, %1" : : "a"(data), "dN"(port));
 }
 
-static inline sreg_t rdcs(void) { //读取cs值
+/**
+ * @brief 读取cs
+ * 
+ * @return cs 
+ */
+inline static sreg_t rdcs(void) {
     sreg_t reg;
     asm volatile ("movw %%cs, %0" : "=rm"(reg));
     return reg;
 }
 
-static inline b16 rdds(void) { //读取ds值
+
+/**
+ * @brief 读取ds
+ * 
+ * @return ds 
+ */
+inline static b16 rdds(void) {
     sreg_t reg;
     asm volatile ("movw %%ds, %0" : "=rm"(reg));
     return reg;
 }
 
-static inline void stds(sreg_t reg) {
+/**
+ * @brief 写ds
+ * 
+ * @param reg ds
+ */
+inline static void stds(sreg_t reg) {
     asm volatile ("movw %0, %%ds" : : "rm"(reg));
 }
 
-static inline sreg_t rdes(void) { //读取es值
+/**
+ * @brief 读取es
+ * 
+ * @return es 
+ */
+inline static sreg_t rdes(void) {
     sreg_t reg;
     asm volatile ("movw %%es, %0" : "=rm"(reg));
     return reg;
 }
 
-static inline void stes(sreg_t reg) {
+/**
+ * @brief 写es
+ * 
+ * @param reg es
+ */
+inline static void stes(sreg_t reg) {
     asm volatile ("movw %0, %%es" : : "rm"(reg));
 }
 
-static inline sreg_t rdfs(void) { //读取fs值
+/**
+ * @brief 读取fs
+ * 
+ * @return es 
+ */
+inline static sreg_t rdfs(void) {
     sreg_t reg;
     asm volatile ("movw %%fs, %0" : "=rm"(reg));
     return reg;
 }
 
-static inline void stfs(sreg_t reg) {
+/**
+ * @brief 写fs
+ * 
+ * @param reg fs
+ */
+inline static void stfs(sreg_t reg) {
     asm volatile ("movw %0, %%fs" : : "rm"(reg));
 }
 
-static inline sreg_t rdgs(void) { //读取gs值
+/**
+ * @brief 读取gs
+ * 
+ * @return gs 
+ */
+inline static sreg_t rdgs(void) {
     sreg_t reg;
     asm volatile ("movw %%gs, %0" : "=rm"(reg));
     return reg;
 }
 
-static inline void stgs(sreg_t reg) {
+/**
+ * @brief 写gs
+ * 
+ * @param reg gs
+ */
+inline static void stgs(sreg_t reg) {
     asm volatile ("movw %0, %%gs" : : "rm"(reg));
 }
 
-static inline sreg_t rdss(void) { //读取ss值
+/**
+ * @brief 读取ss
+ * 
+ * @return ss 
+ */
+inline static sreg_t rdss(void) {
     sreg_t reg;
     asm volatile ("movw %%ss, %0" : "=rm"(reg));
     return reg;
 }
 
-static inline void stss(sreg_t reg) {
+/**
+ * @brief 写ss
+ * 
+ * @param reg ss
+ */
+inline static void stss(sreg_t reg) {
     asm volatile ("movw %0, %%ss" : : "rm"(reg));
 }

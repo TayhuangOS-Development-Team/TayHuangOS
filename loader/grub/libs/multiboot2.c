@@ -19,52 +19,34 @@
  * 应GRUB2要求实现
  */
 struct tayhuang_header {
-    /**
-     * @brief Mulitiboot2 头
-     */
+    /** Mulitiboot2 头 */
     struct multiboot_header header;
     //若启用VBE
 #ifdef VBE_ENABLE
-    /**
-     * @brief 屏幕信息
-     */
+    /** 屏幕信息 */
     struct multiboot_header_tag_framebuffer framebuffer;
-    /**
-     * @brief 保留位 仅供对齐
-     */
+    /** 保留位 仅供对齐 */
     multiboot_uint32_t reserved0;
 #endif
-    /**
-     * @brief Mulitiboot2 尾
-     */
+    /** Mulitiboot2 尾 */
     struct multiboot_header_tag end;
 } 
 //按字节对齐
 __attribute__((packed));
 
-/**
- * @brief 屏幕宽
- */
+/** 屏幕宽 */
 #define FRAMEBUFFER_WIDTH 1024
 
-/**
- * @brief 屏幕高
- */
+/** 屏幕高 */
 #define FRAMEBUFFER_HEIGHT 768
 
-/**
- * @brief 像素位深 
- */
+/** 像素位深 */
 #define FRAMEBUFFER_BPP 24
 
-/**
- * @brief 架构 
- */
+/** 架构 */
 #define ARCHITECTURE MULTIBOOT_ARCHITECTURE_I386
 
-/**
- * @brief 校验码 
- */
+/** 校验码 */
 #define CHECKSUM -(MULTIBOOT2_HEADER_MAGIC + ARCHITECTURE + sizeof(struct tayhuang_header))
 
 /**

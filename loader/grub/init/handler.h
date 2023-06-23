@@ -39,10 +39,7 @@ typedef struct {
         ss;
 } istack_t;
 
-/**
- * @brief 中断处理器
- * 
- */
+/** 中断处理器 */
 typedef bool(*irq_handler_t)(int irq, istack_t *stack);
 
 extern irq_handler_t irq_handlers[32];

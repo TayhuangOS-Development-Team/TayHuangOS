@@ -15,9 +15,7 @@
 #include <tay/types.h>
 #include <stddef.h>
 
-/**
- * @brief 堆大小
- */
+/** 堆大小 */
 #define HEAP_SIZE (512 * 1024)
 
 /**
