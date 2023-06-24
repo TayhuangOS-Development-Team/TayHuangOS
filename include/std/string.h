@@ -21,7 +21,7 @@ inline static void memset(void *dst, int val, size_t sz) {
     __asm__ __volatile__ ("\
 cld\n\
 rep\n\
-stosb" : : "c"(sz), "a"(_val), "D"(dst));
+stosb" : : "c"(sz), "a"(_val), "D"(dst) : "memory");
 }
 
 // memcpy
@@ -30,7 +30,7 @@ inline static void memcpy(void *dst, const void *src, size_t sz) {
     __asm__ __volatile__ ("\
 cld\n\
 rep\n\
-movsb" : : "c"(sz), "S"(src), "D"(dst));
+movsb" : : "c"(sz), "S"(src), "D"(dst) : "memory");
 }
 
 // 比较字符串
@@ -223,7 +223,7 @@ inline static void *memmove(void *dst, const void *src, int size) {
 		__asm__("\
 	cld\n\
 	rep\n\
-	movsb" :: "c"(size), "S"(src), "D"(dst)
+	movsb" :: "c"(size), "S"(src), "D"(dst) : "memory"
 		);
 	}
 	else {
@@ -231,7 +231,7 @@ inline static void *memmove(void *dst, const void *src, int size) {
 		__asm__("\
 	std\n\
 	rep\n\
-	movsb" :: "c"(size), "S"(src + size - 1), "D"(dst + size - 1)
+	movsb" :: "c"(size), "S"(src + size - 1), "D"(dst + size - 1) : "memory"
 		);
 	}
 	return dst;
