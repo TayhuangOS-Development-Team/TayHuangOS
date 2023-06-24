@@ -56,8 +56,7 @@ void main(void) {
     asm volatile ("sti");
     
     disk_t *disk = load_disk(IDE0_BASE, IDE0_BASE2, false);
-    log_info("%s", disk->serial);
-    log_info("%s", disk->model);
+    log_disk(disk);
 
     while (true);
     

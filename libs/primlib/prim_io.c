@@ -12,6 +12,7 @@
 
 #include <primlib/prim_io.h>
 #include <primlib/tostring.h>
+#include <primlib/logger.h>
 
 #include <stdbool.h>
 #include <ctype.h>
@@ -208,11 +209,12 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
                     
                     // 若大写
                     if (flag & FLAG_UPPER) {
-                        // 遍历改为大写字母
-                        for (int i = 0 ; i < strlen(_buffer) ; i ++) {
-                            if (islower(_buffer[i])) {
-                                _buffer[i] = toupper(_buffer[i]);
+                        char *__buffer = _buffer;
+                        while (*__buffer != '\0') {
+                            if (islower(*__buffer)) {
+                                *__buffer = toupper(*__buffer);
                             }
+                            __buffer ++;
                         }
                     }
                 }

@@ -76,7 +76,7 @@
 /** IDE通道特征端口偏移 */
 #define IDE_FEATURES         (1)
 /** IDE通道扇区计数端口偏移 */
-#define IDE_SECTOR_COUNTER   (2)
+#define IDE_SECTOR_COUNT  (2)
 /** IDE通道LBA(低字节)端口偏移 */
 #define IDE_LBA_LOW          (3)
 /** IDE通道LBA(中字节)端口偏移 */

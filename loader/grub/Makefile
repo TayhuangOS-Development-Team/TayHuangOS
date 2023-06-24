@@ -20,7 +20,7 @@ args-ld := flags-ld="$(flags-ld)" script-ld="$(path-d)/grub.ld"
 flags-c := -Wall -Wno-int-conversion -Wstrict-prototypes \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
-		   -fno-toplevel-reorder -fno-tree-scev-cprop -Os
+		   -fno-toplevel-reorder -fno-tree-scev-cprop -O0
 
 include-c := -I$(path-include) -I$(path-include)/std/ -I$(path-include)/libs/ -I$(path-d) -I./third_party/include/
 
