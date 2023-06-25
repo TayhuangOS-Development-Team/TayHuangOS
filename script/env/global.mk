@@ -6,4 +6,6 @@ path-img := $(path-e)/tayhuangOS.img
 path-lib := $(path-e)/libs/
 path-include := $(path-e)/include/
 
+offset-kernel ?= 1048576
+
 q ?= @

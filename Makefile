@@ -3,7 +3,6 @@ global-env := ./script/env/global.mk
 -include ./config.mk
 
 image-sectors ?= 262144
-offset-kernel ?= 1048576
 
 architecture ?= x86_64
 mode-boot ?= bios

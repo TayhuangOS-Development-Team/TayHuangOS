@@ -56,7 +56,20 @@ void main(void) {
     asm volatile ("sti");
     
     disk_t *disk = load_disk(IDE0_BASE, IDE0_BASE2, false);
-    log_disk(disk);
+
+    partition_t *bootpart = NULL;
+    for (int i = 0 ; i < 4 ; i ++) {
+        if (disk->primparts[i] != NULL && disk->primparts[i]->bootable) {
+            bootpart = disk->primparts[i];
+        }
+    }
+
+    if (bootpart == NULL) {
+        log_fatal("Couldn't found boot partition!");
+        while (true);
+    }
+
+    log_part(bootpart, 0);
 
     while (true);
     
