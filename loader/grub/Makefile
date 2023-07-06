@@ -9,7 +9,7 @@ target := $(path-bin)/grub/grubld.bin
 
 objects := main.o
 
-subdirs := init/ libs/ device/
+subdirs := init/ libs/ device/ device/fs/
 
 include $(foreach subdir, $(subdirs), $(path-d)/$(subdir)/include.mk)
 
@@ -32,7 +32,7 @@ flags-asm :=
 
 args-asm := flags-asm="$(flags-asm)"
 
-args := $(args-ld) $(args-c) $(args-asm) libraries=primlib
+args := $(args-ld) $(args-c) $(args-asm) libraries=bcl
 
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 

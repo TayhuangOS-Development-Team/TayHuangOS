@@ -21,7 +21,7 @@
 #include <libs/capi.h>
 #include <libs/debug.h>
 
-#include <primlib/logger.h>
+#include <bcl/logger.h>
 
 #include <device/disk.h>
 
@@ -65,7 +65,7 @@ void main(void) {
     }
 
     if (bootpart == NULL) {
-        log_fatal("Couldn't found boot partition!");
+        lfatal("Couldn't found boot partition!");
         while (true);
     }
 

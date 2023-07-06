@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <primlib/logger.h>
+#include <bcl/logger.h>
 
 void init_serial(void);
 void write_serial_char(char ch);

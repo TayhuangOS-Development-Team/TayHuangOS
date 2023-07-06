@@ -29,9 +29,9 @@ enum sysid_enum {
  */
 typedef struct __partition_struct__ {
     /** 偏移 */
-    dword offset;
+    dword off;
     /** 绝对偏移(相对硬盘起始位置) */
-    dword abs_offset;
+    dword absoff;
     /** 可启动 */
     bool bootable;
     /** 大小(扇区数) */
@@ -75,7 +75,7 @@ typedef struct {
     /** 特征 */
     b8 features;
     /** 扇区计数 */
-    b8 sector_count;
+    b8 sectcnt;
     /** LBA */
     b32 lba;
     /** 命令 */
@@ -125,10 +125,10 @@ disk_t *load_disk(word base, word base2, bool slave);
  * @brief 加载分区
  * 
  * @param disk 磁盘
- * @param offset 偏移
+ * @param off 偏移
  * @param parts 分区数组
  */
-void load_parts(disk_t *disk, dword offset, partition_t **parts);
+void load_parts(disk_t *disk, dword off, partition_t **parts);
 
 /**
  * @brief 输出日志（分区信息）
@@ -150,12 +150,12 @@ void log_disk(disk_t *disk);
  * 
  * @param disk 硬盘 
  * @param lba LBA
- * @param sectors 扇区数 
+ * @param cnt 扇区数 
  * @param dst 目标地址
  * @return true 读成功
  * @return false 读失败
  */
-bool read_disk_sector(disk_t *disk, dword lba, dword sectors, void *dst);
+bool read_disk_sector(disk_t *disk, dword lba, dword cnt, void *dst);
 
 /**
  * @brief 读扇区
@@ -163,9 +163,9 @@ bool read_disk_sector(disk_t *disk, dword lba, dword sectors, void *dst);
  * @param disk 硬盘 
  * @param part 分区
  * @param lba LBA
- * @param sectors 扇区数 
+ * @param cnt 扇区数 
  * @param dst 目标地址
  * @return true 读成功
  * @return false 读失败
  */
-bool read_part_sector(disk_t *disk, partition_t *part, dword lba, dword sectors, void *dst);
+bool read_part_sector(disk_t *disk, partition_t *part, dword lba, dword cnt, void *dst);

@@ -11,7 +11,7 @@
  */
 
 #include <init/handler.h>
-#include <primlib/logger.h>
+#include <bcl/logger.h>
 #include <stddef.h>
 #include <tay/ports.h>
 #include <tay/io.h>
@@ -63,7 +63,7 @@ static int ticks = 0;
 
 bool clock_handler(int irq, istack_t *stack) {
     ticks ++;
-    log_info("Ticks=%d", ticks);
+    linfo("Ticks=%d", ticks);
 
     return false;
 }
@@ -88,11 +88,11 @@ void primary_irq_handler(int irq, istack_t *stack) {
     //发送EOI
     send_eoi(irq);
 
-    log_info("接收到IRQ=%02X", irq);
+    linfo("接收到IRQ=%02X", irq);
 
     if (irq_handlers[irq] != NULL) {
         if (! irq_handlers[irq](irq, stack)) {
-            log_error("解决IRQ=%02X失败!", irq);
+            lerror("解决IRQ=%02X失败!", irq);
             return; //不再开启该中断
         }
     }
@@ -184,30 +184,30 @@ static const exception_solution_t solution_list[] = {
  * @param stack 堆栈
  */
 void primary_exception_handler(int errno, istack_t *stack) {
-    log_error("在%04X:%08X处发生错误:", stack->cs, stack->eip);
-    log_error("%s", exception_msg[errno]);
+    lerror("在%04X:%08X处发生错误:", stack->cs, stack->eip);
+    lerror("%s", exception_msg[errno]);
 
     if (errcode != 0xFFFFFFFF) {
-        log_error("Error Code = %08X", errcode);
+        lerror("Error Code = %08X", errcode);
     }
 
-    log_error("现场已保存:");
+    lerror("现场已保存:");
 
-    log_error("eax: %08X ; ebx: %08X ; ecx: %08X ; edx: %08X", stack->eax, stack->ebx, stack->ecx, stack->edx);
-    log_error("esi: %08X ; edi: %08X ; esp: %08X ; ebp: %08X", stack->esi, stack->edi, stack->esp, stack->ebp);
+    lerror("eax: %08X ; ebx: %08X ; ecx: %08X ; edx: %08X", stack->eax, stack->ebx, stack->ecx, stack->edx);
+    lerror("esi: %08X ; edi: %08X ; esp: %08X ; ebp: %08X", stack->esi, stack->edi, stack->esp, stack->ebp);
 
-    log_error(" ds: %04X     ;  es: %04X     ;  fs: %04X     ;  gs: %04X    ", stack->ds, stack->es, stack->fs, stack->gs);
+    lerror(" ds: %04X     ;  es: %04X     ;  fs: %04X     ;  gs: %04X    ", stack->ds, stack->es, stack->fs, stack->gs);
 
-    log_error("cr3: %08X ; eflags: %08X", stack->cr3, stack->eflags);
+    lerror("cr3: %08X ; eflags: %08X", stack->cr3, stack->eflags);
 
     if (solution_list[errno] != NULL) {
         if (! solution_list[errno]()) {
-            log_fatal("解决异常%02X失败!", errno);
+            lfatal("解决异常%02X失败!", errno);
             while (true);
         }
     }
     else {
-        log_fatal("无法解决异常%02X!", errno);
+        lfatal("无法解决异常%02X!", errno);
         while (true);
     }
 }

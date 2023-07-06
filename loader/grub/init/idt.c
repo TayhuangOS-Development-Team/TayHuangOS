@@ -13,7 +13,7 @@
 #include <init/idt.h>
 #include <init/handler.h>
 
-#include <primlib/logger.h>
+#include <bcl/logger.h>
 
 #include <tay/io.h>
 #include <tay/ports.h>

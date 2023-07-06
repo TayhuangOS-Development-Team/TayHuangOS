@@ -10,29 +10,28 @@
  * 
  */
 
-#include <primlib/logger.h>
-#include <primlib/prim_io.h>
+#include <bcl/logger.h>
+#include <bcl/bio.h>
 #include <stddef.h>
 
 // 日志名
 static const char *logger_name = NULL;
 
 // 输出流
-static prim_output_func ostream;
+static bputs_t lputs;
 
 /**
  * @brief 初始化 ulogger
  * 
- * @param output 输出函数
+ * @param bputs 输出函数
  * @param name 程序名
  */
-void init_ulogger(prim_output_func output, const char *name) {
-    pprintf(output, "[ULogger/INFO]为[%s]初始化日志器中.\n", name);
+void init_ulogger(bputs_t bputs, const char *name) {
+    bprintf(bputs, "[BCL Logger/INFO]为[%s]初始化日志器中.\n", name);
 
     // 初始化
-
     logger_name = name;
-    ostream = output;
+    lputs = bputs;
 }
 
 /**
@@ -43,7 +42,7 @@ void init_ulogger(prim_output_func output, const char *name) {
  * @param msg 日志消息
  */
 void __ll_log__(const char *name, const char *level, const char *msg) {
-    pprintf(ostream, "[%s/%s]%s\n", name, level, msg);
+    bprintf(lputs, "[%s/%s]%s\n", name, level, msg);
 }
 
 /**
@@ -87,7 +86,7 @@ void __logv__(log_level_t level, const char *fmt, va_list args) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_info(const char *fmt, ...) {
+void linfo(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
@@ -101,7 +100,7 @@ void log_info(const char *fmt, ...) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_warning(const char *fmt, ...) {
+void lwarn(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
@@ -115,7 +114,7 @@ void log_warning(const char *fmt, ...) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_error(const char *fmt, ...) {
+void lerror(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
@@ -129,7 +128,7 @@ void log_error(const char *fmt, ...) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_fatal(const char *fmt, ...) {
+void lfatal(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 

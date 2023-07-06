@@ -10,7 +10,7 @@
  * 
  */
 
-#include <primlib/tostring.h>
+#include <bcl/tostring.h>
 
 // 数字表
 static const char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";

@@ -26,7 +26,7 @@ path-objects := $(path-e)/build/objects/
 arg-basic := architecture=$(architecture) global-env=$(global-env) path-bin=$(path-bin) path-objects=$(path-objects)
 
 build:
-	$(q)$(MAKE) -f $(path-e)/libs/primlib/Makefile $(arg-basic) $@
+	$(q)$(MAKE) -f $(path-e)/libs/bcl/Makefile $(arg-basic) $@
 	
 	$(q)$(MAKE) -f $(path-e)/loader/grub/Makefile $(arg-basic) $@
 
@@ -44,5 +44,5 @@ stat_code:
 
 gendoc:
 	$(q)$(MAKE) $(doc-generator)=$(path-d)/DoxygenFile $@
-	$(q)$(MAKE) -f $(path-e)/libs/primlib/Makefile $(arg-basic) $@
+	$(q)$(MAKE) -f $(path-e)/libs/bcl/Makefile $(arg-basic) $@
 	$(q)$(MAKE) -f $(path-e)/loader/grub/Makefile $(arg-basic) $@

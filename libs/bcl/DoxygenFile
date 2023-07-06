@@ -1,10 +1,10 @@
 QUIET                  = YES
 WARNINGS               = YES
-INPUT                  = ./libs/primlib/
-OUTPUT_DIRECTORY       = ./doc/api/primlib
-PROJECT_NAME           = "TayhuangOS Primlib"
+INPUT                  = ./libs/bcllib/
+OUTPUT_DIRECTORY       = ./doc/api/bcllib
+PROJECT_NAME           = "TayhuangOS Basic C Library"
 PROJECT_NUMBER         =
-PROJECT_BRIEF          = Primlib
+PROJECT_BRIEF          = "Basic C Library"
 PROJECT_LOGO           =
 FILE_PATTERNS          = *.c \
                          *.h

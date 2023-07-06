@@ -1,9 +1,10 @@
 QUIET                  = YES
 WARNINGS               = YES
 INPUT                  = ./loader/grub/ \
+                         ./loader/grub/device/fs/ \
                          ./loader/grub/device/ \
                          ./loader/grub/init/ \
-                         ./loader/grub/libs
+                         ./loader/grub/libs/
 OUTPUT_DIRECTORY       = ./doc/api/loader
 PROJECT_NAME           = "TayhuangOS GRUB2 Loader"
 PROJECT_NUMBER         =

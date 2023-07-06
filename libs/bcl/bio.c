@@ -1,5 +1,5 @@
 /**
- * @file prim_io.h
+ * @file bio.h
  * @author theflysong (song_of_the_fly@163.com)
  * @brief primitive io - 实现
  * @version alpha-1.0.0
@@ -10,9 +10,9 @@
  * 
  */
 
-#include <primlib/prim_io.h>
-#include <primlib/tostring.h>
-#include <primlib/logger.h>
+#include <bcl/bio.h>
+#include <bcl/tostring.h>
+#include <bcl/logger.h>
 
 #include <stdbool.h>
 #include <ctype.h>
@@ -320,18 +320,18 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
 }
 
 /**
- * @brief 使用func输出
+ * @brief 使用bputs输出
  * 
- * @param func 输出函数
+ * @param bputs 输出函数
  * @param fmt 格式化字符串
  * @param args 参数
  * @return 输出字符数 
  */
-int vpprintf(prim_output_func func, const char *fmt, va_list args) {
+int vbprintf(bputs_t bputs, const char *fmt, va_list args) {
     char buffer[512];
 
     int ret = __llprintf(buffer, fmt, args);
-    func(buffer);
+    bputs(buffer);
 
     return ret;
 }
@@ -349,19 +349,19 @@ int vsprintf(char *buffer, const char *fmt, va_list args) {
 }
 
 /**
- * @brief 使用func输出
+ * @brief 使用bputs输出
  * 
- * @param func 输出函数
+ * @param bputs 输出函数
  * @param fmt 格式化字符串
  * @param ... 参数
  * @return 输出字符数
  */
-int pprintf(prim_output_func func, const char *fmt, ...) {
+int bprintf(bputs_t bputs, const char *fmt, ...) {
     // 初始化可变参数
     va_list lst;
     va_start(lst, fmt);
 
-    int ret = vpprintf(func, fmt, lst);
+    int ret = vbprintf(bputs, fmt, lst);
 
     va_end(lst);
     return ret;
@@ -387,32 +387,32 @@ int sprintf(char *buffer, const char *fmt, ...)  {
 }
 
 /**
- * @brief 使用func输入
+ * @brief 使用bgetchar输入
  * 
- * @param func 输入函数
+ * @param bgetchar 输入函数
  * @param fmt 格式化字符串
  * @param args 参数
  * @return 输入字符数 
  */
-int vpscanf(prim_getchar_func func, const char *fmt, va_list args) {
+int vbscanf(bgetchar_t bgetchar, const char *fmt, va_list args) {
     // TODO
     return 0;
 }
 
 /**
- * @brief 使用func输入
+ * @brief 使用bgetchar输入
  * 
- * @param func 输入函数
+ * @param bgetchar 输入函数
  * @param fmt 格式化字符串
  * @param ... 参数
  * @return 输入字符数 
  */
-int pscanf(prim_getchar_func func, const char *fmt, ...) {
+int bscanf(bgetchar_t bgetchar, const char *fmt, ...) {
     // 初始化可变参数
     va_list lst;
     va_start(lst, fmt);
 
-    int ret = vpscanf(func, fmt, lst);
+    int ret = vbscanf(bgetchar, fmt, lst);
 
     va_end(lst);
     return ret;

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <primlib/prim_io.h>
+#include <bcl/bio.h>
 #include <stdarg.h>
 
 /**
@@ -21,7 +21,7 @@
  * @param output 输出函数
  * @param name 程序名
  */
-void init_ulogger(prim_output_func output, const char *name);
+void init_ulogger(bputs_t bputs, const char *name);
 
 /**
  * @brief 输出日志
@@ -69,25 +69,25 @@ void __logv__(log_level_t level, const char *fmt, va_list args);
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_info(const char *fmt, ...);
+void linfo(const char *fmt, ...);
 
 /**
  * @brief 输出警告
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_warning(const char *fmt, ...);
+void lwarn(const char *fmt, ...);
 
 /**
  * @brief 输出错误
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_error(const char *fmt, ...);
+void lerror(const char *fmt, ...);
 
 /**
  * @brief 输出致命错误
  * 
  * @param fmt 日志消息格式化字符串
  */
-void log_fatal(const char *fmt, ...);
+void lfatal(const char *fmt, ...);
