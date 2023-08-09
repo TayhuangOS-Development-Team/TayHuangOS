@@ -16,8 +16,24 @@
 #include <tay/ports.h>
 #include <tay/io.h>
 
+/**
+ * @brief 启用中断
+ * 
+ */
+void EnableInterrupt(void) {
+    asm volatile ("sti");
+}
+
+/**
+ * @brief 禁止中断
+ * 
+ */
+void DisableInterrupt(void) {
+    asm volatile ("cli");
+}
+
 //禁用/启用 IRQ
-static void disable_irq(int irq) {
+static void DisableIRQ(int irq) {
     if (irq < 8) {
         //主片
         byte i = inb(M_PIC_BASE + PIC_DATA); 
@@ -32,7 +48,7 @@ static void disable_irq(int irq) {
     }
 }
 
-static void enable_irq(int irq) {
+static void EnableIRQ(int irq) {
     if (irq < 8) {
         //主片
         byte i = inb(M_PIC_BASE + PIC_DATA); 
@@ -50,7 +66,7 @@ static void enable_irq(int irq) {
 #define PIC_EOI (0x20)
 
 //发送EOI
-static void send_eoi(int irq) {
+static void SendEOI(int irq) {
     if (irq > 8) {
         //从片EOI
         outb (S_PIC_BASE + PIC_CONTROL, PIC_EOI); 
@@ -61,7 +77,7 @@ static void send_eoi(int irq) {
 
 static int ticks = 0;
 
-bool clock_handler(int irq, IStack *stack) {
+static bool clockHandler(int irq, IStack *stack) {
     ticks ++;
     LogInfo("Ticks=%d", ticks);
 
@@ -73,7 +89,7 @@ bool clock_handler(int irq, IStack *stack) {
  * 
  */
 IRQHandler irqHandlers[32] = {
-    [0] = clock_handler
+    [0] = clockHandler
 };
 
 /**
@@ -83,10 +99,10 @@ IRQHandler irqHandlers[32] = {
  * @param stack 堆栈
  */
 void PrimaryIRQHandler(int irq, IStack *stack) {
-    disable_irq(irq); 
+    DisableIRQ(irq); 
 
     //发送EOI
-    send_eoi(irq);
+    SendEOI(irq);
 
     LogInfo("接收到IRQ=%02X", irq);
 
@@ -98,14 +114,15 @@ void PrimaryIRQHandler(int irq, IStack *stack) {
     }
 
     //启用同类中断接收
-    enable_irq(irq); 
+    EnableIRQ(irq); 
 }
 
 //---------------------------------------------
 
 int errcode;
 
-static const char *exception_msg[] = { //异常信息
+// 异常信息
+static const char *exceptionMessage[] = {
     "[#DE] 除以0!",
     "[#DB] 单步调试",
     "[无] NMI中断!",
@@ -140,9 +157,9 @@ static const char *exception_msg[] = { //异常信息
     "[保留] 保留!"
 };
 
-typedef bool(*exception_solution_t)(void);
+typedef bool(*ExceptionSolution)(void);
 
-static const exception_solution_t solution_list[] = {
+static const ExceptionSolution solutionList[] = {
     NULL,
     NULL,
     NULL,
@@ -185,7 +202,7 @@ static const exception_solution_t solution_list[] = {
  */
 void PrimaryExceptionHandler(int errno, IStack *stack) {
     LogError("在%04X:%08X处发生错误:", stack->cs, stack->eip);
-    LogError("%s", exception_msg[errno]);
+    LogError("%s", exceptionMessage[errno]);
 
     if (errcode != 0xFFFFFFFF) {
         LogError("Error Code = %08X", errcode);
@@ -200,8 +217,8 @@ void PrimaryExceptionHandler(int errno, IStack *stack) {
 
     LogError("cr3: %08X ; eflags: %08X", stack->cr3, stack->eflags);
 
-    if (solution_list[errno] != NULL) {
-        if (! solution_list[errno]()) {
+    if (solutionList[errno] != NULL) {
+        if (! solutionList[errno]()) {
             LogFatal("解决异常%02X失败!", errno);
             while (true);
         }

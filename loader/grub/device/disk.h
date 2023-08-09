@@ -60,9 +60,9 @@ typedef struct {
     /** 模型 */
     char model[41];
     /** 大小(扇区) */
-    int size;
+    dword size;
     /** 硬盘主扇区(最多4个) */
-    Partition *primitiveParts[4];
+    Partition *mainParts[4];
 } Disk;
 
 /**
@@ -120,6 +120,13 @@ bool SendDiskCmd(Disk *disk, DiskCmd cmd);
  * @return 硬盘 
  */
 Disk *LoadDisk(word base, word base2, bool slave);
+
+/**
+ * @brief 卸载硬盘
+ * 
+ * @param disk 硬盘
+ */
+void UnloadDisk(Disk *disk);
 
 /**
  * @brief 加载分区

@@ -17,13 +17,13 @@ static byte __HEAP__[HEAP_SIZE];
 
 static byte *__HeapPtr__ = __HEAP__;
 
-void *malloc(size_t size) {
+void *lmalloc(size_t size) {
     void *ret = __HeapPtr__;
     __HeapPtr__ += size;
     return ret;
 }
 
-void free(void *ptr) {
+void lfree(void *ptr) {
     // 空实现
 }
 
@@ -33,11 +33,11 @@ static const word charPerLine = 80;
 static word *VIDEO_MEMORY = 0xB8000;
 static const byte printColor = 0x0F;
 
-static void putRawChar(char ch) {
+static void LPutRawChar(char ch) {
     VIDEO_MEMORY[printPosX + printPosY * 80] = (((printColor & 0xFF) << 8) + (ch & 0xFF));
 }
 
-void putchar(char ch) {
+void lputchar(char ch) {
     switch (ch) {
         case '\r':
         case '\n': {
@@ -61,11 +61,11 @@ void putchar(char ch) {
         }
         case '\b': {
             printPosX --;
-            putRawChar(' ');
+            LPutRawChar(' ');
             break;
         }
         default: {
-            putRawChar(ch);
+            LPutRawChar(ch);
             printPosX ++;
         }
     }
@@ -76,9 +76,9 @@ void putchar(char ch) {
     }
 }
 
-void puts(const char *str) {
+void lputs(const char *str) {
     while (*str != '\0') {
-        putchar(*str);
+        lputchar(*str);
         str ++;
     }
 }

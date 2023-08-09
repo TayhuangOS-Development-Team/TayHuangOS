@@ -47,17 +47,26 @@ static void InitEmptyDesc(void) {
 static void InitCodeDesc(void) {
     RawDesc code = {};
 
+    // 平坦模型
     code.base = 0;
-    code.limit = 0xFFFFF; // flat-model
+    code.limit = 0xFFFFF;
 
+    // 内核级可读可执行代码段
     code.dpl = DPL0;
-    code.type = DTYPE_XRCODE; // execute-readable
+    code.type = DTYPE_XRCODE;
 
-    code.system    = true; // data/code segment
+    // 代码/数据段
+    code.system    = true;
+
+    // 存在
     code.present   = true;
     code.avl       = false;
+
+    // 32位段
     code.lm        = false;
     code.db        = true;
+
+    // 4KB粒度
     code.granulity = true;
 
     GDT[CODE_IDX] = BuildDesc(code);
@@ -66,17 +75,26 @@ static void InitCodeDesc(void) {
 static void InitDataDesc(void) {
     RawDesc data = {};
 
+    // 平坦模型
     data.base = 0;
-    data.limit = 0xFFFFF; // flat-model
+    data.limit = 0xFFFFF;
 
+    // 内核级可读写数据段
     data.dpl = DPL0;
     data.type = DTYPE_RWDATA;
 
-    data.system    = true; // data/code segment
+    // 代码/数据段
+    data.system    = true;
+
+    // 存在
     data.present   = true;
     data.avl       = false;
+
+    // 32位段
     data.lm        = false;
     data.db        = true;
+
+    // 4KB粒度
     data.granulity = true;
 
     GDT[DATA_IDX] = BuildDesc(data);
@@ -85,17 +103,26 @@ static void InitDataDesc(void) {
 static void InitKCodeDesc(void) {
     RawDesc kcode = {};
 
+    // 平坦模型
     kcode.base = 0;
-    kcode.limit = 0xFFFFF; // flat-model
+    kcode.limit = 0xFFFFF;
 
+    // 内核级可读可执行代码段
     kcode.dpl = DPL0;
-    kcode.type = DTYPE_XRCODE; // execute-readable
+    kcode.type = DTYPE_XRCODE;
 
-    kcode.system    = true; // data/code segment
+    // 代码/数据段
+    kcode.system    = true;
+
+    // 存在
     kcode.present   = true;
     kcode.avl       = false;
-    kcode.lm        = true; // 64bit
+
+    // 64位段
+    kcode.lm        = true;
     kcode.db        = true;
+
+    // 4KB粒度
     kcode.granulity = true;
 
     GDT[KERCODE_IDX] = BuildDesc(kcode);
@@ -104,17 +131,26 @@ static void InitKCodeDesc(void) {
 static void InitKDataDesc(void) {
     RawDesc kdata = {};
 
+    // 平坦模型
     kdata.base = 0;
-    kdata.limit = 0xFFFFF; // flat-model
+    kdata.limit = 0xFFFFF; 
 
+    // 内核级可读写数据段
     kdata.dpl = DPL0;
-    kdata.type = DTYPE_RWDATA; //read-write
+    kdata.type = DTYPE_RWDATA;
 
-    kdata.system    = true; // data/code segment
+    // 代码/数据段
+    kdata.system    = true;
+
+    // 存在
     kdata.present   = true;
     kdata.avl       = false;
-    kdata.lm        = true; // 64bit
+
+    // 64位段
+    kdata.lm        = true;
     kdata.db        = true;
+
+    // 4KB粒度
     kdata.granulity = true;
 
     GDT[KERDATA_IDX] = BuildDesc(kdata);
@@ -125,18 +161,23 @@ static void InitKDataDesc(void) {
  * 
  */
 void InitGDT(void) {
+    // 初始化描述符
     InitEmptyDesc();
     InitCodeDesc();
     InitDataDesc();
     InitKCodeDesc();
     InitKDataDesc();
 
+    // 初始化GDTR
     GDTR.address = GDT;
     GDTR.size = sizeof(GDT) - 1;
 
     asm volatile ("lgdt %0" : : "m"(GDTR)); //加载GDT
 
+    // 设置段
     stds(DATA_IDX << 3);
+    stes(DATA_IDX << 3);
     stfs(DATA_IDX << 3);
     stgs(DATA_IDX << 3);
+    stss(DATA_IDX << 3);
 }

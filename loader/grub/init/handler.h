@@ -60,6 +60,18 @@ void PrimaryIRQHandler(int irq, IStack *stack);
  */
 void PrimaryExceptionHandler(int errno, IStack *stack);
 
+/**
+ * @brief 启用中断
+ * 
+ */
+void EnableInterrupt(void);
+
+/**
+ * @brief 禁止中断
+ * 
+ */
+void DisableInterrupt(void);
+
 //------------------------------------------
 
 void DivideByZeroFaultHandler(void); //除以0

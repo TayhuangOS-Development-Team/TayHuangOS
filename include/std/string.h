@@ -15,22 +15,22 @@
 #include <stddef.h>
 
 // memset
-inline static void memset(void *dst, int val, size_t sz) {
+inline static void memset(void *dst, int val, size_t size) {
     int _val = val;
 // 字符串设置指令
     __asm__ __volatile__ ("\
 cld\n\
 rep\n\
-stosb" : : "c"(sz), "a"(_val), "D"(dst) : "memory");
+stosb" : : "c"(size), "a"(_val), "D"(dst) : "memory");
 }
 
 // memcpy
-inline static void memcpy(void *dst, const void *src, size_t sz) {
+inline static void memcpy(void *dst, const void *src, size_t size) {
 // 字符串复制指令
     __asm__ __volatile__ ("\
 cld\n\
 rep\n\
-movsb" : : "c"(sz), "S"(src), "D"(dst) : "memory");
+movsb" : : "c"(size), "S"(src), "D"(dst) : "memory");
 }
 
 // 比较字符串
@@ -216,7 +216,7 @@ inline static char *strtok(char *str, const char *split) {
 }
 
 // 从src中复制size个字节到dst中
-inline static void *memmove(void *dst, const void *src, int size) {
+inline static void *memmove(void *dst, const void *src, size_t size) {
 	// 判断是正向复制还是反向复制
 	if (dst < src) {
 		// 正向复制

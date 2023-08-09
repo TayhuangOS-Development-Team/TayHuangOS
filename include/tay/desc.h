@@ -243,7 +243,7 @@ typedef struct TSSStruct TSSDescriptor;
  * @brief IDT属性
  * 
  */
-struct IDTAttribute {
+struct IDTAttributeStruct {
 	/** ist号 */
 	byte ist       : 3;
 	/** 保留 */
@@ -256,7 +256,7 @@ struct IDTAttribute {
 	bool present : 1;
 } __attribute__((packed));
 
-typedef struct IDTAttribute idt_attr_t;
+typedef struct IDTAttributeStruct IDTAttribute;
 
 /**
  * @brief 门描述符
@@ -268,7 +268,7 @@ struct GateStruct {
 	/** 段 */
 	word	   segment;
 	/** 门属性 */
-	idt_attr_t bits;
+	IDTAttribute bits;
 	/** 偏移1 */
 	word	   offset1;
 #if BITS == 64

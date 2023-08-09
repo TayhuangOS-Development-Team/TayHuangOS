@@ -15,6 +15,7 @@
 
 #include <init/gdt.h>
 #include <init/idt.h>
+#include <init/handler.h>
 
 #include <stdbool.h>
 
@@ -25,18 +26,35 @@
 
 #include <device/disk.h>
 
+#include <fs/vfs.h>
+#include <fs/fat32.h>
+
+/**
+ * @brief 初始化文件系统
+ * 
+ */
+void InitFS(void) {
+    RegisterFS(&FAT32FS);
+}
+
 /**
  * @brief 初始化
  * 
  */
 void Init(void) {
+    // Step1. 设置GDT
     InitGDT();
 
+    // Step2. 初始化日志器
     InitSerial();
     InitLogger(WriteSerialStr, "GRUB Loader");
 
+    // Step3. 初始化中断
     InitPIC();
     InitIDT();
+
+    // Step4. 初始化文件系统
+    InitFS();
 }
 
 /**
@@ -44,6 +62,8 @@ void Init(void) {
  * 
  */
 void Terminate(void) {
+    // 永不退出
+    while (true);
 }
 
 /**
@@ -51,27 +71,39 @@ void Terminate(void) {
  * 
  */
 void main(void) {
+    // 初始化
     Init();
 
-    asm volatile ("sti");
+    // 开中断
+    EnableInterrupt();
     
+    // 加载硬盘
     Disk *disk = LoadDisk(IDE0_BASE, IDE0_BASE2, false);
 
+    // 获取启动扇区
     Partition *bootpart = NULL;
     for (int i = 0 ; i < 4 ; i ++) {
-        if (disk->primitiveParts[i] != NULL && disk->primitiveParts[i]->bootable) {
-            bootpart = disk->primitiveParts[i];
+        Partition *part = disk->mainParts[i];
+        // 跳过空分区
+        if (part == NULL) {
+            continue;
+        }
+        
+        // 可启动
+        if (part->bootable) {
+            bootpart = part;
         }
     }
 
+    // 无法找到启动商区
     if (bootpart == NULL) {
         LogFatal("Couldn't found boot partition!");
         while (true);
     }
 
+    // 打印扇区信息
+    LogDisk(disk);
     LogPart(bootpart, 0);
-
-    while (true);
     
     Terminate();
 }
