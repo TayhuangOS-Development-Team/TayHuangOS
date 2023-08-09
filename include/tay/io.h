@@ -4,10 +4,10 @@
  * @brief IO函数
  * @version alpha-1.0.0
  * @date 2023-06-23
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -16,9 +16,9 @@
 
 /**
  * @brief 读字节
- * 
+ *
  * @param port 端口
- * @return 读到的字节 
+ * @return 读到的字节
  */
 inline static byte inb(word port) {
     byte data;
@@ -28,7 +28,7 @@ inline static byte inb(word port) {
 
 /**
  * @brief 写字节
- * 
+ *
  * @param port 端口
  * @param data 数据
  */
@@ -38,9 +38,9 @@ inline static void outb(word port, byte data) {
 
 /**
  * @brief 读字
- * 
+ *
  * @param port 端口
- * @return 读到的字 
+ * @return 读到的字
  */
 inline static word inw(word port) {
     word data;
@@ -50,7 +50,7 @@ inline static word inw(word port) {
 
 /**
  * @brief 写字节
- * 
+ *
  * @param port 端口
  * @param data 数据
  */
@@ -60,9 +60,9 @@ inline static void outw(word port, word data) {
 
 /**
  * @brief 读双字
- * 
+ *
  * @param port 端口
- * @return 读到的双字 
+ * @return 读到的双字
  */
 inline static dword ind(word port) {
     dword data;
@@ -72,8 +72,8 @@ inline static dword ind(word port) {
 
 /**
  * @brief 写双字
- * 
- * @param port 端口 
+ *
+ * @param port 端口
  * @param data 数据
  */
 inline static void outd(word port, dword data) {
@@ -82,8 +82,8 @@ inline static void outd(word port, dword data) {
 
 /**
  * @brief 读取cs
- * 
- * @return cs 
+ *
+ * @return cs
  */
 inline static SegmentRegister rdcs(void) {
     SegmentRegister reg;
@@ -94,8 +94,8 @@ inline static SegmentRegister rdcs(void) {
 
 /**
  * @brief 读取ds
- * 
- * @return ds 
+ *
+ * @return ds
  */
 inline static b16 rdds(void) {
     SegmentRegister reg;
@@ -105,7 +105,7 @@ inline static b16 rdds(void) {
 
 /**
  * @brief 写ds
- * 
+ *
  * @param reg ds
  */
 inline static void stds(SegmentRegister reg) {
@@ -114,8 +114,8 @@ inline static void stds(SegmentRegister reg) {
 
 /**
  * @brief 读取es
- * 
- * @return es 
+ *
+ * @return es
  */
 inline static SegmentRegister rdes(void) {
     SegmentRegister reg;
@@ -125,7 +125,7 @@ inline static SegmentRegister rdes(void) {
 
 /**
  * @brief 写es
- * 
+ *
  * @param reg es
  */
 inline static void stes(SegmentRegister reg) {
@@ -134,8 +134,8 @@ inline static void stes(SegmentRegister reg) {
 
 /**
  * @brief 读取fs
- * 
- * @return es 
+ *
+ * @return es
  */
 inline static SegmentRegister rdfs(void) {
     SegmentRegister reg;
@@ -145,7 +145,7 @@ inline static SegmentRegister rdfs(void) {
 
 /**
  * @brief 写fs
- * 
+ *
  * @param reg fs
  */
 inline static void stfs(SegmentRegister reg) {
@@ -154,8 +154,8 @@ inline static void stfs(SegmentRegister reg) {
 
 /**
  * @brief 读取gs
- * 
- * @return gs 
+ *
+ * @return gs
  */
 inline static SegmentRegister rdgs(void) {
     SegmentRegister reg;
@@ -165,7 +165,7 @@ inline static SegmentRegister rdgs(void) {
 
 /**
  * @brief 写gs
- * 
+ *
  * @param reg gs
  */
 inline static void stgs(SegmentRegister reg) {
@@ -174,8 +174,8 @@ inline static void stgs(SegmentRegister reg) {
 
 /**
  * @brief 读取ss
- * 
- * @return ss 
+ *
+ * @return ss
  */
 inline static SegmentRegister rdss(void) {
     SegmentRegister reg;
@@ -185,7 +185,7 @@ inline static SegmentRegister rdss(void) {
 
 /**
  * @brief 写ss
- * 
+ *
  * @param reg ss
  */
 inline static void stss(SegmentRegister reg) {

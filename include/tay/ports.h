@@ -4,10 +4,10 @@
  * @brief 端口表
  * @version alpha-1.0.0
  * @date 2023-04-30
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once

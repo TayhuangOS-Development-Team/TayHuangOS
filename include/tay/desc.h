@@ -4,10 +4,10 @@
  * @brief 描述符
  * @version alpha-1.0.0
  * @date 2022-12-31
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 /**
  * @brief 特权级
- * 
+ *
  */
 enum DPLList {
 	/** DPL=0 */
@@ -39,7 +39,7 @@ enum DPLList {
 
 /**
  * @brief 描述符类型
- * 
+ *
  */
 enum DescTypes {
 	/** 数据段(只读) */
@@ -102,7 +102,7 @@ enum DescTypes {
 
 /**
  * @brief 描述符(未处理)
- * 
+ *
  */
 typedef struct {
 	/** 段界限 */
@@ -129,7 +129,7 @@ typedef struct {
 
 /**
  * @brief 描述符
- * 
+ *
  */
 struct DescStruct {
 	/** 段界限0 */
@@ -164,7 +164,7 @@ typedef struct DescStruct Descriptor;
 
 /**
  * @brief 处理描述符
- * 
+ *
  * @param raw 未处理描述符
  * @return 已处理描述符
  */
@@ -193,7 +193,7 @@ inline static Descriptor BuildDesc(RawDesc raw) {
 
 /**
  * @brief 描述符表指针
- * 
+ *
  */
 struct DescPtr {
 	/** 大小 */
@@ -206,7 +206,7 @@ typedef struct DescPtr DPTR;
 
 /**
  * @brief TSS项
- * 
+ *
  */
 struct TSSStruct {
 	/** 界限0 */
@@ -241,7 +241,7 @@ typedef struct TSSStruct TSSDescriptor;
 
 /**
  * @brief IDT属性
- * 
+ *
  */
 struct IDTAttributeStruct {
 	/** ist号 */
@@ -260,7 +260,7 @@ typedef struct IDTAttributeStruct IDTAttribute;
 
 /**
  * @brief 门描述符
- * 
+ *
  */
 struct GateStruct {
 	/** 偏移0 */
@@ -285,12 +285,12 @@ typedef struct GateStruct GateDescriptor;
 
 /**
  * @brief 构建门描述符
- * 
+ *
  * @param type 类型
  * @param ptr 地址
  * @param privilege 特权级
  * @param cs 代码段描述符
- * @return 门描述符 
+ * @return 门描述符
  */
 inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int cs) {
     dword base = (dword)ptr;
@@ -310,12 +310,12 @@ inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int
 
 /**
  * @brief 构建门描述符
- * 
+ *
  * @param type 类型
  * @param ptr 地址
  * @param privilege 特权级
  * @param cs 代码段描述符
- * @return 门描述符 
+ * @return 门描述符
  */
 inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int cs) {
     dword base = (dword)ptr;
@@ -336,7 +336,7 @@ inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int
 
 /**
  * @brief 64位TSS
- * 
+ *
  */
 struct TSS64Struct {
 	/** 保留 */

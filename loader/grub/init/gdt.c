@@ -4,10 +4,10 @@
  * @brief GDT
  * @version alpha-1.0.0
  * @date 2023-3-21
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <init/gdt.h>
@@ -21,19 +21,19 @@
 
 /**
  * @brief GDT
- * 
+ *
  */
 Descriptor GDT[64];
 
 /**
  * @brief GDTR
- * 
+ *
  */
 DPTR GDTR;
 
 /**
  * @brief 初始化空描述符
- * 
+ *
  */
 static void InitEmptyDesc(void) {
     RawDesc empty = {};
@@ -42,7 +42,7 @@ static void InitEmptyDesc(void) {
 
 /**
  * @brief 初始化代码段描述符
- * 
+ *
  */
 static void InitCodeDesc(void) {
     RawDesc code = {};
@@ -133,7 +133,7 @@ static void InitKDataDesc(void) {
 
     // 平坦模型
     kdata.base = 0;
-    kdata.limit = 0xFFFFF; 
+    kdata.limit = 0xFFFFF;
 
     // 内核级可读写数据段
     kdata.dpl = DPL0;
@@ -158,7 +158,7 @@ static void InitKDataDesc(void) {
 
 /**
  * @brief 初始化GDT
- * 
+ *
  */
 void InitGDT(void) {
     // 初始化描述符

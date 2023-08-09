@@ -4,10 +4,10 @@
  * @brief primitive io - 实现
  * @version alpha-1.0.0
  * @date 2023-04-08
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <basec/baseio.h>
@@ -20,11 +20,11 @@
 
 /**
  * @brief 底层printf
- * 
+ *
  * @param buffer 输出缓冲
  * @param fmt 格式化字符串
  * @param args 参数
- * @return 输出字符数 
+ * @return 输出字符数
  */
 static int __llprintf(char *buffer, const char *fmt, va_list args) {
     // 标志
@@ -206,7 +206,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
 
                     unsigned int val = va_arg(args, unsigned int);
                     uitoa(val, _buffer, 16);
-                    
+
                     // 若大写
                     if (flag & FLAG_UPPER) {
                         char *__buffer = _buffer;
@@ -310,7 +310,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
     #undef FLAG_FILL_ZERO
     #undef FLAG_PREFIX
     #undef FLAG_UPPER
-    
+
     // 取消精度定义
     #undef QUAL_SHORT
     #undef QUAL_NORMAL
@@ -321,11 +321,11 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
 
 /**
  * @brief 使用bputs输出
- * 
+ *
  * @param bputs 输出函数
  * @param fmt 格式化字符串
  * @param args 参数
- * @return 输出字符数 
+ * @return 输出字符数
  */
 int vbprintf(BaseCPutsFunc bputs, const char *fmt, va_list args) {
     char buffer[512];
@@ -338,11 +338,11 @@ int vbprintf(BaseCPutsFunc bputs, const char *fmt, va_list args) {
 
 /**
  * @brief 输出到buffer中
- * 
+ *
  * @param buffer 缓存
  * @param fmt 格式化字符串
  * @param args 参数
- * @return 输出字符数 
+ * @return 输出字符数
  */
 int vsprintf(char *buffer, const char *fmt, va_list args) {
     return __llprintf(buffer, fmt, args);
@@ -350,7 +350,7 @@ int vsprintf(char *buffer, const char *fmt, va_list args) {
 
 /**
  * @brief 使用bputs输出
- * 
+ *
  * @param bputs 输出函数
  * @param fmt 格式化字符串
  * @param ... 参数
@@ -369,11 +369,11 @@ int bprintf(BaseCPutsFunc bputs, const char *fmt, ...) {
 
 /**
  * @brief 输出到buffer中
- * 
+ *
  * @param buffer 缓存
  * @param fmt 格式化字符串
  * @param ... 参数
- * @return 输出字符数 
+ * @return 输出字符数
  */
 int sprintf(char *buffer, const char *fmt, ...)  {
     // 初始化可变参数
@@ -388,11 +388,11 @@ int sprintf(char *buffer, const char *fmt, ...)  {
 
 /**
  * @brief 使用bgetchar输入
- * 
+ *
  * @param bgetchar 输入函数
  * @param fmt 格式化字符串
  * @param args 参数
- * @return 输入字符数 
+ * @return 输入字符数
  */
 int vbscanf(BaseCGetcharFunc bgetchar, const char *fmt, va_list args) {
     // TODO
@@ -401,11 +401,11 @@ int vbscanf(BaseCGetcharFunc bgetchar, const char *fmt, va_list args) {
 
 /**
  * @brief 使用bgetchar输入
- * 
+ *
  * @param bgetchar 输入函数
  * @param fmt 格式化字符串
  * @param ... 参数
- * @return 输入字符数 
+ * @return 输入字符数
  */
 int bscanf(BaseCGetcharFunc bgetchar, const char *fmt, ...) {
     // 初始化可变参数

@@ -4,10 +4,10 @@
  * @brief 中断处理器
  * @version alpha-1.0.0
  * @date 2023-06-07
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <init/handler.h>
@@ -18,7 +18,7 @@
 
 /**
  * @brief 启用中断
- * 
+ *
  */
 void EnableInterrupt(void) {
     asm volatile ("sti");
@@ -26,7 +26,7 @@ void EnableInterrupt(void) {
 
 /**
  * @brief 禁止中断
- * 
+ *
  */
 void DisableInterrupt(void) {
     asm volatile ("cli");
@@ -36,13 +36,13 @@ void DisableInterrupt(void) {
 static void DisableIRQ(int irq) {
     if (irq < 8) {
         //主片
-        byte i = inb(M_PIC_BASE + PIC_DATA); 
+        byte i = inb(M_PIC_BASE + PIC_DATA);
         i |= (1 << irq);
         outb(M_PIC_BASE + PIC_DATA, i);
     }
     else {
         //从片
-        byte i = inb(S_PIC_BASE + PIC_DATA); 
+        byte i = inb(S_PIC_BASE + PIC_DATA);
         i |= (1 << (irq - 8));
         outb(S_PIC_BASE + PIC_DATA, i);
     }
@@ -51,13 +51,13 @@ static void DisableIRQ(int irq) {
 static void EnableIRQ(int irq) {
     if (irq < 8) {
         //主片
-        byte i = inb(M_PIC_BASE + PIC_DATA); 
+        byte i = inb(M_PIC_BASE + PIC_DATA);
         i &= ~(1 << irq);
         outb(M_PIC_BASE + PIC_DATA, i);
     }
     else {
         //从片
-        byte i = inb(S_PIC_BASE + PIC_DATA); 
+        byte i = inb(S_PIC_BASE + PIC_DATA);
         i &= ~(1 << (irq - 8));
         outb(S_PIC_BASE + PIC_DATA, i);
     }
@@ -69,10 +69,10 @@ static void EnableIRQ(int irq) {
 static void SendEOI(int irq) {
     if (irq > 8) {
         //从片EOI
-        outb (S_PIC_BASE + PIC_CONTROL, PIC_EOI); 
+        outb (S_PIC_BASE + PIC_CONTROL, PIC_EOI);
     }
     //主片EOI
-    outb (M_PIC_BASE + PIC_CONTROL, PIC_EOI); 
+    outb (M_PIC_BASE + PIC_CONTROL, PIC_EOI);
 }
 
 static int ticks = 0;
@@ -86,7 +86,7 @@ static bool clockHandler(int irq, IStack *stack) {
 
 /**
  * @brief IRQ处理器
- * 
+ *
  */
 IRQHandler irqHandlers[32] = {
     [0] = clockHandler
@@ -94,12 +94,12 @@ IRQHandler irqHandlers[32] = {
 
 /**
  * @brief IRQ主处理程序
- * 
+ *
  * @param irq irq号
  * @param stack 堆栈
  */
 void PrimaryIRQHandler(int irq, IStack *stack) {
-    DisableIRQ(irq); 
+    DisableIRQ(irq);
 
     //发送EOI
     SendEOI(irq);
@@ -114,7 +114,7 @@ void PrimaryIRQHandler(int irq, IStack *stack) {
     }
 
     //启用同类中断接收
-    EnableIRQ(irq); 
+    EnableIRQ(irq);
 }
 
 //---------------------------------------------
@@ -196,7 +196,7 @@ static const ExceptionSolution solutionList[] = {
 
 /**
  * @brief 异常主处理程序
- * 
+ *
  * @param errno 异常号
  * @param stack 堆栈
  */

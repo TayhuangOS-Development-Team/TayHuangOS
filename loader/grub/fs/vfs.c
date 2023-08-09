@@ -4,10 +4,10 @@
  * @brief VFS
  * @version alpha-1.0.0
  * @date 2023-08-09
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <fs/vfs.h>
@@ -18,7 +18,7 @@ static FS *fsList = NULL;
 
 /**
  * @brief 注册文件系统
- * 
+ *
  * @param fs 文件系统
  */
 void RegisterFS(FS *fs) {
@@ -43,7 +43,7 @@ void RegisterFS(FS *fs) {
 
 /**
  * @brief 加载文件系统
- * 
+ *
  * @param part 分区
  * @return 文件系统
  */
@@ -71,7 +71,7 @@ FSData *LoadFS(Partition *part) {
 
 /**
  * @brief 卸载文件系统
- * 
+ *
  * @param data 文件系统
  */
 void UnloadFS(FSData *data) {

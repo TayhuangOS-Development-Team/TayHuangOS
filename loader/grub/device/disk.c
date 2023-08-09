@@ -4,10 +4,10 @@
  * @brief 硬盘
  * @version alpha-1.0.0
  * @date 2023-06-08
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <basec/logger.h>
@@ -21,7 +21,7 @@
 
 /**
  * @brief 获取硬盘状态
- * 
+ *
  * @param disk 硬盘
  * @param mask 掩码
  * @return 状态
@@ -32,7 +32,7 @@ bool GetDiskStatus(Disk *disk, byte mask) {
 
 /**
  * @brief 发送命令给硬盘
- * 
+ *
  * @param disk 硬盘
  * @param cmd 命令
  * @return true 发送成功
@@ -44,7 +44,7 @@ bool SendDiskCmd(Disk *disk, DiskCmd cmd) {
         LogError("硬盘忙!");
         return false;
     }
-    
+
     // LBA
     byte lbaLow     =  cmd.lba    & 0xFF;
     byte lbaMid     = (cmd.lba >> 8)  & 0xFF;
@@ -63,7 +63,7 @@ bool SendDiskCmd(Disk *disk, DiskCmd cmd) {
         ((cmd.mode    << 6) & 0x40) |
         ((disk->slave << 4) & 0x10) |
         ( lbaHighest        & 0x0F) |
-        (0xA0) 
+        (0xA0)
     );
 
     outb(disk->base + IDE_DEVICE, deviceReg);
@@ -90,7 +90,7 @@ bool SendDiskCmd(Disk *disk, DiskCmd cmd) {
 
 /**
  * @brief 识别硬盘
- * 
+ *
  * @param disk 硬盘
  */
 inline static bool IdentityDisk(Disk *disk) {
@@ -151,7 +151,7 @@ inline static bool IdentityDisk(Disk *disk) {
 
 /**
  * @brief 加载分区
- * 
+ *
  * @param disk 磁盘
  * @param offset 偏移
  * @param parts 分区数组
@@ -161,7 +161,7 @@ void LoadParts(Disk *disk, dword offset, Partition **parts) {
 
     // 读取分区表
     ReadDisk(disk, offset, 1, buffer);
-    
+
     // 解析分区表
     for (int i = 0 ; i < 4 ; i ++) {
         // 相关信息
@@ -197,11 +197,11 @@ void LoadParts(Disk *disk, dword offset, Partition **parts) {
 
 /**
  * @brief 加载硬盘
- * 
+ *
  * @param base 基地址
  * @param base2 基地址2
  * @param slave 是否为从盘
- * @return 硬盘 
+ * @return 硬盘
  */
 Disk *LoadDisk(word base, word base2, bool slave) {
     // 创建硬盘对象
@@ -224,7 +224,7 @@ Disk *LoadDisk(word base, word base2, bool slave) {
 
 /**
  * @brief 卸载分区
- * 
+ *
  * @param part 分区
  */
 static void UnloadPart(Partition *part) {
@@ -242,7 +242,7 @@ static void UnloadPart(Partition *part) {
 
 /**
  * @brief 卸载硬盘
- * 
+ *
  * @param disk 硬盘
  */
 void UnloadDisk(Disk *disk) {
@@ -256,7 +256,7 @@ void UnloadDisk(Disk *disk) {
 
 /**
  * @brief 输出日志（分区信息）
- * 
+ *
  * @param part 分区
  * @param layer 层次
  */
@@ -291,7 +291,7 @@ void LogPart(Partition *part, int layer) {
 
 /**
  * @brief 输出日志（硬盘信息）
- * 
+ *
  * @param disk 硬盘
  */
 void LogDisk(Disk *disk) {
@@ -314,10 +314,10 @@ void LogDisk(Disk *disk) {
 
 /**
  * @brief 读扇区
- * 
- * @param disk 硬盘 
+ *
+ * @param disk 硬盘
  * @param lba LBA
- * @param cnt 扇区数 
+ * @param cnt 扇区数
  * @param dst 目标地址
  * @return true 读成功
  * @return false 读失败
@@ -338,10 +338,10 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst) {
         return false;
     }
 
-    for (int i = 0 ; i < cnt ; i ++) { 
+    for (int i = 0 ; i < cnt ; i ++) {
         // 等待DRQ
         while (! GetDiskStatus(disk, IDE_DRQ_MASK));
-        
+
         // 读取
         for (int j = 0 ; j < 256 ; j ++) {
             ((word *) dst)[256 * i + j] = inw(disk->base + IDE_DATA);
@@ -352,7 +352,7 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst) {
             inb(disk->base + IDE_STATUS);
         }
     }
-    
+
     // 重置忙标志
     disk->busy = false;
 
@@ -361,11 +361,11 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst) {
 
 /**
  * @brief 读扇区
- * 
- * @param disk 硬盘 
+ *
+ * @param disk 硬盘
  * @param part 分区
  * @param lba LBA
- * @param cnt 扇区数 
+ * @param cnt 扇区数
  * @param dst 目标地址
  * @return true 读成功
  * @return false 读失败

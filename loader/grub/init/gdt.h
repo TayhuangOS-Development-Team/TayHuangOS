@@ -4,10 +4,10 @@
  * @brief GDT
  * @version alpha-1.0.0
  * @date 2023-3-31
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -22,6 +22,6 @@ extern DPTR GDTR;
 
 /**
  * @brief 初始化GDT
- * 
+ *
  */
 void InitGDT(void);

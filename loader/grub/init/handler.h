@@ -4,10 +4,10 @@
  * @brief 中断处理器
  * @version alpha-1.0.0
  * @date 2023-06-07
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 /**
  * @brief 堆栈结构
- * 
+ *
  */
 typedef struct {
     b32 edi,
@@ -46,7 +46,7 @@ extern IRQHandler irqHandlers[32];
 
 /**
  * @brief IRQ主处理程序
- * 
+ *
  * @param irq irq号
  * @param stack 堆栈
  */
@@ -54,7 +54,7 @@ void PrimaryIRQHandler(int irq, IStack *stack);
 
 /**
  * @brief 异常主处理程序
- * 
+ *
  * @param errno 异常号
  * @param stack 堆栈
  */
@@ -62,13 +62,13 @@ void PrimaryExceptionHandler(int errno, IStack *stack);
 
 /**
  * @brief 启用中断
- * 
+ *
  */
 void EnableInterrupt(void);
 
 /**
  * @brief 禁止中断
- * 
+ *
  */
 void DisableInterrupt(void);
 

@@ -4,10 +4,10 @@
  * @brief CAPI
  * @version alpha-1.0.0
  * @date 2022-12-31
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -20,7 +20,7 @@
 
 /**
  * @brief 分配内存
- * 
+ *
  * @param size 请求的内存大小
  * @return void* 内存指针
  */
@@ -28,21 +28,21 @@ void *lmalloc(size_t size);
 
 /**
  * @brief 释放内存
- * 
+ *
  * @param ptr 需要释放的内存指针
  */
 void lfree(void *ptr);
 
 /**
  * @brief 输出字符
- * 
+ *
  * @param ch 需要输出的字符
  */
 void lputchar(char ch);
 
 /**
  * @brief 输出字符串
- * 
+ *
  * @param str 需要输出的字符串
  */
 void lputs(const char *str);

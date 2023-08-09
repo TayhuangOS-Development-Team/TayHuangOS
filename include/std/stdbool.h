@@ -4,10 +4,10 @@
  * @brief stdbool
  * @version alpha-1.0.0
  * @date 2022-12-31
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -22,7 +22,7 @@
 /** 布尔 */
 #define bool _Bool
 
-#if (defined __STDC_VERSION__ && __STDC_VERSION__ > 201710L)	
+#if (defined __STDC_VERSION__ && __STDC_VERSION__ > 201710L)
 // for C23
 /** 真 */
 #define true ((_Bool) + 1u)

@@ -4,10 +4,10 @@
  * @brief string.h
  * @version alpha-1.0.0
  * @date 2022-12-31
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -60,7 +60,7 @@ inline static int strlen(const char *str) {
     repnz\n\
     scasb" : "+c" (cnt) : "D" (str), "a" (0));
     return 0x7FFFFFFF - cnt - 1;
-} 
+}
 
 // 复制字符串
 inline static char *strcpy(void *dst, const char *src) {

@@ -4,10 +4,10 @@
  * @brief VFS
  * @version alpha-1.0.0
  * @date 2023-08-09
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
@@ -20,7 +20,7 @@ struct FSStruct;
 
 /**
  * @brief VFS文件
- * 
+ *
  */
 typedef struct VFileStruct {
     /** 外部数据 */
@@ -62,7 +62,7 @@ typedef enum {
 
 /**
  * @brief 文件系统数据
- * 
+ *
  */
 typedef struct FSDataStruct {
     /** 外部数据 */
@@ -72,7 +72,7 @@ typedef struct FSDataStruct {
     Disk disk;
     /** 文件系统所在分区 */
     Partition *part;
-    
+
     /** 文件系统专用数据 */
     void *data;
     /** 根目录 */
@@ -81,7 +81,7 @@ typedef struct FSDataStruct {
 
 /**
  * @brief 文件系统
- * 
+ *
  */
 typedef struct FSStruct {
     /** 上个文件系统 */
@@ -92,54 +92,54 @@ typedef struct FSStruct {
     const char *name;
     /**
      * @brief 加载文件系统
-     * 
+     *
      * @param part 分区
      * @param data FS数据(在Load外自行Malloc)
-     * 
+     *
      * @return 错误号
      */
     VFSErrors (*Load)(Partition *part, FSData *data);
     /**
      * @brief 卸载文件系统
-     * 
+     *
      * @param data FS数据(在Unload外自行Free)
-     * 
+     *
      * @return 错误号
      */
     VFSErrors (*Unload)(FSData *data);
     /**
      * @brief 遍历文件
-     * 
+     *
      * @param data FS数据
      * @param directory 目录文件
-     * @param head 首个文件 
-     * 
+     * @param head 首个文件
+     *
      * @return 错误号
      */
     VFSErrors (*Foreach)(FSData *data, VFile *directory, VFile *head);
     /**
      * @brief 关闭文件
-     * 
+     *
      * @param file 文件
-     * 
+     *
      * @return 错误号
      */
     VFSErrors (*Close)(VFile *file);
     /**
      * @brief 读取文件
-     * 
+     *
      * @param file 文件
      * @param target 目标地址
-     * 
+     *
      * @return 错误号
      */
     VFSErrors (*Read)(VFile *file, void *target);
     /**
      * @brief 写文件
-     * 
+     *
      * @param file 文件
      * @param source 源地址
-     * 
+     *
      * @return 错误号
      */
     VFSErrors (*Write)(VFile *file, void *source, size_t size);
@@ -147,14 +147,14 @@ typedef struct FSStruct {
 
 /**
  * @brief 注册文件系统
- * 
+ *
  * @param fs 文件系统
  */
 void RegisterFS(FS *fs);
 
 /**
  * @brief 加载文件系统
- * 
+ *
  * @param part 分区
  * @return 文件系统
  */
@@ -162,7 +162,7 @@ FSData *LoadFS(Partition *part);
 
 /**
  * @brief 卸载文件系统
- * 
+ *
  * @param data 文件系统
  */
 void UnloadFS(FSData *data);

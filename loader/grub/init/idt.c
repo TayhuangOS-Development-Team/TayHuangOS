@@ -4,10 +4,10 @@
  * @brief IDT
  * @version alpha-1.0.0
  * @date 2023-05-01
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <init/idt.h>
@@ -22,7 +22,7 @@
 GateDescriptor IDT[256];
 /**
  * @brief IDTR
- * 
+ *
  */
 DPTR IDTR;
 
@@ -30,7 +30,7 @@ DPTR IDTR;
 
 /**
  * @brief 初始化PIC
- * 
+ *
  */
 void InitPIC(void) {
     outb (M_PIC_BASE + PIC_CONTROL, 0x11);
@@ -54,7 +54,7 @@ void InitPIC(void) {
 
 /**
  * @brief 初始化IDT
- * 
+ *
  */
 void InitIDT(void) {
     IDT[0x00] = BuildGate(GTYPE_386_INT_GATE, DivideByZeroFaultHandler, 0, rdcs());
@@ -106,7 +106,7 @@ void InitIDT(void) {
     IDT[IRQ_START + 13] = BuildGate(GTYPE_386_INT_GATE, Irq13Handler, 0, rdcs());
     IDT[IRQ_START + 14] = BuildGate(GTYPE_386_INT_GATE, Irq14Handler, 0, rdcs());
     IDT[IRQ_START + 15] = BuildGate(GTYPE_386_INT_GATE, Irq15Handler, 0, rdcs());
-    
+
     IDTR.address = IDT;
     IDTR.size = sizeof(IDT);
 

@@ -4,26 +4,26 @@
  * @brief assert.h
  * @version alpha-1.0.0
  * @date 2022-12-31
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #pragma once
 
 /**
  * @brief 断言
- * 
+ *
  * @param expression 表达式
  * @param file 文件
- * @param base_file 源文件 
+ * @param base_file 源文件
  * @param line 行
  */
 void assertion_failure(const char *expression, const char *file, const char *base_file, int line);
 /**
  * @brief 崩溃断言
- * 
+ *
  * @param expression 表达式
  * @param file 文件
  * @param base_file 源文件
@@ -32,7 +32,7 @@ void assertion_failure(const char *expression, const char *file, const char *bas
 void panic_failure(const char *expression, const char *file, const char *base_file, int line);
 /**
  * @brief 崩溃
- * 
+ *
  * @param format 格式化字符串
  * @param ... 可变参数
  */

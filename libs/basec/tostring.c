@@ -4,10 +4,10 @@
  * @brief tostring - 实现
  * @version alpha-1.0.0
  * @date 2023-04-09
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <basec/tostring.h>
@@ -17,9 +17,9 @@ static const char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 /**
  * @brief 无符号整型转字符串
- * 
+ *
  * @param val 值
- * @param buffer 缓存 
+ * @param buffer 缓存
  * @param base 进制
  * @return 字符串
  */
@@ -58,9 +58,9 @@ char *uitoa(unsigned int val, char *buffer, int base) {
 
 /**
  * @brief 整型转字符串
- * 
+ *
  * @param val 值
- * @param buffer 缓存 
+ * @param buffer 缓存
  * @param base 进制
  * @return 字符串
  */
@@ -81,7 +81,7 @@ char *itoa(int val, char *buffer, int base) {
         buffer ++;
         val = -val;
     }
-    
+
     // 正整数
     uitoa(val, buffer, base);
 

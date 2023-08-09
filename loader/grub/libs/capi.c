@@ -4,10 +4,10 @@
  * @brief CAPI
  * @version alpha-1.0.0
  * @date 2022-12-31
- * 
+ *
  * @copyright Copyright (c) 2022 TayhuangOS Development Team
  * SPDX-License-Identifier: LGPL-2.1-only
- * 
+ *
  */
 
 #include <libs/capi.h>
@@ -69,7 +69,7 @@ void lputchar(char ch) {
             printPosX ++;
         }
     }
-    
+
     if (printPosX >= charPerLine) { //自动换行
         printPosX -= charPerLine;
         printPosY ++;
