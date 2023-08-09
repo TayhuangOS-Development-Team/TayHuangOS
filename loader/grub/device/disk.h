@@ -18,7 +18,7 @@
  * @brief sysid
  * 
  */
-enum sysid_enum {
+enum SysId {
     SI_EMPTY = 0,
     SI_EXTENDED = 5
 };
@@ -27,11 +27,11 @@ enum sysid_enum {
  * @brief 主分区
  * 
  */
-typedef struct __partition_struct__ {
+typedef struct PartitionStruct {
     /** 偏移 */
-    dword off;
+    dword offset;
     /** 绝对偏移(相对硬盘起始位置) */
-    dword absoff;
+    dword absoluteOffset;
     /** 可启动 */
     bool bootable;
     /** 大小(扇区数) */
@@ -39,8 +39,8 @@ typedef struct __partition_struct__ {
     /** SystemId */
     byte sysid;
     /** 子扇区 */
-    struct __partition_struct__ *subparts[4];
-} partition_t;
+    struct PartitionStruct *subParts[4];
+} Partition;
 
 /**
  * @brief 硬盘
@@ -62,8 +62,8 @@ typedef struct {
     /** 大小(扇区) */
     int size;
     /** 硬盘主扇区(最多4个) */
-    partition_t *primparts[4];
-} disk_t;
+    Partition *primitiveParts[4];
+} Disk;
 
 /**
  * @brief 硬盘命令
@@ -75,12 +75,12 @@ typedef struct {
     /** 特征 */
     b8 features;
     /** 扇区计数 */
-    b8 sectcnt;
+    b8 sectorCnt;
     /** LBA */
     b32 lba;
     /** 命令 */
     b8 command;
-} disk_cmd_t;
+} DiskCmd;
 
 /** DRQ掩码 */
 #define IDE_DRQ_MASK (0x8)
@@ -99,7 +99,7 @@ typedef struct {
  * @param mask 掩码
  * @return 状态
  */
-bool get_disk_status(disk_t *disk, byte mask);
+bool GetDiskStatus(Disk *disk, byte mask);
 
 /**
  * @brief 发送命令给硬盘
@@ -109,7 +109,7 @@ bool get_disk_status(disk_t *disk, byte mask);
  * @return true 发送成功
  * @return false 发送失败
  */
-bool send_disk_cmd(disk_t *disk, disk_cmd_t cmd);
+bool SendDiskCmd(Disk *disk, DiskCmd cmd);
 
 /**
  * @brief 加载硬盘
@@ -119,16 +119,16 @@ bool send_disk_cmd(disk_t *disk, disk_cmd_t cmd);
  * @param slave 是否为从盘
  * @return 硬盘 
  */
-disk_t *load_disk(word base, word base2, bool slave);
+Disk *LoadDisk(word base, word base2, bool slave);
 
 /**
  * @brief 加载分区
  * 
  * @param disk 磁盘
- * @param off 偏移
+ * @param offset 偏移
  * @param parts 分区数组
  */
-void load_parts(disk_t *disk, dword off, partition_t **parts);
+void LoadParts(Disk *disk, dword offset, Partition **parts);
 
 /**
  * @brief 输出日志（分区信息）
@@ -136,14 +136,14 @@ void load_parts(disk_t *disk, dword off, partition_t **parts);
  * @param part 分区
  * @param layer 层次
  */
-void log_part(partition_t *part, int layer);
+void LogPart(Partition *part, int layer);
 
 /**
  * @brief 输出日志（硬盘信息）
  * 
  * @param disk 硬盘
  */
-void log_disk(disk_t *disk);
+void LogDisk(Disk *disk);
 
 /**
  * @brief 读扇区
@@ -155,7 +155,7 @@ void log_disk(disk_t *disk);
  * @return true 读成功
  * @return false 读失败
  */
-bool read_disk_sector(disk_t *disk, dword lba, dword cnt, void *dst);
+bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst);
 
 /**
  * @brief 读扇区
@@ -168,4 +168,4 @@ bool read_disk_sector(disk_t *disk, dword lba, dword cnt, void *dst);
  * @return true 读成功
  * @return false 读失败
  */
-bool read_part_sector(disk_t *disk, partition_t *part, dword lba, dword cnt, void *dst);
+bool ReadPartition(Disk *disk, Partition *part, dword lba, dword cnt, void *dst);

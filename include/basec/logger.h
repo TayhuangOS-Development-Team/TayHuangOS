@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <bcl/bio.h>
+#include <basec/baseio.h>
 #include <stdarg.h>
 
 /**
@@ -21,7 +21,7 @@
  * @param output 输出函数
  * @param name 程序名
  */
-void init_ulogger(bputs_t bputs, const char *name);
+void InitLogger(BaseCPutsFunc bputs, const char *name);
 
 /**
  * @brief 输出日志
@@ -30,7 +30,7 @@ void init_ulogger(bputs_t bputs, const char *name);
  * @param level 日志等级
  * @param msg 日志消息
  */
-void __ll_log__(const char *name, const char *level, const char *msg);
+void __LLog__(const char *name, const char *level, const char *msg);
 
 /**
  * @brief 日志等级枚举
@@ -45,7 +45,7 @@ typedef enum {
     ERROR,
     /** 致命错误 */
     FATAL
-} log_level_t;
+} LogLevel;
 
 /**
  * @brief 输出日志
@@ -53,7 +53,7 @@ typedef enum {
  * @param level 日志等级
  * @param msg 日志消息
  */
-void __log__(log_level_t level, const char *msg);
+void __Log__(LogLevel level, const char *msg);
 
 /**
  * @brief 输出日志
@@ -62,32 +62,32 @@ void __log__(log_level_t level, const char *msg);
  * @param fmt 日志消息格式化字符串
  * @param args 日志消息参数
  */
-void __logv__(log_level_t level, const char *fmt, va_list args);
+void __LogV__(LogLevel level, const char *fmt, va_list args);
 
 /**
  * @brief 输出信息
  * 
  * @param fmt 日志消息格式化字符串
  */
-void linfo(const char *fmt, ...);
+void LogInfo(const char *fmt, ...);
 
 /**
  * @brief 输出警告
  * 
  * @param fmt 日志消息格式化字符串
  */
-void lwarn(const char *fmt, ...);
+void LogWarn(const char *fmt, ...);
 
 /**
  * @brief 输出错误
  * 
  * @param fmt 日志消息格式化字符串
  */
-void lerror(const char *fmt, ...);
+void LogError(const char *fmt, ...);
 
 /**
  * @brief 输出致命错误
  * 
  * @param fmt 日志消息格式化字符串
  */
-void lfatal(const char *fmt, ...);
+void LogFatal(const char *fmt, ...);

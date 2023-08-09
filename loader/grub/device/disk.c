@@ -10,7 +10,7 @@
  * 
  */
 
-#include <bcl/logger.h>
+#include <basec/logger.h>
 
 #include <tay/io.h>
 #include <tay/ports.h>
@@ -26,7 +26,7 @@
  * @param mask 掩码
  * @return 状态
  */
-bool get_disk_status(disk_t *disk, byte mask) {
+bool GetDiskStatus(Disk *disk, byte mask) {
     return inb(disk->base + IDE_STATUS) & mask;
 }
 
@@ -38,33 +38,34 @@ bool get_disk_status(disk_t *disk, byte mask) {
  * @return true 发送成功
  * @return false 发送失败
  */
-bool send_disk_cmd(disk_t *disk, disk_cmd_t cmd) {
+bool SendDiskCmd(Disk *disk, DiskCmd cmd) {
     // 硬盘忙
     if (disk->busy) {
-        lerror("Disk is busy!");
+        LogError("Disk is busy!");
         return false;
     }
     
-    byte lba_low     =  cmd.lba    & 0xFF;
-    byte lba_mid     = (cmd.lba >> 8)  & 0xFF;
-    byte lba_high    = (cmd.lba >> 16) & 0xFF;
-    byte lba_highest = (cmd.lba >> 24) & 0xF;
+    // LBA
+    byte lbaLow     =  cmd.lba    & 0xFF;
+    byte lbaMid     = (cmd.lba >> 8)  & 0xFF;
+    byte lbaHigh    = (cmd.lba >> 16) & 0xFF;
+    byte lbaHighest = (cmd.lba >> 24) & 0xF;
 
     // 等待硬盘空闲
-    while (get_disk_status(disk, IDE_BSY_MASK));
+    while (GetDiskStatus(disk, IDE_BSY_MASK));
 
     // 设置硬盘忙
     disk->busy = true;
 
-    b8 device_reg = (
+    b8 deviceReg = (
         ((cmd.mode    << 6) & 0x40) |
         ((disk->slave << 4) & 0x10) |
-        ( lba_highest       & 0x0F) |
+        ( lbaHighest        & 0x0F) |
         (0xA0) 
     );
 
     // 设置设备寄存器
-    outb(disk->base + IDE_DEVICE, device_reg);
+    outb(disk->base + IDE_DEVICE, deviceReg);
 
     // Relax ATA
     for (int i = 0 ; i < 5; i ++) {
@@ -75,11 +76,11 @@ bool send_disk_cmd(disk_t *disk, disk_cmd_t cmd) {
 
     outb(disk->base + IDE_FEATURES, cmd.features);
 
-    outb(disk->base + IDE_SECTCNT, cmd.sectcnt); // 设置扇区计数
+    outb(disk->base + IDE_SECTCNT, cmd.sectorCnt); // 设置扇区计数
 
-    outb(disk->base + IDE_LBA_LOW , lba_low); // 设置LBA
-    outb(disk->base + IDE_LBA_MID , lba_mid);
-    outb(disk->base + IDE_LBA_HIGH, lba_high);
+    outb(disk->base + IDE_LBA_LOW , lbaLow); // 设置LBA
+    outb(disk->base + IDE_LBA_MID , lbaMid);
+    outb(disk->base + IDE_LBA_HIGH, lbaHigh);
 
     outb(disk->base + IDE_COMMAND, cmd.command); //发送命令
 
@@ -91,25 +92,25 @@ bool send_disk_cmd(disk_t *disk, disk_cmd_t cmd) {
  * 
  * @param disk 硬盘
  */
-inline static bool identity_disk(disk_t *disk) {
+inline static bool IdentityDisk(Disk *disk) {
     // 发送IDENTITY命令
-    disk_cmd_t cmd = {
+    DiskCmd cmd = {
         .mode = 0,
         .features = 0,
-        .sectcnt = 1,
+        .sectorCnt = 1,
         .lba = 0,
         .command = ATA_IDENTITY
     };
 
-    if (! send_disk_cmd(disk, cmd)) {
-        lerror("Couldn't load disk!");
+    if (! SendDiskCmd(disk, cmd)) {
+        LogError("Couldn't load disk!");
         return false;
     }
 
     word buffer[256];
 
     // 等待DRQ
-    while (! get_disk_status(disk, IDE_DRQ_MASK));
+    while (! GetDiskStatus(disk, IDE_DRQ_MASK));
 
     // 读取IDENTITY内容
     for (int i = 0 ; i < 256 ; i ++) {
@@ -142,30 +143,30 @@ inline static bool identity_disk(disk_t *disk) {
 }
 
 /** MSDOS 分区表偏移*/
-#define MSDOS_PT_OFF (0x1BE)
+#define MSDOS_PARTITION_TABLE_OFFSET (0x1BE)
 /** MSDOS 分区项大小*/
-#define MSDOS_PE_SZ  (0x10)
+#define MSDOS_PARTITION_ENTRY_SIZE  (0x10)
 
 /**
  * @brief 加载分区
  * 
  * @param disk 磁盘
- * @param off 偏移
+ * @param offset 偏移
  * @param parts 分区数组
  */
-void load_parts(disk_t *disk, dword off, partition_t **parts) {
+void LoadParts(Disk *disk, dword offset, Partition **parts) {
     char buffer[1024];
 
     // 读取分区表
-    read_disk_sector(disk, off, 1, buffer);
+    ReadDisk(disk, offset, 1, buffer);
     
     // 解析分区表
     for (int i = 0 ; i < 4 ; i ++) {
         // 相关信息
-        dword start_lba = *(dword *)(buffer + MSDOS_PT_OFF + i * MSDOS_PE_SZ + 8);
-        bool bootable   = *(char *) (buffer + MSDOS_PT_OFF + i * MSDOS_PE_SZ + 0);
-        dword cnt   = *(dword *)(buffer + MSDOS_PT_OFF + i * MSDOS_PE_SZ + 12);
-        byte sysid      = *(byte *) (buffer + MSDOS_PT_OFF + i * MSDOS_PE_SZ + 4);
+        dword start_lba = *(dword *)(buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 8);
+        bool bootable   = *(char *) (buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 0);
+        dword cnt   = *(dword *)(buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 12);
+        byte sysid      = *(byte *) (buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 4);
 
         // EMPTY
         if (sysid == SI_EMPTY) {
@@ -175,18 +176,19 @@ void load_parts(disk_t *disk, dword off, partition_t **parts) {
         }
 
         // 创建partition_t对象
-        parts[i] = (partition_t *)malloc(sizeof(partition_t));
-        memset(parts[i], 0, sizeof(partition_t));
+        parts[i] = (Partition *)malloc(sizeof(Partition));
+        memset(parts[i], 0, sizeof(Partition));
 
         // 初始化该对象
-        parts[i]->off = start_lba;
-        parts[i]->absoff = off + start_lba;
+        parts[i]->offset = start_lba;
+        parts[i]->absoluteOffset = offset + start_lba;
         parts[i]->bootable = bootable;
         parts[i]->size = cnt;
         parts[i]->sysid = sysid;
 
+        // 拓展分区
         if (sysid == SI_EXTENDED) {
-            load_parts(disk, parts[i]->absoff, parts[i]->subparts);
+            LoadParts(disk, parts[i]->absoluteOffset, parts[i]->subParts);
         }
     }
 }
@@ -199,20 +201,21 @@ void load_parts(disk_t *disk, dword off, partition_t **parts) {
  * @param slave 是否为从盘
  * @return 硬盘 
  */
-disk_t *load_disk(word base, word base2, bool slave) {
+Disk *LoadDisk(word base, word base2, bool slave) {
     // 创建硬盘对象
-    disk_t *disk = (disk_t *)malloc(sizeof(disk_t));
+    Disk *disk = (Disk *)malloc(sizeof(Disk));
 
     disk->base = base;
     disk->base2 = base2;
     disk->slave = slave;
     disk->busy = false;
 
-    if (! identity_disk(disk)) {
+    if (! IdentityDisk(disk)) {
         return NULL;
     }
 
-    load_parts(disk, 0, disk->primparts);
+    // 加载分区
+    LoadParts(disk, 0, disk->primitiveParts);
 
     return disk;
 }
@@ -223,24 +226,30 @@ disk_t *load_disk(word base, word base2, bool slave) {
  * @param part 分区
  * @param layer 层次
  */
-void log_part(partition_t *part, int layer) {
+void LogPart(Partition *part, int layer) {
+    // 缩进
     char tabs[32];
+    // 至多30层缩进
     layer = layer > 31 ? 31 : layer;
     for (int i = 0 ; i < layer ; i ++) {
         tabs[i] = '\t';
     }
     tabs[layer] = '\0';
 
-    linfo("%s----Partition Info----", tabs);
-    linfo("%soff: %d(Absolute: %d)", tabs, part->off, part->absoff);
-    linfo("%sBootable: %s ; System Id: %#02X", tabs, part->bootable ? "true" : "false", part->sysid);
-    linfo("%sSize: %d sectors(%dB = %dKB = %dMB)", tabs, part->size, part->size * 512, part->size / 2, part->size / 2048);
+    // 打印分区信息
+    LogInfo("%s----Partition Info----", tabs);
+    LogInfo("%sOffset: %d(Absolute: %d)", tabs, part->offset, part->absoluteOffset);
+    LogInfo("%sBootable: %s ; System Id: %#02X", tabs, part->bootable ? "true" : "false", part->sysid);
+    LogInfo("%sSize: %d sectors(%dB = %dKB = %dMB)", tabs, part->size, part->size * 512, part->size / 2, part->size / 2048);
+
+    // 拓展分区
     if (part->sysid == SI_EXTENDED) {
-        linfo("%sChildren Partitions:", tabs);
+        // 打印子分区信息
+        LogInfo("%sChildren Partitions:", tabs);
         for (int i = 0 ; i < 4; i ++) {
-            if (part->subparts[i] != NULL) {
-                linfo("%sPartition %d:", tabs, i);
-                log_part(part->subparts[i], layer + 1);
+            if (part->subParts[i] != NULL) {
+                LogInfo("%sPartition %d:", tabs, i);
+                LogPart(part->subParts[i], layer + 1);
             }
         }
     }
@@ -251,18 +260,20 @@ void log_part(partition_t *part, int layer) {
  * 
  * @param disk 硬盘
  */
-void log_disk(disk_t *disk) {
-    linfo("----------Disk Info----------");
-    linfo("Base: (%#04X, %#04X) ; Busy: %s", disk->base, disk->base2, disk->busy ? "true" : "false");
-    linfo("Serial: %s", disk->serial);
-    linfo("Model: %s", disk->model);
-    linfo("Size: %d sectors(%dB = %dKB = %dMB)", disk->size, disk->size * 512, disk->size / 2, disk->size / 2048);
+void LogDisk(Disk *disk) {
+    LogInfo("----------Disk Info----------");
+    LogInfo("Base: (%#04X, %#04X) ; Busy: %s", disk->base, disk->base2, disk->busy ? "true" : "false");
+    LogInfo("Serial: %s", disk->serial);
+    LogInfo("Model: %s", disk->model);
+    LogInfo("Size: %d sectors(%dB = %dKB = %dMB)", disk->size, disk->size * 512, disk->size / 2, disk->size / 2048);
 
-    linfo("Primary Partitions:");
+    LogInfo("Primary Partitions:");
+
+    // 打印分区
     for (int i = 0 ; i < 4; i ++) {
-        if (disk->primparts[i] != NULL) {
-            linfo("Partition %d:", i);
-            log_part(disk->primparts[i], 1);
+        if (disk->primitiveParts[i] != NULL) {
+            LogInfo("Partition %d:", i);
+            LogPart(disk->primitiveParts[i], 1);
         }
     }
 }
@@ -277,25 +288,25 @@ void log_disk(disk_t *disk) {
  * @return true 读成功
  * @return false 读失败
  */
-bool read_disk_sector(disk_t *disk, dword lba, dword cnt, void *dst) {
+bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst) {
     // 发送IDENTITY命令
-    disk_cmd_t cmd = {
+    DiskCmd cmd = {
         .mode = 1,
         .features = 0,
-        .sectcnt = cnt,
+        .sectorCnt = cnt,
         .lba = lba,
         .command = 0x20
     };
 
     // 发送命令
-    if (! send_disk_cmd(disk, cmd)) {
-        lerror("Couldn't read disk cnt!");
+    if (! SendDiskCmd(disk, cmd)) {
+        LogError("Couldn't read disk cnt!");
         return false;
     }
 
     for (int i = 0 ; i < cnt ; i ++) { 
         // 等待DRQ
-        while (! get_disk_status(disk, IDE_DRQ_MASK));
+        while (! GetDiskStatus(disk, IDE_DRQ_MASK));
         
         // 读取
         for (int j = 0 ; j < 256 ; j ++) {
@@ -324,6 +335,6 @@ bool read_disk_sector(disk_t *disk, dword lba, dword cnt, void *dst) {
  * @return true 读成功
  * @return false 读失败
  */
-bool read_part_sector(disk_t *disk, partition_t *part, dword lba, dword cnt, void *dst) {
-    return read_disk_sector(disk, part->absoff + lba, cnt, dst);
+bool ReadPartition(Disk *disk, Partition *part, dword lba, dword cnt, void *dst) {
+    return ReadDisk(disk, part->absoluteOffset + lba, cnt, dst);
 }

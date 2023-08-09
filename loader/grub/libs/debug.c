@@ -14,7 +14,7 @@
 #include <tay/ports.h>
 #include <tay/io.h>
 
-void init_serial(void) {
+void InitSerial(void) {
     outb(SERIAL_INT_VALID, 0); //禁用COM中断
     outb(SERIAL_CONTROL, 0x80); //启用DLAB
     outb(SERIAL_SEND, 0x03); //设置比特波除数(低)
@@ -27,15 +27,15 @@ void init_serial(void) {
     outb(SERIAL_MODEM_CONTROL, 0x0F);
 }
 
-void write_serial_char(char ch) {
+void WriteSerialChar(char ch) {
     while ((inb(SERIAL_STATUS) & 0x20) == 0);
     outb(SERIAL_SEND, ch);
 }
 
-void write_serial_str(const char *str) {
+void WriteSerialStr(const char *str) {
     // asm volatile ("cli");
     while (*str != '\0') {
-        write_serial_char(*str);
+        WriteSerialChar(*str);
         str ++;
     }
     // asm volatile ("sti");

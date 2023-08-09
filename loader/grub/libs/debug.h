@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <bcl/logger.h>
+#include <basec/logger.h>
 
-void init_serial(void);
-void write_serial_char(char ch);
-void write_serial_str(const char *str);
+void InitSerial(void);
+void WriteSerialChar(char ch);
+void WriteSerialStr(const char *str);

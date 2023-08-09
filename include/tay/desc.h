@@ -18,7 +18,7 @@
  * @brief 特权级
  * 
  */
-enum dpl_list {
+enum DPLList {
 	/** DPL=0 */
 	DPL0 = 0,
 	/** DPL=1 */
@@ -41,7 +41,7 @@ enum dpl_list {
  * @brief 描述符类型
  * 
  */
-enum desc_types {
+enum DescTypes {
 	/** 数据段(只读) */
 	DTYPE_RODATA                  = 0x0,
 	/** 数据段(只读 已访问) */
@@ -125,13 +125,13 @@ typedef struct {
 	bool db;
 	/** 粒度(字节/4KB) */
 	bool granulity;
-} raw_desc_t;
+} RawDesc;
 
 /**
  * @brief 描述符
  * 
  */
-struct desc_struct {
+struct DescStruct {
 	/** 段界限0 */
 	word limit0;
 	/** 段基址0 */
@@ -160,7 +160,7 @@ struct desc_struct {
 	word base2: 8;
 } __attribute__((packed));
 
-typedef struct desc_struct desc_t;
+typedef struct DescStruct Descriptor;
 
 /**
  * @brief 处理描述符
@@ -168,8 +168,8 @@ typedef struct desc_struct desc_t;
  * @param raw 未处理描述符
  * @return 已处理描述符
  */
-inline static desc_t build_descriptor(raw_desc_t raw) {
-	desc_t desc;
+inline static Descriptor BuildDesc(RawDesc raw) {
+	Descriptor desc;
 
 	desc.limit0 = raw.limit;
 	desc.limit1 = (raw.limit >> 16) & 0xF;
@@ -195,20 +195,20 @@ inline static desc_t build_descriptor(raw_desc_t raw) {
  * @brief 描述符表指针
  * 
  */
-struct desc_ptr {
+struct DescPtr {
 	/** 大小 */
 	word size;
 	/** 地址 */
 	qword address;
 } __attribute__((packed));
 
-typedef struct desc_ptr dptr_t;
+typedef struct DescPtr DPTR;
 
 /**
  * @brief TSS项
  * 
  */
-struct tss_struct {
+struct TSSStruct {
 	/** 界限0 */
 	word	 limit0;
 	/** 基址0 */
@@ -237,13 +237,13 @@ struct tss_struct {
 #endif
 } __attribute__((packed));
 
-typedef struct tss_struct tss_desc_t;
+typedef struct TSSStruct TSSDescriptor;
 
 /**
  * @brief IDT属性
  * 
  */
-struct idt_attr {
+struct IDTAttribute {
 	/** ist号 */
 	byte ist       : 3;
 	/** 保留 */
@@ -256,13 +256,13 @@ struct idt_attr {
 	bool present : 1;
 } __attribute__((packed));
 
-typedef struct idt_attr idt_attr_t;
+typedef struct IDTAttribute idt_attr_t;
 
 /**
  * @brief 门描述符
  * 
  */
-struct gate_struct {
+struct GateStruct {
 	/** 偏移0 */
 	word	   offset0;
 	/** 段 */
@@ -279,7 +279,7 @@ struct gate_struct {
 #endif
 } __attribute__((packed));
 
-typedef struct gate_struct gate_desc_t;
+typedef struct GateStruct GateDescriptor;
 
 #if BITS == 32
 
@@ -292,9 +292,9 @@ typedef struct gate_struct gate_desc_t;
  * @param cs 代码段描述符
  * @return 门描述符 
  */
-inline static gate_desc_t build_gate(byte type, void *ptr, byte privilege, int cs) {
+inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int cs) {
     dword base = (dword)ptr;
-	gate_desc_t desc = {};
+	GateDescriptor desc = {};
     desc.offset0 = base & 0xFFFF; //偏移
     desc.segment = cs; //段
     desc.bits.ist = 0;
@@ -317,9 +317,9 @@ inline static gate_desc_t build_gate(byte type, void *ptr, byte privilege, int c
  * @param cs 代码段描述符
  * @return 门描述符 
  */
-inline static gate_desc_t build_gate(byte type, void *ptr, byte privilege, int cs) {
+inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int cs) {
     dword base = (dword)ptr;
-	gate_desc_t desc = {};
+	GateDescriptor desc = {};
     desc.offset0 = base & 0xFFFF; //偏移
     desc.segment = cs; //段
     desc.bits.ist = 0;
@@ -338,7 +338,7 @@ inline static gate_desc_t build_gate(byte type, void *ptr, byte privilege, int c
  * @brief 64位TSS
  * 
  */
-struct tss {
+struct TSS64Struct {
 	/** 保留 */
 	dword reserved0;
 	/** DPL=0 RSP */
@@ -370,3 +370,5 @@ struct tss {
 	/** IOPB */
 	word  iopb;
 } __attribute__((packed));
+
+typedef struct TSS64Struct TSS64;

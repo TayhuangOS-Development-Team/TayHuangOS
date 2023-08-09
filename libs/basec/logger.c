@@ -10,15 +10,15 @@
  * 
  */
 
-#include <bcl/logger.h>
-#include <bcl/bio.h>
+#include <basec/logger.h>
+#include <basec/baseio.h>
 #include <stddef.h>
 
 // 日志名
-static const char *logger_name = NULL;
+static const char *loggerName = NULL;
 
 // 输出流
-static bputs_t lputs;
+static BaseCPutsFunc loggerPuts;
 
 /**
  * @brief 初始化 ulogger
@@ -26,12 +26,12 @@ static bputs_t lputs;
  * @param bputs 输出函数
  * @param name 程序名
  */
-void init_ulogger(bputs_t bputs, const char *name) {
+void InitLogger(BaseCPutsFunc bputs, const char *name) {
     bprintf(bputs, "[BCL Logger/INFO]为[%s]初始化日志器中.\n", name);
 
     // 初始化
-    logger_name = name;
-    lputs = bputs;
+    loggerName = name;
+    loggerPuts = bputs;
 }
 
 /**
@@ -41,8 +41,8 @@ void init_ulogger(bputs_t bputs, const char *name) {
  * @param level 日志等级
  * @param msg 日志消息
  */
-void __ll_log__(const char *name, const char *level, const char *msg) {
-    bprintf(lputs, "[%s/%s]%s\n", name, level, msg);
+void __LLog__(const char *name, const char *level, const char *msg) {
+    bprintf(loggerPuts, "[%s/%s]%s\n", name, level, msg);
 }
 
 /**
@@ -51,7 +51,7 @@ void __ll_log__(const char *name, const char *level, const char *msg) {
  * @param level 日志等级
  * @param msg 日志消息
  */
-void __log__(log_level_t level, const char *msg) {
+void __Log__(LogLevel level, const char *msg) {
     // 日志等级字符串
     const char *level_s = "";
 
@@ -63,7 +63,7 @@ void __log__(log_level_t level, const char *msg) {
     case FATAL:   {level_s = "FATAL";   break;}
     }
 
-    __ll_log__(logger_name, level_s, msg);
+    __LLog__(loggerName, level_s, msg);
 }
 
 /**
@@ -73,12 +73,12 @@ void __log__(log_level_t level, const char *msg) {
  * @param fmt 日志消息格式化字符串
  * @param args 日志消息参数
  */
-void __logv__(log_level_t level, const char *fmt, va_list args) {
+void __LogV__(LogLevel level, const char *fmt, va_list args) {
     char buffer[512];
 
     vsprintf(buffer, fmt, args);
 
-    __log__(level, buffer);
+    __Log__(level, buffer);
 }
 
 /**
@@ -86,11 +86,11 @@ void __logv__(log_level_t level, const char *fmt, va_list args) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void linfo(const char *fmt, ...) {
+void LogInfo(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    __logv__(INFO, fmt, args);
+    __LogV__(INFO, fmt, args);
 
     va_end(args);
 }
@@ -100,11 +100,11 @@ void linfo(const char *fmt, ...) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void lwarn(const char *fmt, ...) {
+void LogWarn(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    __logv__(WARNING, fmt, args);
+    __LogV__(WARNING, fmt, args);
 
     va_end(args);
 }
@@ -114,11 +114,11 @@ void lwarn(const char *fmt, ...) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void lerror(const char *fmt, ...) {
+void LogError(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    __logv__(ERROR, fmt, args);
+    __LogV__(ERROR, fmt, args);
 
     va_end(args);
 }
@@ -128,11 +128,11 @@ void lerror(const char *fmt, ...) {
  * 
  * @param fmt 日志消息格式化字符串
  */
-void lfatal(const char *fmt, ...) {
+void LogFatal(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    __logv__(FATAL, fmt, args);
+    __LogV__(FATAL, fmt, args);
 
     va_end(args);
 }

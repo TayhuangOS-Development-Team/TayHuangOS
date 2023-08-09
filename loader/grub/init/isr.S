@@ -1,10 +1,7 @@
-.global interrupt_handler
-.type interrupt_handler, @function
+.extern PrimaryIRQHandler
+.extern PrimaryExceptionHandler
 
-.extern primary_irq_handler
-.extern primary_exception_handler
-
-.macro save_context
+.macro menter
     pushl %esp
     pushl %ebp
 
@@ -28,7 +25,7 @@
     pushl %edi
 .endm
 
-.macro restore_context
+.macro mleave
     popl %edi
     popl %esi
     popl %edx
@@ -55,248 +52,248 @@
 .extern errcode
 .type errcode, @object
 
-.macro nonerrcode_exception vector
+.macro NonErrcodeHandler vector
     movl $0xFFFFFFFF, (errcode)
-    save_context
+    menter
 
     pushl %esp
     movl $\vector, %eax
 
-    call primary_exception_handler
+    call PrimaryExceptionHandler
 
     addl $4, %esp
 
-    restore_context
+    mleave
     iret
 .endm
 
-.macro errcode_exception vector
+.macro ErrcodeHandler vector
     pushl %eax
     movl 4(%esp), %eax
     movl %eax, (errcode)
     popl %eax
     add $4, %esp
-    save_context
+    menter
 
     pushl %esp
     movl $\vector, %eax
 
-    call primary_exception_handler
+    call PrimaryExceptionHandler
 
     addl $4, %esp
 
-    restore_context
+    mleave
     iret
 .endm
 
-.global divide_by_zero_error
-.type   divide_by_zero_error, @function
-.global single_step_debug
-.type   single_step_debug, @function
-.global non_maskable_interrup
-.type   non_maskable_interrup, @function
-.global breakpoint
-.type   breakpoint, @function
-.global overflow
-.type   overflow, @function
-.global bound_range_exceeded
-.type   bound_range_exceeded, @function
-.global invalid_opcode
-.type   invalid_opcode, @function
-.global device_not_available
-.type   device_not_available, @function
-.global double_fault
-.type   double_fault, @function
-.global coprocessor_segment_overrun
-.type   coprocessor_segment_overrun, @function
-.global invalid_tss
-.type   invalid_tss, @function
-.global segment_not_present
-.type   segment_not_present, @function
-.global stack_segment_fault
-.type   stack_segment_fault, @function
-.global general_protection_fault
-.type   general_protection_fault, @function
-.global page_fault
-.type   page_fault, @function
-.global reserved1_excepetion
-.type   reserved1_excepetion, @function
-.global x87_floating_point_exception
-.type   x87_floating_point_exception, @function
-.global alignment_check
-.type   alignment_check, @function
-.global machine_check
-.type   machine_check, @function
-.global simd_floating_point_exception
-.type   simd_floating_point_exception, @function
-.global virtualization_exception
-.type   virtualization_exception, @function
-.global control_protection_exception
-.type   control_protection_exception, @function
-.global reserved2_excepetion
-.type   reserved2_excepetion, @function
-.global reserved3_excepetion
-.type   reserved3_excepetion, @function
-.global reserved4_excepetion
-.type   reserved4_excepetion, @function
-.global reserved5_excepetion
-.type   reserved5_excepetion, @function
-.global reserved6_excepetion
-.type   reserved6_excepetion, @function
-.global reserved7_excepetion
-.type   reserved7_excepetion, @function
-.global hypervisor_injection_exception
-.type   hypervisor_injection_exception, @function
-.global vmm_communication_exception
-.type   vmm_communication_exception, @function
-.global security_exception
-.type   security_exception, @function
-.global reserved8_excepetion
-.type   reserved8_excepetion, @function
+.global DivideByZeroFaultHandler
+.type   DivideByZeroFaultHandler, @function
+.global SingleStepTrapHandler
+.type   SingleStepTrapHandler, @function
+.global NMIHandler
+.type   NMIHandler, @function
+.global BreakpointTrapHandler
+.type   BreakpointTrapHandler, @function
+.global OverflowTrapHandler
+.type   OverflowTrapHandler, @function
+.global BoundRangeExceededFaultHandler
+.type   BoundRangeExceededFaultHandler, @function
+.global InvalidOpcodeFaultHandler
+.type   InvalidOpcodeFaultHandler, @function
+.global DeviceNotAvailableFaultHandler
+.type   DeviceNotAvailableFaultHandler, @function
+.global DoubleFaultHandler
+.type   DoubleFaultHandler, @function
+.global CoprocessorSegmentOverrunFaultHandler
+.type   CoprocessorSegmentOverrunFaultHandler, @function
+.global InvalidTSSFault
+.type   InvalidTSSFault, @function
+.global SegmentNotPresentFaultHandler
+.type   SegmentNotPresentFaultHandler, @function
+.global StackSegmentFaultHandler
+.type   StackSegmentFaultHandler, @function
+.global GeneralProtectionFaultHandler
+.type   GeneralProtectionFaultHandler, @function
+.global PageFaultHandler
+.type   PageFaultHandler, @function
+.global ReservedHandler1
+.type   ReservedHandler1, @function
+.global X87FloatingPointFaultHandler
+.type   X87FloatingPointFaultHandler, @function
+.global AlignmentCheckHandler
+.type   AlignmentCheckHandler, @function
+.global MachineCheckHandler
+.type   MachineCheckHandler, @function
+.global SIMDFloatingPointFaultHandler
+.type   SIMDFloatingPointFaultHandler, @function
+.global VirtualizationFaultHandler
+.type   VirtualizationFaultHandler, @function
+.global ControlProtectionFaultHandler
+.type   ControlProtectionFaultHandler, @function
+.global ReservedHandler2
+.type   ReservedHandler2, @function
+.global ReservedHandler3
+.type   ReservedHandler3, @function
+.global ReservedHandler4
+.type   ReservedHandler4, @function
+.global ReservedHandler5
+.type   ReservedHandler5, @function
+.global ReservedHandler6
+.type   ReservedHandler6, @function
+.global ReservedHandler7
+.type   ReservedHandler7, @function
+.global HypervisorInjectionException
+.type   HypervisorInjectionException, @function
+.global VMMCommunicationFaultHandler
+.type   VMMCommunicationFaultHandler, @function
+.global SecurityFaultHandler
+.type   SecurityFaultHandler, @function
+.global ReservedHandler8
+.type   ReservedHandler8, @function
 
-divide_by_zero_error:
-    nonerrcode_exception 0
-single_step_debug:
-    nonerrcode_exception 1
-non_maskable_interrup:
-    nonerrcode_exception 2
-breakpoint:
-    nonerrcode_exception 3
-overflow:
-    nonerrcode_exception 4
-bound_range_exceeded:
-    nonerrcode_exception 5
-invalid_opcode:
-    nonerrcode_exception 6
-device_not_available:
-    nonerrcode_exception 7
-double_fault:
-    errcode_exception 8
-coprocessor_segment_overrun:
-    nonerrcode_exception 9
-invalid_tss:
-    errcode_exception 10
-segment_not_present:
-    errcode_exception 11
-stack_segment_fault:
-    errcode_exception 12
-general_protection_fault:
-    errcode_exception 13
-page_fault:
-    errcode_exception 14
-reserved1_excepetion:
-    nonerrcode_exception 15
-x87_floating_point_exception:
-    nonerrcode_exception 16
-alignment_check:
-    errcode_exception 17
-machine_check:
-    nonerrcode_exception 18
-simd_floating_point_exception:
-    nonerrcode_exception 19
-virtualization_exception:
-    nonerrcode_exception 20
-control_protection_exception:
-    errcode_exception 21
-reserved2_excepetion:
-    nonerrcode_exception 22
-reserved3_excepetion:
-    nonerrcode_exception 23
-reserved4_excepetion:
-    nonerrcode_exception 24
-reserved5_excepetion:
-    nonerrcode_exception 25
-reserved6_excepetion:
-    nonerrcode_exception 26
-reserved7_excepetion:
-    nonerrcode_exception 27
-hypervisor_injection_exception:
-    nonerrcode_exception 28
-vmm_communication_exception:
-    errcode_exception 29
-security_exception:
-    errcode_exception 30
-reserved8_excepetion:
-    nonerrcode_exception 31
+DivideByZeroFaultHandler:
+    NonErrcodeHandler 0
+SingleStepTrapHandler:
+    NonErrcodeHandler 1
+NMIHandler:
+    NonErrcodeHandler 2
+BreakpointTrapHandler:
+    NonErrcodeHandler 3
+OverflowTrapHandler:
+    NonErrcodeHandler 4
+BoundRangeExceededFaultHandler:
+    NonErrcodeHandler 5
+InvalidOpcodeFaultHandler:
+    NonErrcodeHandler 6
+DeviceNotAvailableFaultHandler:
+    NonErrcodeHandler 7
+DoubleFaultHandler:
+    ErrcodeHandler 8
+CoprocessorSegmentOverrunFaultHandler:
+    NonErrcodeHandler 9
+InvalidTSSFault:
+    ErrcodeHandler 10
+SegmentNotPresentFaultHandler:
+    ErrcodeHandler 11
+StackSegmentFaultHandler:
+    ErrcodeHandler 12
+GeneralProtectionFaultHandler:
+    ErrcodeHandler 13
+PageFaultHandler:
+    ErrcodeHandler 14
+ReservedHandler1:
+    NonErrcodeHandler 15
+X87FloatingPointFaultHandler:
+    NonErrcodeHandler 16
+AlignmentCheckHandler:
+    ErrcodeHandler 17
+MachineCheckHandler:
+    NonErrcodeHandler 18
+SIMDFloatingPointFaultHandler:
+    NonErrcodeHandler 19
+VirtualizationFaultHandler:
+    NonErrcodeHandler 20
+ControlProtectionFaultHandler:
+    ErrcodeHandler 21
+ReservedHandler2:
+    NonErrcodeHandler 22
+ReservedHandler3:
+    NonErrcodeHandler 23
+ReservedHandler4:
+    NonErrcodeHandler 24
+ReservedHandler5:
+    NonErrcodeHandler 25
+ReservedHandler6:
+    NonErrcodeHandler 26
+ReservedHandler7:
+    NonErrcodeHandler 27
+HypervisorInjectionException:
+    NonErrcodeHandler 28
+VMMCommunicationFaultHandler:
+    ErrcodeHandler 29
+SecurityFaultHandler:
+    ErrcodeHandler 30
+ReservedHandler8:
+    NonErrcodeHandler 31
 
 //-------------------------------------------------
 
-.macro irq_handler vector
-    save_context
+.macro irqHandler vector
+    menter
 
     pushl %esp
     movl $\vector, %eax
 
-    call primary_irq_handler
+    call PrimaryIRQHandler
 
     addl $4, %esp
 
-    restore_context
+    mleave
     iret
 .endm
 
-.global irq0_handler
-.type   irq0_handler, @function
-.global irq1_handler
-.type   irq1_handler, @function
-.global irq2_handler
-.type   irq2_handler, @function
-.global irq3_handler
-.type   irq3_handler, @function
-.global irq4_handler
-.type   irq4_handler, @function
-.global irq5_handler
-.type   irq5_handler, @function
-.global irq6_handler
-.type   irq6_handler, @function
-.global irq7_handler
-.type   irq7_handler, @function
-.global irq8_handler
-.type   irq8_handler, @function
-.global irq9_handler
-.type   irq9_handler, @function
-.global irq10_handler
-.type   irq10_handler, @function
-.global irq11_handler
-.type   irq11_handler, @function
-.global irq12_handler
-.type   irq12_handler, @function
-.global irq13_handler
-.type   irq13_handler, @function
-.global irq14_handler
-.type   irq14_handler, @function
-.global irq15_handler
-.type   irq15_handler, @function
+.global Irq0Handler
+.type   Irq0Handler, @function
+.global Irq1Handler
+.type   Irq1Handler, @function
+.global Irq2Handler
+.type   Irq2Handler, @function
+.global Irq3Handler
+.type   Irq3Handler, @function
+.global Irq4Handler
+.type   Irq4Handler, @function
+.global Irq5Handler
+.type   Irq5Handler, @function
+.global Irq6Handler
+.type   Irq6Handler, @function
+.global Irq7Handler
+.type   Irq7Handler, @function
+.global Irq8Handler
+.type   Irq8Handler, @function
+.global Irq9Handler
+.type   Irq9Handler, @function
+.global Irq10Handler
+.type   Irq10Handler, @function
+.global Irq11Handler
+.type   Irq11Handler, @function
+.global Irq12Handler
+.type   Irq12Handler, @function
+.global Irq13Handler
+.type   Irq13Handler, @function
+.global Irq14Handler
+.type   Irq14Handler, @function
+.global Irq15Handler
+.type   Irq15Handler, @function
 
-irq0_handler:
-    irq_handler 0
-irq1_handler:
-    irq_handler 1
-irq2_handler:
-    irq_handler 2
-irq3_handler:
-    irq_handler 3
-irq4_handler:
-    irq_handler 4
-irq5_handler:
-    irq_handler 5
-irq6_handler:
-    irq_handler 6
-irq7_handler:
-    irq_handler 7
-irq8_handler:
-    irq_handler 8
-irq9_handler:
-    irq_handler 9
-irq10_handler:
-    irq_handler 10
-irq11_handler:
-    irq_handler 11
-irq12_handler:
-    irq_handler 12
-irq13_handler:
-    irq_handler 13
-irq14_handler:
-    irq_handler 14
-irq15_handler:
-    irq_handler 15
+Irq0Handler:
+    irqHandler 0
+Irq1Handler:
+    irqHandler 1
+Irq2Handler:
+    irqHandler 2
+Irq3Handler:
+    irqHandler 3
+Irq4Handler:
+    irqHandler 4
+Irq5Handler:
+    irqHandler 5
+Irq6Handler:
+    irqHandler 6
+Irq7Handler:
+    irqHandler 7
+Irq8Handler:
+    irqHandler 8
+Irq9Handler:
+    irqHandler 9
+Irq10Handler:
+    irqHandler 10
+Irq11Handler:
+    irqHandler 11
+Irq12Handler:
+    irqHandler 12
+Irq13Handler:
+    irqHandler 13
+Irq14Handler:
+    irqHandler 14
+Irq15Handler:
+    irqHandler 15

@@ -23,29 +23,29 @@
  * @brief GDT
  * 
  */
-desc_t GDT[64];
+Descriptor GDT[64];
 
 /**
  * @brief GDTR
  * 
  */
-dptr_t GDTR;
+DPTR GDTR;
 
 /**
  * @brief 初始化空描述符
  * 
  */
-static void init_empty_desc(void) {
-    raw_desc_t empty = {};
-    GDT[0] = build_descriptor(empty);
+static void InitEmptyDesc(void) {
+    RawDesc empty = {};
+    GDT[0] = BuildDesc(empty);
 }
 
 /**
  * @brief 初始化代码段描述符
  * 
  */
-static void init_code_desc(void) {
-    raw_desc_t code = {};
+static void InitCodeDesc(void) {
+    RawDesc code = {};
 
     code.base = 0;
     code.limit = 0xFFFFF; // flat-model
@@ -60,11 +60,11 @@ static void init_code_desc(void) {
     code.db        = true;
     code.granulity = true;
 
-    GDT[CODE_IDX] = build_descriptor(code);
+    GDT[CODE_IDX] = BuildDesc(code);
 }
 
-static void init_data_desc(void) {
-    raw_desc_t data = {};
+static void InitDataDesc(void) {
+    RawDesc data = {};
 
     data.base = 0;
     data.limit = 0xFFFFF; // flat-model
@@ -79,57 +79,57 @@ static void init_data_desc(void) {
     data.db        = true;
     data.granulity = true;
 
-    GDT[DATA_IDX] = build_descriptor(data);
+    GDT[DATA_IDX] = BuildDesc(data);
 }
 
-static void init_kercode_desc(void) {
-    raw_desc_t kercode = {};
+static void InitKCodeDesc(void) {
+    RawDesc kcode = {};
 
-    kercode.base = 0;
-    kercode.limit = 0xFFFFF; // flat-model
+    kcode.base = 0;
+    kcode.limit = 0xFFFFF; // flat-model
 
-    kercode.dpl = DPL0;
-    kercode.type = DTYPE_XRCODE; // execute-readable
+    kcode.dpl = DPL0;
+    kcode.type = DTYPE_XRCODE; // execute-readable
 
-    kercode.system    = true; // data/code segment
-    kercode.present   = true;
-    kercode.avl       = false;
-    kercode.lm        = true; // 64bit
-    kercode.db        = true;
-    kercode.granulity = true;
+    kcode.system    = true; // data/code segment
+    kcode.present   = true;
+    kcode.avl       = false;
+    kcode.lm        = true; // 64bit
+    kcode.db        = true;
+    kcode.granulity = true;
 
-    GDT[KERCODE_IDX] = build_descriptor(kercode);
+    GDT[KERCODE_IDX] = BuildDesc(kcode);
 }
 
-static void init_kerdata_desc(void) {
-    raw_desc_t kerdata = {};
+static void InitKDataDesc(void) {
+    RawDesc kdata = {};
 
-    kerdata.base = 0;
-    kerdata.limit = 0xFFFFF; // flat-model
+    kdata.base = 0;
+    kdata.limit = 0xFFFFF; // flat-model
 
-    kerdata.dpl = DPL0;
-    kerdata.type = DTYPE_RWDATA; //read-write
+    kdata.dpl = DPL0;
+    kdata.type = DTYPE_RWDATA; //read-write
 
-    kerdata.system    = true; // data/code segment
-    kerdata.present   = true;
-    kerdata.avl       = false;
-    kerdata.lm        = true; // 64bit
-    kerdata.db        = true;
-    kerdata.granulity = true;
+    kdata.system    = true; // data/code segment
+    kdata.present   = true;
+    kdata.avl       = false;
+    kdata.lm        = true; // 64bit
+    kdata.db        = true;
+    kdata.granulity = true;
 
-    GDT[KERDATA_IDX] = build_descriptor(kerdata);
+    GDT[KERDATA_IDX] = BuildDesc(kdata);
 }
 
 /**
  * @brief 初始化GDT
  * 
  */
-void init_gdt(void) {
-    init_empty_desc();
-    init_code_desc();
-    init_data_desc();
-    init_kercode_desc();
-    init_kerdata_desc();
+void InitGDT(void) {
+    InitEmptyDesc();
+    InitCodeDesc();
+    InitDataDesc();
+    InitKCodeDesc();
+    InitKDataDesc();
 
     GDTR.address = GDT;
     GDTR.size = sizeof(GDT) - 1;

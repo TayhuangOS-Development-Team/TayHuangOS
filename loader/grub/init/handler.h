@@ -31,18 +31,18 @@ typedef struct {
         ds,
         cr3,
         ebp,
-        handler_esp,
+        handlerEsp,
         eip,
         cs,
         eflags,
         esp,
         ss;
-} istack_t;
+} IStack;
 
 /** 中断处理器 */
-typedef bool(*irq_handler_t)(int irq, istack_t *stack);
+typedef bool(*IRQHandler)(int irq, IStack *stack);
 
-extern irq_handler_t irq_handlers[32];
+extern IRQHandler irqHandlers[32];
 
 /**
  * @brief IRQ主处理程序
@@ -50,7 +50,7 @@ extern irq_handler_t irq_handlers[32];
  * @param irq irq号
  * @param stack 堆栈
  */
-void primary_irq_handler(int irq, istack_t *stack);
+void PrimaryIRQHandler(int irq, IStack *stack);
 
 /**
  * @brief 异常主处理程序
@@ -58,58 +58,58 @@ void primary_irq_handler(int irq, istack_t *stack);
  * @param errno 异常号
  * @param stack 堆栈
  */
-void primary_exception_handler(int errno, istack_t *stack);
+void PrimaryExceptionHandler(int errno, IStack *stack);
 
 //------------------------------------------
 
-void divide_by_zero_error(void); //除以0
-void single_step_debug(void); //单步调试
-void non_maskable_interrup(void); //NMI
-void breakpoint(void); //断点
-void overflow(void); //溢出
-void bound_range_exceeded(void); //出界
-void invalid_opcode(void); //非法指令码
-void device_not_available(void); //设备不可用
-void double_fault(void); //双重错误
-void coprocessor_segment_overrun(void); //协处理器错误
-void invalid_tss(void); //无效TSS
-void segment_not_present(void); //段不存在
-void stack_segment_fault(void); //栈段错误
-void general_protection_fault(void); //通用保护错误
-void page_fault(void); //缺页中断
-void reserved1_excepetion(void); //
-void x87_floating_point_exception(void); //x87数学协处理器浮点运算错误
-void alignment_check(void); //对齐检测
-void machine_check(void); //机器检测
-void simd_floating_point_exception(void); //SIMD浮点运算错误
-void virtualization_exception(void); //虚拟化异常
-void control_protection_exception(void); //控制保护错误
-void reserved2_excepetion(void); //
-void reserved3_excepetion(void); //
-void reserved4_excepetion(void); //
-void reserved5_excepetion(void); //
-void reserved6_excepetion(void); //
-void reserved7_excepetion(void); //
-void hypervisor_injection_exception(void); //VMM注入错误
-void vmm_communication_exception(void); //VMM交流错误
-void security_exception(void); //安全性错误
-void reserved8_excepetion(void); //
+void DivideByZeroFaultHandler(void); //除以0
+void SingleStepTrapHandler(void); //单步调试
+void NMIHandler(void); //NMI
+void BreakpointTrapHandler(void); //断点
+void OverflowTrapHandler(void); //溢出
+void BoundRangeExceededFaultHandler(void); //出界
+void InvalidOpcodeFaultHandler(void); //非法指令码
+void DeviceNotAvailableFaultHandler(void); //设备不可用
+void DoubleFaultHandler(void); //双重错误
+void CoprocessorSegmentOverrunFaultHandler(void); //协处理器错误
+void InvalidTSSFault(void); //无效TSS
+void SegmentNotPresentFaultHandler(void); //段不存在
+void StackSegmentFaultHandler(void); //栈段错误
+void GeneralProtectionFaultHandler(void); //通用保护错误
+void PageFaultHandler(void); //缺页中断
+void ReservedHandler1(void); //
+void X87FloatingPointFaultHandler(void); //x87数学协处理器浮点运算错误
+void AlignmentCheckHandler(void); //对齐检测
+void MachineCheckHandler(void); //机器检测
+void SIMDFloatingPointFaultHandler(void); //SIMD浮点运算错误
+void VirtualizationFaultHandler(void); //虚拟化异常
+void ControlProtectionFaultHandler(void); //控制保护错误
+void ReservedHandler2(void); //
+void ReservedHandler3(void); //
+void ReservedHandler4(void); //
+void ReservedHandler5(void); //
+void ReservedHandler6(void); //
+void ReservedHandler7(void); //
+void HypervisorInjectionException(void); //VMM注入错误
+void VMMCommunicationFaultHandler(void); //VMM交流错误
+void SecurityFaultHandler(void); //安全性错误
+void ReservedHandler8(void); //
 
 //------------------------------------------
 
-void irq0_handler(void);
-void irq1_handler(void);
-void irq2_handler(void);
-void irq3_handler(void);
-void irq4_handler(void);
-void irq5_handler(void);
-void irq6_handler(void);
-void irq7_handler(void);
-void irq8_handler(void);
-void irq9_handler(void);
-void irq10_handler(void);
-void irq11_handler(void);
-void irq12_handler(void);
-void irq13_handler(void);
-void irq14_handler(void);
-void irq15_handler(void);
+void Irq0Handler(void);
+void Irq1Handler(void);
+void Irq2Handler(void);
+void Irq3Handler(void);
+void Irq4Handler(void);
+void Irq5Handler(void);
+void Irq6Handler(void);
+void Irq7Handler(void);
+void Irq8Handler(void);
+void Irq9Handler(void);
+void Irq10Handler(void);
+void Irq11Handler(void);
+void Irq12Handler(void);
+void Irq13Handler(void);
+void Irq14Handler(void);
+void Irq15Handler(void);

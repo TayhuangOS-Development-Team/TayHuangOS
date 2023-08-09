@@ -15,13 +15,13 @@
 #include <tay/desc.h>
 
 /** GDT */
-extern desc_t GDT[64];
+extern Descriptor GDT[64];
 
 /** GDTR */
-extern dptr_t GDTR;
+extern DPTR GDTR;
 
 /**
  * @brief 初始化GDT
  * 
  */
-void init_gdt(void);
+void InitGDT(void);

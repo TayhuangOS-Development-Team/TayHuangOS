@@ -13,18 +13,18 @@
 #include <init/idt.h>
 #include <init/handler.h>
 
-#include <bcl/logger.h>
+#include <basec/logger.h>
 
 #include <tay/io.h>
 #include <tay/ports.h>
 
 /** IDT */
-gate_desc_t IDT[256];
+GateDescriptor IDT[256];
 /**
  * @brief IDTR
  * 
  */
-dptr_t IDTR;
+DPTR IDTR;
 
 #define IRQ_START (32)
 
@@ -32,7 +32,7 @@ dptr_t IDTR;
  * @brief 初始化PIC
  * 
  */
-void init_pic(void) {
+void InitPIC(void) {
     outb (M_PIC_BASE + PIC_CONTROL, 0x11);
     outb (S_PIC_BASE + PIC_CONTROL, 0x11); //ICW1
 
@@ -56,56 +56,56 @@ void init_pic(void) {
  * @brief 初始化IDT
  * 
  */
-void init_idt(void) {
-    IDT[0x00] = build_gate(GTYPE_386_INT_GATE, divide_by_zero_error, 0, rdcs());
-    IDT[0x01] = build_gate(GTYPE_386_INT_GATE, single_step_debug, 0, rdcs());
-    IDT[0x02] = build_gate(GTYPE_386_INT_GATE, non_maskable_interrup, 0, rdcs());
-    IDT[0x03] = build_gate(GTYPE_386_INT_GATE, breakpoint, 0, rdcs());
-    IDT[0x04] = build_gate(GTYPE_386_INT_GATE, overflow, 0, rdcs());
-    IDT[0x05] = build_gate(GTYPE_386_INT_GATE, bound_range_exceeded, 0, rdcs());
-    IDT[0x06] = build_gate(GTYPE_386_INT_GATE, invalid_opcode, 0, rdcs());
-    IDT[0x07] = build_gate(GTYPE_386_INT_GATE, device_not_available, 0, rdcs());
-    IDT[0x08] = build_gate(GTYPE_386_INT_GATE, double_fault, 0, rdcs());
-    IDT[0x09] = build_gate(GTYPE_386_INT_GATE, coprocessor_segment_overrun, 0, rdcs());
-    IDT[0x0A] = build_gate(GTYPE_386_INT_GATE, invalid_tss, 0, rdcs());
-    IDT[0x0B] = build_gate(GTYPE_386_INT_GATE, segment_not_present, 0, rdcs());
-    IDT[0x0C] = build_gate(GTYPE_386_INT_GATE, stack_segment_fault, 0, rdcs());
-    IDT[0x0D] = build_gate(GTYPE_386_INT_GATE, general_protection_fault, 0, rdcs());
-    IDT[0x0E] = build_gate(GTYPE_386_INT_GATE, page_fault, 0, rdcs());
-    IDT[0x0F] = build_gate(GTYPE_386_INT_GATE, reserved1_excepetion, 0, rdcs());
-    IDT[0x10] = build_gate(GTYPE_386_INT_GATE, x87_floating_point_exception, 0, rdcs());
-    IDT[0x11] = build_gate(GTYPE_386_INT_GATE, alignment_check, 0, rdcs());
-    IDT[0x12] = build_gate(GTYPE_386_INT_GATE, machine_check, 0, rdcs());
-    IDT[0x13] = build_gate(GTYPE_386_INT_GATE, simd_floating_point_exception, 0, rdcs());
-    IDT[0x14] = build_gate(GTYPE_386_INT_GATE, virtualization_exception, 0, rdcs());
-    IDT[0x15] = build_gate(GTYPE_386_INT_GATE, control_protection_exception, 0, rdcs());
-    IDT[0x16] = build_gate(GTYPE_386_INT_GATE, reserved2_excepetion, 0, rdcs());
-    IDT[0x17] = build_gate(GTYPE_386_INT_GATE, reserved3_excepetion, 0, rdcs());
-    IDT[0x18] = build_gate(GTYPE_386_INT_GATE, reserved4_excepetion, 0, rdcs());
-    IDT[0x19] = build_gate(GTYPE_386_INT_GATE, reserved5_excepetion, 0, rdcs());
-    IDT[0x1A] = build_gate(GTYPE_386_INT_GATE, reserved6_excepetion, 0, rdcs());
-    IDT[0x1B] = build_gate(GTYPE_386_INT_GATE, reserved7_excepetion, 0, rdcs());
-    IDT[0x1C] = build_gate(GTYPE_386_INT_GATE, hypervisor_injection_exception, 0, rdcs());
-    IDT[0x1D] = build_gate(GTYPE_386_INT_GATE, vmm_communication_exception, 0, rdcs());
-    IDT[0x1E] = build_gate(GTYPE_386_INT_GATE, security_exception, 0, rdcs());
-    IDT[0x1F] = build_gate(GTYPE_386_INT_GATE, reserved8_excepetion, 0, rdcs());
+void InitIDT(void) {
+    IDT[0x00] = BuildGate(GTYPE_386_INT_GATE, DivideByZeroFaultHandler, 0, rdcs());
+    IDT[0x01] = BuildGate(GTYPE_386_INT_GATE, SingleStepTrapHandler, 0, rdcs());
+    IDT[0x02] = BuildGate(GTYPE_386_INT_GATE, NMIHandler, 0, rdcs());
+    IDT[0x03] = BuildGate(GTYPE_386_INT_GATE, BreakpointTrapHandler, 0, rdcs());
+    IDT[0x04] = BuildGate(GTYPE_386_INT_GATE, OverflowTrapHandler, 0, rdcs());
+    IDT[0x05] = BuildGate(GTYPE_386_INT_GATE, BoundRangeExceededFaultHandler, 0, rdcs());
+    IDT[0x06] = BuildGate(GTYPE_386_INT_GATE, InvalidOpcodeFaultHandler, 0, rdcs());
+    IDT[0x07] = BuildGate(GTYPE_386_INT_GATE, DeviceNotAvailableFaultHandler, 0, rdcs());
+    IDT[0x08] = BuildGate(GTYPE_386_INT_GATE, DoubleFaultHandler, 0, rdcs());
+    IDT[0x09] = BuildGate(GTYPE_386_INT_GATE, CoprocessorSegmentOverrunFaultHandler, 0, rdcs());
+    IDT[0x0A] = BuildGate(GTYPE_386_INT_GATE, InvalidTSSFault, 0, rdcs());
+    IDT[0x0B] = BuildGate(GTYPE_386_INT_GATE, SegmentNotPresentFaultHandler, 0, rdcs());
+    IDT[0x0C] = BuildGate(GTYPE_386_INT_GATE, StackSegmentFaultHandler, 0, rdcs());
+    IDT[0x0D] = BuildGate(GTYPE_386_INT_GATE, GeneralProtectionFaultHandler, 0, rdcs());
+    IDT[0x0E] = BuildGate(GTYPE_386_INT_GATE, PageFaultHandler, 0, rdcs());
+    IDT[0x0F] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler1, 0, rdcs());
+    IDT[0x10] = BuildGate(GTYPE_386_INT_GATE, X87FloatingPointFaultHandler, 0, rdcs());
+    IDT[0x11] = BuildGate(GTYPE_386_INT_GATE, AlignmentCheckHandler, 0, rdcs());
+    IDT[0x12] = BuildGate(GTYPE_386_INT_GATE, MachineCheckHandler, 0, rdcs());
+    IDT[0x13] = BuildGate(GTYPE_386_INT_GATE, SIMDFloatingPointFaultHandler, 0, rdcs());
+    IDT[0x14] = BuildGate(GTYPE_386_INT_GATE, VirtualizationFaultHandler, 0, rdcs());
+    IDT[0x15] = BuildGate(GTYPE_386_INT_GATE, ControlProtectionFaultHandler, 0, rdcs());
+    IDT[0x16] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler2, 0, rdcs());
+    IDT[0x17] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler3, 0, rdcs());
+    IDT[0x18] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler4, 0, rdcs());
+    IDT[0x19] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler5, 0, rdcs());
+    IDT[0x1A] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler6, 0, rdcs());
+    IDT[0x1B] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler7, 0, rdcs());
+    IDT[0x1C] = BuildGate(GTYPE_386_INT_GATE, HypervisorInjectionException, 0, rdcs());
+    IDT[0x1D] = BuildGate(GTYPE_386_INT_GATE, VMMCommunicationFaultHandler, 0, rdcs());
+    IDT[0x1E] = BuildGate(GTYPE_386_INT_GATE, SecurityFaultHandler, 0, rdcs());
+    IDT[0x1F] = BuildGate(GTYPE_386_INT_GATE, ReservedHandler8, 0, rdcs());
 
-    IDT[IRQ_START + 0] = build_gate(GTYPE_386_INT_GATE, irq0_handler, 0, rdcs());
-    IDT[IRQ_START + 1] = build_gate(GTYPE_386_INT_GATE, irq1_handler, 0, rdcs());
-    IDT[IRQ_START + 2] = build_gate(GTYPE_386_INT_GATE, irq2_handler, 0, rdcs());
-    IDT[IRQ_START + 3] = build_gate(GTYPE_386_INT_GATE, irq3_handler, 0, rdcs());
-    IDT[IRQ_START + 4] = build_gate(GTYPE_386_INT_GATE, irq4_handler, 0, rdcs());
-    IDT[IRQ_START + 5] = build_gate(GTYPE_386_INT_GATE, irq5_handler, 0, rdcs());
-    IDT[IRQ_START + 6] = build_gate(GTYPE_386_INT_GATE, irq6_handler, 0, rdcs());
-    IDT[IRQ_START + 7] = build_gate(GTYPE_386_INT_GATE, irq7_handler, 0, rdcs());
-    IDT[IRQ_START + 8] = build_gate(GTYPE_386_INT_GATE, irq8_handler, 0, rdcs());
-    IDT[IRQ_START + 9] = build_gate(GTYPE_386_INT_GATE, irq9_handler, 0, rdcs());
-    IDT[IRQ_START + 10] = build_gate(GTYPE_386_INT_GATE, irq10_handler, 0, rdcs());
-    IDT[IRQ_START + 11] = build_gate(GTYPE_386_INT_GATE, irq11_handler, 0, rdcs());
-    IDT[IRQ_START + 12] = build_gate(GTYPE_386_INT_GATE, irq12_handler, 0, rdcs());
-    IDT[IRQ_START + 13] = build_gate(GTYPE_386_INT_GATE, irq13_handler, 0, rdcs());
-    IDT[IRQ_START + 14] = build_gate(GTYPE_386_INT_GATE, irq14_handler, 0, rdcs());
-    IDT[IRQ_START + 15] = build_gate(GTYPE_386_INT_GATE, irq15_handler, 0, rdcs());
+    IDT[IRQ_START + 0] = BuildGate(GTYPE_386_INT_GATE, Irq0Handler, 0, rdcs());
+    IDT[IRQ_START + 1] = BuildGate(GTYPE_386_INT_GATE, Irq1Handler, 0, rdcs());
+    IDT[IRQ_START + 2] = BuildGate(GTYPE_386_INT_GATE, Irq2Handler, 0, rdcs());
+    IDT[IRQ_START + 3] = BuildGate(GTYPE_386_INT_GATE, Irq3Handler, 0, rdcs());
+    IDT[IRQ_START + 4] = BuildGate(GTYPE_386_INT_GATE, Irq4Handler, 0, rdcs());
+    IDT[IRQ_START + 5] = BuildGate(GTYPE_386_INT_GATE, Irq5Handler, 0, rdcs());
+    IDT[IRQ_START + 6] = BuildGate(GTYPE_386_INT_GATE, Irq6Handler, 0, rdcs());
+    IDT[IRQ_START + 7] = BuildGate(GTYPE_386_INT_GATE, Irq7Handler, 0, rdcs());
+    IDT[IRQ_START + 8] = BuildGate(GTYPE_386_INT_GATE, Irq8Handler, 0, rdcs());
+    IDT[IRQ_START + 9] = BuildGate(GTYPE_386_INT_GATE, Irq9Handler, 0, rdcs());
+    IDT[IRQ_START + 10] = BuildGate(GTYPE_386_INT_GATE, Irq10Handler, 0, rdcs());
+    IDT[IRQ_START + 11] = BuildGate(GTYPE_386_INT_GATE, Irq11Handler, 0, rdcs());
+    IDT[IRQ_START + 12] = BuildGate(GTYPE_386_INT_GATE, Irq12Handler, 0, rdcs());
+    IDT[IRQ_START + 13] = BuildGate(GTYPE_386_INT_GATE, Irq13Handler, 0, rdcs());
+    IDT[IRQ_START + 14] = BuildGate(GTYPE_386_INT_GATE, Irq14Handler, 0, rdcs());
+    IDT[IRQ_START + 15] = BuildGate(GTYPE_386_INT_GATE, Irq15Handler, 0, rdcs());
     
     IDTR.address = IDT;
     IDTR.size = sizeof(IDT);

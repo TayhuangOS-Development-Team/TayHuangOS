@@ -15,19 +15,19 @@
 #include <tay/desc.h>
 
 /** IDT */
-extern gate_desc_t IDT[256];
+extern GateDescriptor IDT[256];
 
 /** IDTR */
-extern dptr_t IDTR;
+extern DPTR IDTR;
 
 /**
  * @brief 初始化PIC
  * 
  */
-void init_pic(void);
+void InitPIC(void);
 
 /**
  * @brief 初始化IDT
  * 
  */
-void init_idt(void);
+void InitIDT(void);

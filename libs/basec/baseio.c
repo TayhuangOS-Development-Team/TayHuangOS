@@ -1,5 +1,5 @@
 /**
- * @file bio.h
+ * @file baseio.h
  * @author theflysong (song_of_the_fly@163.com)
  * @brief primitive io - 实现
  * @version alpha-1.0.0
@@ -10,9 +10,9 @@
  * 
  */
 
-#include <bcl/bio.h>
-#include <bcl/tostring.h>
-#include <bcl/logger.h>
+#include <basec/baseio.h>
+#include <basec/tostring.h>
+#include <basec/logger.h>
 
 #include <stdbool.h>
 #include <ctype.h>
@@ -327,7 +327,7 @@ static int __llprintf(char *buffer, const char *fmt, va_list args) {
  * @param args 参数
  * @return 输出字符数 
  */
-int vbprintf(bputs_t bputs, const char *fmt, va_list args) {
+int vbprintf(BaseCPutsFunc bputs, const char *fmt, va_list args) {
     char buffer[512];
 
     int ret = __llprintf(buffer, fmt, args);
@@ -356,7 +356,7 @@ int vsprintf(char *buffer, const char *fmt, va_list args) {
  * @param ... 参数
  * @return 输出字符数
  */
-int bprintf(bputs_t bputs, const char *fmt, ...) {
+int bprintf(BaseCPutsFunc bputs, const char *fmt, ...) {
     // 初始化可变参数
     va_list lst;
     va_start(lst, fmt);
@@ -394,7 +394,7 @@ int sprintf(char *buffer, const char *fmt, ...)  {
  * @param args 参数
  * @return 输入字符数 
  */
-int vbscanf(bgetchar_t bgetchar, const char *fmt, va_list args) {
+int vbscanf(BaseCGetcharFunc bgetchar, const char *fmt, va_list args) {
     // TODO
     return 0;
 }
@@ -407,7 +407,7 @@ int vbscanf(bgetchar_t bgetchar, const char *fmt, va_list args) {
  * @param ... 参数
  * @return 输入字符数 
  */
-int bscanf(bgetchar_t bgetchar, const char *fmt, ...) {
+int bscanf(BaseCGetcharFunc bgetchar, const char *fmt, ...) {
     // 初始化可变参数
     va_list lst;
     va_start(lst, fmt);

@@ -9,7 +9,7 @@ include $(path-script)/helper.mk
 target-x86 := $(path-bin)/libs/x86/libbcl.a
 target-x86_64 := $(path-bin)/libs/x86_64/libbcl.a
 
-objects := logger.o bio.o tostring.o
+objects := logger.o baseio.o tostring.o
 
 flags-c := -Wall -Wno-int-conversion -Wstrict-prototypes \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -30,6 +30,3 @@ dir-x86_64 := dir-obj="$(path-objects)/bcl/x86_64/" dir-src="$(path-d)"
 build:
 	$(q)$(MAKE) $(builder-s-x86)=$(target-x86) objects="$(objects)" $(dir-x86) $(args) $(target-x86)
 	$(q)$(MAKE) $(builder-s-x86_64)=$(target-x86_64) objects="$(objects)" $(dir-x86_64) $(args) $(target-x86_64)
-
-gendoc:
-	$(q)$(MAKE) $(doc-generator)=$(path-d)/DoxygenFile $@

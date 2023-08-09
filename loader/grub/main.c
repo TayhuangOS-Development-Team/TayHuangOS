@@ -21,7 +21,7 @@
 #include <libs/capi.h>
 #include <libs/debug.h>
 
-#include <bcl/logger.h>
+#include <basec/logger.h>
 
 #include <device/disk.h>
 
@@ -29,21 +29,21 @@
  * @brief 初始化
  * 
  */
-void initialize(void) {
-    init_gdt();
+void Init(void) {
+    InitGDT();
 
-    init_serial();
-    init_ulogger(write_serial_str, "GRUB Loader");
+    InitSerial();
+    InitLogger(WriteSerialStr, "GRUB Loader");
 
-    init_pic();
-    init_idt();
+    InitPIC();
+    InitIDT();
 }
 
 /**
  * @brief 结束
  * 
  */
-void terminate(void) {
+void Terminate(void) {
 }
 
 /**
@@ -51,27 +51,27 @@ void terminate(void) {
  * 
  */
 void main(void) {
-    initialize();
+    Init();
 
     asm volatile ("sti");
     
-    disk_t *disk = load_disk(IDE0_BASE, IDE0_BASE2, false);
+    Disk *disk = LoadDisk(IDE0_BASE, IDE0_BASE2, false);
 
-    partition_t *bootpart = NULL;
+    Partition *bootpart = NULL;
     for (int i = 0 ; i < 4 ; i ++) {
-        if (disk->primparts[i] != NULL && disk->primparts[i]->bootable) {
-            bootpart = disk->primparts[i];
+        if (disk->primitiveParts[i] != NULL && disk->primitiveParts[i]->bootable) {
+            bootpart = disk->primitiveParts[i];
         }
     }
 
     if (bootpart == NULL) {
-        lfatal("Couldn't found boot partition!");
+        LogFatal("Couldn't found boot partition!");
         while (true);
     }
 
-    log_part(bootpart, 0);
+    LogPart(bootpart, 0);
 
     while (true);
     
-    terminate();
+    Terminate();
 }

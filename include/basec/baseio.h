@@ -1,5 +1,5 @@
 /**
- * @file bio.h
+ * @file baseio.h
  * @author theflysong (song_of_the_fly@163.com)
  * @brief primitive io 头文件
  * @version alpha-1.0.0
@@ -17,12 +17,12 @@
 /**
  * @brief 输出函数
  */
-typedef void(*bputs_t)(const char *);
+typedef void(*BaseCPutsFunc)(const char *);
 
 /**
  * @brief 输入函数
  */
-typedef char(*bgetchar_t)(void);
+typedef char(*BaseCGetcharFunc)(void);
 
 /**
  * @brief 使用bputs输出
@@ -32,7 +32,7 @@ typedef char(*bgetchar_t)(void);
  * @param args 参数
  * @return 输出字符数 
  */
-int vbprintf(bputs_t bputs, const char *fmt, va_list args);
+int vbprintf(BaseCPutsFunc bputs, const char *fmt, va_list args);
 
 /**
  * @brief 输出到buffer中
@@ -52,7 +52,7 @@ int vsprintf(char *buffer, const char *fmt, va_list args);
  * @param ... 参数
  * @return 输出字符数
  */
-int bprintf(bputs_t bputs, const char *fmt, ...);
+int bprintf(BaseCPutsFunc bputs, const char *fmt, ...);
 
 /**
  * @brief 输出到buffer中
@@ -72,7 +72,7 @@ int sprintf(char *buffer, const char *fmt, ...);
  * @param args 参数
  * @return 输入字符数 
  */
-int vbscanf(bgetchar_t bgetchar, const char *fmt, va_list args);
+int vbscanf(BaseCGetcharFunc bgetchar, const char *fmt, va_list args);
 
 /**
  * @brief 使用bgetchar输入
@@ -82,4 +82,4 @@ int vbscanf(bgetchar_t bgetchar, const char *fmt, va_list args);
  * @param ... 参数
  * @return 输入字符数 
  */
-int bscanf(bgetchar_t bgetchar, const char *fmt, ...);
+int bscanf(BaseCGetcharFunc bgetchar, const char *fmt, ...);

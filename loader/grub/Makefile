@@ -9,7 +9,7 @@ target := $(path-bin)/grub/grubld.bin
 
 objects := main.o
 
-subdirs := init/ libs/ device/ device/fs/
+subdirs := init/ libs/ device/
 
 include $(foreach subdir, $(subdirs), $(path-d)/$(subdir)/include.mk)
 
@@ -22,7 +22,7 @@ flags-c := -Wall -Wno-int-conversion -Wstrict-prototypes \
  		   -ffreestanding -fno-stack-protector -Wno-int-to-pointer-cast -mno-red-zone \
 		   -fno-toplevel-reorder -fno-tree-scev-cprop -Os
 
-include-c := -I$(path-include) -I$(path-include)/std/ -I$(path-include)/libs/ -I$(path-d) -I./third_party/include/
+include-c := -I$(path-include) -I$(path-include)/std/ -I$(path-d) -I./third_party/include/
 
 defs-c :=
 
@@ -32,12 +32,9 @@ flags-asm :=
 
 args-asm := flags-asm="$(flags-asm)"
 
-args := $(args-ld) $(args-c) $(args-asm) libraries=bcl
+args := $(args-ld) $(args-c) $(args-asm) libraries=basec
 
 dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
 
 build:
 	$(q)$(MAKE) $(builder-k-x86)=$(target) objects="$(objects)" $(dir) $(args) $(target)
-
-gendoc:
-	$(q)$(MAKE) $(doc-generator)=$(path-d)/DoxygenFile $@

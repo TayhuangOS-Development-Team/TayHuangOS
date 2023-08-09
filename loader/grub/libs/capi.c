@@ -15,11 +15,11 @@
 
 static byte __HEAP__[HEAP_SIZE];
 
-static byte *__heap_ptr__ = __HEAP__;
+static byte *__HeapPtr__ = __HEAP__;
 
 void *malloc(size_t size) {
-    void *ret = __heap_ptr__;
-    __heap_ptr__ += size;
+    void *ret = __HeapPtr__;
+    __HeapPtr__ += size;
     return ret;
 }
 
@@ -27,52 +27,52 @@ void free(void *ptr) {
     // 空实现
 }
 
-static word print_pos_x = 0;
-static word print_pos_y = 0;
-static const word char_per_line = 80;
+static word printPosX = 0;
+static word printPosY = 0;
+static const word charPerLine = 80;
 static word *VIDEO_MEMORY = 0xB8000;
-static const byte print_color = 0x0F;
+static const byte printColor = 0x0F;
 
-static void putrawchar(char ch) {
-    VIDEO_MEMORY[print_pos_x + print_pos_y * 80] = (((print_color & 0xFF) << 8) + (ch & 0xFF));
+static void putRawChar(char ch) {
+    VIDEO_MEMORY[printPosX + printPosY * 80] = (((printColor & 0xFF) << 8) + (ch & 0xFF));
 }
 
 void putchar(char ch) {
     switch (ch) {
         case '\r':
         case '\n': {
-            print_pos_x = 0;
-            print_pos_y ++;
+            printPosX = 0;
+            printPosY ++;
             break;
         }
         case '\t': {
-            print_pos_x += 4;
+            printPosX += 4;
             break;
         }
         case '\v': {
-            print_pos_y ++;
+            printPosY ++;
             break;
         }
         case '\f': {
-            print_pos_x = 0;
-            print_pos_y = 0;
+            printPosX = 0;
+            printPosY = 0;
             // clrscr();
             break;
         }
         case '\b': {
-            print_pos_x --;
-            putrawchar(' ');
+            printPosX --;
+            putRawChar(' ');
             break;
         }
         default: {
-            putrawchar(ch);
-            print_pos_x ++;
+            putRawChar(ch);
+            printPosX ++;
         }
     }
     
-    if (print_pos_x >= char_per_line) { //自动换行
-        print_pos_x -= char_per_line;
-        print_pos_y ++;
+    if (printPosX >= charPerLine) { //自动换行
+        printPosX -= charPerLine;
+        printPosY ++;
     }
 }
 

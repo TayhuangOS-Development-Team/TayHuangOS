@@ -1,1 +1,0 @@
-objects += device/fs/fat32.o
