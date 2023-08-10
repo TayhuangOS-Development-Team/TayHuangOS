@@ -11,20 +11,67 @@
  */
 
 #include <libs/capi.h>
+#include <basec/logger.h>
 #include <tay/types.h>
 
 static byte __HEAP__[HEAP_SIZE];
 
 static byte *__HeapPtr__ = __HEAP__;
 
+static int lastStage = 0;
+
 void *lmalloc(size_t size) {
     void *ret = __HeapPtr__;
     __HeapPtr__ += size;
+
+    size_t usedSize = __HeapPtr__ - __HEAP__;
+
+    if (usedSize * 100 >= HEAP_SIZE && lastStage < 1) {
+        lastStage = 1;
+        LogWarn("超过1%%的堆已使用!");
+    }
+
+    if (usedSize * 10 >= HEAP_SIZE && lastStage < 2) {
+        lastStage = 2;
+        LogWarn("超过10%%的堆已使用!");
+    }
+
+    if (usedSize * 4 >= HEAP_SIZE && lastStage < 3) {
+        lastStage = 3;
+        LogWarn("超过25%%的堆已使用!");
+    }
+
+    if (usedSize * 2 >= HEAP_SIZE && lastStage < 4) {
+        lastStage = 4;
+        LogWarn("超过50%%的堆已使用!");
+    }
+
+    if (usedSize * 4 >= HEAP_SIZE * 3 && lastStage < 5) {
+        lastStage = 5;
+        LogWarn("超过75%%的堆已使用!");
+    }
+
     return ret;
 }
 
 void lfree(void *ptr) {
     // 空实现
+}
+
+/**
+ * @brief 打印堆情况
+ *
+ */
+void LogHeap(void) {
+    size_t usedSize = __HeapPtr__ - __HEAP__;
+
+    LogInfo("----------堆信息----------");
+    LogInfo(
+        "总大小: %d B(%d KB=%d MB) ; 已使用空间: %d B(%d KB=%d MB)(占比=%d%%)",
+        HEAP_SIZE, HEAP_SIZE / 1024, HEAP_SIZE / 1024 / 1024,
+        usedSize,  usedSize  / 1024, usedSize  / 1024 / 1024,
+        usedSize * 100 / HEAP_SIZE
+        );
 }
 
 static word printPosX = 0;

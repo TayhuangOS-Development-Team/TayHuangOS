@@ -6,8 +6,8 @@ include $(path-script)/helper.mk
 
 .PHONY: build
 
-target-x86 := $(path-bin)/libs/x86/libbcl.a
-target-x86_64 := $(path-bin)/libs/x86_64/libbcl.a
+target-x86 := $(path-bin)/libs/x86/libbasec.a
+target-x86_64 := $(path-bin)/libs/x86_64/libbasec.a
 
 objects := logger.o baseio.o tostring.o
 

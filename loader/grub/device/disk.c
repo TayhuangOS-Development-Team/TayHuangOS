@@ -187,6 +187,7 @@ void LoadParts(Disk *disk, dword offset, Partition **parts) {
         parts[i]->bootable = bootable;
         parts[i]->size = cnt;
         parts[i]->sysid = sysid;
+        parts[i]->disk = disk;
 
         // 拓展分区
         if (sysid == SI_EXTENDED) {
@@ -362,14 +363,12 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst) {
 /**
  * @brief 读扇区
  *
- * @param disk 硬盘
- * @param part 分区
  * @param lba LBA
  * @param cnt 扇区数
  * @param dst 目标地址
  * @return true 读成功
  * @return false 读失败
  */
-bool ReadPartition(Disk *disk, Partition *part, dword lba, dword cnt, void *dst) {
-    return ReadDisk(disk, part->absoluteOffset + lba, cnt, dst);
+bool ReadPartition(Partition *part, dword lba, dword cnt, void *dst) {
+    return ReadDisk(part->disk, part->absoluteOffset + lba, cnt, dst);
 }

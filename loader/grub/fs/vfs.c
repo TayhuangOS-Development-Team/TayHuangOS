@@ -55,10 +55,14 @@ FSData *LoadFS(Partition *part) {
 
     FSData *data = (FSData *)lmalloc(sizeof(FSData));
 
+    data->disk = part->disk;
+    data->part = part;
+
     FS *fs = fsList;
     while (fs != NULL) {
         // 若加载成功
         if (fs->Load(part, data) == VFS_PASSED) {
+            data->fs = fs;
             return data;
         }
         fs = fs->next;

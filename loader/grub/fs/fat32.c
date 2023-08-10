@@ -11,7 +11,9 @@
  */
 
 #include <fs/fat32.h>
+#include <libs/capi.h>
 #include <basec/logger.h>
+#include <string.h>
 
 /**
  * @brief FAT32引导扇区信息
@@ -174,6 +176,11 @@ struct Fat32FileEntry {
 /**
  * @brief FAT32 长文件名项
  *
+ * 名称中每个word只需取最低字节即可
+ * 例如'你好' unicode码为
+ * e4bda0 e5a5bd
+ * 在FAT32中存储为(小端序)
+ * e400 bd00 a000    4500 a500 bd00
  */
 struct Fat32LFNEntry {
     /** 序号 */
@@ -206,6 +213,27 @@ typedef union {
 } Fat32Entry;
 
 /**
+ * @brief FAT32文件系统数据
+ *
+ */
+typedef struct {
+    Fat32BootRecord bootRecord;
+} Fat32FSData;
+
+/**
+ * @brief FAT32文件数据
+ *
+ */
+typedef struct {
+} Fat32FileData;
+
+/** 为了方便 */
+#define __DATA__ ((Fat32FSData *)data->data)
+#define __BR__ (__DATA__->bootRecord)
+
+
+
+/**
  * @brief 加载文件系统
  *
  * @param part 分区
@@ -214,7 +242,48 @@ typedef union {
  * @return 错误号
  */
 VFSErrors Fat32Load(Partition *part, FSData *data) {
-    return VFS_UNIMPLEMENTED;
+    // 设置data
+    data->data = (void *)lmalloc(sizeof(Fat32FSData));
+
+    // 读取引导扇区
+    char boot[512];
+    ReadPartition(part, 0, 1, boot);
+
+    // 复制Boot Record
+    memcpy(&__BR__, boot, sizeof(Fat32BootRecord));
+
+    // 检测是否是正确的文件系统
+    const char *fat32Name = "FAT32   ";
+    bool flag = false;
+
+    for (int i = 0 ; i < 8 ; i ++) {
+        if (fat32Name[i] != __BR__.fileSystem[i]) {
+            flag = true;
+            break;
+        }
+    }
+
+    // 非零数据为零
+    flag |= (__BR__.bytesPerSector == 0);
+    flag |= (__BR__.sectorsPerClus == 0);
+    flag |= (__BR__.fatsNum == 0);
+    flag |= (__BR__.sectorsPerTrack == 0);
+    flag |= (__BR__.heads == 0);
+    flag |= (__BR__.totalSectors == 0);
+    flag |= (__BR__.fatSectors == 0);
+
+    // BootRecord错误
+    if (flag) {
+        // 释放Data项
+        lfree(data->data);
+        return VFS_INVALID;
+    }
+
+    dword fatStart = __BR__.reservedSectors;
+    dword dataStart = fatStart + __BR__.fatsNum * __BR__.fatSectors - 2 * __BR__.sectorsPerClus;
+    dword rootStart = dataStart + __BR__.rootDirStartClus * __BR__.sectorsPerClus;
+
+    return VFS_PASSED;
 }
 
 /**
@@ -225,7 +294,17 @@ VFSErrors Fat32Load(Partition *part, FSData *data) {
  * @return 错误号
  */
 VFSErrors Fat32Unload(FSData *data) {
-    return VFS_UNIMPLEMENTED;
+    // 关闭根目录文件
+    VFSErrors errcode = Fat32Close(data->root);
+    if (errcode != VFS_PASSED) {
+        return errcode;
+    }
+
+    // 释放额外信息
+    lfree(data->data);
+
+    // 系统已卸载
+    return VFS_PASSED;
 }
 
 /**

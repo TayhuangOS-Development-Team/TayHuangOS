@@ -34,6 +34,12 @@ void *lmalloc(size_t size);
 void lfree(void *ptr);
 
 /**
+ * @brief 打印堆情况
+ *
+ */
+void LogHeap(void);
+
+/**
  * @brief 输出字符
  *
  * @param ch 需要输出的字符

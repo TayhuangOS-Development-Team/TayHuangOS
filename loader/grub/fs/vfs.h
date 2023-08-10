@@ -69,7 +69,7 @@ typedef struct FSDataStruct {
     /** 文件系统 */
     struct FSStruct *fs;
     /** 文件系统所在硬盘 */
-    Disk disk;
+    Disk *disk;
     /** 文件系统所在分区 */
     Partition *part;
 

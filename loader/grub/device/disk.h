@@ -23,11 +23,15 @@ enum SysId {
     SI_EXTENDED = 5
 };
 
+struct DiskStruct;
+
 /**
  * @brief 主分区
  *
  */
 typedef struct PartitionStruct {
+    /** 硬盘 */
+    struct DiskStruct *disk;
     /** 偏移 */
     dword offset;
     /** 绝对偏移(相对硬盘起始位置) */
@@ -46,7 +50,7 @@ typedef struct PartitionStruct {
  * @brief 硬盘
  *
  */
-typedef struct {
+typedef struct DiskStruct {
     /** 基址 */
     word base;
     /** 基址2 */
@@ -167,7 +171,6 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst);
 /**
  * @brief 读扇区
  *
- * @param disk 硬盘
  * @param part 分区
  * @param lba LBA
  * @param cnt 扇区数
@@ -175,4 +178,4 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst);
  * @return true 读成功
  * @return false 读失败
  */
-bool ReadPartition(Disk *disk, Partition *part, dword lba, dword cnt, void *dst);
+bool ReadPartition(Partition *part, dword lba, dword cnt, void *dst);

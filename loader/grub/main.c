@@ -62,6 +62,9 @@ void Init(void) {
  *
  */
 void Terminate(void) {
+    //  打印堆信息
+    LogHeap();
+
     // 永不退出
     while (true);
 }
