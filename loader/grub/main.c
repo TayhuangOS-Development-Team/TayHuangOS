@@ -97,6 +97,10 @@ void LogDirectory(FSData *fs, VFile *dir, int layer) {
     fs->fs->CloseIteration(fs, iter);
 }
 
+static const char *kernelPath = "/TayhuangOS/System/tayKernel.bin";
+
+#define KERNEL_BUFFER (0x500000)
+
 /**
  * @brief 入口函数
  *
@@ -143,6 +147,17 @@ void main(void) {
     }
 
     LogDirectory(fs, fs->root, 0);
+
+    VFile *kernel = OpenFile(fs, kernelPath);
+    if (kernel == NULL) {
+        LogFatal("未找到内核!");
+        Terminate();
+    }
+
+    fs->fs->Read(kernel, (void *)KERNEL_BUFFER);
+    CloseFile(kernel);
+
+    UnloadFS(fs);
 
     Terminate();
 }

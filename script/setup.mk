@@ -23,5 +23,6 @@ setup-losetup:
 
 	#TODO:添加UEFI支持
 	-$(q)$(sudo) $(grub-install-target) --root-directory=$(path-mount) --no-floppy --modules="$(grub-modules)" $(loop-a)
+	$(q)$(call if_sudo_mkdir, $(path-mount)/TayhuangOS/System/)
 
 	$(q)$(sudo) $(umount) $(path-mount)

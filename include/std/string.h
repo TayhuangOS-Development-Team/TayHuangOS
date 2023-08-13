@@ -16,21 +16,18 @@
 
 // memset
 inline static void memset(void *dst, int val, size_t size) {
-    int _val = val;
-// 字符串设置指令
-    __asm__ __volatile__ ("\
-cld\n\
-rep\n\
-stosb" : : "c"(size), "a"(_val), "D"(dst) : "memory");
+	// 还是用C写不容易出问题
+	for (int i = 0 ; i < size ; i ++) {
+		*(char *)(dst + i) = val & 0xFF;
+	}
 }
 
 // memcpy
 inline static void memcpy(void *dst, const void *src, size_t size) {
-// 字符串复制指令
-    __asm__ __volatile__ ("\
-cld\n\
-rep\n\
-movsb" : : "c"(size), "S"(src), "D"(dst) : "memory");
+	// 还是用C写不容易出问题
+	for (int i = 0 ; i < size ; i ++) {
+		*(char *)(dst + i) = *(char *)(src + i);
+	}
 }
 
 // 比较字符串

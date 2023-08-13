@@ -12,6 +12,8 @@
 
 #include <fs/vfs.h>
 #include <libs/capi.h>
+#include <string.h>
+#include <basec/logger.h>
 
 /** 文件系统列表 */
 static FS *fsList = NULL;
@@ -76,9 +78,87 @@ FSData *LoadFS(Partition *part) {
 /**
  * @brief 卸载文件系统
  *
- * @param data 文件系统
+ * @param fs 文件系统
  */
-void UnloadFS(FSData *data) {
-    data->fs->Unload(data);
-    lfree(data);
+void UnloadFS(FSData *fs) {
+    fs->fs->Unload(fs);
+    lfree(fs);
+}
+
+/**
+ * @brief 打开文件
+ *
+ * @param fs 文件系统
+ * @param path 路径
+ * @return 文件
+ */
+VFile *OpenFile(FSData *fs, const char *path) {
+    const char *backup = path;
+
+    VFile *dir = fs->root;
+    char filename[512];
+    while (*path != '\0') {
+        // 去除开头的/
+        if (*path == '/') path ++;
+
+        // 获取文件名
+        int cnt = 0;
+        while (path[cnt] != '\0' && path[cnt] != '/') {
+            cnt ++;
+        }
+
+        memcpy(filename, path, cnt);
+        filename[cnt] = '\0';
+
+        path += cnt;
+
+        // 遍历寻找文件
+        void *iter;
+
+        if (fs->fs->InitIteration(fs, dir, &iter) != VFS_PASSED) {
+            LogError("未能初始化迭代器!");
+            return NULL;
+        }
+
+        VFile *file = (VFile *)lmalloc(sizeof(VFile));
+
+        bool found = false;
+
+        while (fs->fs->Next(fs, iter, file) == VFS_PASSED) {
+            if (! strcmp(file->name, filename)) {
+                found = true;
+                break;
+            }
+            fs->fs->Close(file);
+        }
+
+        fs->fs->CloseIteration(fs, iter);
+
+        // 未找到
+        if (! found) {
+            fs->fs->Close(file);
+            lfree(file);
+            LogError("未找到文件%s(%s文件/目录未找到)", backup, filename);
+            return NULL;
+        }
+
+        if (! dir->isRoot) {
+            fs->fs->Close(dir);
+            lfree(dir);
+        }
+
+        dir = file;
+    }
+
+    return dir;
+}
+
+/**
+ * @brief 关闭文件
+ *
+ * @param file 文件
+ */
+void CloseFile(VFile *file) {
+    file->fs->fs->Close(file);
+    lfree(file);
 }

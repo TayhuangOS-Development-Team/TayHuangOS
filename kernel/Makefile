@@ -5,17 +5,17 @@ include $(path-script)/helper.mk
 
 .PHONY: build
 
-target := $(path-bin)/grub/grubld.bin
+target := $(path-bin)/kernel/tayKernel.bin
 
 objects := main.o
 
-subdirs := init/ libs/ device/ fs/
+subdirs :=
 
 include $(foreach subdir, $(subdirs), $(path-d)/$(subdir)/include.mk)
 
 flags-ld := -s -z max-page-size=0x100
 
-args-ld := flags-ld="$(flags-ld)" script-ld="$(path-d)/grub.ld"
+args-ld := flags-ld="$(flags-ld)" script-ld="$(path-d)/kernel.ld"
 
 flags-c := -Wall -Wno-int-conversion -Wstrict-prototypes \
 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic -fno-asynchronous-unwind-tables \
@@ -34,7 +34,7 @@ args-asm := flags-asm="$(flags-asm)"
 
 args := $(args-ld) $(args-c) $(args-asm) libraries=basec
 
-dir := dir-obj="$(path-objects)/grub/" dir-src="$(path-d)"
+dir := dir-obj="$(path-objects)/kernel/" dir-src="$(path-d)"
 
 build:
-	$(q)$(MAKE) $(builder-k-x86)=$(target) objects="$(objects)" $(dir) $(args) $(target)
+	$(q)$(MAKE) $(builder-k-x86_64)=$(target) objects="$(objects)" $(dir) $(args) $(target)

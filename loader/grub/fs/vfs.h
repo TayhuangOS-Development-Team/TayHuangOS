@@ -180,6 +180,22 @@ FSData *LoadFS(Partition *part);
 /**
  * @brief 卸载文件系统
  *
- * @param data 文件系统
+ * @param fs 文件系统
  */
-void UnloadFS(FSData *data);
+void UnloadFS(FSData *fs);
+
+/**
+ * @brief 打开文件
+ *
+ * @param fs 文件系统
+ * @param path 路径
+ * @return 文件
+ */
+VFile *OpenFile(FSData *fs, const char *path);
+
+/**
+ * @brief 关闭文件
+ *
+ * @param file 文件
+ */
+void CloseFile(VFile *file);

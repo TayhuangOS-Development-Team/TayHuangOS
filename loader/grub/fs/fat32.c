@@ -689,7 +689,9 @@ VFSErrors FAT32Close(VFile *file) {
  * @return 错误号
  */
 VFSErrors FAT32Read(VFile *file, void *target) {
-    return VFS_UNIMPLEMENTED;
+    UpdateFileCache(file->fs, file);
+    memcpy(target, file->cache, file->size);
+    return VFS_PASSED;
 }
 
 /**
