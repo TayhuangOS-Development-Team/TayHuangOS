@@ -18,7 +18,7 @@ include $(path-script)/util.mk
 include $(path-script)/setup.mk
 include $(path-script)/run.mk
 
-.PHONY: build image __image stat_code gendoc
+.PHONY: build mount umount image __image stat_code gendoc
 
 path-bin := $(path-e)/build/bin/
 path-objects := $(path-e)/build/objects/
@@ -29,6 +29,12 @@ build:
 	$(q)$(MAKE) -f $(path-e)/libs/basec/Makefile $(arg-basic) $@
 	
 	$(q)$(MAKE) -f $(path-e)/loader/grub/Makefile $(arg-basic) $@
+
+mount:
+	$(q)$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) loop=$(loop-b) start-image
+
+umount:
+	$(q)$(umount) /mnt/tayhuangOS/
 
 image:
 	$(q)$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) loop=$(loop-b) start-image

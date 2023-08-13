@@ -22,7 +22,7 @@
  *
  * @return 错误号
  */
-VFSErrors Fat32Load(Partition *part, FSData *data);
+VFSErrors FAT32Load(Partition *part, FSData *data);
 /**
  * @brief 卸载文件系统
  *
@@ -30,17 +30,36 @@ VFSErrors Fat32Load(Partition *part, FSData *data);
  *
  * @return 错误号
  */
-VFSErrors Fat32Unload(FSData *data);
+VFSErrors FAT32Unload(FSData *data);
 /**
- * @brief 遍历文件
+ * @brief 初始化迭代器
  *
  * @param data FS数据
  * @param directory 目录文件
- * @param head 首个文件
+ * @param iter 迭代器
  *
  * @return 错误号
  */
-VFSErrors Fat32Foreach(FSData *data, VFile *directory, VFile *head);
+VFSErrors FAT32InitIteration(FSData *data, VFile *directory, void **iter);
+/**
+ * @brief 下个文件
+ *
+ * @param data FS数据
+ * @param iter 迭代器
+ * @param file 文件
+ *
+ * @return 错误号
+ */
+VFSErrors FAT32Next(FSData *data, void *iter, VFile *file);
+/**
+ * @brief 关闭迭代器
+ *
+ * @param data FS数据
+ * @param iter 迭代器
+ *
+ * @return 错误号
+ */
+VFSErrors FAT32CloseIteration(FSData *data, void *iter);
 /**
  * @brief 关闭文件
  *
@@ -48,7 +67,7 @@ VFSErrors Fat32Foreach(FSData *data, VFile *directory, VFile *head);
  *
  * @return 错误号
  */
-VFSErrors Fat32Close(VFile *file);
+VFSErrors FAT32Close(VFile *file);
 /**
  * @brief 读取文件
  *
@@ -57,7 +76,7 @@ VFSErrors Fat32Close(VFile *file);
  *
  * @return 错误号
  */
-VFSErrors Fat32Read(VFile *file, void *target);
+VFSErrors FAT32Read(VFile *file, void *target);
 /**
  * @brief 写文件
  *
@@ -66,7 +85,7 @@ VFSErrors Fat32Read(VFile *file, void *target);
  *
  * @return 错误号
  */
-VFSErrors Fat32Write(VFile *file, void *source, size_t size);
+VFSErrors FAT32Write(VFile *file, void *source, size_t size);
 
 /**
  * @brief FAT32文件系统

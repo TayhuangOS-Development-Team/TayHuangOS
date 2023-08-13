@@ -267,7 +267,7 @@ void LogPart(Partition *part, int layer) {
     // 至多30层缩进
     layer = layer > 31 ? 31 : layer;
     for (int i = 0 ; i < layer ; i ++) {
-        tabs[i] = '\t';
+        tabs[i] = ' ';
     }
     tabs[layer] = '\0';
 

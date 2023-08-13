@@ -41,11 +41,8 @@ typedef struct VFileStruct {
     char *name;
     /** 是否为目录 */
     bool isDirectory;
-
-    /** 上一个文件 */
-    struct VFileStruct *last;
-    /** 下一个文件 */
-    struct VFileStruct *next;
+    /** 是否为根目录 */
+    bool isRoot;
 } VFile;
 
 typedef enum {
@@ -57,7 +54,8 @@ typedef enum {
     VFS_READ_FAILED = 5,
     VFS_WRITE_FAILED = 6,
     VFS_NOT_EXIST = 7,
-    VFS_UNIMPLEMENTED = 8
+    VFS_UNIMPLEMENTED = 8,
+    VFS_FINAL = 9
 } VFSErrors;
 
 /**
@@ -108,15 +106,34 @@ typedef struct FSStruct {
      */
     VFSErrors (*Unload)(FSData *data);
     /**
-     * @brief 遍历文件
+     * @brief 初始化迭代器
      *
      * @param data FS数据
      * @param directory 目录文件
-     * @param head 首个文件
+     * @param iter 迭代器
      *
      * @return 错误号
      */
-    VFSErrors (*Foreach)(FSData *data, VFile *directory, VFile *head);
+    VFSErrors (*InitIteration)(FSData *data, VFile *directory, void **iter);
+    /**
+     * @brief 下个文件
+     *
+     * @param data FS数据
+     * @param iter 迭代器
+     * @param file 文件
+     *
+     * @return 错误号
+     */
+    VFSErrors (*Next)(FSData *data, void *iter, VFile *file);
+    /**
+     * @brief 关闭迭代器
+     *
+     * @param data FS数据
+     * @param iter 迭代器
+     *
+     * @return 错误号
+     */
+    VFSErrors (*CloseIteration)(FSData *data, void *iter);
     /**
      * @brief 关闭文件
      *

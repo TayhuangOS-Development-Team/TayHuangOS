@@ -26,9 +26,9 @@ void *lmalloc(size_t size) {
 
     size_t usedSize = __HeapPtr__ - __HEAP__;
 
-    if (usedSize * 100 >= HEAP_SIZE && lastStage < 1) {
+    if (usedSize * 20 >= HEAP_SIZE && lastStage < 1) {
         lastStage = 1;
-        LogWarn("超过1%%的堆已使用!");
+        LogWarn("超过5%%的堆已使用!");
     }
 
     if (usedSize * 10 >= HEAP_SIZE && lastStage < 2) {

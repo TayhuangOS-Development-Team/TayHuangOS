@@ -69,6 +69,34 @@ void Terminate(void) {
     while (true);
 }
 
+void LogDirectory(FSData *fs, VFile *dir, int layer) {
+    // 缩进
+    char tabs[32];
+    // 至多30层缩进
+    layer = layer > 31 ? 31 : layer;
+    for (int i = 0 ; i < layer ; i ++) {
+        tabs[i] = ' ';
+    }
+    tabs[layer] = '\0';
+
+    VFile *file = (VFile *)lmalloc(sizeof(VFile));
+    void *iter;
+
+    fs->fs->InitIteration(fs, dir, &iter);
+
+    while (fs->fs->Next(fs, iter, file) == VFS_PASSED) {
+        LogInfo("%s%s", tabs, file->name, file->size);
+
+        if (file->isDirectory) {
+            LogDirectory(fs, file, layer + 1);
+        }
+
+        fs->fs->Close(file);
+    }
+
+    fs->fs->CloseIteration(fs, iter);
+}
+
 /**
  * @brief 入口函数
  *
@@ -113,6 +141,8 @@ void main(void) {
         LogFatal("无法识别启动分区的文件系统!");
         Terminate();
     }
+
+    LogDirectory(fs, fs->root, 0);
 
     Terminate();
 }
