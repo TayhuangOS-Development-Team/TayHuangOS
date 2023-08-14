@@ -11,8 +11,8 @@
  */
 
 /**
- * @brief 内核主函数
+ * @brief 内核启动函数
  *
  */
-void main(void) {
+void setup(void) {
 }

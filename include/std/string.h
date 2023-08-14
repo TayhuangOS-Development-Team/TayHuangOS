@@ -40,6 +40,11 @@ inline static int strcmp(const char *str1, const char *str2) {
 		str1 ++;
 		str2 ++;
 	} while (*str1 != 0 && *str2 != 0 && ret == 0);
+
+	// *str2 = 0而*str1 != 0 => len(str1) > len(str2) => str1 > str2
+	if (*str1 != 0) return 1;
+	else if (*str2 != 0) return -1;
+
 	// 根据ret符号获得比较结果
 	if (ret < 0) return -1;
 	else if (ret > 0) return 1;

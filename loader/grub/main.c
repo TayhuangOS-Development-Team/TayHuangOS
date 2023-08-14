@@ -29,6 +29,8 @@
 #include <fs/vfs.h>
 #include <fs/fat32.h>
 
+#include <multiboot2.h>
+
 /**
  * @brief 初始化文件系统
  *
@@ -55,6 +57,9 @@ void Init(void) {
 
     // Step4. 初始化文件系统
     InitFS();
+
+    // 开中断
+    EnableInterrupt();
 }
 
 /**
@@ -105,13 +110,7 @@ static const char *kernelPath = "/TayhuangOS/System/tayKernel.bin";
  * @brief 入口函数
  *
  */
-void main(void) {
-    // 初始化
-    Init();
-
-    // 开中断
-    EnableInterrupt();
-
+int main(void) {
     // 加载硬盘
     Disk *disk = LoadDisk(IDE0_BASE, IDE0_BASE2, false);
 
@@ -133,7 +132,7 @@ void main(void) {
     // 无法找到启动商区
     if (bootPart == NULL) {
         LogFatal("找不到启动分区!");
-        Terminate();
+        return -1;
     }
 
     // 打印扇区信息
@@ -143,7 +142,7 @@ void main(void) {
     FSData *fs = LoadFS(bootPart);
     if (fs == NULL) {
         LogFatal("无法识别启动分区的文件系统!");
-        Terminate();
+        return -1;
     }
 
     LogDirectory(fs, fs->root, 0);
@@ -151,7 +150,7 @@ void main(void) {
     VFile *kernel = OpenFile(fs, kernelPath);
     if (kernel == NULL) {
         LogFatal("未找到内核!");
-        Terminate();
+        return -1;
     }
 
     fs->fs->Read(kernel, (void *)KERNEL_BUFFER);
@@ -159,5 +158,33 @@ void main(void) {
 
     UnloadFS(fs);
 
+    return 0;
+}
+
+/**
+ * @brief 启动函数
+ *
+ */
+void setup(void) {
+    register int magic __asm__("eax"); //Loader 魔数 存放在eax
+    register struct multiboot_tag *multibootInfo __asm__("ebx"); //multiboot info 存放在ebx
+
+    // 设置栈
+    asm volatile ("movl $0x1008000, %esp");
+
+    if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
+        while (true);
+    }
+
+    // 初始化
+    Init();
+
+    // 主函数
+    int ret = main();
+    if (ret != 0) {
+        LogFatal("加载器发生错误!");
+    }
+
+    // 收尾
     Terminate();
 }
