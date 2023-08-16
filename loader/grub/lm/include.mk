@@ -1,0 +1,1 @@
+objects += lm/elfLoader.o

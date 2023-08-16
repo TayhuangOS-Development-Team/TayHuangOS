@@ -13,23 +13,23 @@
 #include <tay/types.h>
 #include <tay/ports.h>
 
+#include <basec/logger.h>
+#include <stdbool.h>
+#include <multiboot2.h>
+
 #include <init/gdt.h>
 #include <init/idt.h>
 #include <init/handler.h>
 
-#include <stdbool.h>
-
 #include <libs/capi.h>
 #include <libs/debug.h>
-
-#include <basec/logger.h>
 
 #include <device/disk.h>
 
 #include <fs/vfs.h>
 #include <fs/fat32.h>
 
-#include <multiboot2.h>
+#include <lm/elfLoader.h>
 
 /**
  * @brief 初始化文件系统
@@ -129,7 +129,7 @@ int main(void) {
         }
     }
 
-    // 无法找到启动商区
+    // 无法找到启动扇区
     if (bootPart == NULL) {
         LogFatal("找不到启动分区!");
         return -1;
@@ -153,8 +153,21 @@ int main(void) {
         return -1;
     }
 
-    fs->fs->Read(kernel, (void *)KERNEL_BUFFER);
+    if (fs->fs->Read(kernel, (void *)KERNEL_BUFFER) != VFS_PASSED) {
+        LogFatal("读取内核时出现异常!");
+        return -1;
+    }
+
     CloseFile(kernel);
+
+    LoadInfo kernelLoadInfo;
+    if (! LoadELF((void *)KERNEL_BUFFER, &kernelLoadInfo)) {
+        LogFatal("加载内核时出现异常!");
+        return -1;
+    }
+
+    LogInfo("内核入口点: %p", kernelLoadInfo.entrypoint);
+    LogInfo("内核区间: %p~%p", kernelLoadInfo.start, kernelLoadInfo.limit);
 
     UnloadFS(fs);
 
