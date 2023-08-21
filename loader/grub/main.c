@@ -12,6 +12,7 @@
 
 #include <tay/types.h>
 #include <tay/ports.h>
+#include <tay/cr.h>
 
 #include <basec/logger.h>
 #include <stdbool.h>
@@ -106,6 +107,65 @@ static const char *kernelPath = "/TayhuangOS/System/tayKernel.bin";
 
 #define KERNEL_BUFFER (0x500000)
 
+void LogCR(void) {
+    LogInfo("--------控制寄存器--------");
+
+    CR0 cr0 = rdcr0();
+    CR2 cr2 = rdcr2();
+    CR3 cr3 = rdcr3();
+    CR4 cr4 = rdcr4();
+
+    LogInfo("CR0: %s %s %s %s %s %s %s %s %s %s %s",
+        cr0.PE ? "PE" : "pe",
+        cr0.MP ? "MP" : "mp",
+        cr0.EM ? "EM" : "em",
+        cr0.TS ? "TS" : "ts",
+        cr0.ET ? "ET" : "et",
+        cr0.NE ? "NE" : "ne",
+        cr0.WP ? "WP" : "wp",
+        cr0.AM ? "AM" : "am",
+        cr0.NW ? "NW" : "nw",
+        cr0.CD ? "CD" : "cd",
+        cr0.PG ? "PG" : "pg"
+    );
+
+    LogInfo("CR2: PFLA: %p", cr2.PFLA);
+
+    LogInfo("CR3: page: %p %s %s",
+        (dword)(cr3.pageEntry & CR3_PAGE_ENTRY_MASK),
+        cr3.PWT ? "PWT" : "pwt",
+        cr3.PCD ? "PCD" : "pcd"
+    );
+
+    LogInfo("CR4: page: %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
+        cr4.VME        ? "VME"        : "vme",
+        cr4.PVI        ? "PVI"        : "pvi",
+        cr4.TSD        ? "TSD"        : "tsd",
+        cr4.DE         ? "DE"         : "de",
+        cr4.PSE        ? "PSE"        : "pse",
+        cr4.PAE        ? "PAE"        : "pae",
+        cr4.MCE        ? "MCE"        : "mce",
+        cr4.PGE        ? "PGE"        : "pge",
+        cr4.PCE        ? "PCE"        : "pce",
+        cr4.OSFXSR     ? "OSFXSR"     : "osfxsr",
+        cr4.OSXMMEXCPT ? "OSXMMEXCPT" : "osxmmexcpt",
+        cr4.UMIP       ? "UMIP"       : "umip",
+        cr4.LA57       ? "LA57"       : "la57",
+        cr4.VMXE       ? "VMXE"       : "vmxe",
+        cr4.SMXE       ? "SMXE"       : "smxe",
+        cr4.FSGSBASE   ? "FSGSBASE"   : "fsgsbase",
+        cr4.PCIDE      ? "PCIDE"      : "pcide",
+        cr4.OSXSAVE    ? "OSXSAVE"    : "osxsave",
+        cr4.KL         ? "KL"         : "kl",
+        cr4.SMEP       ? "SMEP"       : "smep",
+        cr4.SMAP       ? "SMAP"       : "smap",
+        cr4.PKE        ? "PKE"        : "pke",
+        cr4.CET        ? "CET"        : "cet",
+        cr4.PKS        ? "PKS"        : "pks",
+        cr4.UINTR      ? "UINTR"      : "uintr"
+    );
+}
+
 /**
  * @brief 入口函数
  *
@@ -170,6 +230,8 @@ int main(void) {
     LogInfo("内核区间: %p~%p", kernelLoadInfo.start, kernelLoadInfo.limit);
 
     UnloadFS(fs);
+
+    LogCR();
 
     return 0;
 }

@@ -13,6 +13,7 @@
 #pragma once
 
 #include <stdarg.h>
+#include <stdio.h>
 
 /**
  * @brief 输出函数
@@ -35,16 +36,6 @@ typedef char(*BaseCGetcharFunc)(void);
 int vbprintf(BaseCPutsFunc bputs, const char *fmt, va_list args);
 
 /**
- * @brief 输出到buffer中
- *
- * @param buffer 缓存
- * @param fmt 格式化字符串
- * @param args 参数
- * @return 输出字符数
- */
-int vsprintf(char *buffer, const char *fmt, va_list args);
-
-/**
  * @brief 使用bputs输出
  *
  * @param bputs 输出函数
@@ -53,16 +44,6 @@ int vsprintf(char *buffer, const char *fmt, va_list args);
  * @return 输出字符数
  */
 int bprintf(BaseCPutsFunc bputs, const char *fmt, ...);
-
-/**
- * @brief 输出到buffer中
- *
- * @param buffer 缓存
- * @param fmt 格式化字符串
- * @param ... 参数
- * @return 输出字符数
- */
-int sprintf(char *buffer, const char *fmt, ...);
 
 /**
  * @brief 使用bgetchar输入

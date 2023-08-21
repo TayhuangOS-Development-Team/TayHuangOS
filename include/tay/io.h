@@ -87,7 +87,7 @@ inline static void outd(word port, dword data) {
  */
 inline static SegmentRegister rdcs(void) {
     SegmentRegister reg;
-    asm volatile ("movw %%cs, %0" : "=rm"(reg));
+    asm volatile ("movw %%cs, %0" : "=r"(reg));
     return reg;
 }
 
@@ -99,7 +99,7 @@ inline static SegmentRegister rdcs(void) {
  */
 inline static b16 rdds(void) {
     SegmentRegister reg;
-    asm volatile ("movw %%ds, %0" : "=rm"(reg));
+    asm volatile ("movw %%ds, %0" : "=r"(reg));
     return reg;
 }
 
@@ -109,7 +109,7 @@ inline static b16 rdds(void) {
  * @param reg ds
  */
 inline static void stds(SegmentRegister reg) {
-    asm volatile ("movw %0, %%ds" : : "rm"(reg));
+    asm volatile ("movw %0, %%ds" : : "r"(reg));
 }
 
 /**
@@ -119,7 +119,7 @@ inline static void stds(SegmentRegister reg) {
  */
 inline static SegmentRegister rdes(void) {
     SegmentRegister reg;
-    asm volatile ("movw %%es, %0" : "=rm"(reg));
+    asm volatile ("movw %%es, %0" : "=r"(reg));
     return reg;
 }
 
@@ -129,7 +129,7 @@ inline static SegmentRegister rdes(void) {
  * @param reg es
  */
 inline static void stes(SegmentRegister reg) {
-    asm volatile ("movw %0, %%es" : : "rm"(reg));
+    asm volatile ("movw %0, %%es" : : "r"(reg));
 }
 
 /**
@@ -139,7 +139,7 @@ inline static void stes(SegmentRegister reg) {
  */
 inline static SegmentRegister rdfs(void) {
     SegmentRegister reg;
-    asm volatile ("movw %%fs, %0" : "=rm"(reg));
+    asm volatile ("movw %%fs, %0" : "=r"(reg));
     return reg;
 }
 
@@ -149,7 +149,7 @@ inline static SegmentRegister rdfs(void) {
  * @param reg fs
  */
 inline static void stfs(SegmentRegister reg) {
-    asm volatile ("movw %0, %%fs" : : "rm"(reg));
+    asm volatile ("movw %0, %%fs" : : "r"(reg));
 }
 
 /**
@@ -159,7 +159,7 @@ inline static void stfs(SegmentRegister reg) {
  */
 inline static SegmentRegister rdgs(void) {
     SegmentRegister reg;
-    asm volatile ("movw %%gs, %0" : "=rm"(reg));
+    asm volatile ("movw %%gs, %0" : "=r"(reg));
     return reg;
 }
 
@@ -169,7 +169,7 @@ inline static SegmentRegister rdgs(void) {
  * @param reg gs
  */
 inline static void stgs(SegmentRegister reg) {
-    asm volatile ("movw %0, %%gs" : : "rm"(reg));
+    asm volatile ("movw %0, %%gs" : : "r"(reg));
 }
 
 /**
@@ -179,7 +179,7 @@ inline static void stgs(SegmentRegister reg) {
  */
 inline static SegmentRegister rdss(void) {
     SegmentRegister reg;
-    asm volatile ("movw %%ss, %0" : "=rm"(reg));
+    asm volatile ("movw %%ss, %0" : "=r"(reg));
     return reg;
 }
 
@@ -189,5 +189,5 @@ inline static SegmentRegister rdss(void) {
  * @param reg ss
  */
 inline static void stss(SegmentRegister reg) {
-    asm volatile ("movw %0, %%ss" : : "rm"(reg));
+    asm volatile ("movw %0, %%ss" : : "r"(reg));
 }

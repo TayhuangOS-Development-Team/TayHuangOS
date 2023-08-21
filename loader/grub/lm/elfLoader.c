@@ -64,7 +64,6 @@ static inline bool LoadProgram(void *addr, Elf64_Phdr *program, ProgramInfo *inf
  */
 bool LoadELF(void *addr, LoadInfo *info) {
     //TODO: 判断是否是ELF文件
-
     Elf64_Ehdr *header = addr;
 
     // 遍历每个段
