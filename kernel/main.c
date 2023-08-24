@@ -32,7 +32,7 @@ void setup(void) {
     register int magic __asm__("eax"); //GRUB Loader 魔数 存放在eax
 
     // 设置栈
-    asm volatile ("movl $0x1008000, %esp");
+    asm volatile ("movl $0x400000, %esp");
 
     if ((magic & 0xFFFFFFFF) != BOOT_MAGIC) { //魔数不匹配
         while (true);

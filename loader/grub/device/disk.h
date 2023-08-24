@@ -31,19 +31,19 @@ struct DiskStruct;
  */
 typedef struct PartitionStruct {
     /** 硬盘 */
-    struct DiskStruct *disk;
+    struct DiskStruct *diskPtr;
     /** 偏移 */
-    dword offset;
+    dword paritionOffset;
     /** 绝对偏移(相对硬盘起始位置) */
-    dword absoluteOffset;
+    dword partitionAbsoluteOffset;
     /** 可启动 */
-    bool bootable;
+    bool isBootable;
     /** 大小(扇区数) */
-    dword size;
+    dword partitionSizeInSectors;
     /** SystemId */
-    byte sysid;
+    byte systemID;
     /** 子扇区 */
-    struct PartitionStruct *subParts[4];
+    struct PartitionStruct *childPartitions[4];
 } Partition;
 
 /**
@@ -52,21 +52,21 @@ typedef struct PartitionStruct {
  */
 typedef struct DiskStruct {
     /** 基址 */
-    word base;
+    word diskBasePort;
     /** 基址2 */
-    word base2;
+    word diskBasePort2;
     /** 主/从盘 */
-    bool slave;
+    bool isSlave;
     /** 忙标志 */
-    bool busy;
+    bool isBusy;
     /** 序列号 */
-    char serial[21];
+    char diskSerial[21];
     /** 模型 */
-    char model[41];
+    char diskModel[41];
     /** 大小(扇区) */
-    dword size;
+    dword diskSizeInSectors;
     /** 硬盘主扇区(最多4个) */
-    Partition *mainParts[4];
+    Partition *primaryPartitions[4];
 } Disk;
 
 /**
@@ -118,12 +118,12 @@ bool SendDiskCmd(Disk *disk, DiskCmd cmd);
 /**
  * @brief 加载硬盘
  *
- * @param base 基地址
- * @param base2 基地址2
- * @param slave 是否为从盘
+ * @param basePort 基地址
+ * @param basePort2 基地址2
+ * @param isSlave 是否为从盘
  * @return 硬盘
  */
-Disk *LoadDisk(word base, word base2, bool slave);
+Disk *LoadDisk(word basePort, word basePort2, bool isSlave);
 
 /**
  * @brief 卸载硬盘
@@ -133,21 +133,12 @@ Disk *LoadDisk(word base, word base2, bool slave);
 void UnloadDisk(Disk *disk);
 
 /**
- * @brief 加载分区
- *
- * @param disk 磁盘
- * @param offset 偏移
- * @param parts 分区数组
- */
-void LoadParts(Disk *disk, dword offset, Partition **parts);
-
-/**
  * @brief 输出日志（分区信息）
  *
- * @param part 分区
+ * @param partition 分区
  * @param layer 层次
  */
-void LogPart(Partition *part, int layer);
+void LogParition(Partition *partition, int layer);
 
 /**
  * @brief 输出日志（硬盘信息）
@@ -171,11 +162,11 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst);
 /**
  * @brief 读扇区
  *
- * @param part 分区
+ * @param partition 分区
  * @param lba LBA
  * @param cnt 扇区数
  * @param dst 目标地址
  * @return true 读成功
  * @return false 读失败
  */
-bool ReadPartition(Partition *part, dword lba, dword cnt, void *dst);
+bool ReadPartition(Partition *partition, dword lba, dword cnt, void *dst);

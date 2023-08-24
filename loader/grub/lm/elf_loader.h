@@ -1,5 +1,5 @@
 /**
- * @file elfLoader.h
+ * @file elf_loader.h
  * @author theflysong (song_of_the_fly@163.com)
  * @brief 内核加载
  * @version alpha-1.0.0
@@ -20,19 +20,19 @@
  */
 typedef struct {
     /** 入口点 */
-    void *entrypoint;
+    void *programEntrypoint;
 
     /** 起始地址 */
-    void *start;
+    void *programStartAddress;
     /** 结束地址 */
-    void *limit;
+    void *programLimitAddress;
 } LoadInfo;
 
 /**
  * @brief 加载ELF文件
  *
- * @param addr ELF文件地址
+ * @param elfAddress ELF文件地址
  * @param info 加载信息
  * @return 加载是否成功
  */
-bool LoadELF(void *addr, LoadInfo *info);
+bool LoadELF(void *elfAddress, LoadInfo *info);

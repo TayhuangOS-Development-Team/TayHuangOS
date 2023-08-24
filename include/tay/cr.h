@@ -375,13 +375,13 @@ static inline CR0 rdcr0(void) {
 
 /**
  * @brief 写CR0
- * 
+ *
  * @param cr0 CR0
  */
 static inline void wrcr0(CR0 cr0) {
     dword cr0Val = *(dword *)&cr0;
 
-    asm volatile("movl %0, %%cr0" : "=r"(cr0Val));
+    asm volatile("movl %0, %%cr0" : : "r"(cr0Val));
 }
 
 /**
@@ -402,13 +402,13 @@ static inline CR2 rdcr2(void) {
 
 /**
  * @brief 写CR2
- * 
+ *
  * @param cr2 CR2
  */
 static inline void wrcr2(CR2 cr2) {
     dword cr2Val = *(dword *)&cr2;
 
-    asm volatile("movl %0, %%cr2" : "=r"(cr2Val));
+    asm volatile("movl %0, %%cr2" : : "r"(cr2Val));
 }
 
 /**
@@ -429,13 +429,13 @@ static inline CR3 rdcr3(void) {
 
 /**
  * @brief 写CR3
- * 
+ *
  * @param cr3 CR3
  */
 static inline void wrcr3(CR3 cr3) {
     dword cr3Val = *(dword *)&cr3;
 
-    asm volatile("movl %0, %%cr3" : "=r"(cr3Val));
+    asm volatile("movl %0, %%cr3" : : "r"(cr3Val));
 }
 
 /**
@@ -456,11 +456,63 @@ static inline CR4 rdcr4(void) {
 
 /**
  * @brief 写CR4
- * 
+ *
  * @param cr4 CR4
  */
 static inline void wrcr4(CR4 cr4) {
     dword cr4Val = *(dword *)&cr4;
 
-    asm volatile("movl %0, %%cr4" : "=r"(cr4Val));
+    asm volatile("movl %0, %%cr4" : : "r"(cr4Val));
+}
+
+/**
+ * @brief 读MSR
+ *
+ * @param address MSR地址
+ * @return MSR
+ */
+static inline qword rdmsr(dword address) {
+    // EAX:EDX -> high:low
+    dword high;
+    dword low;
+    // 读取msr
+    asm volatile("rdmsr" : "=d"(high), "=a"(low) : "c"(address));
+    qword msr = (((qword)high) << 32) | ((qword)low);
+    return msr;
+}
+
+/**
+ * @brief 写MSR
+ *
+ * @param address MSR地址
+ * @param msr MSR
+ */
+static inline void wrmsr(dword address, qword msr) {
+    // high:low -> EAX:EDX
+    dword high = (msr >> 32) & 0xFFFFFFFF;
+    dword low  = (msr      ) & 0xFFFFFFFF;
+    // 写msr
+    asm volatile("wrmsr" : : "d"(high), "a"(low), "c"(address));
+}
+
+/**
+ * @brief 读EFER
+ *
+ * @return EFER
+ */
+static inline EFER rdefer(void) {
+    EFER efer;
+    qword eferVal = rdmsr(MSR_EFER_ADDR);
+    efer = *(EFER *)(&eferVal);
+    return efer;
+}
+
+/**
+ * @brief 写EFER
+ *
+ * @param efer EFER
+ */
+static inline void wrefer(EFER efer) {
+    qword eferVal = *(qword *)&efer;
+    wrmsr(MSR_EFER_ADDR, eferVal);
 }

@@ -1,5 +1,5 @@
 /**
- * @file gotolm.h
+ * @file setup_lm.h
  * @author theflysong (song_of_the_fly@163.com)
  * @brief 进入长模式
  * @version alpha-1.0.0
@@ -12,4 +12,22 @@
 
 #pragma once
 
+#include <tay/types.h>
+
+/**
+ * @brief 页表区域起始地址
+ *
+ */
+#define PAGING_TABLE_ADDRESS (0x1800000)
+
+/**
+ * @brief 分页范围
+ *
+ */
+#define PAGING_RANGE         (0x2000000)
+
+/**
+ * @brief 配置分页
+ *
+ */
 void SetupPaging(void);

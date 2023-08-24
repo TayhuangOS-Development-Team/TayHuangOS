@@ -13,6 +13,7 @@
 #include <tay/types.h>
 #include <tay/ports.h>
 #include <tay/cr.h>
+#include <tay/paging.h>
 
 #include <basec/logger.h>
 #include <stdbool.h>
@@ -30,7 +31,7 @@
 #include <fs/vfs.h>
 #include <fs/fat32.h>
 
-#include <lm/elfLoader.h>
+#include <lm/elf_loader.h>
 
 /**
  * @brief 初始化文件系统
@@ -88,19 +89,19 @@ void LogDirectory(FSData *fs, VFile *dir, int layer) {
     VFile *file = (VFile *)lmalloc(sizeof(VFile));
     void *iter;
 
-    fs->fs->InitIteration(fs, dir, &iter);
+    fs->fsFunctionTable->InitIteration(fs, dir, &iter);
 
-    while (fs->fs->Next(fs, iter, file) == VFS_PASSED) {
-        LogInfo("%s%s", tabs, file->name, file->size);
+    while (fs->fsFunctionTable->Next(fs, iter, file) == VFS_PASSED) {
+        LogInfo("%s%s", tabs, file->filename, file->fileSizeInBytes);
 
         if (file->isDirectory) {
             LogDirectory(fs, file, layer + 1);
         }
 
-        fs->fs->Close(file);
+        fs->fsFunctionTable->Close(file);
     }
 
-    fs->fs->CloseIteration(fs, iter);
+    fs->fsFunctionTable->CloseIteration(fs, iter);
 }
 
 static const char *kernelPath = "/TayhuangOS/System/tayKernel.bin";
@@ -175,37 +176,37 @@ int main(void) {
     Disk *disk = LoadDisk(IDE0_BASE, IDE0_BASE2, false);
 
     // 获取启动扇区
-    Partition *bootPart = NULL;
+    Partition *bootPartition = NULL;
     for (int i = 0 ; i < 4 ; i ++) {
-        Partition *part = disk->mainParts[i];
+        Partition *partition = disk->primaryPartitions[i];
         // 跳过空分区
-        if (part == NULL) {
+        if (partition == NULL) {
             continue;
         }
 
         // 可启动
-        if (part->bootable) {
-            bootPart = part;
+        if (partition->isBootable) {
+            bootPartition = partition;
         }
     }
 
     // 无法找到启动扇区
-    if (bootPart == NULL) {
+    if (bootPartition == NULL) {
         LogFatal("找不到启动分区!");
         return -1;
     }
 
     // 打印扇区信息
     LogDisk(disk);
-    LogPart(bootPart, 0);
+    LogParition(bootPartition, 0);
 
-    FSData *fs = LoadFS(bootPart);
+    FSData *fs = LoadFS(bootPartition);
     if (fs == NULL) {
         LogFatal("无法识别启动分区的文件系统!");
         return -1;
     }
 
-    LogDirectory(fs, fs->root, 0);
+    // LogDirectory(fs, fs->rootDirectory, 0);
 
     VFile *kernel = OpenFile(fs, kernelPath);
     if (kernel == NULL) {
@@ -213,7 +214,7 @@ int main(void) {
         return -1;
     }
 
-    if (fs->fs->Read(kernel, (void *)KERNEL_BUFFER) != VFS_PASSED) {
+    if (fs->fsFunctionTable->Read(kernel, (void *)KERNEL_BUFFER) != VFS_PASSED) {
         LogFatal("读取内核时出现异常!");
         return -1;
     }
@@ -226,12 +227,22 @@ int main(void) {
         return -1;
     }
 
-    LogInfo("内核入口点: %p", kernelLoadInfo.entrypoint);
-    LogInfo("内核区间: %p~%p", kernelLoadInfo.start, kernelLoadInfo.limit);
+    LogInfo("内核入口点: %p", kernelLoadInfo.programEntrypoint);
+    LogInfo("内核区间: %p~%p", kernelLoadInfo.programStartAddress, kernelLoadInfo.programLimitAddress);
 
     UnloadFS(fs);
 
     LogCR();
+
+    LogInfo("sizeof(PageEntry4K)=%d", sizeof(PageEntry4K));
+    LogInfo("sizeof(PageEntry2M)=%d", sizeof(PageEntry2M));
+    LogInfo("sizeof(PageEntry1G)=%d", sizeof(PageEntry1G));
+    LogInfo("sizeof(PagingTableEntry)=%d", sizeof(PagingTableEntry));
+    LogInfo("sizeof(PTE)=%d", sizeof(PTE));
+    LogInfo("sizeof(PDE)=%d", sizeof(PDE));
+    LogInfo("sizeof(PDPTE)=%d", sizeof(PDPTE));
+    LogInfo("sizeof(PML4E)=%d", sizeof(PML4E));
+    LogInfo("sizeof(PML5E)=%d", sizeof(PML5E));
 
     return 0;
 }
@@ -241,13 +252,13 @@ int main(void) {
  *
  */
 void setup(void) {
-    register int magic __asm__("eax"); //Loader 魔数 存放在eax
+    register int magicNumber __asm__("eax"); //Loader 魔数 存放在eax
     register struct multiboot_tag *multibootInfo __asm__("ebx"); //multiboot info 存放在ebx
 
     // 设置栈
-    asm volatile ("movl $0x1008000, %esp");
+    asm volatile ("movl $0x1000000, %esp");
 
-    if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
+    if (magicNumber != MULTIBOOT2_BOOTLOADER_MAGIC) { //魔数不匹配
         while (true);
     }
 

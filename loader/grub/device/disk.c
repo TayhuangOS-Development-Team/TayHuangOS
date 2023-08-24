@@ -27,7 +27,7 @@
  * @return 状态
  */
 bool GetDiskStatus(Disk *disk, byte mask) {
-    return inb(disk->base + IDE_STATUS) & mask;
+    return inb(disk->diskBasePort + IDE_STATUS) & mask;
 }
 
 /**
@@ -40,7 +40,7 @@ bool GetDiskStatus(Disk *disk, byte mask) {
  */
 bool SendDiskCmd(Disk *disk, DiskCmd cmd) {
     // 硬盘忙
-    if (disk->busy) {
+    if (disk->isBusy) {
         LogError("硬盘忙!");
         return false;
     }
@@ -55,35 +55,35 @@ bool SendDiskCmd(Disk *disk, DiskCmd cmd) {
     while (GetDiskStatus(disk, IDE_BSY_MASK));
 
     // 设置硬盘忙
-    disk->busy = true;
+    disk->isBusy = true;
 
 
     // 设置设备寄存器
     b8 deviceReg = (
         ((cmd.mode    << 6) & 0x40) |
-        ((disk->slave << 4) & 0x10) |
+        ((disk->isSlave << 4) & 0x10) |
         ( lbaHighest        & 0x0F) |
         (0xA0)
     );
 
-    outb(disk->base + IDE_DEVICE, deviceReg);
+    outb(disk->diskBasePort + IDE_DEVICE, deviceReg);
 
     // 等待设备寄存器设置完成
     for (int i = 0 ; i < 5; i ++) {
-        inb(disk->base + IDE_STATUS);
+        inb(disk->diskBasePort + IDE_STATUS);
     }
 
-    outb(disk->base2 + IDE_DEVICE_CONTROL, 2); // 使用轮询方式
+    outb(disk->diskBasePort2 + IDE_DEVICE_CONTROL, 2); // 使用轮询方式
 
-    outb(disk->base + IDE_FEATURES, cmd.features);
+    outb(disk->diskBasePort + IDE_FEATURES, cmd.features);
 
-    outb(disk->base + IDE_SECTCNT, cmd.sectorCnt); // 设置扇区计数
+    outb(disk->diskBasePort + IDE_SECTCNT, cmd.sectorCnt); // 设置扇区计数
 
-    outb(disk->base + IDE_LBA_LOW , lbaLow); // 设置LBA
-    outb(disk->base + IDE_LBA_MID , lbaMid);
-    outb(disk->base + IDE_LBA_HIGH, lbaHigh);
+    outb(disk->diskBasePort + IDE_LBA_LOW , lbaLow); // 设置LBA
+    outb(disk->diskBasePort + IDE_LBA_MID , lbaMid);
+    outb(disk->diskBasePort + IDE_LBA_HIGH, lbaHigh);
 
-    outb(disk->base + IDE_COMMAND, cmd.command); //发送命令
+    outb(disk->diskBasePort + IDE_COMMAND, cmd.command); //发送命令
 
     return true;
 }
@@ -116,30 +116,30 @@ inline static bool IdentityDisk(Disk *disk) {
 
     // 读取IDENTITY内容
     for (int i = 0 ; i < 256 ; i ++) {
-        buffer[i] = inw(disk->base + IDE_DATA);
+        buffer[i] = inw(disk->diskBasePort + IDE_DATA);
     }
 
     // 复制序列号
     for (int i = 0 ; i < 10 ; i ++) {
         word w = buffer[i + 0xA];
-        disk->serial[i * 2 + 1] = (char)( w       & 0xFF);
-        disk->serial[i * 2 + 0] = (char)((w >> 8) & 0xFF);
+        disk->diskSerial[i * 2 + 1] = (char)( w       & 0xFF);
+        disk->diskSerial[i * 2 + 0] = (char)((w >> 8) & 0xFF);
     }
-    disk->serial[20] = '\0';
+    disk->diskSerial[20] = '\0';
 
     // 复制model
     for (int i = 0 ; i < 20 ; i ++) {
         word w = buffer[i + 0x1B];
-        disk->model[i * 2 + 1] = (char)( w       & 0xFF);
-        disk->model[i * 2 + 0] = (char)((w >> 8) & 0xFF);
+        disk->diskModel[i * 2 + 1] = (char)( w       & 0xFF);
+        disk->diskModel[i * 2 + 0] = (char)((w >> 8) & 0xFF);
     }
-    disk->model[40] = '\0';
+    disk->diskModel[40] = '\0';
 
     // 获取扇区数
-    disk->size = *(dword *)(buffer + 0x3C);
+    disk->diskSizeInSectors = *(dword *)(buffer + 0x3C);
 
     // 重置忙标志
-    disk->busy = false;
+    disk->isBusy = false;
 
     return true;
 }
@@ -156,7 +156,7 @@ inline static bool IdentityDisk(Disk *disk) {
  * @param offset 偏移
  * @param parts 分区数组
  */
-void LoadParts(Disk *disk, dword offset, Partition **parts) {
+inline static void LoadParts(Disk *disk, dword offset, Partition **parts) {
     char buffer[1024];
 
     // 读取分区表
@@ -165,13 +165,13 @@ void LoadParts(Disk *disk, dword offset, Partition **parts) {
     // 解析分区表
     for (int i = 0 ; i < 4 ; i ++) {
         // 相关信息
-        dword start_lba = *(dword *)(buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 8);
-        bool bootable   = *(char *) (buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 0);
-        dword cnt   = *(dword *)(buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 12);
-        byte sysid      = *(byte *) (buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 4);
+        dword startLBA = *(dword *)(buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 8);
+        bool isBootable   = *(char *) (buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 0);
+        dword partitionSizeInSectors   = *(dword *)(buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 12);
+        byte systemID      = *(byte *) (buffer + MSDOS_PARTITION_TABLE_OFFSET + i * MSDOS_PARTITION_ENTRY_SIZE + 4);
 
         // EMPTY
-        if (sysid == SI_EMPTY) {
+        if (systemID == SI_EMPTY) {
             // empty entry
             parts[i] = NULL;
             continue;
@@ -182,16 +182,16 @@ void LoadParts(Disk *disk, dword offset, Partition **parts) {
         memset(parts[i], 0, sizeof(Partition));
 
         // 初始化该对象
-        parts[i]->offset = start_lba;
-        parts[i]->absoluteOffset = offset + start_lba;
-        parts[i]->bootable = bootable;
-        parts[i]->size = cnt;
-        parts[i]->sysid = sysid;
-        parts[i]->disk = disk;
+        parts[i]->paritionOffset = startLBA;
+        parts[i]->partitionAbsoluteOffset = offset + startLBA;
+        parts[i]->isBootable = isBootable;
+        parts[i]->partitionSizeInSectors = partitionSizeInSectors;
+        parts[i]->systemID = systemID;
+        parts[i]->diskPtr = disk;
 
         // 拓展分区
-        if (sysid == SI_EXTENDED) {
-            LoadParts(disk, parts[i]->absoluteOffset, parts[i]->subParts);
+        if (systemID == SI_EXTENDED) {
+            LoadParts(disk, parts[i]->partitionAbsoluteOffset, parts[i]->childPartitions);
         }
     }
 }
@@ -199,26 +199,26 @@ void LoadParts(Disk *disk, dword offset, Partition **parts) {
 /**
  * @brief 加载硬盘
  *
- * @param base 基地址
- * @param base2 基地址2
- * @param slave 是否为从盘
+ * @param basePort 基地址
+ * @param basePort2 基地址2
+ * @param isSlave 是否为从盘
  * @return 硬盘
  */
-Disk *LoadDisk(word base, word base2, bool slave) {
+Disk *LoadDisk(word basePort, word basePort2, bool isSlave) {
     // 创建硬盘对象
     Disk *disk = (Disk *)lmalloc(sizeof(Disk));
 
-    disk->base = base;
-    disk->base2 = base2;
-    disk->slave = slave;
-    disk->busy = false;
+    disk->diskBasePort = basePort;
+    disk->diskBasePort2 = basePort2;
+    disk->isSlave = isSlave;
+    disk->isBusy = false;
 
     if (! IdentityDisk(disk)) {
         return NULL;
     }
 
     // 加载分区
-    LoadParts(disk, 0, disk->mainParts);
+    LoadParts(disk, 0, disk->primaryPartitions);
 
     return disk;
 }
@@ -230,11 +230,11 @@ Disk *LoadDisk(word base, word base2, bool slave) {
  */
 static void UnloadPart(Partition *part) {
     // 拓展分区
-    if (part->sysid == SI_EXTENDED) {
+    if (part->systemID == SI_EXTENDED) {
         // 卸载子分区
         for (int i = 0 ; i  < 4 ; i ++) {
-            if (part->subParts[i] != NULL) {
-                UnloadPart(part->subParts[i]);
+            if (part->childPartitions[i] != NULL) {
+                UnloadPart(part->childPartitions[i]);
             }
         }
     }
@@ -248,8 +248,8 @@ static void UnloadPart(Partition *part) {
  */
 void UnloadDisk(Disk *disk) {
     for (int i = 0 ; i  < 4 ; i ++) {
-        if (disk->mainParts[i] != NULL) {
-            UnloadPart(disk->mainParts[i]);
+        if (disk->primaryPartitions[i] != NULL) {
+            UnloadPart(disk->primaryPartitions[i]);
         }
     }
     lfree(disk);
@@ -258,10 +258,10 @@ void UnloadDisk(Disk *disk) {
 /**
  * @brief 输出日志（分区信息）
  *
- * @param part 分区
+ * @param partition 分区
  * @param layer 层次
  */
-void LogPart(Partition *part, int layer) {
+void LogParition(Partition *partition, int layer) {
     // 缩进
     char tabs[32];
     // 至多30层缩进
@@ -273,18 +273,22 @@ void LogPart(Partition *part, int layer) {
 
     // 打印分区信息
     LogInfo("%s----分区信息----", tabs);
-    LogInfo("%s偏移: %d扇区(绝对偏移: %d扇区)", tabs, part->offset, part->absoluteOffset);
-    LogInfo("%s%s ; 系统ID: %#02X", tabs, part->bootable ? "可启动" : "不可启动", part->sysid);
-    LogInfo("%s大小: %d 扇区(%dB = %dKB = %dMB)", tabs, part->size, part->size * 512, part->size / 2, part->size / 2048);
+    LogInfo("%s偏移: %d扇区(绝对偏移: %d扇区)", tabs, partition->paritionOffset, partition->partitionAbsoluteOffset);
+    LogInfo("%s%s ; 系统ID: %#02X", tabs, partition->isBootable ? "可启动" : "不可启动", partition->systemID);
+
+    qword partitionSizeInBytes = partition->partitionSizeInSectors * 512;
+    qword partitionSizeInKB = partitionSizeInBytes / 1024;
+    qword partitionSizeInMB = partitionSizeInKB / 1024;
+    LogInfo("%s大小: %d 扇区(%dB = %dKB = %dMB)", tabs, partition->partitionSizeInSectors, partitionSizeInBytes, partitionSizeInKB, partitionSizeInMB);
 
     // 拓展分区
-    if (part->sysid == SI_EXTENDED) {
+    if (partition->systemID == SI_EXTENDED) {
         // 打印子分区信息
         LogInfo("%s子分区:", tabs);
         for (int i = 0 ; i < 4; i ++) {
-            if (part->subParts[i] != NULL) {
+            if (partition->childPartitions[i] != NULL) {
                 LogInfo("%s分区%d:", tabs, i);
-                LogPart(part->subParts[i], layer + 1);
+                LogParition(partition->childPartitions[i], layer + 1);
             }
         }
     }
@@ -297,18 +301,22 @@ void LogPart(Partition *part, int layer) {
  */
 void LogDisk(Disk *disk) {
     LogInfo("----------硬盘信息----------");
-    LogInfo("基址: (%#04X, %#04X) ; %s", disk->base, disk->base2, disk->busy ? "忙" : "空闲");
-    LogInfo("序列号: %s", disk->serial);
-    LogInfo("模型: %s", disk->model);
-    LogInfo("大小: %d 扇区(%dB = %dKB = %dMB)", disk->size, disk->size * 512, disk->size / 2, disk->size / 2048);
+    LogInfo("基址: (%#04X, %#04X) ; %s", disk->diskBasePort, disk->diskBasePort2, disk->isBusy ? "忙" : "空闲");
+    LogInfo("序列号: %s", disk->diskSerial);
+    LogInfo("模型: %s", disk->diskModel);
+
+    qword diskSizeInBytes = disk->diskSizeInSectors * 512;
+    qword diskSizeInKB = diskSizeInBytes / 1024;
+    qword diskSizeInMB = diskSizeInKB / 1024;
+    LogInfo("大小: %d 扇区(%dB = %dKB = %dMB)", disk->diskSizeInSectors, diskSizeInBytes, diskSizeInKB, diskSizeInMB);
 
     LogInfo("主分区:");
 
     // 打印分区
     for (int i = 0 ; i < 4; i ++) {
-        if (disk->mainParts[i] != NULL) {
+        if (disk->primaryPartitions[i] != NULL) {
             LogInfo("分区 %d:", i);
-            LogPart(disk->mainParts[i], 1);
+            LogParition(disk->primaryPartitions[i], 1);
         }
     }
 }
@@ -345,17 +353,17 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst) {
 
         // 读取
         for (int j = 0 ; j < 256 ; j ++) {
-            ((word *) dst)[256 * i + j] = inw(disk->base + IDE_DATA);
+            ((word *) dst)[256 * i + j] = inw(disk->diskBasePort + IDE_DATA);
         }
 
         // 硬盘刷新DRQ需要一定时间
         for (int i = 0 ; i < 5; i ++) {
-            inb(disk->base + IDE_STATUS);
+            inb(disk->diskBasePort + IDE_STATUS);
         }
     }
 
     // 重置忙标志
-    disk->busy = false;
+    disk->isBusy = false;
 
     return true;
 }
@@ -363,12 +371,13 @@ bool ReadDisk(Disk *disk, dword lba, dword cnt, void *dst) {
 /**
  * @brief 读扇区
  *
+ * @param partition 分区
  * @param lba LBA
  * @param cnt 扇区数
  * @param dst 目标地址
  * @return true 读成功
  * @return false 读失败
  */
-bool ReadPartition(Partition *part, dword lba, dword cnt, void *dst) {
-    return ReadDisk(part->disk, part->absoluteOffset + lba, cnt, dst);
+bool ReadPartition(Partition *partition, dword lba, dword cnt, void *dst) {
+    return ReadDisk(partition->diskPtr, partition->partitionAbsoluteOffset + lba, cnt, dst);
 }

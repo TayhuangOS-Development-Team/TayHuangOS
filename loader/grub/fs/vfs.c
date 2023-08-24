@@ -27,29 +27,29 @@ void RegisterFS(FS *fs) {
     // 表为空
     if (fsList == NULL) {
         fsList = fs;
-        fs->last = fs->next = NULL;
+        fs->lastFS = fs->nextFS = NULL;
         return;
     }
 
     // 遍历到表尾
-    FS *last = fsList;
-    while (last->next != NULL) {
-        last = last->next;
+    FS *lastFS = fsList;
+    while (lastFS->nextFS != NULL) {
+        lastFS = lastFS->nextFS;
     }
 
     // 加入链表
-    last->next = fs;
-    fs->last = last;
-    fs->next = NULL;
+    lastFS->nextFS = fs;
+    fs->lastFS = lastFS;
+    fs->nextFS = NULL;
 }
 
 /**
  * @brief 加载文件系统
  *
- * @param part 分区
+ * @param partition 分区
  * @return 文件系统
  */
-FSData *LoadFS(Partition *part) {
+FSData *LoadFS(Partition *partition) {
     // 表为空
     if (fsList == NULL) {
         return NULL;
@@ -57,17 +57,17 @@ FSData *LoadFS(Partition *part) {
 
     FSData *data = (FSData *)lmalloc(sizeof(FSData));
 
-    data->disk = part->disk;
-    data->part = part;
+    data->diskPtr = partition->diskPtr;
+    data->partitionPtr = partition;
 
     FS *fs = fsList;
     while (fs != NULL) {
         // 若加载成功
-        if (fs->Load(part, data) == VFS_PASSED) {
-            data->fs = fs;
+        if (fs->Load(partition, data) == VFS_PASSED) {
+            data->fsFunctionTable = fs;
             return data;
         }
-        fs = fs->next;
+        fs = fs->nextFS;
     }
 
     // 无法加载
@@ -81,7 +81,7 @@ FSData *LoadFS(Partition *part) {
  * @param fs 文件系统
  */
 void UnloadFS(FSData *fs) {
-    fs->fs->Unload(fs);
+    fs->fsFunctionTable->Unload(fs);
     lfree(fs);
 }
 
@@ -93,9 +93,9 @@ void UnloadFS(FSData *fs) {
  * @return 文件
  */
 VFile *OpenFile(FSData *fs, const char *path) {
-    const char *backup = path;
+    const char *backupPathPtr = path;
 
-    VFile *dir = fs->root;
+    VFile *dir = fs->rootDirectory;
     char filename[512];
     while (*path != '\0') {
         // 去除开头的/
@@ -115,7 +115,7 @@ VFile *OpenFile(FSData *fs, const char *path) {
         // 遍历寻找文件
         void *iter;
 
-        if (fs->fs->InitIteration(fs, dir, &iter) != VFS_PASSED) {
+        if (fs->fsFunctionTable->InitIteration(fs, dir, &iter) != VFS_PASSED) {
             LogError("未能初始化迭代器!");
             return NULL;
         }
@@ -124,26 +124,26 @@ VFile *OpenFile(FSData *fs, const char *path) {
 
         bool found = false;
 
-        while (fs->fs->Next(fs, iter, file) == VFS_PASSED) {
-            if (! strcmp(file->name, filename)) {
+        while (fs->fsFunctionTable->Next(fs, iter, file) == VFS_PASSED) {
+            if (! strcmp(file->filename, filename)) {
                 found = true;
                 break;
             }
-            fs->fs->Close(file);
+            fs->fsFunctionTable->Close(file);
         }
 
-        fs->fs->CloseIteration(fs, iter);
+        fs->fsFunctionTable->CloseIteration(fs, iter);
 
         // 未找到
         if (! found) {
-            fs->fs->Close(file);
+            fs->fsFunctionTable->Close(file);
             lfree(file);
-            LogError("未找到文件%s(%s文件/目录未找到)", backup, filename);
+            LogError("未找到文件%s(%s文件/目录未找到)", backupPathPtr, filename);
             return NULL;
         }
 
         if (! dir->isRoot) {
-            fs->fs->Close(dir);
+            fs->fsFunctionTable->Close(dir);
             lfree(dir);
         }
 
@@ -159,6 +159,6 @@ VFile *OpenFile(FSData *fs, const char *path) {
  * @param file 文件
  */
 void CloseFile(VFile *file) {
-    file->fs->fs->Close(file);
+    file->fsPtr->fsFunctionTable->Close(file);
     lfree(file);
 }

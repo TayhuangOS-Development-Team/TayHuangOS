@@ -52,22 +52,22 @@ static void InitCodeDesc(void) {
     code.limit = 0xFFFFF;
 
     // 内核级可读可执行代码段
-    code.dpl = DPL0;
+    code.DPL = DPL0;
     code.type = DTYPE_XRCODE;
 
     // 代码/数据段
-    code.system    = true;
+    code.S    = true;
 
     // 存在
-    code.present   = true;
-    code.avl       = false;
+    code.P   = true;
+    code.AVL       = false;
 
     // 32位段
-    code.lm        = false;
-    code.db        = true;
+    code.L        = false;
+    code.DB        = true;
 
     // 4KB粒度
-    code.granulity = true;
+    code.G = true;
 
     GDT[CODE_IDX] = BuildDesc(code);
 }
@@ -80,22 +80,22 @@ static void InitDataDesc(void) {
     data.limit = 0xFFFFF;
 
     // 内核级可读写数据段
-    data.dpl = DPL0;
+    data.DPL = DPL0;
     data.type = DTYPE_RWDATA;
 
     // 代码/数据段
-    data.system    = true;
+    data.S    = true;
 
     // 存在
-    data.present   = true;
-    data.avl       = false;
+    data.P   = true;
+    data.AVL       = false;
 
     // 32位段
-    data.lm        = false;
-    data.db        = true;
+    data.L        = false;
+    data.DB        = true;
 
     // 4KB粒度
-    data.granulity = true;
+    data.G = true;
 
     GDT[DATA_IDX] = BuildDesc(data);
 }
@@ -108,22 +108,22 @@ static void InitKCodeDesc(void) {
     kcode.limit = 0xFFFFF;
 
     // 内核级可读可执行代码段
-    kcode.dpl = DPL0;
+    kcode.DPL = DPL0;
     kcode.type = DTYPE_XRCODE;
 
     // 代码/数据段
-    kcode.system    = true;
+    kcode.S    = true;
 
     // 存在
-    kcode.present   = true;
-    kcode.avl       = false;
+    kcode.P   = true;
+    kcode.AVL       = false;
 
     // 64位段
-    kcode.lm        = true;
-    kcode.db        = true;
+    kcode.L        = true;
+    kcode.DB        = false;
 
     // 4KB粒度
-    kcode.granulity = true;
+    kcode.G = true;
 
     GDT[KERCODE_IDX] = BuildDesc(kcode);
 }
@@ -136,22 +136,22 @@ static void InitKDataDesc(void) {
     kdata.limit = 0xFFFFF;
 
     // 内核级可读写数据段
-    kdata.dpl = DPL0;
+    kdata.DPL = DPL0;
     kdata.type = DTYPE_RWDATA;
 
     // 代码/数据段
-    kdata.system    = true;
+    kdata.S    = true;
 
     // 存在
-    kdata.present   = true;
-    kdata.avl       = false;
+    kdata.P   = true;
+    kdata.AVL       = false;
 
     // 64位段
-    kdata.lm        = true;
-    kdata.db        = true;
+    kdata.L        = true;
+    kdata.DB        = false;
 
     // 4KB粒度
-    kdata.granulity = true;
+    kdata.G = true;
 
     GDT[KERDATA_IDX] = BuildDesc(kdata);
 }

@@ -43,7 +43,7 @@ struct FAT32BRStruct {
     /** 每磁道扇区数    (+0x18) */
     word  sectorsPerTrack;
     /* 磁头数 (+0x1A) */
-    word  heads;
+    word  diskHeads;
     /** 隐藏扇区数 (+0x1C) */
     dword hiddenSectors;
     /** 总扇区数 (+0x20) */
@@ -71,9 +71,9 @@ struct FAT32BRStruct {
     /** (+0x41) */
     byte  reserved6;
     /** boot标志 (+0x42) */
-    byte  bootSig;
+    byte  bootSignature;
     /** 卷号 (+0x43) */
-    dword volumnId;
+    dword volumnID;
     /** 卷标 (+0x47) */
     char  volumnLabel[11];
     /** 文件系统 (+0x52) */
@@ -126,30 +126,30 @@ struct FAT32Time {
  */
 struct FAT32FileEntry {
     /** 名称 */
-    char name[8];
+    char fileName[8];
     /** 扩展名 */
-    char extension[3];
+    char fileExtensionName[3];
     /** 属性 */
     struct {
         /** 只读 */
-        bool readonly  : 1;
+        bool isReadonly  : 1;
         /** 隐藏 */
-        bool hidden    : 1;
+        bool isHidden    : 1;
         /** 系统 */
-        bool system    : 1;
+        bool isSystem    : 1;
         /** 卷标 */
-        bool volumnID  : 1;
+        bool isVolumnID  : 1;
         /** 目录 */
-        bool directory : 1;
+        bool isDirectory : 1;
         /** 归档 */
-        bool archive   : 1;
+        bool isArchive   : 1;
         /** 保留*/
         byte reserved  : 2;
-    } attr;
+    } attribute;
     /** 保留 */
     byte             reserved;
     /** 创建时间(以10s计) */
-    byte             creationTimeTenSeconds;
+    byte             creationTimeInTenSeconds;
     /** 创建时间 */
     struct FAT32Time creationTime;
     /** 创建日期 */
@@ -165,7 +165,7 @@ struct FAT32FileEntry {
     /** 起始簇号(低16位) */
     word             startClusLow;
     /** 文件大小 */
-    dword            fileSize;
+    dword            fileSizeInBytes;
 } __attribute__((packed));
 
 /** LFN属性 */
@@ -184,21 +184,21 @@ struct FAT32FileEntry {
  */
 struct FAT32LFNEntry {
     /** 序号 */
-    byte order;
+    byte lfnOrder;
     /** 名称1 */
-    word name1[5];
+    word lfnName1[5];
     /** 属性 */
-    byte attr;
+    byte lfnAttribute;
     /** 类型 */
-    byte type;
+    byte lfnType;
     /** 校验数 */
-    byte chksum;
+    byte lfnCheckSum;
     /** 名称2 */
-    word name2[6];
+    word lfnName2[6];
     /** 保留 */
     word reserved;
     /** 名称3 */
-    word name3[2];
+    word lfnName3[2];
 } __attribute__((packed));
 
 /**
@@ -221,7 +221,7 @@ typedef union {
 
 typedef struct {
     /** FAT缓存起始扇区 */
-    dword fatCacheStart;
+    dword fatCacheStartInSectors;
     /** FAT区缓存 */
     byte fatCache[FAT_CACHE_SIZE];
 } FAT32FATCache;
@@ -234,9 +234,9 @@ typedef struct {
     /** 引导记录 */
     FAT32BootRecord bootRecord;
     /** FAT区起始 */
-    dword fatStart;
+    dword fatStartInSectors;
     /** 数据区起始 */
-    dword dataStart;
+    dword dataStartInSectors;
     /** FAT区缓存 */
     FAT32FATCache fatCache;
 } FAT32FSData;
@@ -257,7 +257,7 @@ typedef struct {
  */
 typedef struct {
     /** 目录 */
-    VFile *dir;
+    VFile *currentDirectory;
     /** 上次偏移 */
     dword lastOffset;
 } FAT32Iteration;
@@ -265,13 +265,13 @@ typedef struct {
 typedef dword FAT32FATEntry;
 
 /** 为了方便 */
-#define __DATA__ ((FAT32FSData *)data->data)
+#define __DATA__ ((FAT32FSData *)data->fsExtraData)
 #define __BR__ (&__DATA__->bootRecord)
 #define __CACHE__ (&__DATA__->fatCache)
 #define __BPS__ (__BR__->bytesPerSector)
 #define __SPC__ (__BR__->sectorsPerClus)
 #define __ROOT__ (data->root)
-#define __FILEDATA__ ((FAT32FileData *)file->data)
+#define __FILEDATA__ ((FAT32FileData *)file->fileExtraData)
 
 /**
  * @brief 获取数据所在扇区
@@ -281,7 +281,7 @@ typedef dword FAT32FATEntry;
  * @return 数据所在扇区
  */
 inline static dword GetDataSector(FSData *data, dword clus) {
-    return __DATA__->dataStart + (clus - 2) * __SPC__;
+    return __DATA__->dataStartInSectors + (clus - 2) * __SPC__;
 }
 
 /**
@@ -294,38 +294,38 @@ inline static dword GetDataSector(FSData *data, dword clus) {
  */
 inline static dword UpdateFATCache(FSData *data, dword fatNo) {
     // 计算缓存所存储的扇区数
-    const dword cacheSectors = FAT_CACHE_SIZE / __BPS__;
+    const dword cacheSizeInSectors = FAT_CACHE_SIZE / __BPS__;
     // 计算FAT项所处扇区
-    const dword fatSector =  fatNo * sizeof(FAT32FATEntry) / __BPS__;
+    const dword fatSectorIn =  fatNo * sizeof(FAT32FATEntry) / __BPS__;
 
     // 缓存不可用
     if (
-        __CACHE__->fatCacheStart == CACHE_NOT_VALID ||
-        fatSector < __CACHE__->fatCacheStart ||
-        fatSector >= __CACHE__->fatCacheStart + cacheSectors
+        __CACHE__->fatCacheStartInSectors == CACHE_NOT_VALID ||
+        fatSectorIn < __CACHE__->fatCacheStartInSectors ||
+        fatSectorIn >= __CACHE__->fatCacheStartInSectors + cacheSizeInSectors
     ) {
         // 更新缓存
-        __CACHE__->fatCacheStart = fatSector;
-        if (! ReadPartition(data->part, __CACHE__->fatCacheStart + __DATA__->fatStart, cacheSectors, __CACHE__->fatCache)) {
+        __CACHE__->fatCacheStartInSectors = fatSectorIn;
+        if (! ReadPartition(data->partitionPtr, __CACHE__->fatCacheStartInSectors + __DATA__->fatStartInSectors, cacheSizeInSectors, __CACHE__->fatCache)) {
             LogError("无法更新FAT缓存!");
             return CACHE_NOT_VALID;
         }
     }
 
     // 返回偏移
-    return fatNo * sizeof(FAT32FATEntry) - __CACHE__->fatCacheStart * __BPS__;
+    return fatNo * sizeof(FAT32FATEntry) - __CACHE__->fatCacheStartInSectors * __BPS__;
 }
 
 inline static void InitFile(FSData *data, VFile *file) {
-    file->fs = data;
-    file->disk = data->disk;
-    file->part = data->part;
+    file->fsPtr = data;
+    file->diskPtr = data->diskPtr;
+    file->partitionPtr = data->partitionPtr;
 
-    file->data = (void *)lmalloc(sizeof(FAT32FileData));
-    memset(file->data, 0, sizeof(sizeof(FAT32FileData)));
+    file->fileExtraData = (void *)lmalloc(sizeof(FAT32FileData));
+    memset(file->fileExtraData, 0, sizeof(sizeof(FAT32FileData)));
 
-    file->cache = NULL;
-    file->size = 0;
+    file->fileCache = NULL;
+    file->fileSizeInBytes = 0;
 
     file->isDirectory = file->isRoot = false;
 }
@@ -345,8 +345,8 @@ inline static void __LoadFileData__(FSData *data, dword startClus, void *cache) 
     while (clus <= FINAL_FAT) {
         // 读簇
         ReadPartition(
-            data->part,
-            __DATA__->dataStart + (clus - 2) * __SPC__,
+            data->partitionPtr,
+            __DATA__->dataStartInSectors + (clus - 2) * __SPC__,
             __SPC__,
             cache + cnt * __SPC__ * __BPS__
         );
@@ -366,16 +366,16 @@ inline static void __LoadFileData__(FSData *data, dword startClus, void *cache) 
  * @param file 文件
  */
 inline static void UpdateFileCache(FSData *data, VFile *file) {
-    if (file->cache == NULL) {
+    if (file->fileCache == NULL) {
         // 计算缓存大小
-        dword cacheSize = file->size;
+        dword cacheSize = file->fileSizeInBytes;
         dword fixedSize = (cacheSize / __BPS__) * __BPS__;
         if (cacheSize % __BPS__ != 0) {
             fixedSize += __BPS__;
         }
 
-        file->cache = (void *)lmalloc(fixedSize);
-        __LoadFileData__(data, __FILEDATA__->startClus, file->cache);
+        file->fileCache = (void *)lmalloc(fixedSize);
+        __LoadFileData__(data, __FILEDATA__->startClus, file->fileCache);
     }
 }
 
@@ -410,7 +410,7 @@ inline static dword GetDirectorySize(FSData *data, dword startClus) {
  */
 VFSErrors FAT32Load(Partition *part, FSData *data) {
     // 设置data
-    data->data = (void *)lmalloc(sizeof(FAT32FSData));
+    data->fsExtraData = (void *)lmalloc(sizeof(FAT32FSData));
 
     // 读取引导扇区
     char boot[4096];
@@ -427,35 +427,33 @@ VFSErrors FAT32Load(Partition *part, FSData *data) {
     flag |= (__SPC__ == 0);
     flag |= (__BR__->fatsNum == 0);
     flag |= (__BR__->sectorsPerTrack == 0);
-    flag |= (__BR__->heads == 0);
+    flag |= (__BR__->diskHeads == 0);
     flag |= (__BR__->totalSectors == 0);
     flag |= (__BR__->fatSectors == 0);
 
     // BootRecord错误
     if (flag) {
         // 释放Data项
-        lfree(data->data);
+        lfree(data->fsExtraData);
         return VFS_INVALID;
     }
 
-    __DATA__->fatStart = __BR__->reservedSectors;
-    __DATA__->dataStart = __DATA__->fatStart + __BR__->fatsNum * __BR__->fatSectors;
-    __DATA__->fatCache.fatCacheStart = CACHE_NOT_VALID;
+    __DATA__->fatStartInSectors = __BR__->reservedSectors;
+    __DATA__->dataStartInSectors = __DATA__->fatStartInSectors + __BR__->fatsNum * __BR__->fatSectors;
+    __DATA__->fatCache.fatCacheStartInSectors = CACHE_NOT_VALID;
 
     // 加载Root
     dword rootDirSize = GetDirectorySize(data, __BR__->rootDirStartClus);
+    data->rootDirectory = (VFile *)lmalloc(sizeof(VFile));
+    InitFile(data, data->rootDirectory);
 
-    data->root = (VFile *)lmalloc(sizeof(VFile));
-    InitFile(data, data->root);
+    data->rootDirectory->filename = (char *)lmalloc(2);
+    data->rootDirectory->filename[0] = '/';
+    data->rootDirectory->filename[1] = '\0';
 
-    data->root->name = (char *)lmalloc(2);
-    data->root->name[0] = '/';
-    data->root->name[1] = '\0';
-
-    ((FAT32FileData *)data->root->data)->startClus = __BR__->rootDirStartClus;
-    data->root->size = rootDirSize;
-
-    data->root->isDirectory = data->root->isRoot = true;
+    ((FAT32FileData *)data->rootDirectory->fileExtraData)->startClus = __BR__->rootDirStartClus;
+    data->rootDirectory->isDirectory = data->rootDirectory->isRoot = true;
+    data->rootDirectory->fileSizeInBytes = rootDirSize;
 
     return VFS_PASSED;
 }
@@ -469,14 +467,14 @@ VFSErrors FAT32Load(Partition *part, FSData *data) {
  */
 VFSErrors FAT32Unload(FSData *data) {
     // 关闭根目录文件
-    VFSErrors errcode = FAT32Close(data->root);
+    VFSErrors errcode = FAT32Close(data->rootDirectory);
     if (errcode != VFS_PASSED) {
         return errcode;
     }
 
     // 释放额外信息
-    lfree(data->data);
-    lfree(data->root);
+    lfree(data->fsExtraData);
+    lfree(data->rootDirectory);
 
     // 系统已卸载
     return VFS_PASSED;
@@ -503,7 +501,7 @@ VFSErrors FAT32InitIteration(FSData *data, VFile *directory, void **iter) {
     FAT32Iteration *iteration = (FAT32Iteration *)lmalloc(sizeof(FAT32Iteration));
     *iter = (void *)iteration;
 
-    iteration->dir = directory;
+    iteration->currentDirectory = directory;
     iteration->lastOffset = 0;
 
     return VFS_PASSED;
@@ -520,41 +518,41 @@ inline static dword GetFileName(dword offset, dword lastOffset, void *cache, cha
 
         // 检测name1
         for (int i = 0 ; (i < 5) & (! flag) ; i ++) {
-            if (entry->lfnEntry.name1[i] == 0) {
+            if (entry->lfnEntry.lfnName1[i] == 0) {
                 flag = true;
                 break;
             }
             if (name != NULL) {
-                name[cnt] = entry->lfnEntry.name1[i] & 0xFF;
+                name[cnt] = entry->lfnEntry.lfnName1[i] & 0xFF;
             }
             cnt ++;
         }
 
         // 检测name2
         for (int i = 0 ; (i < 6) & (! flag) ; i ++) {
-            if (entry->lfnEntry.name2[i] == 0) {
+            if (entry->lfnEntry.lfnName2[i] == 0) {
                 flag = true;
                 break;
             }
             if (name != NULL) {
-                name[cnt] = entry->lfnEntry.name2[i] & 0xFF;
+                name[cnt] = entry->lfnEntry.lfnName2[i] & 0xFF;
             }
             cnt ++;
         }
 
         // 检测name3
         for (int i = 0 ; (i < 2) & (! flag) ; i ++) {
-            if (entry->lfnEntry.name3[i] == 0) {
+            if (entry->lfnEntry.lfnName3[i] == 0) {
                 break;
             }
             if (name != NULL) {
-                name[cnt] = entry->lfnEntry.name3[i] & 0xFF;
+                name[cnt] = entry->lfnEntry.lfnName3[i] & 0xFF;
             }
             cnt ++;
         }
 
         // 最终项LFN
-        if ((entry->lfnEntry.order & LFN_ORDER_MASK) == LFN_ORDER_MASK) {
+        if ((entry->lfnEntry.lfnOrder & LFN_ORDER_MASK) == LFN_ORDER_MASK) {
             break;
         }
 
@@ -586,7 +584,7 @@ VFSErrors FAT32Next(FSData *data, void *iter, VFile *file) {
     dword offset = iteration->lastOffset;
 
     // 最后一个文件
-    if (offset >= iteration->dir->size) {
+    if (offset >= iteration->currentDirectory->fileSizeInBytes) {
         return VFS_FINAL;
     }
 
@@ -594,19 +592,19 @@ VFSErrors FAT32Next(FSData *data, void *iter, VFile *file) {
     InitFile(data, file);
 
     // 定位文件
-    while (offset < iteration->dir->size) {
-        FAT32Entry *entry = (FAT32Entry *)(iteration->dir->cache + offset);
+    while (offset < iteration->currentDirectory->fileSizeInBytes) {
+        FAT32Entry *entry = (FAT32Entry *)(iteration->currentDirectory->fileCache + offset);
 
         // 是有效项
         if (
-            (entry->lfnEntry.order != 0) &&
-            (entry->fileEntry.attr.reserved == 0)
+            (entry->lfnEntry.lfnOrder != 0) &&
+            (entry->fileEntry.attribute.reserved == 0)
         ) {
             // 不是.或者..文件
             if (
-                (! entry->fileEntry.attr.volumnID) &&
-                (memcmp(entry->fileEntry.name, ".       ", 8) != 0)&&
-                (memcmp(entry->fileEntry.name, "..      ", 8) != 0)
+                (! entry->fileEntry.attribute.isVolumnID) &&
+                (memcmp(entry->fileEntry.fileName, ".       ", 8) != 0)&&
+                (memcmp(entry->fileEntry.fileName, "..      ", 8) != 0)
             ) {
                 // 文件项
                 break;
@@ -617,20 +615,20 @@ VFSErrors FAT32Next(FSData *data, void *iter, VFile *file) {
     }
 
     // 最后一个文件
-    if (offset >= iteration->dir->size) {
+    if (offset >= iteration->currentDirectory->fileSizeInBytes) {
         iteration->lastOffset = offset;
         return VFS_FINAL;
     }
 
-    FAT32Entry *entry = (FAT32Entry *)(iteration->dir->cache + offset);
+    FAT32Entry *entry = (FAT32Entry *)(iteration->currentDirectory->fileCache + offset);
 
     // 获取文件名
-    dword len = GetFileName(offset, iteration->lastOffset, iteration->dir->cache, NULL);
-    file->name = (char *)lmalloc(len + 1);
-    GetFileName(offset, iteration->lastOffset, iteration->dir->cache, file->name);
+    dword len = GetFileName(offset, iteration->lastOffset, iteration->currentDirectory->fileCache, NULL);
+    file->filename = (char *)lmalloc(len + 1);
+    GetFileName(offset, iteration->lastOffset, iteration->currentDirectory->fileCache, file->filename);
 
     // 设置是否为目录
-    file->isDirectory = entry->fileEntry.attr.directory;
+    file->isDirectory = entry->fileEntry.attribute.isDirectory;
 
     // 设置文件数据
     __FILEDATA__->entry = entry->fileEntry;
@@ -642,10 +640,10 @@ VFSErrors FAT32Next(FSData *data, void *iter, VFile *file) {
     __FILEDATA__->startClus = startClus;
 
     if (file->isDirectory) {
-        file->size = GetDirectorySize(data, __FILEDATA__->startClus);
+        file->fileSizeInBytes = GetDirectorySize(data, __FILEDATA__->startClus);
     }
     else {
-        file->size = entry->fileEntry.fileSize;
+        file->fileSizeInBytes = entry->fileEntry.fileSizeInBytes;
     }
 
     iteration->lastOffset = offset + sizeof(FAT32Entry);
@@ -673,9 +671,9 @@ VFSErrors FAT32CloseIteration(FSData *data, void *iter) {
  * @return 错误号
  */
 VFSErrors FAT32Close(VFile *file) {
-    lfree(file->data);
-    if (file->cache != NULL) {
-        lfree(file->cache);
+    lfree(file->fileExtraData);
+    if (file->fileCache != NULL) {
+        lfree(file->fileCache);
     }
     return VFS_PASSED;
 }
@@ -689,8 +687,8 @@ VFSErrors FAT32Close(VFile *file) {
  * @return 错误号
  */
 VFSErrors FAT32Read(VFile *file, void *target) {
-    UpdateFileCache(file->fs, file);
-    memcpy(target, file->cache, file->size);
+    UpdateFileCache(file->fsPtr, file);
+    memcpy(target, file->fileCache, file->fileSizeInBytes);
     return VFS_PASSED;
 }
 

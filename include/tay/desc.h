@@ -109,22 +109,63 @@ typedef struct {
 	dword limit;
 	/** 段基址 */
 	dword base;
-	/** DPL */
-	word dpl;
+	/**
+	 * @brief Descriptor Privilege Level(描述符特权级)
+	 * DPL=0 => Supervisor=Kernel
+	 * DPL=3 => User
+	 *
+	 */
+	word DPL;
 	/** 段类型 */
 	word type;
-	/** 是否为系统描述符 */
-	bool system; // =0 => system ; =1 => data/code
-	/** 存在位 */
-	bool present;
-	/** 自用 */
-	bool avl;
-	/** 长模式 */
-	bool lm;
-	/** D/B标志位 */
-	bool db;
-	/** 粒度(字节/4KB) */
-	bool granulity;
+	/**
+	 * @brief System (系统描述符)
+	 * S=0 是系统描述符
+	 * S=1 是代码/数据段描述符
+	 *
+	 */
+	bool S;
+	/**
+	 * @brief Present (存在位)
+	 * P=0 该段存在
+	 *
+	 */
+	bool P;
+	/**
+	 * @brief Avaliable to System (对系统可用)
+	 * AVL位可以由OS自行使用
+	 *
+	 */
+	bool AVL;
+	/**
+	 * @brief Longmode (长模式)
+	 *
+	 */
+	bool L;
+	/**
+	 * @brief D/B位
+	 * (1)在代码段中 该位为D位
+	 *     [1]D=0且L=0 使用16位操作数
+	 *     [1]D=1且L=0 使用32位操作数
+	 *     [1]D=0且L=1 使用64位操作数
+	 *     [1]D=1且L=1 错误
+	 * (2)在数据段中 该位为B位
+	 *     [1]若该段选择子在栈段寄存器ss上
+	 *        1. D=0则指令以16位为标准进行栈操作
+	 *        2. D=1则指令以32位为标准进行栈操作
+	 *     [2]若该段选择子是向下扩展的
+	 * 		  1. D=0则段上界为64KB
+	 *        2. D=1则段上界为4GB
+	 *
+	 */
+	bool DB;
+	/**
+	 * @brief Granularity (粒度)
+	 * G=0时 段界限以1B为单位
+	 * G=1时 段界限以4KB为单位
+	 *
+	 */
+	bool G;
 } RawDesc;
 
 /**
@@ -140,33 +181,74 @@ struct DescStruct {
 	word base1 : 8;
 	/** 段类型 */
 	word type : 4;
-	/** 是否为系统描述符 */
-	bool system: 1;
-	/** DPL */
-	word dpl: 2;
-	/** 存在位 */
-	bool present: 1;
+	/**
+	 * @brief System (系统描述符)
+	 * S=0 是系统描述符
+	 * S=1 是代码/数据段描述符
+	 *
+	 */
+	bool S : 1;
+	/**
+	 * @brief Descriptor Privilege Level(描述符特权级)
+	 * DPL=0 => Supervisor=Kernel
+	 * DPL=3 => User
+	 *
+	 */
+	word DPL : 2;
+	/**
+	 * @brief Present (存在位)
+	 * P=0 该段存在
+	 *
+	 */
+	bool P : 1;
 	/** 段界限1 */
 	word limit1: 4;
-	/** 自用 */
-	bool avl: 1;
-	/** 长模式 */
-	bool lm: 1;
-	/** D/B标志位 */
-	bool db: 1;
-	/** 粒度(字节/4KB) */
-	bool granulity: 1;
+	/**
+	 * @brief Avaliable to System (对系统可用)
+	 * AVL位可以由OS自行使用
+	 *
+	 */
+	bool AVL : 1;
+	/**
+	 * @brief Longmode (长模式)
+	 *
+	 */
+	bool L : 1;
+	/**
+	 * @brief D/B位
+	 * (1)在代码段中 该位为D位
+	 *     [1]D=0且L=0 使用16位操作数
+	 *     [1]D=1且L=0 使用32位操作数
+	 *     [1]D=0且L=1 使用64位操作数
+	 *     [1]D=1且L=1 错误
+	 * (2)在数据段中 该位为B位
+	 *     [1]若该段选择子在栈段寄存器ss上
+	 *        1. D=0则指令以16位为标准进行栈操作
+	 *        2. D=1则指令以32位为标准进行栈操作
+	 *     [2]若该段选择子是向下扩展的
+	 * 		  1. D=0则段上界为64KB
+	 *        2. D=1则段上界为4GB
+	 *
+	 */
+	bool DB : 1;
+	/**
+	 * @brief Granularity (粒度)
+	 * G=0时 段界限以1B为单位
+	 * G=1时 段界限以4KB为单位
+	 *
+	 */
+	bool G : 1;
 	/** 段基址2 */
-	word base2: 8;
+	word base2 : 8;
 } __attribute__((packed));
 
 typedef struct DescStruct Descriptor;
 
 /**
- * @brief 处理描述符
+ * @brief 构建描述符
  *
- * @param raw 未处理描述符
- * @return 已处理描述符
+ * @param raw 未处理过的描述符
+ * @return 处理后的描述符
  */
 inline static Descriptor BuildDesc(RawDesc raw) {
 	Descriptor desc;
@@ -178,15 +260,15 @@ inline static Descriptor BuildDesc(RawDesc raw) {
 	desc.base1 = (raw.base >> 16) & 0xFF;
 	desc.base2 = (raw.base >> 24) & 0xFF;
 
-	desc.dpl = raw.dpl;
+	desc.DPL = raw.DPL;
 	desc.type = raw.type;
 
-	desc.system = raw.system;
-	desc.present = raw.present;
-	desc.avl = raw.avl;
-	desc.lm = raw.lm;
-	desc.db = raw.db;
-	desc.granulity = raw.granulity;
+	desc.S = raw.S;
+	desc.P = raw.P;
+	desc.AVL = raw.AVL;
+	desc.L = raw.L;
+	desc.DB = raw.DB;
+	desc.G = raw.G;
 
 	return desc;
 }
@@ -217,10 +299,19 @@ struct TSSStruct {
 	byte	 base1 : 8;
 	/** TSS类型 */
 	byte   type : 5;
-	/** DPL */
-	byte   dpl : 2;
-	/** 存在位 */
-	bool present : 1;
+	/**
+	 * @brief Descriptor Privilege Level(描述符特权级)
+	 * DPL=0 => Supervisor=Kernel
+	 * DPL=3 => User
+	 *
+	 */
+	byte   DPL : 2;
+	/**
+	 * @brief Present (存在位)
+	 * P=0 该段存在
+	 *
+	 */
+	bool P : 1;
 	/** 界限1 */
 	byte	 limit1 : 4;
 	/** 保留 */
@@ -250,10 +341,19 @@ struct IDTAttributeStruct {
 	byte reserved  : 5;
 	/** 门类型 */
 	byte type      : 5;
-	/** DPL */
-	byte dpl       : 2;
-	/** 存在位 */
-	bool present : 1;
+	/**
+	 * @brief Descriptor Privilege Level(描述符特权级)
+	 * DPL=0 => Supervisor=Kernel
+	 * DPL=3 => User
+	 *
+	 */
+	byte DPL       : 2;
+	/**
+	 * @brief Present (存在位)
+	 * P=0 该段存在
+	 *
+	 */
+	bool P : 1;
 } __attribute__((packed));
 
 typedef struct IDTAttributeStruct IDTAttribute;
@@ -300,8 +400,8 @@ inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int
     desc.bits.ist = 0;
     desc.bits.reserved = 0;
     desc.bits.type = type; //类型
-    desc.bits.dpl = privilege; //权限
-    desc.bits.present = true; //存在
+    desc.bits.DPL = privilege; //权限
+    desc.bits.P = true; //存在
     desc.offset1 = base >> 16; //偏移
 	return desc;
 }
@@ -325,8 +425,8 @@ inline static GateDescriptor BuildGate(byte type, void *ptr, byte privilege, int
     desc.bits.ist = 0;
     desc.bits.reserved = 0;
     desc.bits.type = type; //类型
-    desc.bits.dpl = privilege; //权限
-    desc.bits.present = true; //存在
+    desc.bits.DPL = privilege; //权限
+    desc.bits.P = true; //存在
     desc.offset1 = (base >> 16) & 0xFFFF; //偏移
     desc.offset2 = base >> 32; //偏移
     desc.reserved = 0;
@@ -367,8 +467,12 @@ struct TSS64Struct {
 	qword reserved2;
 	/** 保留 */
 	word  reserved3;
-	/** IOPB */
-	word  iopb;
+	/**
+	 * @brief I/O Permission Bitmap(I/O许可位图)
+	 * I/O许可位图距TSS的偏移
+	 * 
+	 */
+	word  IOPB;
 } __attribute__((packed));
 
 typedef struct TSS64Struct TSS64;

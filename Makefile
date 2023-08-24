@@ -35,7 +35,7 @@ mount:
 	$(q)$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) loop=$(loop-b) start-image
 
 umount:
-	$(q)$(umount) /mnt/tayhuangOS/
+	$(q)$(umount) $(path-mount)
 
 image:
 	$(q)$(MAKE) -f $(path-script)/image/Makefile.image global-env=$(global-env) loop=$(loop-b) start-image

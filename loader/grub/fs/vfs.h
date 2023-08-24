@@ -25,20 +25,20 @@ struct FSStruct;
 typedef struct VFileStruct {
     /** 外部数据 */
     /** 文件所在硬盘 */
-    Disk *disk;
+    Disk *diskPtr;
     /** 文件所在分区 */
-    Partition *part;
+    Partition *partitionPtr;
     /** 文件所在文件系统 */
-    struct FSDataStruct *fs;
+    struct FSDataStruct *fsPtr;
 
     /** 文件专用数据 */
-    void *data;
+    void *fileExtraData;
     /** 文件缓存 */
-    void *cache;
+    void *fileCache;
     /** 文件大小 */
-    size_t size;
+    size_t fileSizeInBytes;
     /** 文件名*/
-    char *name;
+    char *filename;
     /** 是否为目录 */
     bool isDirectory;
     /** 是否为根目录 */
@@ -65,16 +65,16 @@ typedef enum {
 typedef struct FSDataStruct {
     /** 外部数据 */
     /** 文件系统 */
-    struct FSStruct *fs;
+    struct FSStruct *fsFunctionTable;
     /** 文件系统所在硬盘 */
-    Disk *disk;
+    Disk *diskPtr;
     /** 文件系统所在分区 */
-    Partition *part;
+    Partition *partitionPtr;
 
     /** 文件系统专用数据 */
-    void *data;
+    void *fsExtraData;
     /** 根目录 */
-    VFile *root;
+    VFile *rootDirectory;
 } FSData;
 
 /**
@@ -83,11 +83,11 @@ typedef struct FSDataStruct {
  */
 typedef struct FSStruct {
     /** 上个文件系统 */
-    struct FSStruct *last;
+    struct FSStruct *lastFS;
     /** 下个文件系统 */
-    struct FSStruct *next;
+    struct FSStruct *nextFS;
     /** 文件系统名称 */
-    const char *name;
+    const char *fsName;
     /**
      * @brief 加载文件系统
      *
